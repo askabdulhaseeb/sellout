@@ -10,9 +10,7 @@ import '../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart
 import '../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../data/source/local/local_notification.dart';
 import '../../../domain/entities/notification_entity.dart';
-import '../../provider/notification_provider.dart';
 
 class NotificationTile extends StatefulWidget {
   const NotificationTile({required this.notification, super.key});
@@ -43,7 +41,7 @@ class _NotificationTileState extends State<NotificationTile> {
 
     // Order-related notifications
     if (type.contains('order')) {
-      return 'view';
+      return 'order';
     }
 
     // Fallback to first available
@@ -59,12 +57,6 @@ class _NotificationTileState extends State<NotificationTile> {
     final String? chatId = widget.notification.chatId;
     final String? postId = widget.notification.postId;
     final String? orderId = widget.notification.orderId;
-
-    // Mark as viewed
-    await LocalNotifications.markAsViewed(widget.notification.notificationId);
-    if (context.mounted) {
-      context.read<NotificationProvider>().refreshFromLocal();
-    }
 
     // Handle based on primary action
     if (!context.mounted) return;
@@ -169,6 +161,106 @@ class _NotificationTileState extends State<NotificationTile> {
     }
   }
 
+  // UI helpers for modularization
+  Widget _buildAvatar(UserEntity user) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: CustomNetworkImage(
+        imageURL: user.profilePhotoURL,
+        size: 52,
+        placeholder: user.displayName.isNotEmpty ? user.displayName : 'na'.tr(),
+      ),
+    );
+  }
+
+  Widget _buildHeader(UserEntity user, String timeText, bool isUnread) {
+    return Row(
+      children: <Widget>[
+        Flexible(
+          child: Text(
+            user.displayName.isNotEmpty ? user.displayName : 'na'.tr(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: isUnread ? FontWeight.w700 : FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          timeText,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTitleRow(bool isUnread) {
+    return Row(
+      children: <Widget>[
+        if (isUnread)
+          Container(
+            width: 8,
+            height: 8,
+            margin: const EdgeInsets.only(right: 6),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        Expanded(
+          child: Text(
+            widget.notification.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: isUnread ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMessage() {
+    return Text(
+      widget.notification.message,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(bool hasAction) {
+    if (!hasAction) return const SizedBox.shrink();
+    return TextButton.icon(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(0, 32),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.compact,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      ),
+      onPressed: () => _openNotification(context),
+      label: Text(
+        _getButtonText(),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isUnread = !widget.notification.isViewed;
@@ -206,132 +298,23 @@ class _NotificationTileState extends State<NotificationTile> {
             ),
             child: Row(
               children: <Widget>[
-                // User Avatar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CustomNetworkImage(
-                    imageURL: user.profilePhotoURL,
-                    size: 52,
-                    placeholder: user.displayName.isNotEmpty
-                        ? user.displayName
-                        : 'na'.tr(),
-                  ),
-                ),
+                _buildAvatar(user),
                 const SizedBox(width: 10),
-
-                // Content
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      // User name and time
-                      Row(
-                        children: <Widget>[
-                          Flexible(
-                            child: Text(
-                              user.displayName.isNotEmpty
-                                  ? user.displayName
-                                  : 'na'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    fontWeight: isUnread
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
-                                  ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            timeText,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.5),
-                                ),
-                          ),
-                        ],
-                      ),
+                      _buildHeader(user, timeText, isUnread),
                       const SizedBox(height: 2),
-
-                      // Title with unread indicator
-                      Row(
-                        children: <Widget>[
-                          if (isUnread)
-                            Container(
-                              width: 8,
-                              height: 8,
-                              margin: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          Expanded(
-                            child: Text(
-                              widget.notification.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                    fontWeight: isUnread
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildTitleRow(isUnread),
                       const SizedBox(height: 2),
-
-                      // Message
-                      Text(
-                        widget.notification.message,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.55),
-                        ),
-                      ),
+                      _buildMessage(),
                     ],
                   ),
                 ),
-
-                // Action Button
-                if (hasAction) ...<Widget>[
-                  const SizedBox(width: 8),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size(0, 32),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: VisualDensity.compact,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                    onPressed: () => _openNotification(context),
-                    label: Text(
-                      _getButtonText(),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+                const SizedBox(width: 8),
+                _buildActionButton(hasAction),
               ],
             ),
           ),

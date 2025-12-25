@@ -18,15 +18,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NotificationProvider>().bootstrap();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final NotificationProvider provider = context
+          .read<NotificationProvider>();
+      await provider.bootstrap();
+      // Mark all notifications as viewed when screen opens
+      await provider.viewAllNotifications();
     });
-  }
-
-  Future<void> _onRefresh() async {
-    final NotificationProvider provider = context.read<NotificationProvider>();
-    await provider.viewAllNotifications();
-    await provider.fetchNotificationsByType();
   }
 
   @override
@@ -41,19 +39,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: Consumer<NotificationProvider>(
         builder: (BuildContext context, NotificationProvider provider, _) {
           final List<NotificationEntity> notifications = provider.notifications;
-          return RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  NotificationsFilterToggle(
-                    value: provider.selectedNotificationType,
-                    onChanged: provider.setNotificationType,
-                  ),
-                  NotificationsListSection(notifications: notifications),
-                ],
-              ),
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                NotificationsFilterToggle(
+                  value: provider.selectedNotificationType,
+                  onChanged: provider.setNotificationType,
+                ),
+                NotificationsListSection(notifications: notifications),
+              ],
             ),
           );
         },
