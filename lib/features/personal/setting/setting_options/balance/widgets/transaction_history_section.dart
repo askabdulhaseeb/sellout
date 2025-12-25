@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../payment/domain/entities/wallet_transaction_entity.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../transaction_history_screen.dart';
+import '../../../../../../core/widgets/shadow_container.dart';
 
 class TransactionHistorySection extends StatelessWidget {
   const TransactionHistorySection({
@@ -101,23 +102,12 @@ class TransactionHistorySection extends StatelessWidget {
                   ),
                 ),
                 borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  width: double.infinity,
+                child: ShadowContainer(
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Theme.of(
-                          context,
-                        ).shadowColor.withValues(alpha: 0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  showShadow: true,
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -148,7 +138,7 @@ class TransactionHistorySection extends StatelessWidget {
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Text(
-                             tx.status.code.tr(),
+                              tx.status.code.tr(),
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: Theme.of(

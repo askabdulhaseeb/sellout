@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../payment/domain/entities/wallet_transaction_entity.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
+import '../../../../../../core/widgets/shadow_container.dart';
 import 'balance_detail_row.dart';
 
 class TransactionItemCard extends StatelessWidget {
@@ -30,7 +31,7 @@ class TransactionItemCard extends StatelessWidget {
 
   String _formatStatus(StatusType status) {
     // Use code for localization when available
-    return status.code.tr();
+    return status.code.tr ();
   }
 
   String _formatDate(String dateStr) {
@@ -61,9 +62,13 @@ class TransactionItemCard extends StatelessWidget {
       case StatusType.pending:
       case StatusType.inprogress:
       case StatusType.processing:
+      case StatusType.authorized:
         return Icons.schedule_rounded;
+      case StatusType.released:
+        return Icons.lock_open_rounded;
       case StatusType.accepted:
       case StatusType.completed:
+      case StatusType.succeeded:
       case StatusType.delivered:
       case StatusType.shipped:
       case StatusType.active:
@@ -83,6 +88,8 @@ class TransactionItemCard extends StatelessWidget {
   Color _getColorForStatus(StatusType status, BuildContext context) {
     switch (status) {
       case StatusType.completed:
+      case StatusType.succeeded:
+      case StatusType.released:
       case StatusType.accepted:
       case StatusType.delivered:
       case StatusType.shipped:
@@ -92,6 +99,7 @@ class TransactionItemCard extends StatelessWidget {
       case StatusType.pending:
       case StatusType.inprogress:
       case StatusType.processing:
+      case StatusType.authorized:
         return Colors.orange;
       case StatusType.cancelled:
       case StatusType.canceled:
@@ -117,21 +125,12 @@ class TransactionItemCard extends StatelessWidget {
     final String createdAtStr = _formatDate(transaction.createdAt);
     final String paidAtStr = _formatDate(transaction.paidAt);
 
-    return Container(
-      width: double.infinity,
+    return ShadowContainer(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(12),
+      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
