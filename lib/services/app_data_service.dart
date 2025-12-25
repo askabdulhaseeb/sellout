@@ -8,6 +8,9 @@ import '../core/widgets/phone_number/data/sources/country_api.dart';
 import '../core/widgets/phone_number/data/sources/local_country.dart';
 import '../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
+import '../features/personal/notifications/data/source/local/local_notification.dart';
+import '../features/personal/notifications/domain/entities/notification_entity.dart';
+import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
 import 'token_refresh_scheduler.dart';
 import 'get_it.dart';
 
@@ -22,6 +25,8 @@ class AppDataService extends WidgetsBindingObserver {
   final CategoryDataService _categoryDataService = CategoryDataService();
   final RefreshTokenUsecase _refreshUsecase = RefreshTokenUsecase(locator());
   final CountryApi _countryApi = locator<CountryApi>();
+  final GetAllNotificationsUseCase _getAllNotificationsUseCase =
+      GetAllNotificationsUseCase(locator());
 
   final TokenRefreshScheduler _tokenRefreshScheduler = TokenRefreshScheduler(
     onRefresh: () => AppDataService().ensureTokenRefreshed(),
@@ -87,6 +92,11 @@ class AppDataService extends WidgetsBindingObserver {
     } catch (e, s) {
       AppLog.error('Error fetching categories', error: e, stackTrace: s);
     }
+    try {
+      await _fetchNotifications();
+    } catch (e, s) {
+      AppLog.error('Error fetching notifications', error: e, stackTrace: s);
+    }
   }
 
   // ---------------------------------------------------------------
@@ -128,6 +138,41 @@ class AppDataService extends WidgetsBindingObserver {
     }
   }
 
+  // ---------------------------------------------------------------
+  // NOTIFICATIONS
+  // ---------------------------------------------------------------
+  Future<void> _fetchNotifications() async {
+    try {
+      final DataState<List<NotificationEntity>> result =
+          await _getAllNotificationsUseCase(null);
+
+      if (result is DataSuccess<List<NotificationEntity>>) {
+        final List<NotificationEntity> notifications =
+            result.entity ?? <NotificationEntity>[];
+        for (final NotificationEntity n in notifications) {
+          await LocalNotifications.saveNotification(n);
+        }
+        LocalNotifications.initializeUnreadCount();
+        AppLog.info('Notifications fetched and saved: ${notifications.length}');
+        return;
+      }
+
+      if (result is DataFailer) {
+        AppLog.error(
+          'Failed fetching notifications',
+          error: result.exception,
+          name: 'AppDataService._fetchNotifications',
+        );
+      }
+    } catch (e, s) {
+      AppLog.error(
+        'Exception fetching notifications',
+        error: e,
+        stackTrace: s,
+        name: 'AppDataService._fetchNotifications',
+      );
+    }
+  }
 }
 
 /// Top-level function for isolate - must be outside class to avoid capturing instance state.
