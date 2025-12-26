@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
@@ -30,34 +29,9 @@ class NotificationTile extends StatefulWidget {
 class _NotificationTileState extends State<NotificationTile>
     with SingleTickerProviderStateMixin {
   bool _hasBeenMarkedAsViewed = false;
-  double _dragOffset = 0.0;
-  bool _isDismissing = false;
-  late AnimationController _controller;
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _onVisibilityChanged(VisibilityInfo info) {
-    if (info.visibleFraction >= 0.5 &&
-        !_hasBeenMarkedAsViewed &&
-        !widget.notification.isViewed) {
-      _hasBeenMarkedAsViewed = true;
-      context.read<NotificationProvider>().viewSingleNotification(
-        widget.notification.notificationId,
-      );
-    }
   }
 
   String get _primaryAction {
@@ -196,26 +170,6 @@ class _NotificationTileState extends State<NotificationTile>
     );
   }
 
-  void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    if (_isDismissing) return;
-    setState(() {
-      _dragOffset += details.delta.dx;
-      // Only allow left swipe
-      if (_dragOffset > 0) _dragOffset = 0;
-    });
-  }
-
-  void _onHorizontalDragEnd(DragEndDetails details) async {
-    if (_isDismissing) return;
-    if (_dragOffset.abs() > 100) {
-      setState(() => _isDismissing = true);
-      await _controller.forward();
-      await _handleDelete(context);
-    } else {
-      setState(() => _dragOffset = 0);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool isUnread = !widget.notification.isViewed;
@@ -233,73 +187,72 @@ class _NotificationTileState extends State<NotificationTile>
         if (!snapshot.hasData) return const SizedBox();
 
         final UserEntity user = snapshot.data!;
-        return VisibilityDetector(
-          key: Key('notification_${widget.notification.notificationId}'),
-          onVisibilityChanged: _onVisibilityChanged,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final slide = _isDismissing
-                  ? -MediaQuery.of(context).size.width * _controller.value
-                  : _dragOffset;
-              return Stack(
-                children: [
-                  // Red background with delete icon
-                  Positioned.fill(
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 24),
-                      color: Theme.of(context).colorScheme.error,
-                      child: Icon(
-                        Icons.delete_outline,
-                        color: Theme.of(context).colorScheme.onError,
-                      ),
-                    ),
-                  ),
-                  Transform.translate(
-                    offset: Offset(slide, 0),
-                    child: GestureDetector(
-                      onHorizontalDragUpdate: _onHorizontalDragUpdate,
-                      onHorizontalDragEnd: _onHorizontalDragEnd,
-                      child: InkWell(
-                        onTap: hasAction ? _handleAction : null,
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: isUnread
-                                ? Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withValues(alpha: 0.05)
-                                : null,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              _buildAvatar(user),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    _buildHeader(user, timeText, isUnread),
-                                    const SizedBox(height: 4),
-                                    _buildMessage(),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              _buildActionButton(hasAction),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+        // Mark as viewed if not already and only if still not viewed
+        if (!_hasBeenMarkedAsViewed && !widget.notification.isViewed) {
+          _hasBeenMarkedAsViewed = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && !widget.notification.isViewed) {
+              context.read<NotificationProvider>().viewSingleNotification(
+                widget.notification.notificationId,
               );
-            },
+            }
+          });
+        }
+        return Dismissible(
+          key: Key(
+            'dismissible_notification_${widget.notification.notificationId}',
+          ),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 24),
+            color: Theme.of(context).colorScheme.error,
+            child: Icon(
+              Icons.delete_outline,
+              color: Theme.of(context).colorScheme.onError,
+            ),
+          ),
+          onDismissed: (_) async {
+            await _handleDelete(context);
+          },
+          child: InkWell(
+            onTap: hasAction ? _handleAction : null,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: <Widget>[
+                  _buildAvatar(user),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        if (_primaryAction == 'chat') ...<Widget>[
+                          Text(
+                            user.displayName,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 4),
+                        ] else ...<Widget>[
+                          _buildHeader(user, timeText, isUnread),
+                          const SizedBox(height: 4),
+                        ],
+                        _buildMessage(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildActionButton(hasAction),
+                ],
+              ),
+            ),
           ),
         );
       },
