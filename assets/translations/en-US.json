@@ -1256,6 +1256,9 @@
   "withdraw_to_bank": "Withdraw to Bank",
   "step_2": "Step 2",
   "withdraw_to_bank_desc": "Transfer Stripe balance to your bank account",
+  "available": "Available",
+  "transfer_all": "Transfer All",
+  "slide_to_transfer": "Slide to transfer",
 
   "add_reason_for_repot_please": "Please add reason for report",
   "safety_matters_title": "Your safety matters to us!",
