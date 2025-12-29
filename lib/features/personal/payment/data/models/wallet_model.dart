@@ -1,4 +1,5 @@
 import '../../domain/entities/wallet_entity.dart';
+import 'amount_in_connected_account_model.dart';
 import 'wallet_funds_in_hold_model.dart';
 import 'wallet_transaction_model.dart';
 
@@ -8,6 +9,7 @@ class WalletModel extends WalletEntity {
     required super.nextReleaseAt,
     required super.currency,
     required super.createdAt,
+    required super.canReceive,
     required super.status,
     required super.totalEarnings,
     required super.transactionHistory,
@@ -18,7 +20,9 @@ class WalletModel extends WalletEntity {
     required super.totalRefunded,
     required super.fundsInHold,
     required super.totalWithdrawn,
+    required super.canWithdraw,
     required super.walletId,
+    required super.amountInConnectedAccount,
   });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
@@ -26,12 +30,15 @@ class WalletModel extends WalletEntity {
         (json['transaction_history'] as List<dynamic>?) ?? <dynamic>[];
     final List<dynamic> fundsInHoldRaw =
         (json['funds_in_hold'] as List<dynamic>?) ?? <dynamic>[];
+    final Map<String, dynamic>? amountInConnectedAccountRaw =
+        json['amount_in_connected_account'] as Map<String, dynamic>?;
 
     return WalletModel(
       withdrawableBalance: (json['withdrawable_balance'] ?? 0).toDouble(),
       nextReleaseAt: json['next_release_at'] ?? '',
       currency: json['currency'] ?? '',
       createdAt: json['created_at'] ?? '',
+      canReceive: json['can_receive'] ?? false,
       status: json['status'] ?? '',
       totalEarnings: (json['total_earnings'] ?? 0).toDouble(),
       transactionHistory: transactionHistoryRaw
@@ -48,7 +55,11 @@ class WalletModel extends WalletEntity {
           .map(WalletFundsInHoldModel.fromJson)
           .toList(),
       totalWithdrawn: (json['total_withdrawn'] ?? 0).toDouble(),
+      canWithdraw: json['can_withdraw'] ?? false,
       walletId: json['wallet_id'] ?? '',
+      amountInConnectedAccount: amountInConnectedAccountRaw != null
+          ? AmountInConnectedAccountModel.fromJson(amountInConnectedAccountRaw)
+          : null,
     );
   }
 }

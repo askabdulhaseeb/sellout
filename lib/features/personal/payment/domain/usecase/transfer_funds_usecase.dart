@@ -9,6 +9,8 @@ class TransferFundsUsecase implements UseCase<bool, TransferFundsParams> {
 
   @override
   Future<DataState<bool>> call(TransferFundsParams params) async {
-    return await repository.transferFunds(params);
+    return await repository.transferFunds(
+      TransferFundsParams(walletId: '', amount: 0, currency: ''),
+    );
   }
 }
