@@ -14,6 +14,7 @@ import 'widgets/balance_summary_card.dart';
 import 'widgets/funds_in_hold_section.dart';
 import 'widgets/transaction_history_section.dart';
 import 'widgets/withdraw_funds_dialog.dart';
+import 'widgets/transfer_to_stripe_dialog.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
@@ -85,14 +86,29 @@ class _BalanceScreenState extends State<BalanceScreen> {
       walletBalance: wallet.withdrawableBalance,
       stripeBalance: wallet.amountInConnectedAccount?.available ?? 0,
       currency: wallet.currency,
-      onTransferToStripe: _transferToStripe,
+      onTransferToStripe: _showTransferToStripeDialog,
       onWithdrawToBank: _payoutToBank,
       isTransferring: _isTransferring,
       isWithdrawing: _withdrawing,
     );
   }
 
-  Future<void> _transferToStripe() async {
+  void _showTransferToStripeDialog() {
+    final WalletModel? wallet = _wallet;
+    if (wallet == null) return;
+
+    // Close the withdraw funds dialog first
+    Navigator.of(context).pop();
+
+    TransferToStripeDialog.show(
+      context: context,
+      walletBalance: wallet.withdrawableBalance,
+      currency: wallet.currency,
+      onTransfer: _executeTransfer,
+    );
+  }
+
+  Future<void> _executeTransfer(double amount) async {
     final WalletModel? wallet = _wallet;
     if (wallet == null) return;
 
@@ -102,7 +118,6 @@ class _BalanceScreenState extends State<BalanceScreen> {
       return;
     }
 
-    final double amount = wallet.withdrawableBalance;
     if (amount <= 0) {
       _showSnack('nothing_to_withdraw'.tr());
       return;
@@ -147,7 +162,8 @@ class _BalanceScreenState extends State<BalanceScreen> {
       return;
     }
 
-    final double stripeBalance = wallet.amountInConnectedAccount?.available ?? 0;
+    final double stripeBalance =
+        wallet.amountInConnectedAccount?.available ?? 0;
     if (stripeBalance <= 0) {
       _showSnack('nothing_to_withdraw'.tr());
       return;
