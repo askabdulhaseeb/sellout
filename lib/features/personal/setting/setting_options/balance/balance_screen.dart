@@ -13,6 +13,7 @@ import 'balance_skeleton.dart';
 import 'widgets/balance_summary_card.dart';
 import 'widgets/funds_in_hold_section.dart';
 import 'widgets/transaction_history_section.dart';
+import 'widgets/withdraw_funds_dialog.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
@@ -27,6 +28,8 @@ class _BalanceScreenState extends State<BalanceScreen> {
   bool _loading = true;
   String? _error;
   bool _withdrawing = false;
+  bool _refreshing = false;
+  bool _isTransferring = false;
 
   @override
   void initState() {
@@ -39,9 +42,13 @@ class _BalanceScreenState extends State<BalanceScreen> {
     super.dispose();
   }
 
-  Future<void> _fetchWallet() async {
+  Future<void> _fetchWallet({bool isRefresh = false}) async {
     setState(() {
-      _loading = true;
+      if (isRefresh) {
+        _refreshing = true;
+      } else {
+        _loading = true;
+      }
       _error = null;
     });
     final String walletId = LocalAuth.stripeAccountId ?? '';
@@ -51,11 +58,13 @@ class _BalanceScreenState extends State<BalanceScreen> {
       setState(() {
         _wallet = result.entity;
         _loading = false;
+        _refreshing = false;
       });
     } else {
       setState(() {
         _error = result.exception?.message ?? 'something_wrong'.tr();
         _loading = false;
+        _refreshing = false;
       });
     }
   }
@@ -67,7 +76,23 @@ class _BalanceScreenState extends State<BalanceScreen> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _withdrawToBank() async {
+  void _showWithdrawDialog() {
+    final WalletModel? wallet = _wallet;
+    if (wallet == null) return;
+
+    WithdrawFundsDialog.show(
+      context: context,
+      walletBalance: wallet.withdrawableBalance,
+      stripeBalance: wallet.amountInConnectedAccount?.available ?? 0,
+      currency: wallet.currency,
+      onTransferToStripe: _transferToStripe,
+      onWithdrawToBank: _payoutToBank,
+      isTransferring: _isTransferring,
+      isWithdrawing: _withdrawing,
+    );
+  }
+
+  Future<void> _transferToStripe() async {
     final WalletModel? wallet = _wallet;
     if (wallet == null) return;
 
@@ -83,8 +108,9 @@ class _BalanceScreenState extends State<BalanceScreen> {
       return;
     }
 
-    if (_withdrawing) return;
-    setState(() => _withdrawing = true);
+    if (_isTransferring) return;
+    setState(() => _isTransferring = true);
+    Navigator.of(context).pop();
 
     try {
       final TransferFundsUsecase transferUsecase = TransferFundsUsecase(
@@ -98,18 +124,47 @@ class _BalanceScreenState extends State<BalanceScreen> {
         ),
       );
 
-      if (transferResult is! DataSuccess || transferResult.entity != true) {
+      if (transferResult is DataSuccess && transferResult.entity == true) {
+        _showSnack('withdraw_success'.tr());
+      } else {
         _showSnack(transferResult.exception?.message ?? 'withdraw_failed'.tr());
-        return;
       }
+    } finally {
+      if (mounted) {
+        setState(() => _isTransferring = false);
+      }
+      await _fetchWallet();
+    }
+  }
 
+  Future<void> _payoutToBank() async {
+    final WalletModel? wallet = _wallet;
+    if (wallet == null) return;
+
+    final String walletId = LocalAuth.stripeAccountId ?? '';
+    if (walletId.isEmpty) {
+      _showSnack('something_wrong'.tr());
+      return;
+    }
+
+    final double stripeBalance = wallet.amountInConnectedAccount?.available ?? 0;
+    if (stripeBalance <= 0) {
+      _showSnack('nothing_to_withdraw'.tr());
+      return;
+    }
+
+    if (_withdrawing) return;
+    setState(() => _withdrawing = true);
+    Navigator.of(context).pop();
+
+    try {
       final CreatePayoutsUsecase payoutsUsecase = CreatePayoutsUsecase(
         locator(),
       );
       final DataState<WalletModel> payoutResult = await payoutsUsecase.call(
         CreatePayoutParams(
           walletId: walletId,
-          amount: amount,
+          amount: stripeBalance,
           currency: wallet.currency,
         ),
       );
@@ -119,10 +174,9 @@ class _BalanceScreenState extends State<BalanceScreen> {
           _wallet = payoutResult.entity;
         });
         _showSnack('withdraw_success'.tr());
-        return;
+      } else {
+        _showSnack(payoutResult.exception?.message ?? 'withdraw_failed'.tr());
       }
-
-      _showSnack(payoutResult.exception?.message ?? 'withdraw_failed'.tr());
     } finally {
       if (mounted) {
         setState(() => _withdrawing = false);
@@ -166,14 +220,16 @@ class _BalanceScreenState extends State<BalanceScreen> {
                   BalanceSummaryCard(
                     wallet: wallet,
                     isWithdrawing: _withdrawing,
-                    onWithdrawTap: _withdrawToBank,
+                    isRefreshing: _refreshing,
+                    onWithdrawTap: _showWithdrawDialog,
+                    onRefreshTap: () => _fetchWallet(isRefresh: true),
                   ),
                   const SizedBox(height: 16),
                   FundsInHoldSection(fundsInHold: wallet.fundsInHold),
                   const SizedBox(height: 16),
                   TransactionHistorySection(
                     transactionHistory: wallet.transactionHistory,
-                  )
+                  ),
                 ],
               ),
             ),
