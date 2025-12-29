@@ -13,6 +13,9 @@ class WalletTransactionEntity {
     required this.stripePayoutId,
     required this.paidAt,
     required this.payoutType,
+    required this.description,
+    required this.fundId,
+    required this.releasedAt,
   });
 
   final String id;
@@ -26,6 +29,9 @@ class WalletTransactionEntity {
   final String stripePayoutId;
   final String paidAt;
   final String payoutType;
+  final String description;
+  final String fundId;
+  final String releasedAt;
 
   double get amount {
     final String typeL = type.toLowerCase();

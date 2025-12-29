@@ -14,6 +14,9 @@ class WalletTransactionModel extends WalletTransactionEntity {
     required super.stripePayoutId,
     required super.paidAt,
     required super.payoutType,
+    required super.description,
+    required super.fundId,
+    required super.releasedAt,
   });
 
   factory WalletTransactionModel.fromJson(Map<String, dynamic> json) {
@@ -55,6 +58,9 @@ class WalletTransactionModel extends WalletTransactionEntity {
       stripePayoutId: (json['stripe_payout_id'] ?? '').toString(),
       paidAt: (json['paid_at'] ?? '').toString(),
       payoutType: (json['payout_type'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      fundId: (json['fund_id'] ?? '').toString(),
+      releasedAt: (json['released_at'] ?? '').toString(),
     );
   }
 }

@@ -4,6 +4,7 @@ abstract class WalletFundsInHoldEntity {
     required this.amount,
     required this.postId,
     required this.releaseAt,
+    required this.fundId,
     required this.currency,
     required this.orderId,
     required this.status,
@@ -13,6 +14,7 @@ abstract class WalletFundsInHoldEntity {
   final double amount;
   final String postId;
   final String releaseAt;
+  final String fundId;
   final String currency;
   final String orderId;
   final String status;
