@@ -44,6 +44,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
   }
 
   Future<void> _fetchWallet({bool isRefresh = false}) async {
+    if (!mounted) return;
     setState(() {
       if (isRefresh) {
         _refreshing = true;
@@ -55,6 +56,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
     final String walletId = LocalAuth.stripeAccountId ?? '';
     final GetWalletUsecase usecase = GetWalletUsecase(locator());
     final DataState<WalletModel> result = await usecase.call(walletId);
+    if (!mounted) return;
     if (result is DataSuccess && result.entity != null) {
       setState(() {
         _wallet = result.entity;
@@ -80,7 +82,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
   void _showWithdrawDialog() {
     final WalletModel? wallet = _wallet;
     if (wallet == null) return;
-
+    if (!mounted) return;
     WithdrawFundsDialog.show(
       context: context,
       walletBalance: wallet.withdrawableBalance,
@@ -96,10 +98,10 @@ class _BalanceScreenState extends State<BalanceScreen> {
   void _showTransferToStripeDialog() {
     final WalletModel? wallet = _wallet;
     if (wallet == null) return;
-
+    if (!mounted) return;
     // Close the withdraw funds dialog first
     Navigator.of(context).pop();
-
+    if (!mounted) return;
     TransferToStripeDialog.show(
       context: context,
       walletBalance: wallet.withdrawableBalance,
@@ -124,7 +126,9 @@ class _BalanceScreenState extends State<BalanceScreen> {
     }
 
     if (_isTransferring) return;
+    if (!mounted) return;
     setState(() => _isTransferring = true);
+    if (!mounted) return;
     Navigator.of(context).pop();
 
     try {
@@ -139,6 +143,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
         ),
       );
 
+      if (!mounted) return;
       if (transferResult is DataSuccess && transferResult.entity == true) {
         _showSnack('withdraw_success'.tr());
       } else {
@@ -170,7 +175,9 @@ class _BalanceScreenState extends State<BalanceScreen> {
     }
 
     if (_withdrawing) return;
+    if (!mounted) return;
     setState(() => _withdrawing = true);
+    if (!mounted) return;
     Navigator.of(context).pop();
 
     try {
@@ -185,10 +192,13 @@ class _BalanceScreenState extends State<BalanceScreen> {
         ),
       );
 
+      if (!mounted) return;
       if (payoutResult is DataSuccess && payoutResult.entity != null) {
-        setState(() {
-          _wallet = payoutResult.entity;
-        });
+        if (mounted) {
+          setState(() {
+            _wallet = payoutResult.entity;
+          });
+        }
         _showSnack('withdraw_success'.tr());
       } else {
         _showSnack(payoutResult.exception?.message ?? 'withdraw_failed'.tr());
