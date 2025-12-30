@@ -5,7 +5,7 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/theme/app_colors.dart';
-import '../../../../payment/data/models/wallet_model.dart';
+import '../../../../payment/domain/entities/wallet_entity.dart';
 
 class BalanceSummaryCard extends StatelessWidget {
   const BalanceSummaryCard({
@@ -17,7 +17,7 @@ class BalanceSummaryCard extends StatelessWidget {
     super.key,
   });
 
-  final WalletModel wallet;
+  final WalletEntity wallet;
   final VoidCallback onWithdrawTap;
   final VoidCallback onRefreshTap;
   final bool isWithdrawing;

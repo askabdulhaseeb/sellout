@@ -13,32 +13,38 @@ import 'transfer_to_stripe_dialog/amount_input_section.dart';
 import 'transfer_to_stripe_dialog/transfer_all_button.dart';
 import 'transfer_to_stripe_dialog/slide_to_transfer_slider.dart';
 
+enum TransferDialogMode { walletToStripe, stripeToBank }
+
 class TransferToStripeDialog extends StatefulWidget {
   const TransferToStripeDialog({
-    required this.walletBalance,
+    required this.balance,
     required this.currency,
-    required this.onTransfer,
+    required this.onAction,
+    required this.mode,
     super.key,
   });
 
-  final double walletBalance;
+  final double balance;
   final String currency;
-  final void Function(double amount) onTransfer;
+  final void Function(double amount) onAction;
+  final TransferDialogMode mode;
 
   static Future<void> show({
     required BuildContext context,
-    required double walletBalance,
+    required double balance,
     required String currency,
-    required void Function(double amount) onTransfer,
+    required void Function(double amount) onAction,
+    required TransferDialogMode mode,
   }) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => TransferToStripeDialog(
-        walletBalance: walletBalance,
+        balance: balance,
         currency: currency,
-        onTransfer: onTransfer,
+        onAction: onAction,
+        mode: mode,
       ),
     );
   }
@@ -48,7 +54,6 @@ class TransferToStripeDialog extends StatefulWidget {
 }
 
 class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
-
   final TextEditingController _amountController = TextEditingController();
   double _selectedAmount = 0.0;
   bool _isUpdatingText = false;
@@ -80,10 +85,9 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
     }
   }
 
-
   void _setPercentage(double percentage) {
     setState(() {
-      _selectedAmount = widget.walletBalance * percentage;
+      _selectedAmount = widget.balance * percentage;
       _isUpdatingText = true;
       _amountController.text = _selectedAmount.toStringAsFixed(2);
       _amountController.selection = TextSelection.fromPosition(
@@ -98,25 +102,21 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
     _setPercentage(1.0);
   }
 
-
   void _onSliderEnd() {
-    final bool canTransfer =
-        _selectedAmount > 0 && _selectedAmount <= widget.walletBalance;
-
-    if (!canTransfer) return;
-
+    final bool canAct =
+        _selectedAmount > 0 && _selectedAmount <= widget.balance;
+    if (!canAct) return;
     HapticFeedback.mediumImpact();
-    widget.onTransfer(_selectedAmount);
+    widget.onAction(_selectedAmount);
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final String symbol = CountryHelper.currencySymbolHelper(widget.currency);
-
-    final bool canTransfer =
-        _selectedAmount > 0 && _selectedAmount <= widget.walletBalance;
-
+    final bool canAct =
+        _selectedAmount > 0 && _selectedAmount <= widget.balance;
+    final bool isPayout = widget.mode == TransferDialogMode.stripeToBank;
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -136,52 +136,50 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
               children: <Widget>[
                 TransferToStripeHeader(
                   onBack: () => Navigator.of(context).pop(),
-                  title: 'transfer_to_stripe'.tr(),
+                  title: isPayout
+                      ? 'withdraw_to_bank'.tr()
+                      : 'transfer_to_stripe'.tr(),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-                const StepIndicator(currentStep: 2),
+                StepIndicator(currentStep: isPayout ? 2 : 1),
                 const SizedBox(height: AppSpacing.lg),
-
                 WalletToStripeVisual(
-                  walletLabel: 'wallet'.tr(),
-                  stripeLabel: 'stripe'.tr(),
-                  walletColor: Theme.of(context).primaryColor,
-                  stripeColor: Theme.of(context).colorScheme.secondary,
-                  walletIcon: Icons.account_balance_wallet_outlined,
-                  stripeIconText: 'S',
+                  walletLabel: isPayout ? 'stripe'.tr() : 'wallet'.tr(),
+                  stripeLabel: isPayout ? 'bank'.tr() : 'stripe'.tr(),
+                  walletColor: isPayout
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).primaryColor,
+                  stripeColor: isPayout
+                      ? Colors.teal
+                      : Theme.of(context).colorScheme.secondary,
+                  walletIcon: isPayout
+                      ? Icons.account_balance_wallet_outlined
+                      : Icons.account_balance_wallet_outlined,
+                  stripeIconText: isPayout ? 'B' : 'S',
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 AvailableBalanceText(
                   symbol: symbol,
-                  walletBalance: widget.walletBalance,
+                  walletBalance: widget.balance,
                   availableLabel: 'available'.tr(),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 AmountInputSection(
                   controller: _amountController,
                   currency: widget.currency,
-                  walletBalance: widget.walletBalance,
+                  walletBalance: widget.balance,
                   onPercentageTap: _setPercentage,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 TransferAllButton(
                   onTap: _setTransferAll,
-                  label: 'transfer_all'.tr(),
+                  label: isPayout ? 'withdraw_all'.tr() : 'transfer_all'.tr(),
                   symbol: symbol,
-                  walletBalance: widget.walletBalance,
+                  walletBalance: widget.balance,
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 SlideToTransferSlider(
-                  canTransfer: canTransfer,
+                  canTransfer: canAct,
                   onTransfer: _onSliderEnd,
                 ),
                 const SizedBox(height: AppSpacing.md),

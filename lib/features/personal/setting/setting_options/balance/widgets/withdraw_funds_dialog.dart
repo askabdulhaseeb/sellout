@@ -5,48 +5,66 @@ import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 
+/// A modular bottom sheet dialog for withdrawing funds.
+///
+/// This dialog is purely presentational - all business logic should be
+/// handled by the parent widget through callbacks.
+///
+/// Usage:
+/// ```dart
+/// WithdrawFundsDialog.show(
+///   context: context,
+///   walletBalance: 100.0,
+///   stripeBalance: 50.0,
+///   currency: 'USD',
+///   isTransferring: false,
+///   isWithdrawing: false,
+///   onTransferToStripe: () => handleTransfer(),
+///   onWithdrawToBank: () => handleWithdraw(),
+/// );
+/// ```
 class WithdrawFundsDialog extends StatelessWidget {
-  const WithdrawFundsDialog({
+  const WithdrawFundsDialog._({
     required this.walletBalance,
     required this.stripeBalance,
     required this.currency,
+    required this.isTransferring,
+    required this.isWithdrawing,
     required this.onTransferToStripe,
     required this.onWithdrawToBank,
-    this.isTransferring = false,
-    this.isWithdrawing = false,
-    super.key,
   });
 
   final double walletBalance;
   final double stripeBalance;
   final String currency;
-  final VoidCallback onTransferToStripe;
-  final VoidCallback onWithdrawToBank;
   final bool isTransferring;
   final bool isWithdrawing;
+  final VoidCallback? onTransferToStripe;
+  final VoidCallback? onWithdrawToBank;
 
+  /// Shows the withdraw funds dialog as a modal bottom sheet.
   static Future<void> show({
     required BuildContext context,
     required double walletBalance,
     required double stripeBalance,
     required String currency,
-    required VoidCallback onTransferToStripe,
-    required VoidCallback onWithdrawToBank,
-    bool isTransferring = false,
-    bool isWithdrawing = false,
+    required bool isTransferring,
+    required bool isWithdrawing,
+    required VoidCallback? onTransferToStripe,
+    required VoidCallback? onWithdrawToBank,
   }) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext context) => WithdrawFundsDialog(
+      builder: (BuildContext context) => WithdrawFundsDialog._(
         walletBalance: walletBalance,
         stripeBalance: stripeBalance,
         currency: currency,
-        onTransferToStripe: onTransferToStripe,
-        onWithdrawToBank: onWithdrawToBank,
         isTransferring: isTransferring,
         isWithdrawing: isWithdrawing,
+        onTransferToStripe: onTransferToStripe,
+        onWithdrawToBank: onWithdrawToBank,
       ),
     );
   }
@@ -54,6 +72,8 @@ class WithdrawFundsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String symbol = CountryHelper.currencySymbolHelper(currency);
+    final bool canTransferToStripe = walletBalance > 0 && !isTransferring;
+    final bool canWithdrawToBank = stripeBalance > 0 && !isWithdrawing;
 
     return Container(
       decoration: BoxDecoration(
@@ -68,63 +88,9 @@ class WithdrawFundsDialog extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'withdraw_funds'.tr(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // Info banner
-              ShadowContainer(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Icon(
-                      Icons.info_outline,
-                      size: 20,
-                      color: Colors.grey[600],
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'two_step_withdrawal_process'.tr(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'two_step_withdrawal_desc'.tr(),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _DialogHeader(onClose: () => Navigator.of(context).pop()),
               const SizedBox(height: AppSpacing.lg),
+
               // Balance cards row
               Row(
                 children: <Widget>[
@@ -148,37 +114,97 @@ class WithdrawFundsDialog extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              // Step 1 - Transfer to Stripe
+
+              // Info section
+              const _InfoSection(),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Step 1: Transfer to Stripe
               _WithdrawStepTile(
-                icon: 'S',
-                iconColor: AppColors.secondaryColor,
-                iconBackgroundColor: AppColors.secondaryColor.withValues(alpha: 0.1),
+                icon: Icons.account_balance_wallet_outlined,
+                iconColor: AppColors.primaryColor,
+                iconBackgroundColor: AppColors.primaryColor.withOpacity(0.1),
                 title: 'transfer_to_stripe'.tr(),
                 stepLabel: 'step_1'.tr(),
-                subtitle: 'transfer_to_stripe_desc'.tr(),
-                onTap: walletBalance > 0 && !isTransferring
-                    ? onTransferToStripe
-                    : null,
+                subtitle: 'move_funds_from_wallet_to_stripe'.tr(),
+                onTap: canTransferToStripe ? onTransferToStripe : null,
                 isLoading: isTransferring,
               ),
               const SizedBox(height: AppSpacing.md),
-              // Step 2 - Withdraw to Bank
+
+              // Step 2: Withdraw to Bank
               _WithdrawStepTile(
-                icon: Icons.account_balance,
+                icon: 'S',
                 iconColor: Colors.teal,
-                iconBackgroundColor: Colors.teal.withValues(alpha: 0.1),
+                iconBackgroundColor: Colors.teal.withOpacity(0.1),
                 title: 'withdraw_to_bank'.tr(),
                 stepLabel: 'step_2'.tr(),
-                subtitle: 'withdraw_to_bank_desc'.tr(),
-                onTap: stripeBalance > 0 && !isWithdrawing
-                    ? onWithdrawToBank
-                    : null,
+                subtitle: 'transfer_from_stripe_to_bank'.tr(),
+                onTap: canWithdrawToBank ? onWithdrawToBank : null,
                 isLoading: isWithdrawing,
               ),
               const SizedBox(height: AppSpacing.md),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DialogHeader extends StatelessWidget {
+  const _DialogHeader({required this.onClose});
+
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          'withdraw_funds'.tr(),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        IconButton(
+          onPressed: onClose,
+          icon: const Icon(Icons.close),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+        ),
+      ],
+    );
+  }
+}
+
+class _InfoSection extends StatelessWidget {
+  const _InfoSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      ),
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              'two_step_withdraw_info'.tr(),
+              style: TextStyle(
+                color: Colors.blue[700],
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -222,20 +248,14 @@ class _MiniBalanceCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Text(
                 title,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             amount,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -333,10 +353,7 @@ class _WithdrawStepTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -348,10 +365,7 @@ class _WithdrawStepTile extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             else
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey[400],
-              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
           ],
         ),
       ),
