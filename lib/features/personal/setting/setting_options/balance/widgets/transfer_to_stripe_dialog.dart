@@ -48,20 +48,48 @@ class TransferToStripeDialog extends StatefulWidget {
 }
 
 class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
-  final TextEditingController _amountController = TextEditingController();
 
+  final TextEditingController _amountController = TextEditingController();
   double _selectedAmount = 0.0;
+  bool _isUpdatingText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController.addListener(_onAmountChanged);
+  }
 
   @override
   void dispose() {
+    _amountController.removeListener(_onAmountChanged);
     _amountController.dispose();
     super.dispose();
   }
 
+  void _onAmountChanged() {
+    if (_isUpdatingText) return;
+    final String text = _amountController.text.replaceAll(',', '.');
+    final double value = double.tryParse(text) ?? 0.0;
+    if (value != _selectedAmount) {
+      setState(() {
+        _selectedAmount = value;
+      });
+    } else {
+      // Still call setState to force rebuild for canTransfer
+      setState(() {});
+    }
+  }
+
+
   void _setPercentage(double percentage) {
     setState(() {
       _selectedAmount = widget.walletBalance * percentage;
+      _isUpdatingText = true;
       _amountController.text = _selectedAmount.toStringAsFixed(2);
+      _amountController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _amountController.text.length),
+      );
+      _isUpdatingText = false;
     });
   }
 
