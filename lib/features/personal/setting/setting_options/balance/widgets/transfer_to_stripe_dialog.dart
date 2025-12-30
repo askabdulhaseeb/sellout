@@ -50,7 +50,6 @@ class TransferToStripeDialog extends StatefulWidget {
 class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
   final TextEditingController _amountController = TextEditingController();
 
-  double _sliderValue = 0.0;
   double _selectedAmount = 0.0;
 
   @override
@@ -61,7 +60,6 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
 
   void _setPercentage(double percentage) {
     setState(() {
-      _sliderValue = percentage;
       _selectedAmount = widget.walletBalance * percentage;
       _amountController.text = _selectedAmount.toStringAsFixed(2);
     });
@@ -72,13 +70,6 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
     _setPercentage(1.0);
   }
 
-  void _onSliderChanged(double value) {
-    setState(() {
-      _sliderValue = value;
-      _selectedAmount = widget.walletBalance * value;
-      _amountController.text = _selectedAmount.toStringAsFixed(2);
-    });
-  }
 
   void _onSliderEnd() {
     final bool canTransfer =
@@ -162,9 +153,7 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                 const SizedBox(height: AppSpacing.lg),
 
                 SlideToTransferSlider(
-                  sliderValue: _sliderValue,
                   canTransfer: canTransfer,
-                  onChanged: _onSliderChanged,
                   onTransfer: _onSliderEnd,
                 ),
                 const SizedBox(height: AppSpacing.md),
