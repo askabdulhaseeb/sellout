@@ -122,11 +122,16 @@ class WithdrawFundsDialog extends StatelessWidget {
               // Step 1: Transfer to Stripe
               _WithdrawStepTile(
                 icon: Icons.account_balance_wallet_outlined,
-                iconColor: AppColors.primaryColor,
-                iconBackgroundColor: AppColors.primaryColor.withOpacity(0.1),
-                title: 'transfer_to_stripe'.tr(),
-                stepLabel: 'step_1'.tr(),
-                subtitle: 'move_funds_from_wallet_to_stripe'.tr(),
+                iconColor: Theme.of(context).colorScheme.primary,
+                iconBackgroundColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
+                title: tr('transfer_to_stripe', context: context),
+                stepLabel: tr('step_1', context: context),
+                subtitle: tr(
+                  'move_funds_from_wallet_to_stripe',
+                  context: context,
+                ),
                 onTap: canTransferToStripe ? onTransferToStripe : null,
                 isLoading: isTransferring,
               ),
@@ -135,11 +140,13 @@ class WithdrawFundsDialog extends StatelessWidget {
               // Step 2: Withdraw to Bank
               _WithdrawStepTile(
                 icon: 'S',
-                iconColor: Colors.teal,
-                iconBackgroundColor: Colors.teal.withOpacity(0.1),
-                title: 'withdraw_to_bank'.tr(),
-                stepLabel: 'step_2'.tr(),
-                subtitle: 'transfer_from_stripe_to_bank'.tr(),
+                iconColor: Theme.of(context).colorScheme.secondary,
+                iconBackgroundColor: Theme.of(
+                  context,
+                ).colorScheme.secondary.withOpacity(0.1),
+                title: tr('withdraw_to_bank', context: context),
+                stepLabel: tr('step_2', context: context),
+                subtitle: tr('transfer_from_stripe_to_bank', context: context),
                 onTap: canWithdrawToBank ? onWithdrawToBank : null,
                 isLoading: isWithdrawing,
               ),
@@ -163,11 +170,10 @@ class _DialogHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          'withdraw_funds'.tr(),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          tr('withdraw_funds', context: context),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         IconButton(
           onPressed: onClose,
@@ -185,22 +191,22 @@ class _InfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: theme.colorScheme.primary.withOpacity(0.07),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
       ),
       child: Row(
         children: <Widget>[
-          Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+          Icon(Icons.info_outline, color: theme.colorScheme.primary, size: 20),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'two_step_withdraw_info'.tr(),
-              style: TextStyle(
-                color: Colors.blue[700],
-                fontSize: 13,
+              tr('two_step_withdraw_info', context: context),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.primary,
               ),
             ),
           ),
@@ -227,6 +233,7 @@ class _MiniBalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ShadowContainer(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
@@ -239,23 +246,26 @@ class _MiniBalanceCard extends StatelessWidget {
               else if (iconText != null)
                 Text(
                   iconText!,
-                  style: TextStyle(
+                  style: theme.textTheme.labelLarge?.copyWith(
                     color: iconColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
                   ),
                 ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 title,
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             amount,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -286,6 +296,7 @@ class _WithdrawStepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final bool isDisabled = onTap == null && !isLoading;
 
     return ShadowContainer(
@@ -307,10 +318,9 @@ class _WithdrawStepTile extends StatelessWidget {
                     ? Icon(icon as IconData, color: iconColor, size: 22)
                     : Text(
                         icon.toString(),
-                        style: TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           color: iconColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
                         ),
                       ),
               ),
@@ -324,9 +334,8 @@ class _WithdrawStepTile extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontSize: 15,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -336,15 +345,14 @@ class _WithdrawStepTile extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: theme.colorScheme.surfaceVariant,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           stepLabel,
-                          style: TextStyle(
-                            fontSize: 10,
+                          style: theme.textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -353,7 +361,9 @@ class _WithdrawStepTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -365,7 +375,7 @@ class _WithdrawStepTile extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             else
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
+              Icon(Icons.chevron_right, color: theme.colorScheme.outline),
           ],
         ),
       ),

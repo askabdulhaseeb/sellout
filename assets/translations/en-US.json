@@ -1249,7 +1249,6 @@
   "two_step_process": "Two-step process: Wallet → Stripe → Bank",
   "two_step_withdrawal_process": "Two-Step Withdrawal Process",
   "two_step_withdrawal_desc": "First transfer funds from your wallet to Stripe, then withdraw from Stripe to your bank account.",
-  "stripe": "Stripe",
   "transfer_to_stripe": "Transfer to Stripe",
   "step_1": "Step 1",
   "transfer_to_stripe_desc": "Move funds from wallet to Stripe balance",
@@ -1361,7 +1360,10 @@
     "dispute_resolution": "Dispute Resolution Policy",
 
     "intellectual_property": "Intellectual Property",
-    "ip_copyright": "Intellectual Property & Copyright Policy"
+    "ip_copyright": "Intellectual Property & Copyright Policy",
+    "move_funds_from_wallet_to_stripe": "Move funds from wallet to Stripe",
+    "transfer_from_stripe_to_bank": "Transfer from Stripe to bank",
+    "two_step_withdraw_info": "Withdrawals are a two-step process: first transfer funds to Stripe, then withdraw to your bank.",
+    "hold": "Hold"
+    }
   }
-
-}
