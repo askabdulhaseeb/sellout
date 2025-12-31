@@ -18,34 +18,23 @@ import 'transfer_to_stripe_dialog/slide_to_transfer_slider.dart';
 enum TransferDialogMode { walletToStripe, stripeToBank }
 
 class TransferToStripeDialog extends StatefulWidget {
-  const TransferToStripeDialog({
-    required this.balance,
-    required this.currency,
-    required this.mode,
-    super.key,
-  });
+  const TransferToStripeDialog({required this.mode, super.key});
 
-  final double balance;
-  final String currency;
   final TransferDialogMode mode;
 
   static Future<void> show({
     required BuildContext context,
-    required double balance,
-    required String currency,
     required TransferDialogMode mode,
   }) {
+    final BalanceProvider provider = context.read<BalanceProvider>();
+    provider.setTransferMode(mode);
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider<BalanceProvider>.value(
-        value: context.read<BalanceProvider>(),
-        child: TransferToStripeDialog(
-          balance: balance,
-          currency: currency,
-          mode: mode,
-        ),
+        value: provider,
+        child: TransferToStripeDialog(mode: mode),
       ),
     );
   }
@@ -56,7 +45,6 @@ class TransferToStripeDialog extends StatefulWidget {
 
 class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
   final TextEditingController _amountController = TextEditingController();
-  double _selectedAmount = 0.0;
   bool _isUpdatingText = false;
 
   @override
@@ -76,25 +64,22 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
     if (_isUpdatingText) return;
     final String text = _amountController.text.replaceAll(',', '.');
     final double value = double.tryParse(text) ?? 0.0;
-    if (value != _selectedAmount) {
-      setState(() {
-        _selectedAmount = value;
-      });
-    } else {
-      setState(() {});
+    final BalanceProvider provider = context.read<BalanceProvider>();
+    if (value != provider.transferAmount) {
+      provider.setTransferAmount(value);
     }
   }
 
   void _setPercentage(double percentage) {
-    setState(() {
-      _selectedAmount = widget.balance * percentage;
-      _isUpdatingText = true;
-      _amountController.text = _selectedAmount.toStringAsFixed(2);
-      _amountController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _amountController.text.length),
-      );
-      _isUpdatingText = false;
-    });
+    final BalanceProvider provider = context.read<BalanceProvider>();
+    final double amount = provider.currentBalance * percentage;
+    provider.setTransferAmount(amount);
+    _isUpdatingText = true;
+    _amountController.text = amount.toStringAsFixed(2);
+    _amountController.selection = TextSelection.fromPosition(
+      TextPosition(offset: _amountController.text.length),
+    );
+    _isUpdatingText = false;
   }
 
   void _setTransferAll() {
@@ -111,26 +96,19 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
 
   Future<void> _onSliderEnd() async {
     final BalanceProvider provider = context.read<BalanceProvider>();
-    final bool canAct =
-        _selectedAmount > 0 && _selectedAmount <= widget.balance;
-    if (!canAct || provider.isProcessing) return;
+    if (provider.isProcessing) return;
 
     HapticFeedback.mediumImpact();
 
     final NavigatorState navigator = Navigator.of(context);
 
-    String? errorMessage;
-    if (widget.mode == TransferDialogMode.walletToStripe) {
-      errorMessage = await provider.executeTransfer(_selectedAmount);
-    } else {
-      errorMessage = await provider.executePayout(_selectedAmount);
-    }
+    await provider.executeCurrentTransfer();
 
     if (!mounted) return;
 
-    if (errorMessage != null) {
-      _showSnackBar(errorMessage);
-    } else {
+    if (provider.isError) {
+      _showSnackBar(provider.transferError ?? 'something_wrong'.tr());
+    } else if (provider.isSuccess) {
       HapticFeedback.heavyImpact();
       navigator.pop();
     }
@@ -138,15 +116,14 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final String symbol = CountryHelper.currencySymbolHelper(widget.currency);
     final bool isPayout = widget.mode == TransferDialogMode.stripeToBank;
 
     return Consumer<BalanceProvider>(
       builder: (BuildContext context, BalanceProvider provider, Widget? child) {
-        final bool canAct =
-            _selectedAmount > 0 &&
-            _selectedAmount <= widget.balance &&
-            !provider.isProcessing;
+        final String symbol = CountryHelper.currencySymbolHelper(
+          provider.currency,
+        );
+        final double balance = provider.currentBalance;
 
         return Container(
           decoration: BoxDecoration(
@@ -194,14 +171,14 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                     const SizedBox(height: AppSpacing.md),
                     AvailableBalanceText(
                       symbol: symbol,
-                      walletBalance: widget.balance,
+                      walletBalance: balance,
                       availableLabel: 'available'.tr(),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AmountInputSection(
                       controller: _amountController,
-                      currency: widget.currency,
-                      walletBalance: widget.balance,
+                      currency: provider.currency,
+                      walletBalance: balance,
                       onPercentageTap: provider.isProcessing
                           ? null
                           : _setPercentage,
@@ -213,14 +190,10 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                           ? 'withdraw_all'.tr()
                           : 'transfer_all'.tr(),
                       symbol: symbol,
-                      walletBalance: widget.balance,
+                      walletBalance: balance,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    SlideToTransferSlider(
-                      canTransfer: canAct,
-                      onTransfer: _onSliderEnd,
-                      isLoading: provider.isProcessing,
-                    ),
+                    SlideToTransferSlider(onTransfer: _onSliderEnd),
                     const SizedBox(height: AppSpacing.md),
                   ],
                 ),
