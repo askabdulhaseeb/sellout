@@ -91,20 +91,20 @@ class BalanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> executeTransfer() async {
+  Future<bool> executeTransfer() async {
     final String walletId = LocalAuth.stripeAccountId ?? '';
     if (walletId.isEmpty) {
       _transferState = TransferState.error;
       _transferError = 'something_wrong'.tr();
       notifyListeners();
-      return;
+      return false;
     }
 
     if (_transferAmount <= 0) {
       _transferState = TransferState.error;
       _transferError = 'nothing_to_withdraw'.tr();
       notifyListeners();
-      return;
+      return false;
     }
 
     _transferState = TransferState.loading;
@@ -125,29 +125,31 @@ class BalanceProvider extends ChangeNotifier {
     if (transferResult is DataSuccess && transferResult.entity == true) {
       _transferState = TransferState.success;
       notifyListeners();
-      await fetchWallet(isRefresh: true);
+      fetchWallet(isRefresh: true);
+      return true;
     } else {
       _transferState = TransferState.error;
       _transferError =
           transferResult.exception?.message ?? 'transfer_failed'.tr();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> executePayout() async {
+  Future<bool> executePayout() async {
     final String walletId = LocalAuth.stripeAccountId ?? '';
     if (walletId.isEmpty) {
       _transferState = TransferState.error;
       _transferError = 'something_wrong'.tr();
       notifyListeners();
-      return;
+      return false;
     }
 
     if (_transferAmount <= 0) {
       _transferState = TransferState.error;
       _transferError = 'nothing_to_withdraw'.tr();
       notifyListeners();
-      return;
+      return false;
     }
 
     _transferState = TransferState.loading;
@@ -169,20 +171,22 @@ class BalanceProvider extends ChangeNotifier {
       _wallet = payoutResult.entity;
       _transferState = TransferState.success;
       notifyListeners();
-      await fetchWallet(isRefresh: true);
+      fetchWallet(isRefresh: true);
+      return true;
     } else {
       _transferState = TransferState.error;
       _transferError =
           payoutResult.exception?.message ?? 'withdraw_failed'.tr();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> executeCurrentTransfer() async {
+  Future<bool> executeCurrentTransfer() async {
     if (_currentMode == TransferDialogMode.walletToStripe) {
-      await executeTransfer();
+      return executeTransfer();
     } else {
-      await executePayout();
+      return executePayout();
     }
   }
 }
