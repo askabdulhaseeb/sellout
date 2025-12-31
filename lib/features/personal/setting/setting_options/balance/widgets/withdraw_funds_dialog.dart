@@ -129,7 +129,7 @@ class WithdrawFundsDialog extends StatelessWidget {
                 title: tr('transfer_to_stripe', context: context),
                 stepLabel: tr('step_1', context: context),
                 subtitle: tr(
-                  'move_funds_from_wallet_to_stripe',
+                  'legal_documents.move_funds_from_wallet_to_stripe',
                   context: context,
                 ),
                 onTap: canTransferToStripe ? onTransferToStripe : null,
@@ -143,10 +143,13 @@ class WithdrawFundsDialog extends StatelessWidget {
                 iconColor: Theme.of(context).colorScheme.secondary,
                 iconBackgroundColor: Theme.of(
                   context,
-                ).colorScheme.secondary.withOpacity(0.1),
+                ).colorScheme.secondary.withValues(alpha: 0.1),
                 title: tr('withdraw_to_bank', context: context),
                 stepLabel: tr('step_2', context: context),
-                subtitle: tr('transfer_from_stripe_to_bank', context: context),
+                subtitle: tr(
+                  'legal_documents.transfer_from_stripe_to_bank',
+                  context: context,
+                ),
                 onTap: canWithdrawToBank ? onWithdrawToBank : null,
                 isLoading: isWithdrawing,
               ),
@@ -191,23 +194,51 @@ class _InfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.07),
+        color: AppColors.lightPrimaryColor.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        border: Border.all(
+          color: AppColors.primaryColor.withValues(alpha: 0.12),
+        ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(Icons.info_outline, color: theme.colorScheme.primary, size: 20),
-          const SizedBox(width: AppSpacing.sm),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+            ),
+            padding: const EdgeInsets.all(6),
+            child: Icon(
+              Icons.info_outline,
+              color: AppColors.primaryColor,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
-            child: Text(
-              tr('two_step_withdraw_info', context: context),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'two_step_withdrawal_process'.tr(),
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  'two_step_withdrawal_desc'.tr(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.subtitleLight,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -233,7 +264,7 @@ class _MiniBalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     return ShadowContainer(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
@@ -296,7 +327,7 @@ class _WithdrawStepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     final bool isDisabled = onTap == null && !isLoading;
 
     return ShadowContainer(
@@ -307,8 +338,8 @@ class _WithdrawStepTile extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              width: 44,
-              height: 44,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: iconBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
