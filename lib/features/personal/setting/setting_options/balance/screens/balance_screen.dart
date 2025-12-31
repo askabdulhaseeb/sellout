@@ -18,7 +18,7 @@ class BalanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BalanceProvider>(
-      create: (_) => BalanceProvider()..fetchWallet(),
+      create: (_) => BalanceProvider()..fetchWallet(isRefresh: true),
       child: const _BalanceScreenContent(),
     );
   }
@@ -66,61 +66,59 @@ class _BalanceScreenContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('balance'.tr())),
       body: Consumer<BalanceProvider>(
-        builder: (
-          BuildContext context,
-          BalanceProvider provider,
-          Widget? child,
-        ) {
-          if (provider.loading) {
-            return const BalanceSkeleton();
-          }
+        builder:
+            (BuildContext context, BalanceProvider provider, Widget? child) {
+              if (provider.loading) {
+                return const BalanceSkeleton();
+              }
 
-          if (provider.error != null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+              if (provider.error != null) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(provider.error!, textAlign: TextAlign.center),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () => provider.fetchWallet(),
+                          child: Text('retry'.tr()),
+                        ),
+                      ],
+                    ), 
+                  ),
+                );
+              }
+
+              final WalletEntity? wallet = provider.wallet;
+              if (wallet == null) {
+                return const BalanceSkeleton();
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(provider.error!, textAlign: TextAlign.center),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () => provider.fetchWallet(),
-                      child: Text('retry'.tr()),
+                    BalanceSummaryCard(
+                      wallet: wallet,
+                      isWithdrawing: provider.isProcessing,
+                      isRefreshing: provider.refreshing,
+                      onWithdrawTap: () =>
+                          _showWithdrawDialog(context, provider),
+                      onRefreshTap: () => provider.fetchWallet(isRefresh: true),
+                    ),
+                    const SizedBox(height: 16),
+                    FundsInHoldSection(fundsInHold: wallet.fundsInHold),
+                    const SizedBox(height: 16),
+                    TransactionHistorySection(
+                      transactionHistory: wallet.transactionHistory,
                     ),
                   ],
                 ),
-              ),
-            );
-          }
-
-          final WalletEntity? wallet = provider.wallet;
-          if (wallet == null) {
-            return const BalanceSkeleton();
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                BalanceSummaryCard(
-                  wallet: wallet,
-                  isWithdrawing: provider.isProcessing,
-                  isRefreshing: provider.refreshing,
-                  onWithdrawTap: () => _showWithdrawDialog(context, provider),
-                  onRefreshTap: () => provider.fetchWallet(isRefresh: true),
-                ),
-                const SizedBox(height: 16),
-                FundsInHoldSection(fundsInHold: wallet.fundsInHold),
-                const SizedBox(height: 16),
-                TransactionHistorySection(
-                  transactionHistory: wallet.transactionHistory,
-                ),
-              ],
-            ),
-          );
-        },
+              );
+            },
       ),
     );
   }

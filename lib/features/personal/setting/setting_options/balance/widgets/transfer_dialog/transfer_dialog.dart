@@ -106,7 +106,10 @@ class _TransferDialogState extends State<TransferDialog> {
 
     if (success) {
       HapticFeedback.heavyImpact();
-      navigator.pop();
+      // Ensure dialog closes after success
+      if (navigator.canPop()) {
+        navigator.pop();
+      }
     } else {
       _showSnackBar(provider.transferError ?? 'something_wrong'.tr());
     }

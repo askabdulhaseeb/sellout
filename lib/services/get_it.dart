@@ -922,7 +922,7 @@ void _payment() {
   );
   locator.registerFactory<WalletRemoteApi>(() => WalletRemoteApiImpl());
   locator.registerFactory<WalletRepository>(
-    () => WalletRepositoryImpl(locator()),
+    () => WalletRepositoryImpl(locator(), locator()),
   );
   locator.registerLazySingleton<LocalWallet>(() => LocalWallet());
   locator.registerFactory<GetExchangeRateUsecase>(

@@ -19,6 +19,24 @@ import '../functions/app_log.dart';
 import '../sources/api_call.dart';
 
 class SocketImplementations {
+  // PAYOUT STATUS UPDATED
+  Future<void> handlePayoutStatusUpdated(dynamic data) async {
+    try {
+      // Parse wallet data and save locally (assume same structure as wallet-updated)
+      if (data is Map<String, dynamic>) {
+        final wallet = WalletModel.fromJson(data);
+        await LocalWallet().saveWallet(wallet);
+        AppLog.info('Payout status updated and wallet saved locally.');
+      } else {
+        AppLog.error(
+          'Payout status update data is not a Map<String, dynamic>.',
+        );
+      }
+    } catch (e) {
+      AppLog.error('Error in handlePayoutStatusUpdated: $e');
+    }
+  }
+
   // WALLET UPDATED
   Future<void> handleWalletUpdated(dynamic data) async {
     try {

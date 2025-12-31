@@ -5,6 +5,7 @@ import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../payment/domain/entities/wallet_entity.dart';
 import '../../../../payment/domain/params/create_payout_params.dart';
+import '../../../../payment/domain/params/get_wallet_params.dart';
 import '../../../../payment/domain/params/transfer_funds_params.dart';
 import '../../../../payment/domain/usecase/create_payouts_usecase.dart';
 import '../../../../payment/domain/usecase/get_wallet_usecase.dart';
@@ -66,7 +67,10 @@ class BalanceProvider extends ChangeNotifier {
   Future<void> fetchWallet({bool isRefresh = false}) async {
     _prepareWalletFetch(isRefresh);
     final String walletId = LocalAuth.stripeAccountId ?? '';
-    final DataState<WalletEntity> result = await _getWallet(walletId);
+    final DataState<WalletEntity> result = await _getWallet(
+      walletId,
+      isRefresh,
+    );
     _handleWalletFetchResult(result);
   }
 
@@ -80,9 +84,14 @@ class BalanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<DataState<WalletEntity>> _getWallet(String walletId) async {
+  Future<DataState<WalletEntity>> _getWallet(
+    String walletId,
+    bool isRefresh,
+  ) async {
     final GetWalletUsecase usecase = GetWalletUsecase(locator());
-    return await usecase.call(walletId);
+    return await usecase.call(
+      GetWalletParams(walletId: walletId, refresh: isRefresh),
+    );
   }
 
   void _handleWalletFetchResult(DataState<WalletEntity> result) {
