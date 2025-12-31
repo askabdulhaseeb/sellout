@@ -1,9 +1,14 @@
+import 'package:hive_ce/hive.dart';
+
 import 'amount_in_connected_account_entity.dart';
 import 'wallet_funds_in_hold_entity.dart';
 import 'wallet_transaction_entity.dart';
 
-abstract class WalletEntity {
-  const WalletEntity({
+part 'wallet_entity.g.dart';
+
+@HiveType(typeId: 92)
+class WalletEntity {
+  WalletEntity({
     required this.withdrawableBalance,
     required this.nextReleaseAt,
     required this.currency,
@@ -23,22 +28,41 @@ abstract class WalletEntity {
     required this.walletId,
     required this.amountInConnectedAccount,
   });
-  final double withdrawableBalance;
-  final String nextReleaseAt;
-  final String currency;
-  final String createdAt;
-  final bool canReceive;
-  final String status;
-  final double totalEarnings;
-  final List<WalletTransactionEntity> transactionHistory;
-  final double pendingBalance;
-  final double totalBalance;
-  final String updatedAt;
-  final String entityId;
-  final double totalRefunded;
-  final List<WalletFundsInHoldEntity> fundsInHold;
-  final double totalWithdrawn;
-  final bool canWithdraw;
-  final String walletId;
-  final AmountInConnectedAccountEntity? amountInConnectedAccount;
+
+  @HiveField(0)
+  double withdrawableBalance;
+  @HiveField(1)
+  String nextReleaseAt;
+  @HiveField(2)
+  String currency;
+  @HiveField(3)
+  String createdAt;
+  @HiveField(4)
+  bool canReceive;
+  @HiveField(5)
+  String status;
+  @HiveField(6)
+  double totalEarnings;
+  @HiveField(7)
+  List<WalletTransactionEntity> transactionHistory;
+  @HiveField(8)
+  double pendingBalance;
+  @HiveField(9)
+  double totalBalance;
+  @HiveField(10)
+  String updatedAt;
+  @HiveField(11)
+  String entityId;
+  @HiveField(12)
+  double totalRefunded;
+  @HiveField(13)
+  List<WalletFundsInHoldEntity> fundsInHold;
+  @HiveField(14)
+  double totalWithdrawn;
+  @HiveField(15)
+  bool canWithdraw;
+  @HiveField(16)
+  String walletId;
+  @HiveField(17)
+  AmountInConnectedAccountEntity? amountInConnectedAccount;
 }

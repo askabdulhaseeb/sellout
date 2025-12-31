@@ -59,6 +59,7 @@ import 'package:sellout/features/personal/order/domain/entities/order_entity.dar
 import 'package:sellout/features/personal/order/domain/entities/order_payment_detail_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/postage_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/shipping_detail_entity.dart';
+import 'package:sellout/features/personal/payment/payment.dart';
 import 'package:sellout/features/personal/post/domain/entities/discount_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/feed/feed_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/meetup/availability_entity.dart';
@@ -91,6 +92,7 @@ import 'package:sellout/features/personal/user/profiles/domain/entities/user_str
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AddressEntityAdapter());
+    registerAdapter(AmountInConnectedAccountEntityAdapter());
     registerAdapter(ApiRequestEntityAdapter());
     registerAdapter(AttachmentEntityAdapter());
     registerAdapter(AttachmentTypeAdapter());
@@ -176,12 +178,16 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(UserEntityAdapter());
     registerAdapter(UserStripeAccountEntityAdapter());
     registerAdapter(VisitingEntityAdapter());
+    registerAdapter(WalletEntityAdapter());
+    registerAdapter(WalletFundsInHoldEntityAdapter());
+    registerAdapter(WalletTransactionEntityAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(AddressEntityAdapter());
+    registerAdapter(AmountInConnectedAccountEntityAdapter());
     registerAdapter(ApiRequestEntityAdapter());
     registerAdapter(AttachmentEntityAdapter());
     registerAdapter(AttachmentTypeAdapter());
@@ -267,5 +273,8 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(UserEntityAdapter());
     registerAdapter(UserStripeAccountEntityAdapter());
     registerAdapter(VisitingEntityAdapter());
+    registerAdapter(WalletEntityAdapter());
+    registerAdapter(WalletFundsInHoldEntityAdapter());
+    registerAdapter(WalletTransactionEntityAdapter());
   }
 }

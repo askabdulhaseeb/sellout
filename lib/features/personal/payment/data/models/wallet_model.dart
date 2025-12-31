@@ -7,6 +7,27 @@ import 'wallet_funds_in_hold_model.dart';
 import 'wallet_transaction_model.dart';
 
 class WalletModel extends WalletEntity {
+
+   WalletModel({
+    required super.withdrawableBalance,
+    required super.nextReleaseAt,
+    required super.currency,
+    required super.createdAt,
+    required super.canReceive,
+    required super.status,
+    required super.totalEarnings,
+    required super.transactionHistory,
+    required super.pendingBalance,
+    required super.totalBalance,
+    required super.updatedAt,
+    required super.entityId,
+    required super.totalRefunded,
+    required super.fundsInHold,
+    required super.totalWithdrawn,
+    required super.canWithdraw,
+    required super.walletId,
+    required super.amountInConnectedAccount,
+  });
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'withdrawable_balance': withdrawableBalance,
@@ -41,27 +62,6 @@ class WalletModel extends WalletEntity {
   static WalletModel fromJsonString(String jsonString) {
     return WalletModel.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
   }
-
-  const WalletModel({
-    required super.withdrawableBalance,
-    required super.nextReleaseAt,
-    required super.currency,
-    required super.createdAt,
-    required super.canReceive,
-    required super.status,
-    required super.totalEarnings,
-    required super.transactionHistory,
-    required super.pendingBalance,
-    required super.totalBalance,
-    required super.updatedAt,
-    required super.entityId,
-    required super.totalRefunded,
-    required super.fundsInHold,
-    required super.totalWithdrawn,
-    required super.canWithdraw,
-    required super.walletId,
-    required super.amountInConnectedAccount,
-  });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
     final List<dynamic> transactionHistoryRaw =

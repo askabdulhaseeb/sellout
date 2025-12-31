@@ -13,8 +13,7 @@ import '../../features/personal/chats/chat_dashboard/data/sources/local/local_un
 import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
-import '../../features/personal/payment/data/models/wallet_model.dart';
-import '../../features/personal/payment/data/sources/local/local_wallet.dart';
+import '../../features/personal/payment/payment.dart';
 import '../../services/get_it.dart';
 import '../functions/app_log.dart';
 import '../sources/api_call.dart';
