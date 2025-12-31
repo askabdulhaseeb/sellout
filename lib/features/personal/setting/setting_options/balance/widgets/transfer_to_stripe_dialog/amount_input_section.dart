@@ -7,12 +7,16 @@ import '../../../../../../../core/widgets/shadow_container.dart';
 
 class AmountInputSection extends StatelessWidget {
   const AmountInputSection({
-    required this.controller, required this.currency, required this.walletBalance, required this.onPercentageTap, super.key,
+    required this.controller,
+    required this.currency,
+    required this.walletBalance,
+    this.onPercentageTap,
+    super.key,
   });
   final TextEditingController controller;
   final String currency;
   final double walletBalance;
-  final void Function(double) onPercentageTap;
+  final void Function(double)? onPercentageTap;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +82,7 @@ class AmountInputSection extends StatelessWidget {
 
   Widget _buildPercentageButton(String label, double percentage) {
     return GestureDetector(
-      onTap: () => onPercentageTap(percentage),
+      onTap: onPercentageTap != null ? () => onPercentageTap!(percentage) : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(

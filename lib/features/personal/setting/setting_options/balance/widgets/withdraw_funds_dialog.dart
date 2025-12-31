@@ -5,31 +5,11 @@ import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 
-/// A modular bottom sheet dialog for withdrawing funds.
-///
-/// This dialog is purely presentational - all business logic should be
-/// handled by the parent widget through callbacks.
-///
-/// Usage:
-/// ```dart
-/// WithdrawFundsDialog.show(
-///   context: context,
-///   walletBalance: 100.0,
-///   stripeBalance: 50.0,
-///   currency: 'USD',
-///   isTransferring: false,
-///   isWithdrawing: false,
-///   onTransferToStripe: () => handleTransfer(),
-///   onWithdrawToBank: () => handleWithdraw(),
-/// );
-/// ```
 class WithdrawFundsDialog extends StatelessWidget {
   const WithdrawFundsDialog._({
     required this.walletBalance,
     required this.stripeBalance,
     required this.currency,
-    required this.isTransferring,
-    required this.isWithdrawing,
     required this.onTransferToStripe,
     required this.onWithdrawToBank,
   });
@@ -37,19 +17,14 @@ class WithdrawFundsDialog extends StatelessWidget {
   final double walletBalance;
   final double stripeBalance;
   final String currency;
-  final bool isTransferring;
-  final bool isWithdrawing;
   final VoidCallback? onTransferToStripe;
   final VoidCallback? onWithdrawToBank;
 
-  /// Shows the withdraw funds dialog as a modal bottom sheet.
   static Future<void> show({
     required BuildContext context,
     required double walletBalance,
     required double stripeBalance,
     required String currency,
-    required bool isTransferring,
-    required bool isWithdrawing,
     required VoidCallback? onTransferToStripe,
     required VoidCallback? onWithdrawToBank,
   }) {
@@ -61,8 +36,6 @@ class WithdrawFundsDialog extends StatelessWidget {
         walletBalance: walletBalance,
         stripeBalance: stripeBalance,
         currency: currency,
-        isTransferring: isTransferring,
-        isWithdrawing: isWithdrawing,
         onTransferToStripe: onTransferToStripe,
         onWithdrawToBank: onWithdrawToBank,
       ),
@@ -72,8 +45,8 @@ class WithdrawFundsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String symbol = CountryHelper.currencySymbolHelper(currency);
-    final bool canTransferToStripe = walletBalance > 0 && !isTransferring;
-    final bool canWithdrawToBank = stripeBalance > 0 && !isWithdrawing;
+    final bool canTransferToStripe = walletBalance > 0;
+    final bool canWithdrawToBank = stripeBalance > 0;
 
     return Container(
       decoration: BoxDecoration(
@@ -87,11 +60,9 @@ class WithdrawFundsDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Header
               _DialogHeader(onClose: () => Navigator.of(context).pop()),
               const SizedBox(height: AppSpacing.lg),
 
-              // Balance cards row
               Row(
                 children: <Widget>[
                   Expanded(
@@ -115,11 +86,9 @@ class WithdrawFundsDialog extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Info section
               const _InfoSection(),
               const SizedBox(height: AppSpacing.lg),
 
-              // Step 1: Transfer to Stripe
               _WithdrawStepTile(
                 icon: Icons.account_balance_wallet_outlined,
                 iconColor: Theme.of(context).colorScheme.primary,
@@ -133,11 +102,9 @@ class WithdrawFundsDialog extends StatelessWidget {
                   context: context,
                 ),
                 onTap: canTransferToStripe ? onTransferToStripe : null,
-                isLoading: isTransferring,
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Step 2: Withdraw to Bank
               _WithdrawStepTile(
                 icon: 'S',
                 iconColor: Theme.of(context).colorScheme.secondary,
@@ -151,7 +118,6 @@ class WithdrawFundsDialog extends StatelessWidget {
                   context: context,
                 ),
                 onTap: canWithdrawToBank ? onWithdrawToBank : null,
-                isLoading: isWithdrawing,
               ),
               const SizedBox(height: AppSpacing.md),
             ],
@@ -313,7 +279,6 @@ class _WithdrawStepTile extends StatelessWidget {
     required this.iconBackgroundColor,
     this.icon,
     this.onTap,
-    this.isLoading = false,
   });
 
   final dynamic icon;
@@ -323,15 +288,14 @@ class _WithdrawStepTile extends StatelessWidget {
   final String stepLabel;
   final String subtitle;
   final VoidCallback? onTap;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDisabled = onTap == null && !isLoading;
+    final bool isDisabled = onTap == null;
 
     return ShadowContainer(
-      onTap: isLoading ? null : onTap,
+      onTap: onTap,
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Opacity(
         opacity: isDisabled ? 0.5 : 1.0,
@@ -399,14 +363,7 @@ class _WithdrawStepTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (isLoading)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else
-              Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
           ],
         ),
       ),
