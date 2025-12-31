@@ -5,6 +5,11 @@ import 'package:path_provider/path_provider.dart';
 import '../../../features/personal/order/domain/entities/fast_delivery_entity.dart';
 import '../../../features/personal/order/domain/entities/postage_entity.dart';
 import '../../../features/personal/order/domain/entities/shipping_detail_entity.dart';
+import '../../../features/personal/payment/data/sources/local/local_wallet.dart';
+import '../../../features/personal/payment/domain/entities/amount_in_connected_account_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_funds_in_hold_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_transaction_entity.dart';
 import '../../utilities/app_string.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
@@ -210,6 +215,10 @@ class HiveDB {
     Hive.registerAdapter(ShippingDetailEntityAdapter()); //89
     Hive.registerAdapter(PostageEntityAdapter()); //90
     Hive.registerAdapter(FastDeliveryEntityAdapter()); //91
+    Hive.registerAdapter(WalletEntityAdapter()); //92
+    Hive.registerAdapter(WalletTransactionEntityAdapter()); //93
+    Hive.registerAdapter(WalletFundsInHoldEntityAdapter()); //94
+    Hive.registerAdapter(AmountInConnectedAccountEntityAdapter()); //95
 
     // Hive box Open
     await refresh();
@@ -264,11 +273,15 @@ class HiveDB {
     await safeClear(() => LocalService().clear(), 'LocalService');
     await safeClear(() => LocalReview().clear(), 'LocalReview');
     await safeClear(() => LocalBooking().clear(), 'LocalBooking');
-    await safeClear(() => LocalUnreadMessagesService().clear(),'LocalUnreadMessagesService');
+    await safeClear(
+      () => LocalUnreadMessagesService().clear(),
+      'LocalUnreadMessagesService',
+    );
     await safeClear(() => LocalPromo().clear(), 'LocalPromo');
     await safeClear(() => LocalColors().clear(), 'LocalColors');
     await safeClear(() => LocalOrders().clear(), 'LocalOrders');
     await safeClear(() => LocalNotifications().clear(), 'LocalNotifications');
+    await safeClear(() => LocalWallet().clear(), 'LocalWallet');
     // await LocalServiceCategory().clear();
     // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();
