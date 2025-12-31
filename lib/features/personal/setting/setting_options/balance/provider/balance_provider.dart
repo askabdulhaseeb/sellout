@@ -15,6 +15,16 @@ import '../widgets/transfer_dialog/transfer_dialog.dart';
 enum TransferState { idle, loading, success, error }
 
 class BalanceProvider extends ChangeNotifier {
+  void setLoading(bool value) {
+    _loading = value;
+    notifyListeners();
+  }
+
+  void setRefreshing(bool value) {
+    _refreshing = value;
+    notifyListeners();
+  }
+
   WalletEntity? _wallet;
   bool _loading = true;
   String? _error;
@@ -76,12 +86,11 @@ class BalanceProvider extends ChangeNotifier {
 
   void _prepareWalletFetch(bool isRefresh) {
     if (isRefresh) {
-      _refreshing = true;
+      setRefreshing(true);
     } else {
-      _loading = true;
+      setLoading(true);
     }
     _error = null;
-    notifyListeners();
   }
 
   Future<DataState<WalletEntity>> _getWallet(
@@ -97,14 +106,13 @@ class BalanceProvider extends ChangeNotifier {
   void _handleWalletFetchResult(DataState<WalletEntity> result) {
     if (result is DataSuccess && result.entity != null) {
       _wallet = result.entity;
-      _loading = false;
-      _refreshing = false;
+      setLoading(false);
+      setRefreshing(false);
     } else {
       _error = result.exception?.message ?? 'something_wrong'.tr();
-      _loading = false;
-      _refreshing = false;
+      setLoading(false);
+      setRefreshing(false);
     }
-    notifyListeners();
   }
 
   Future<bool> executeTransfer() async {

@@ -2,7 +2,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 part 'amount_in_connected_account_entity.g.dart';
 
 @HiveType(typeId: 95)
-class AmountInConnectedAccountEntity extends HiveObject {
+class AmountInConnectedAccountEntity {
   AmountInConnectedAccountEntity({
     required this.available,
     required this.currency,
