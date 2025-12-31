@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import 'balance_provider.dart';
-import 'balance_skeleton.dart';
-import 'widgets/balance_summary_card.dart';
-import 'widgets/funds_in_hold_section.dart';
-import 'widgets/transaction_history_section.dart';
-import 'widgets/transfer_to_stripe_dialog.dart';
-import 'widgets/withdraw_funds_dialog.dart';
+import '../../../../payment/domain/entities/wallet_entity.dart';
+import '../balance_skeleton.dart';
+import '../provider/balance_provider.dart';
+import '../widgets/balance_summary_card.dart';
+import '../widgets/funds_in_hold_section.dart';
+import '../widgets/transaction_history_section.dart';
+import '../widgets/transfer_dialog.dart';
+import '../widgets/withdraw_funds_dialog.dart';
 
 class BalanceScreen extends StatelessWidget {
   const BalanceScreen({super.key});
@@ -45,7 +46,7 @@ class _BalanceScreenContent extends StatelessWidget {
   ) {
     if (provider.wallet == null) return;
     Navigator.of(context).pop();
-    TransferToStripeDialog.show(
+    TransferDialog.show(
       context: context,
       mode: TransferDialogMode.walletToStripe,
     );
@@ -54,7 +55,7 @@ class _BalanceScreenContent extends StatelessWidget {
   void _showPayoutDialog(BuildContext context, BalanceProvider provider) {
     if (provider.wallet == null) return;
     Navigator.of(context).pop();
-    TransferToStripeDialog.show(
+    TransferDialog.show(
       context: context,
       mode: TransferDialogMode.stripeToBank,
     );
@@ -93,7 +94,7 @@ class _BalanceScreenContent extends StatelessWidget {
             );
           }
 
-          final wallet = provider.wallet;
+          final WalletEntity? wallet = provider.wallet;
           if (wallet == null) {
             return const BalanceSkeleton();
           }

@@ -2,23 +2,21 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../balance_provider.dart';
-
-import 'transfer_to_stripe_dialog/transfer_to_stripe_header.dart';
-import 'transfer_to_stripe_dialog/step_indicator.dart';
-import 'transfer_to_stripe_dialog/wallet_to_stripe_visual.dart';
-import 'transfer_to_stripe_dialog/available_balance_text.dart';
-import 'transfer_to_stripe_dialog/amount_input_section.dart';
-import 'transfer_to_stripe_dialog/transfer_all_button.dart';
-import 'transfer_to_stripe_dialog/slide_to_transfer_slider.dart';
+import '../provider/balance_provider.dart';
+import 'transfer_dialog/transfer_dialog_header.dart';
+import 'transfer_dialog/step_indicator.dart';
+import 'transfer_dialog/transfer_visual.dart';
+import 'transfer_dialog/available_balance_text.dart';
+import 'transfer_dialog/amount_input_section.dart';
+import 'transfer_dialog/transfer_all_button.dart';
+import 'transfer_dialog/slide_to_transfer_slider.dart';
 
 enum TransferDialogMode { walletToStripe, stripeToBank }
 
-class TransferToStripeDialog extends StatefulWidget {
-  const TransferToStripeDialog({required this.mode, super.key});
+class TransferDialog extends StatefulWidget {
+  const TransferDialog({required this.mode, super.key});
 
   final TransferDialogMode mode;
 
@@ -34,16 +32,16 @@ class TransferToStripeDialog extends StatefulWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider<BalanceProvider>.value(
         value: provider,
-        child: TransferToStripeDialog(mode: mode),
+        child: TransferDialog(mode: mode),
       ),
     );
   }
 
   @override
-  State<TransferToStripeDialog> createState() => _TransferToStripeDialogState();
+  State<TransferDialog> createState() => _TransferDialogState();
 }
 
-class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
+class _TransferDialogState extends State<TransferDialog> {
   final TextEditingController _amountController = TextEditingController();
   bool _isUpdatingText = false;
 
@@ -143,7 +141,7 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    TransferToStripeHeader(
+                    TransferDialogHeader(
                       onBack: provider.isProcessing
                           ? null
                           : () => Navigator.of(context).pop(),
@@ -154,31 +152,31 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                     const SizedBox(height: AppSpacing.lg),
                     StepIndicator(currentStep: isPayout ? 2 : 1),
                     const SizedBox(height: AppSpacing.lg),
-                    WalletToStripeVisual(
-                      walletLabel: isPayout ? 'stripe'.tr() : 'wallet'.tr(),
-                      stripeLabel: isPayout ? 'bank'.tr() : 'stripe'.tr(),
-                      walletColor: isPayout
+                    TransferVisual(
+                      sourceLabel: isPayout ? 'stripe'.tr() : 'wallet'.tr(),
+                      destinationLabel: isPayout ? 'bank'.tr() : 'stripe'.tr(),
+                      sourceColor: isPayout
                           ? Theme.of(context).colorScheme.secondary
                           : Theme.of(context).primaryColor,
-                      stripeColor: isPayout
+                      destinationColor: isPayout
                           ? Colors.teal
                           : Theme.of(context).colorScheme.secondary,
-                      walletIcon: isPayout
+                      sourceIcon: isPayout
                           ? Icons.account_balance_wallet_outlined
                           : Icons.account_balance_wallet_outlined,
-                      stripeIconText: isPayout ? 'B' : 'S',
+                      destinationIconText: isPayout ? 'B' : 'S',
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AvailableBalanceText(
                       symbol: symbol,
-                      walletBalance: balance,
+                      balance: balance,
                       availableLabel: 'available'.tr(),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     AmountInputSection(
                       controller: _amountController,
                       currency: provider.currency,
-                      walletBalance: balance,
+                      maxAmount: balance,
                       onPercentageTap: provider.isProcessing
                           ? null
                           : _setPercentage,
@@ -190,10 +188,19 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
                           ? 'withdraw_all'.tr()
                           : 'transfer_all'.tr(),
                       symbol: symbol,
-                      walletBalance: balance,
+                      amount: balance,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    SlideToTransferSlider(onTransfer: _onSliderEnd),
+                    SlideToTransferSlider(
+                      onTransfer: _onSliderEnd,
+                      canTransfer:
+                          provider.transferAmount > 0 &&
+                          provider.transferAmount <= balance &&
+                          !provider.isProcessing &&
+                          !provider.isSuccess,
+                      isLoading: provider.isProcessing,
+                      isSuccess: provider.isSuccess,
+                    ),
                     const SizedBox(height: AppSpacing.md),
                   ],
                 ),

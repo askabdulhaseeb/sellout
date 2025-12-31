@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AvailableBalanceText extends StatelessWidget {
-  final String symbol;
-  final double walletBalance;
-  final String availableLabel;
   const AvailableBalanceText({
-    super.key,
     required this.symbol,
-    required this.walletBalance,
+    required this.balance,
     required this.availableLabel,
+    super.key,
   });
+
+  final String symbol;
+  final double balance;
+  final String availableLabel;
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      '$availableLabel: $symbol${walletBalance.toStringAsFixed(2)}',
+      '$availableLabel: $symbol${balance.toStringAsFixed(2)}',
       style: TextStyle(fontSize: 14, color: Colors.grey[600]),
     );
   }
