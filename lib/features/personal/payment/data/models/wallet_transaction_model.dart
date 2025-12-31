@@ -2,7 +2,7 @@ import '../../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/wallet_transaction_entity.dart';
 
 class WalletTransactionModel extends WalletTransactionEntity {
-  const WalletTransactionModel({
+   WalletTransactionModel({
     required super.id,
     required super.transferAmount,
     required super.payoutAmount,

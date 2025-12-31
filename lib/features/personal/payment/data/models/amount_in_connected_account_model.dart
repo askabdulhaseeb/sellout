@@ -1,7 +1,7 @@
 import '../../domain/entities/amount_in_connected_account_entity.dart';
 
 class AmountInConnectedAccountModel extends AmountInConnectedAccountEntity {
-  const AmountInConnectedAccountModel({
+  AmountInConnectedAccountModel({
     required super.available,
     required super.currency,
     required super.lastSynced,

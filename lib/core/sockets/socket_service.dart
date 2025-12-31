@@ -11,6 +11,7 @@ import '../../features/personal/notifications/data/models/notification_model.dar
 import '../../features/personal/notifications/data/source/local/local_notification.dart';
 import '../../services/system_notification_service.dart';
 import '../functions/app_log.dart';
+import '../utilities/app_string.dart';
 import 'socket_implementations.dart';
 
 class SocketService with WidgetsBindingObserver {
@@ -97,7 +98,7 @@ class SocketService with WidgetsBindingObserver {
     });
 
     // Initial full list when connecting
-    socket!.on('getOnlineUsers', (dynamic data) async {
+    socket!.on(AppStrings.getOnlineUsers, (dynamic data) async {
       AppLog.info(
         '📶 Initial online users: $data',
         name: 'SocketService.getOnlineUsers',
@@ -113,7 +114,7 @@ class SocketService with WidgetsBindingObserver {
     });
 
     // When someone comes online
-    socket!.on('userOnline', (dynamic data) {
+    socket!.on(AppStrings.userOnline, (dynamic data) {
       AppLog.info(
         '🟢 User came online: $data',
         name: 'SocketService.userOnline',
@@ -126,7 +127,7 @@ class SocketService with WidgetsBindingObserver {
         AppLog.error('Error handling userOnline: $e');
       }
     });
-    socket!.on('wallet-updated', (dynamic data) async {
+    socket!.on(AppStrings.walletUpdated, (dynamic data) async {
       AppLog.info(
         '🟢 Wallet updated: $data',
         name: 'SocketService.walletUpdated',
@@ -142,7 +143,7 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('onboarding-success', (dynamic data) async {
+    socket!.on(AppStrings.onboardingSuccess, (dynamic data) async {
       AppLog.info(
         '🎉 Onboarding success: $data',
         name: 'SocketService.onboarding-success',
@@ -163,7 +164,7 @@ class SocketService with WidgetsBindingObserver {
     });
 
     // When someone goes offline
-    socket!.on('userOffline', (dynamic data) {
+    socket!.on(AppStrings.userOffline, (dynamic data) {
       AppLog.info(
         '🔴 User went offline: $data',
         name: 'SocketService.userOffline',
@@ -182,7 +183,7 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('new-notification', (dynamic data) async {
+    socket!.on(AppStrings.newNotification, (dynamic data) async {
       AppLog.info(
         '🔔 New notification: $data',
         name: 'SocketService.new-notification',
@@ -215,11 +216,11 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('lastSeen', (dynamic data) {
+    socket!.on(AppStrings.lastSeen, (dynamic data) {
       AppLog.info('🕓 Last seen: $data', name: 'SocketService.lastSeen');
     });
 
-    socket!.on('newMessage', (dynamic data) async {
+    socket!.on(AppStrings.newMessage, (dynamic data) async {
       AppLog.info(
         '📨 New message received: $data',
         name: 'SocketService.newMessage',
@@ -234,7 +235,7 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('updatedMessage', (dynamic data) async {
+    socket!.on(AppStrings.updatedMessage, (dynamic data) async {
       AppLog.info(
         '📝 Message update arrived: $data',
         name: 'SocketService.updatedMessage',
@@ -249,7 +250,7 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('update-pinned-message', (dynamic data) async {
+    socket!.on(AppStrings.updatePinnedMessage, (dynamic data) async {
       AppLog.info(
         '📝 Updated Pinned Message arrived: $data',
         name: 'SocketService.updatedPinnedMessage',
@@ -264,7 +265,7 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    socket!.on('new-pinned-message', (dynamic data) async {
+    socket!.on(AppStrings.newPinnedMessage, (dynamic data) async {
       AppLog.info(
         '📝 New Pinned Message arrived: $data',
         name: 'SocketService.newPinnedMessage',

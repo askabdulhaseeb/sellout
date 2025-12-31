@@ -87,13 +87,7 @@ import '../features/personal/location/domain/usecase/location_name_usecase.dart'
 import '../features/personal/location/view/provider/location_field_provider.dart';
 import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
 import '../features/personal/order/domain/usecase/get_order_by_order_id.dart';
-import '../features/personal/payment/data/repositories/payment_repository_impl.dart';
-import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
-import '../features/personal/payment/domain/repositories/payment_repository.dart';
-import '../features/personal/payment/domain/usecase/create_payouts_usecase.dart';
-import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
-import '../features/personal/payment/domain/usecase/get_wallet_usecase.dart';
-import '../features/personal/payment/domain/usecase/transfer_funds_usecase.dart';
+import '../features/personal/payment/payment.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
@@ -926,6 +920,11 @@ void _payment() {
   locator.registerFactory<PaymentRepository>(
     () => PaymentRepositoryImpl(locator()),
   );
+  locator.registerFactory<WalletRemoteApi>(() => WalletRemoteApiImpl());
+  locator.registerFactory<WalletRepository>(
+    () => WalletRepositoryImpl(locator()),
+  );
+  locator.registerLazySingleton<LocalWallet>(() => LocalWallet());
   locator.registerFactory<GetExchangeRateUsecase>(
     () => GetExchangeRateUsecase(locator()),
   );

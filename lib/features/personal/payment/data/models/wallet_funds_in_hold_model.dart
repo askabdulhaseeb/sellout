@@ -1,7 +1,7 @@
 import '../../domain/entities/wallet_funds_in_hold_entity.dart';
 
 class WalletFundsInHoldModel extends WalletFundsInHoldEntity {
-  const WalletFundsInHoldModel({
+  WalletFundsInHoldModel({
     required super.transactionId,
     required super.amount,
     required super.postId,
