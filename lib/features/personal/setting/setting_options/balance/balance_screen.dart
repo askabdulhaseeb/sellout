@@ -47,8 +47,6 @@ class _BalanceScreenContent extends StatelessWidget {
     Navigator.of(context).pop();
     TransferToStripeDialog.show(
       context: context,
-      balance: provider.walletBalance,
-      currency: provider.currency,
       mode: TransferDialogMode.walletToStripe,
     );
   }
@@ -58,8 +56,6 @@ class _BalanceScreenContent extends StatelessWidget {
     Navigator.of(context).pop();
     TransferToStripeDialog.show(
       context: context,
-      balance: provider.stripeBalance,
-      currency: provider.currency,
       mode: TransferDialogMode.stripeToBank,
     );
   }
