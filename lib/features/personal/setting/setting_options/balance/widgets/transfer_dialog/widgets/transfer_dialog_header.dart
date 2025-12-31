@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../core/constants/app_spacings.dart';
 
 class TransferDialogHeader extends StatelessWidget {
   const TransferDialogHeader({

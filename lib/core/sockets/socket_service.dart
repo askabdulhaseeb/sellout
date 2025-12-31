@@ -126,11 +126,20 @@ class SocketService with WidgetsBindingObserver {
         AppLog.error('Error handling userOnline: $e');
       }
     });
-    socket!.on('walletUpdated', (dynamic data) {
+    socket!.on('wallet-updated', (dynamic data) async {
       AppLog.info(
-        '🟢 User creted its wallet: $data',
+        '🟢 Wallet updated: $data',
         name: 'SocketService.walletUpdated',
       );
+      if (data == null) return;
+      try {
+        // You may want to parse the wallet data into a WalletModel/Entity here
+        // and update your local state or provider.
+        await _socketImplementations.handleWalletUpdated(data);
+        debugPrint('Wallet updated and local state refreshed.');
+      } catch (e) {
+        AppLog.error('Error handling wallet-updated: $e');
+      }
     });
 
     socket!.on('onboarding-success', (dynamic data) async {
@@ -193,8 +202,9 @@ class SocketService with WidgetsBindingObserver {
               metadataMap,
             );
           }
-          final NotificationModel notification =
-              NotificationModel.fromMap(data);
+          final NotificationModel notification = NotificationModel.fromMap(
+            data,
+          );
           await LocalNotifications.saveNotification(notification);
 
           // Show system notification

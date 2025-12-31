@@ -8,8 +8,8 @@ import '../provider/balance_provider.dart';
 import '../widgets/balance_summary_card.dart';
 import '../widgets/funds_in_hold_section.dart';
 import '../widgets/transaction_history_section.dart';
-import '../widgets/transfer_dialog.dart';
-import '../widgets/withdraw_funds_dialog.dart';
+import '../widgets/transfer_dialog/transfer_dialog.dart';
+import '../widgets/withdraw_funds_dialog/withdraw_funds_dialog.dart';
 
 class BalanceScreen extends StatelessWidget {
   const BalanceScreen({super.key});

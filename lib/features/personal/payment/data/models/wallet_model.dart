@@ -1,9 +1,47 @@
+import 'dart:convert';
 import '../../domain/entities/wallet_entity.dart';
+import '../../domain/entities/wallet_funds_in_hold_entity.dart';
+import '../../domain/entities/wallet_transaction_entity.dart';
 import 'amount_in_connected_account_model.dart';
 import 'wallet_funds_in_hold_model.dart';
 import 'wallet_transaction_model.dart';
 
 class WalletModel extends WalletEntity {
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'withdrawable_balance': withdrawableBalance,
+      'next_release_at': nextReleaseAt,
+      'currency': currency,
+      'created_at': createdAt,
+      'can_receive': canReceive,
+      'status': status,
+      'total_earnings': totalEarnings,
+      'transaction_history': transactionHistory
+          .map((WalletTransactionEntity e) => (e as dynamic).toJson())
+          .toList(),
+      'pending_balance': pendingBalance,
+      'total_balance': totalBalance,
+      'updated_at': updatedAt,
+      'entity_id': entityId,
+      'total_refunded': totalRefunded,
+      'funds_in_hold': fundsInHold
+          .map((WalletFundsInHoldEntity e) => (e as dynamic).toJson())
+          .toList(),
+      'total_withdrawn': totalWithdrawn,
+      'can_withdraw': canWithdraw,
+      'wallet_id': walletId,
+      'amount_in_connected_account': amountInConnectedAccount != null
+          ? (amountInConnectedAccount as dynamic).toJson()
+          : null,
+    };
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  static WalletModel fromJsonString(String jsonString) {
+    return WalletModel.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
+  }
+
   const WalletModel({
     required super.withdrawableBalance,
     required super.nextReleaseAt,

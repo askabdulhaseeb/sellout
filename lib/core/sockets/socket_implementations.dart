@@ -13,11 +13,29 @@ import '../../features/personal/chats/chat_dashboard/data/sources/local/local_un
 import '../../features/personal/chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../features/personal/chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
+import '../../features/personal/payment/data/models/wallet_model.dart';
+import '../../features/personal/payment/data/sources/local/local_wallet.dart';
 import '../../services/get_it.dart';
 import '../functions/app_log.dart';
 import '../sources/api_call.dart';
 
 class SocketImplementations {
+  // WALLET UPDATED
+  Future<void> handleWalletUpdated(dynamic data) async {
+    try {
+      // Parse wallet data and save locally
+      if (data is Map<String, dynamic>) {
+        final wallet = WalletModel.fromJson(data);
+        await LocalWallet().saveWallet(wallet);
+        AppLog.info('Wallet updated and saved locally.');
+      } else {
+        AppLog.error('Wallet update data is not a Map<String, dynamic>.');
+      }
+    } catch (e) {
+      AppLog.error('Error in handleWalletUpdated: $e');
+    }
+  }
+
   // NEW MESSAGES
   Future<void> handleNewMessage(Map<String, dynamic> data) async {
     final MessageModel newMsg = MessageModel.fromMap(data);
@@ -143,8 +161,9 @@ class SocketImplementations {
 
   // ONLINE USERS
   final ValueNotifier<List<String>> onlineUsers = ValueNotifier(<String>[]);
-  final ValueNotifier<Map<String, String>> lastSeenMap =
-      ValueNotifier(<String, String>{});
+  final ValueNotifier<Map<String, String>> lastSeenMap = ValueNotifier(
+    <String, String>{},
+  );
 
   Future<void> handleOnlineUsers(List<String> users) async {
     onlineUsers.value = users;
@@ -158,11 +177,14 @@ class SocketImplementations {
       onlineUsers.value = currentUsers;
     }
     // Remove from last seen map when user comes online
-    final Map<String, String> currentLastSeen =
-        Map<String, String>.from(lastSeenMap.value);
+    final Map<String, String> currentLastSeen = Map<String, String>.from(
+      lastSeenMap.value,
+    );
     currentLastSeen.remove(entityId);
     lastSeenMap.value = currentLastSeen;
-    debugPrint('User online: $entityId | Total online: ${onlineUsers.value.length}');
+    debugPrint(
+      'User online: $entityId | Total online: ${onlineUsers.value.length}',
+    );
   }
 
   void handleUserOffline(String entityId, String lastSeen) {
@@ -171,12 +193,15 @@ class SocketImplementations {
     onlineUsers.value = currentUsers;
     // Add to last seen map
     if (lastSeen.isNotEmpty) {
-      final Map<String, String> currentLastSeen =
-          Map<String, String>.from(lastSeenMap.value);
+      final Map<String, String> currentLastSeen = Map<String, String>.from(
+        lastSeenMap.value,
+      );
       currentLastSeen[entityId] = lastSeen;
       lastSeenMap.value = currentLastSeen;
     }
-    debugPrint('User offline: $entityId at $lastSeen | Total online: ${onlineUsers.value.length}');
+    debugPrint(
+      'User offline: $entityId at $lastSeen | Total online: ${onlineUsers.value.length}',
+    );
   }
 
   // Notifictions
