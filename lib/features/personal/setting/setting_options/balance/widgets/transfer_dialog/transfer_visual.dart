@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
 
-class WalletToStripeVisual extends StatelessWidget {
-  const WalletToStripeVisual({
-    required this.walletLabel,
-    required this.stripeLabel,
-    required this.walletColor,
-    required this.stripeColor,
-    required this.walletIcon,
-    required this.stripeIconText,
+class TransferVisual extends StatelessWidget {
+  const TransferVisual({
+    required this.sourceLabel,
+    required this.destinationLabel,
+    required this.sourceColor,
+    required this.destinationColor,
+    required this.sourceIcon,
+    required this.destinationIconText,
     super.key,
   });
-  final String walletLabel;
-  final String stripeLabel;
-  final Color walletColor;
-  final Color stripeColor;
-  final IconData walletIcon;
-  final String stripeIconText;
+
+  final String sourceLabel;
+  final String destinationLabel;
+  final Color sourceColor;
+  final Color destinationColor;
+  final IconData sourceIcon;
+  final String destinationIconText;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        _buildIconBox(icon: walletIcon, label: walletLabel, color: walletColor),
+        _buildIconBox(icon: sourceIcon, label: sourceLabel, color: sourceColor),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(width: 30, height: 2, color: Colors.grey[300]),
         ),
         _buildIconBox(
-          iconText: stripeIconText,
-          label: stripeLabel,
-          color: stripeColor,
+          iconText: destinationIconText,
+          label: destinationLabel,
+          color: destinationColor,
         ),
       ],
     );
@@ -48,7 +49,7 @@ class WalletToStripeVisual extends StatelessWidget {
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(

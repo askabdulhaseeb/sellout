@@ -5,7 +5,7 @@ import '../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../setting/setting_dashboard/view/screens/personal_setting_screen.dart';
-import '../../../../../setting/setting_options/balance/balance_screen.dart';
+import '../../../../../setting/setting_options/balance/screens/balance_screen.dart';
 import '../../screens/edit_profile_screen.dart';
 
 class ProfileEditAndSettingsWidget extends StatefulWidget {

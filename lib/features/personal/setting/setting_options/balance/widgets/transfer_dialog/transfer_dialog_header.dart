@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 
-class TransferToStripeHeader extends StatelessWidget {
-  const TransferToStripeHeader({
+class TransferDialogHeader extends StatelessWidget {
+  const TransferDialogHeader({
     required this.title,
     this.onBack,
     super.key,
@@ -10,6 +10,7 @@ class TransferToStripeHeader extends StatelessWidget {
 
   final VoidCallback? onBack;
   final String title;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -19,9 +20,7 @@ class TransferToStripeHeader extends StatelessWidget {
           child: Icon(
             Icons.arrow_back_ios,
             size: 20,
-            color: onBack == null
-                ? Theme.of(context).disabledColor
-                : null,
+            color: onBack == null ? Theme.of(context).disabledColor : null,
           ),
         ),
         const SizedBox(width: AppSpacing.sm),

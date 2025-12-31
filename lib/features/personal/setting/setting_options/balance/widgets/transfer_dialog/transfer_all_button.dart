@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/shadow_container.dart';
+
 class TransferAllButton extends StatelessWidget {
+  const TransferAllButton({
+    required this.label,
+    required this.symbol,
+    required this.amount,
+    this.onTap,
+    super.key,
+  });
+
   final VoidCallback? onTap;
   final String label;
   final String symbol;
-  final double walletBalance;
-  const TransferAllButton({
-    super.key,
-    this.onTap,
-    required this.label,
-    required this.symbol,
-    required this.walletBalance,
-  });
+  final double amount;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class TransferAllButton extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            '$label ($symbol${walletBalance.toStringAsFixed(2)})',
+            '$label ($symbol${amount.toStringAsFixed(2)})',
             style: TextStyle(fontSize: 14, color: Colors.grey[700]),
           ),
         ],

@@ -1,16 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../core/sources/data_state.dart';
-import '../../../../../services/get_it.dart';
-import '../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../payment/domain/entities/wallet_entity.dart';
-import '../../../payment/domain/params/create_payout_params.dart';
-import '../../../payment/domain/params/transfer_funds_params.dart';
-import '../../../payment/domain/usecase/create_payouts_usecase.dart';
-import '../../../payment/domain/usecase/get_wallet_usecase.dart';
-import '../../../payment/domain/usecase/transfer_funds_usecase.dart';
-import 'widgets/transfer_to_stripe_dialog.dart';
+import '../../../../../../core/sources/data_state.dart';
+import '../../../../../../services/get_it.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../payment/domain/entities/wallet_entity.dart';
+import '../../../../payment/domain/params/create_payout_params.dart';
+import '../../../../payment/domain/params/transfer_funds_params.dart';
+import '../../../../payment/domain/usecase/create_payouts_usecase.dart';
+import '../../../../payment/domain/usecase/get_wallet_usecase.dart';
+import '../../../../payment/domain/usecase/transfer_funds_usecase.dart';
+import '../widgets/transfer_dialog.dart';
 
 enum TransferState { idle, loading, success, error }
 
