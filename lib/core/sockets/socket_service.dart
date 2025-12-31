@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../features/personal/payment/data/sources/local/local_wallet.dart';
 import '../../features/personal/auth/stripe/data/models/stripe_connect_account_model.dart';
 import '../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../features/personal/chats/chat/data/sources/local/local_message.dart';
@@ -127,6 +128,8 @@ class SocketService with WidgetsBindingObserver {
         AppLog.error('Error handling userOnline: $e');
       }
     });
+
+    // Wallet updated - save payload locally
     socket!.on(AppStrings.walletUpdated, (dynamic data) async {
       AppLog.info(
         '🟢 Wallet updated: $data',
@@ -134,12 +137,25 @@ class SocketService with WidgetsBindingObserver {
       );
       if (data == null) return;
       try {
-        // You may want to parse the wallet data into a WalletModel/Entity here
-        // and update your local state or provider.
-        await _socketImplementations.handleWalletUpdated(data);
-        debugPrint('Wallet updated and local state refreshed.');
+        await LocalWallet().saveWalletFromPayload(data);
+        debugPrint('Wallet payload saved locally.');
       } catch (e) {
         AppLog.error('Error handling wallet-updated: $e');
+      }
+    });
+
+    // Payout status updated - also update wallet locally
+    socket!.on(AppStrings.payoutStatusUpdated, (dynamic data) async {
+      AppLog.info(
+        '🟢 Payout status updated: $data',
+        name: 'SocketService.payoutStatusUpdated',
+      );
+      if (data == null) return;
+      try {
+        await LocalWallet().saveWalletFromPayload(data);
+        debugPrint('Wallet payload saved locally from payout-status-updated.');
+      } catch (e) {
+        AppLog.error('Error handling payout-status-updated: $e');
       }
     });
 

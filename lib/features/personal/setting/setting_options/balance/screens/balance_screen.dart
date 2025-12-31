@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 import '../../../../payment/domain/entities/wallet_entity.dart';
+import '../../../../payment/data/sources/local/local_wallet.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../balance_skeleton.dart';
 import '../provider/balance_provider.dart';
 import '../widgets/balance_summary_card.dart';
 import '../widgets/funds_in_hold_section.dart';
 import '../widgets/transaction_history_section.dart';
-import '../widgets/transfer_dialog/transfer_dialog.dart';
-import '../widgets/withdraw_funds_dialog/withdraw_funds_dialog.dart';
 
 class BalanceScreen extends StatelessWidget {
   const BalanceScreen({super.key});
@@ -18,7 +17,7 @@ class BalanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<BalanceProvider>(
-      create: (_) => BalanceProvider()..fetchWallet(isRefresh: true),
+      create: (_) => BalanceProvider()..initFromCache(),
       child: const _BalanceScreenContent(),
     );
   }
@@ -26,40 +25,6 @@ class BalanceScreen extends StatelessWidget {
 
 class _BalanceScreenContent extends StatelessWidget {
   const _BalanceScreenContent();
-
-  void _showWithdrawDialog(BuildContext context, BalanceProvider provider) {
-    if (provider.wallet == null) return;
-
-    WithdrawFundsDialog.show(
-      context: context,
-      walletBalance: provider.walletBalance,
-      stripeBalance: provider.stripeBalance,
-      currency: provider.currency,
-      onTransferToStripe: () => _showTransferToStripeDialog(context, provider),
-      onWithdrawToBank: () => _showPayoutDialog(context, provider),
-    );
-  }
-
-  void _showTransferToStripeDialog(
-    BuildContext context,
-    BalanceProvider provider,
-  ) {
-    if (provider.wallet == null) return;
-    Navigator.of(context).pop();
-    TransferDialog.show(
-      context: context,
-      mode: TransferDialogMode.walletToStripe,
-    );
-  }
-
-  void _showPayoutDialog(BuildContext context, BalanceProvider provider) {
-    if (provider.wallet == null) return;
-    Navigator.of(context).pop();
-    TransferDialog.show(
-      context: context,
-      mode: TransferDialogMode.stripeToBank,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +51,17 @@ class _BalanceScreenContent extends StatelessWidget {
                           child: Text('retry'.tr()),
                         ),
                       ],
-                    ), 
+                    ),
                   ),
                 );
               }
 
-              final WalletEntity? wallet = provider.wallet;
+              final String walletId = LocalAuth.stripeAccountId ?? '';
+              final WalletEntity? wallet =
+                  (walletId.isNotEmpty
+                      ? LocalWallet().getWallet(walletId)
+                      : null) ??
+                  provider.wallet;
               if (wallet == null) {
                 return const BalanceSkeleton();
               }
@@ -102,12 +72,7 @@ class _BalanceScreenContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     BalanceSummaryCard(
-                      wallet: wallet,
-                      isWithdrawing: provider.isProcessing,
-                      isRefreshing: provider.refreshing,
-                      onWithdrawTap: () =>
-                          _showWithdrawDialog(context, provider),
-                      onRefreshTap: () => provider.fetchWallet(isRefresh: true),
+                   
                     ),
                     const SizedBox(height: 16),
                     FundsInHoldSection(fundsInHold: wallet.fundsInHold),
