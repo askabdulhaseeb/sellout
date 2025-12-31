@@ -9,7 +9,7 @@ import '../../../../payment/domain/params/transfer_funds_params.dart';
 import '../../../../payment/domain/usecase/create_payouts_usecase.dart';
 import '../../../../payment/domain/usecase/get_wallet_usecase.dart';
 import '../../../../payment/domain/usecase/transfer_funds_usecase.dart';
-import '../widgets/transfer_dialog.dart';
+import '../widgets/transfer_dialog/transfer_dialog.dart';
 
 enum TransferState { idle, loading, success, error }
 
@@ -37,14 +37,12 @@ class BalanceProvider extends ChangeNotifier {
   bool get isError => _transferState == TransferState.error;
 
   double get walletBalance => _wallet?.withdrawableBalance ?? 0;
-  double get stripeBalance =>
-      _wallet?.amountInConnectedAccount?.available ?? 0;
+  double get stripeBalance => _wallet?.amountInConnectedAccount?.available ?? 0;
   String get currency => _wallet?.currency ?? 'USD';
 
-  double get currentBalance =>
-      _currentMode == TransferDialogMode.stripeToBank
-          ? stripeBalance
-          : walletBalance;
+  double get currentBalance => _currentMode == TransferDialogMode.stripeToBank
+      ? stripeBalance
+      : walletBalance;
 
   void setTransferMode(TransferDialogMode mode) {
     _currentMode = mode;
@@ -66,6 +64,13 @@ class BalanceProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWallet({bool isRefresh = false}) async {
+    _prepareWalletFetch(isRefresh);
+    final String walletId = LocalAuth.stripeAccountId ?? '';
+    final DataState<WalletEntity> result = await _getWallet(walletId);
+    _handleWalletFetchResult(result);
+  }
+
+  void _prepareWalletFetch(bool isRefresh) {
     if (isRefresh) {
       _refreshing = true;
     } else {
@@ -73,11 +78,14 @@ class BalanceProvider extends ChangeNotifier {
     }
     _error = null;
     notifyListeners();
+  }
 
-    final String walletId = LocalAuth.stripeAccountId ?? '';
+  Future<DataState<WalletEntity>> _getWallet(String walletId) async {
     final GetWalletUsecase usecase = GetWalletUsecase(locator());
-    final DataState<WalletEntity> result = await usecase.call(walletId);
+    return await usecase.call(walletId);
+  }
 
+  void _handleWalletFetchResult(DataState<WalletEntity> result) {
     if (result is DataSuccess && result.entity != null) {
       _wallet = result.entity;
       _loading = false;
@@ -92,91 +100,92 @@ class BalanceProvider extends ChangeNotifier {
 
   Future<bool> executeTransfer() async {
     final String walletId = LocalAuth.stripeAccountId ?? '';
+    if (!_validateTransfer(walletId)) return false;
+    _setTransferLoading();
+    final DataState<bool> transferResult = await _performTransfer(walletId);
+    return _handleTransferResult(transferResult);
+  }
+
+  bool _validateTransfer(String walletId) {
     if (walletId.isEmpty) {
-      _transferState = TransferState.error;
-      _transferError = 'something_wrong'.tr();
-      notifyListeners();
+      _setTransferError('something_wrong'.tr());
       return false;
     }
-
     if (_transferAmount <= 0) {
-      _transferState = TransferState.error;
-      _transferError = 'nothing_to_withdraw'.tr();
-      notifyListeners();
+      _setTransferError('nothing_to_withdraw'.tr());
       return false;
     }
+    return true;
+  }
 
+  void _setTransferLoading() {
     _transferState = TransferState.loading;
     _transferError = null;
     notifyListeners();
+  }
 
+  void _setTransferError(String error) {
+    _transferState = TransferState.error;
+    _transferError = error;
+    notifyListeners();
+  }
+
+  Future<DataState<bool>> _performTransfer(String walletId) async {
     final TransferFundsUsecase transferUsecase = TransferFundsUsecase(
       locator(),
     );
-    final DataState<bool> transferResult = await transferUsecase.call(
+    return await transferUsecase.call(
       TransferFundsParams(
         walletId: walletId,
         amount: _transferAmount,
         currency: currency,
       ),
     );
+  }
 
+  bool _handleTransferResult(DataState<bool> transferResult) {
     if (transferResult is DataSuccess && transferResult.entity == true) {
       _transferState = TransferState.success;
       notifyListeners();
       fetchWallet(isRefresh: true);
       return true;
     } else {
-      _transferState = TransferState.error;
-      _transferError =
-          transferResult.exception?.message ?? 'transfer_failed'.tr();
-      notifyListeners();
+      _setTransferError(
+        transferResult.exception?.message ?? 'transfer_failed'.tr(),
+      );
       return false;
     }
   }
 
   Future<bool> executePayout() async {
     final String walletId = LocalAuth.stripeAccountId ?? '';
-    if (walletId.isEmpty) {
-      _transferState = TransferState.error;
-      _transferError = 'something_wrong'.tr();
-      notifyListeners();
-      return false;
-    }
+    if (!_validateTransfer(walletId)) return false;
+    _setTransferLoading();
+    final DataState<bool> payoutResult = await _performPayout(walletId);
+    return _handlePayoutResult(payoutResult);
+  }
 
-    if (_transferAmount <= 0) {
-      _transferState = TransferState.error;
-      _transferError = 'nothing_to_withdraw'.tr();
-      notifyListeners();
-      return false;
-    }
-
-    _transferState = TransferState.loading;
-    _transferError = null;
-    notifyListeners();
-
-    final CreatePayoutsUsecase payoutsUsecase = CreatePayoutsUsecase(
-      locator(),
-    );
-    final DataState<WalletEntity> payoutResult = await payoutsUsecase.call(
+  Future<DataState<bool>> _performPayout(String walletId) async {
+    final CreatePayoutsUsecase payoutsUsecase = CreatePayoutsUsecase(locator());
+    return await payoutsUsecase.call(
       CreatePayoutParams(
         walletId: walletId,
         amount: _transferAmount,
         currency: currency,
       ),
     );
+  }
 
-    if (payoutResult is DataSuccess && payoutResult.entity != null) {
-      _wallet = payoutResult.entity;
-      _transferState = TransferState.success;
+  bool _handlePayoutResult(DataState<bool> payoutResult) {
+    if (payoutResult is DataSuccess) {
       notifyListeners();
-      fetchWallet(isRefresh: true);
+      // Let UI react to success before refreshing wallet
+      Future<void>.microtask(() => fetchWallet(isRefresh: true));
       return true;
     } else {
-      _transferState = TransferState.error;
-      _transferError =
-          payoutResult.exception?.message ?? 'withdraw_failed'.tr();
-      notifyListeners();
+      _setTransferError(
+        payoutResult.exception?.message ?? 'withdraw_failed'.tr(),
+      );
       return false;
     }
   }

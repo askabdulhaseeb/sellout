@@ -1,17 +1,15 @@
 import '../../../../../core/usecase/usecase.dart';
-import '../../data/models/wallet_model.dart';
-import '../entities/wallet_entity.dart';
 import '../params/create_payout_params.dart';
-import '../repositories/payment_repository.dart';
+import '../repositories/wallet_repository.dart';
 
 class CreatePayoutsUsecase
-    implements UseCase<WalletEntity, CreatePayoutParams> {
+    implements UseCase<bool, CreatePayoutParams> {
   const CreatePayoutsUsecase(this.repository);
 
-  final PaymentRepository repository;
+  final WalletRepository repository;
 
   @override
-  Future<DataState<WalletModel>> call(CreatePayoutParams params) async {
+  Future<DataState<bool>> call(CreatePayoutParams params) async {
     return await repository.createPayouts(params);
   }
 }
