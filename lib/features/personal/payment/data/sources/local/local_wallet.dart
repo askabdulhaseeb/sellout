@@ -2,12 +2,14 @@ import 'package:hive_ce_flutter/adapters.dart';
 import '../../../domain/entities/wallet_entity.dart';
 import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
-
 import '../../models/wallet_funds_in_hold_model.dart';
 
 class LocalWallet extends LocalHiveBox<WalletEntity> {
   @override
   String get boxName => AppStrings.localWalletBox;
+
+  @override
+  bool get requiresEncryption => true;
 
   Box<WalletEntity> get _box => box;
 
@@ -64,22 +66,22 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
   }
 
   Future<void> saveFundsInHold(WalletFundsInHoldModel model) async {
-    final box = await getFundsInHoldBox();
+    final Box<WalletFundsInHoldModel> box = await getFundsInHoldBox();
     await box.put(model.fundId, model);
   }
 
   WalletFundsInHoldModel? getFundsInHoldById(String fundId) {
-    final box = _fundsInHoldBox;
+    final Box<WalletFundsInHoldModel>? box = _fundsInHoldBox;
     return box?.get(fundId);
   }
 
   List<WalletFundsInHoldModel> getAllFundsInHold() {
-    final box = _fundsInHoldBox;
+    final Box<WalletFundsInHoldModel>? box = _fundsInHoldBox;
     return box?.values.toList() ?? <WalletFundsInHoldModel>[];
   }
 
   Future<void> clearFundsInHold(String fundId) async {
-    final box = await getFundsInHoldBox();
+    final Box<WalletFundsInHoldModel> box = await getFundsInHoldBox();
     await box.delete(fundId);
   }
 
@@ -87,7 +89,7 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
     String fundId,
     WalletFundsInHoldModel Function(WalletFundsInHoldModel) update,
   ) async {
-    final box = await getFundsInHoldBox();
+    final Box<WalletFundsInHoldModel> box = await getFundsInHoldBox();
     final WalletFundsInHoldModel? model = box.get(fundId);
     if (model == null) return;
     final WalletFundsInHoldModel updated = update(model);

@@ -335,6 +335,7 @@ class AppStrings {
   static String get userOnline => 'userOnline';
   static String get userOffline => 'userOffline';
   static String get walletUpdated => 'wallet-updated';
+  static String get payoutStatusUpdated => 'payout-status-updated';
   static String get onboardingSuccess => 'onboarding-success';
   static String get updatePinnedMessage => 'update-pinned-message';
   static String get newPinnedMessage => 'new-pinned-message';
