@@ -245,6 +245,7 @@ class HiveDB {
     await LocalColors().refresh();
     await LocalOrders().refresh();
     await LocalNotifications().refresh();
+    await LocalWallet().refresh();
     // Initialize the unread notification count after box is ready
     LocalNotifications.initializeUnreadCount();
     await LocalServiceCategory().refresh();

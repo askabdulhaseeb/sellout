@@ -4,6 +4,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../payment/domain/entities/wallet_entity.dart';
+import '../../../../payment/data/sources/local/local_wallet.dart';
 import '../../../../payment/domain/params/create_payout_params.dart';
 import '../../../../payment/domain/params/get_wallet_params.dart';
 import '../../../../payment/domain/params/transfer_funds_params.dart';
@@ -15,6 +16,37 @@ import '../widgets/transfer_dialog/transfer_dialog.dart';
 enum TransferState { idle, loading, success, error }
 
 class BalanceProvider extends ChangeNotifier {
+  BalanceProvider() {
+    LocalWallet.walletUpdatedNotifier.addListener(_onLocalWalletUpdated);
+  }
+
+  // Load cached wallet immediately so UI shows local data without waiting
+  // for network fetch.
+  void initFromCache() {
+    final String currentId = LocalAuth.stripeAccountId ?? '';
+    if (currentId.isEmpty) return;
+    final WalletEntity? local = LocalWallet().getWallet(currentId);
+    if (local != null) {
+      _wallet = local;
+      _loading = false;
+      _refreshing = false;
+      notifyListeners();
+    }
+  }
+
+  void _onLocalWalletUpdated() {
+    final String? updatedId = LocalWallet.walletUpdatedNotifier.value;
+    final String currentId = LocalAuth.stripeAccountId ?? '';
+    if (updatedId == null || updatedId != currentId) return;
+    final WalletEntity? local = LocalWallet().getWallet(currentId);
+    if (local != null) {
+      _wallet = local;
+      _loading = false;
+      _refreshing = false;
+      notifyListeners();
+    }
+  }
+
   void setLoading(bool value) {
     _loading = value;
     notifyListeners();
@@ -164,7 +196,6 @@ class BalanceProvider extends ChangeNotifier {
     if (transferResult is DataSuccess && transferResult.entity == true) {
       _transferState = TransferState.success;
       notifyListeners();
-      fetchWallet(isRefresh: true);
       return true;
     } else {
       _setTransferError(
@@ -196,8 +227,6 @@ class BalanceProvider extends ChangeNotifier {
   bool _handlePayoutResult(DataState<bool> payoutResult) {
     if (payoutResult is DataSuccess) {
       notifyListeners();
-      // Let UI react to success before refreshing wallet
-      Future<void>.microtask(() => fetchWallet(isRefresh: true));
       return true;
     } else {
       _setTransferError(
@@ -213,5 +242,13 @@ class BalanceProvider extends ChangeNotifier {
     } else {
       return executePayout();
     }
+  }
+
+  @override
+  void dispose() {
+    try {
+      LocalWallet.walletUpdatedNotifier.removeListener(_onLocalWalletUpdated);
+    } catch (_) {}
+    super.dispose();
   }
 }

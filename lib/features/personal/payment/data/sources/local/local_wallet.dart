@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import '../../../domain/entities/wallet_entity.dart';
+import '../../models/wallet_model.dart';
 import '../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../models/wallet_funds_in_hold_model.dart';
@@ -13,9 +17,15 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
 
   Box<WalletEntity> get _box => box;
 
+  /// Notifier that emits the walletId of the last updated wallet.
+  static final ValueNotifier<String?> walletUpdatedNotifier =
+      ValueNotifier<String?>(null);
+
   /// Save or update the wallet by id
   Future<void> saveWallet(WalletEntity wallet) async {
     await _box.put(wallet.walletId, wallet);
+    // Notify listeners that this wallet was updated
+    walletUpdatedNotifier.value = wallet.walletId;
   }
 
   /// Get wallet by id
@@ -24,6 +34,7 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
   /// Remove wallet by id
   Future<void> clearWallet(String walletId) async {
     await _box.delete(walletId);
+    walletUpdatedNotifier.value = walletId;
   }
 
   /// Update wallet with a function that modifies the WalletEntity
@@ -83,6 +94,31 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
   Future<void> clearFundsInHold(String fundId) async {
     final Box<WalletFundsInHoldModel> box = await getFundsInHoldBox();
     await box.delete(fundId);
+  }
+
+  /// Parse incoming socket payload (Map or JSON string) and save the wallet.
+  Future<void> saveWalletFromPayload(dynamic data) async {
+    if (data == null) return;
+
+    WalletModel? model;
+    try {
+      if (data is WalletModel) {
+        model = data;
+      } else if (data is Map<String, dynamic>) {
+        model = WalletModel.fromJson(Map<String, dynamic>.from(data));
+      } else if (data is String) {
+        final Map<String, dynamic> parsed =
+            jsonDecode(data) as Map<String, dynamic>;
+        model = WalletModel.fromJson(parsed);
+      }
+    } catch (e) {
+      // Ignore parse errors here; caller can log if needed.
+      return;
+    }
+
+    if (model != null) {
+      await saveWallet(model);
+    }
   }
 
   Future<void> updateFundsInHold(
