@@ -102,15 +102,15 @@ class _TransferToStripeDialogState extends State<TransferToStripeDialog> {
 
     final NavigatorState navigator = Navigator.of(context);
 
-    await provider.executeCurrentTransfer();
+    final bool success = await provider.executeCurrentTransfer();
 
     if (!mounted) return;
 
-    if (provider.isError) {
-      _showSnackBar(provider.transferError ?? 'something_wrong'.tr());
-    } else if (provider.isSuccess) {
+    if (success) {
       HapticFeedback.heavyImpact();
       navigator.pop();
+    } else {
+      _showSnackBar(provider.transferError ?? 'something_wrong'.tr());
     }
   }
 
