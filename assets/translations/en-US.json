@@ -1339,6 +1339,8 @@
   "saving": "Saving...",
   "item": "Item",
   "grand_total": "Grand total",
+  "transfer_success": "Transfer successful",
+  "transfer_failed": "Transfer failed. Please try again.",
   
    "legal_documents": {
     "title": "Legal Documents",

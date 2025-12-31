@@ -3,12 +3,12 @@ import '../../../../../../../core/constants/app_spacings.dart';
 
 class TransferToStripeHeader extends StatelessWidget {
   const TransferToStripeHeader({
-    required this.onBack,
     required this.title,
+    this.onBack,
     super.key,
   });
 
-  final VoidCallback onBack;
+  final VoidCallback? onBack;
   final String title;
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,13 @@ class TransferToStripeHeader extends StatelessWidget {
       children: <Widget>[
         GestureDetector(
           onTap: onBack,
-          child: const Icon(Icons.arrow_back_ios, size: 20),
+          child: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: onBack == null
+                ? Theme.of(context).disabledColor
+                : null,
+          ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Text(

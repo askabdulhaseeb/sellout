@@ -1,16 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/theme/app_colors.dart';
 
 class SlideToTransferSlider extends StatefulWidget {
   const SlideToTransferSlider({
     required this.canTransfer,
     required this.onTransfer,
+    this.isLoading = false,
     super.key,
   });
 
   final bool canTransfer;
   final VoidCallback onTransfer;
+  final bool isLoading;
 
   @override
   State<SlideToTransferSlider> createState() => _SlideToTransferSliderState();
@@ -30,6 +31,13 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
     if (oldWidget.canTransfer && !widget.canTransfer) {
       _resetSlider();
     }
+    if (widget.isLoading) {
+      if (_sliderValue != 1.0) {
+        setState(() {
+          _sliderValue = 1.0;
+        });
+      }
+    }
   }
 
   void _resetSlider() {
@@ -44,10 +52,10 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
 
   void _handleDragUpdate(double dx) {
     if (!mounted) return;
+    if (widget.isLoading) return;
     double newValue = ((dx - _trackPadding) / _trackWidth).clamp(0.0, 1.0);
-    // Prevent getting stuck at the beginning by requiring a minimum drag
     if (_sliderValue == 0.0 && newValue < 0.1) {
-      return; // Don't update for tiny movements at start
+      return;
     }
     if (_sliderValue != newValue) {
       setState(() {
@@ -58,59 +66,67 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
 
   void _handleDragEnd() {
     if (!mounted) return;
+    if (widget.isLoading) return;
     if (_isDragging) {
       setState(() {
         _isDragging = false;
       });
     }
-    // Check if user slid past 90%
     if (_sliderValue >= 0.9) {
-      // Call after frame to avoid setState in build
+      setState(() {
+        _sliderValue = 1.0;
+      });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onTransfer();
       });
+    } else {
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted && _sliderValue != 0.0 && !widget.isLoading) {
+          setState(() {
+            _sliderValue = 0.0;
+          });
+        }
+      });
     }
-    // Reset slider after a short delay
-    Future.delayed(const Duration(milliseconds: 200), () {
-      if (mounted && _sliderValue != 0.0) {
-        setState(() {
-          _sliderValue = 0.0;
-        });
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        // Calculate dimensions once
-        _thumbSize = 44.0; // Fixed size for better control
+        _thumbSize = 44.0;
         _trackPadding = 4.0;
         _containerHeight = 52.0;
         _trackWidth = constraints.maxWidth - 2 * _trackPadding - _thumbSize;
 
         final double thumbLeft = _trackPadding + (_sliderValue * _trackWidth);
 
-        final bool enabled = widget.canTransfer;
-        final Color mainColor = enabled
-            ? AppColors.primaryColor
-            : Colors.grey[400]!;
-        final Color backgroundColor = enabled
-            ? AppColors.primaryColor.withOpacity(0.08)
-            : Colors.grey[200]!;
-        final Color progressColor = enabled
-            ? AppColors.primaryColor.withOpacity(0.6)
-            : Colors.grey[400]!;
+        final bool enabled = widget.canTransfer && !widget.isLoading;
+
+        final Color mainColor;
+        final Color backgroundColor;
+        final Color progressColor;
+
+        if (widget.isLoading || enabled) {
+          mainColor = colorScheme.primary;
+          backgroundColor = colorScheme.primary.withOpacity(0.08);
+          progressColor = colorScheme.primary.withOpacity(0.6);
+        } else {
+          mainColor = colorScheme.outline;
+          backgroundColor = colorScheme.surfaceContainerHighest;
+          progressColor = colorScheme.outline;
+        }
 
         return Container(
           height: _containerHeight,
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(12.0), // Less rounded
-            border: enabled
+            borderRadius: BorderRadius.circular(12.0),
+            border: enabled || widget.isLoading
                 ? Border.all(
-                    color: AppColors.primaryColor.withOpacity(0.2),
+                    color: colorScheme.primary.withOpacity(0.2),
                     width: 1.5,
                   )
                 : null,
@@ -118,7 +134,6 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
           child: Stack(
             alignment: Alignment.centerLeft,
             children: <Widget>[
-              // Progress bar background (full width, behind thumb)
               Positioned(
                 left: _trackPadding,
                 right: _trackPadding + _thumbSize / 2,
@@ -126,13 +141,12 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
               ),
 
-              // Progress fill
               Positioned(
                 left: _trackPadding,
                 top: 0,
@@ -143,12 +157,11 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
                   height: _containerHeight,
                   decoration: BoxDecoration(
                     color: progressColor,
-                    borderRadius: BorderRadius.circular(8.0), // Less rounded
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
               ),
 
-              // Slider thumb
               Positioned(
                 left: thumbLeft,
                 top: (_containerHeight - _thumbSize) / 2,
@@ -188,50 +201,30 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
                           _resetSlider();
                         }
                       : null,
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     width: _thumbSize,
                     height: _thumbSize,
                     decoration: BoxDecoration(
                       color: mainColor,
-                      borderRadius: BorderRadius.circular(
-                        10.0,
-                      ), // Square with slight rounding
-                      boxShadow: [
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: colorScheme.shadow.withOpacity(0.15),
                           blurRadius: 6,
                           offset: const Offset(0, 3),
-                          spreadRadius: 0,
                         ),
                       ],
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.8),
+                        color: colorScheme.onPrimary.withOpacity(0.8),
                         width: 2.0,
                       ),
                     ),
-                    child: Center(
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 150),
-                        child: _sliderValue >= 0.9
-                            ? Icon(
-                                Icons.check_rounded,
-                                color: Colors.white,
-                                size: 24,
-                                key: const ValueKey('check'),
-                              )
-                            : Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Colors.white,
-                                size: 20,
-                                key: const ValueKey('arrow'),
-                              ),
-                      ),
-                    ),
+                    child: Center(child: _buildThumbIcon(colorScheme)),
                   ),
                 ),
               ),
 
-              // Instruction text
               if (!_isDragging && _sliderValue < 0.1 && enabled)
                 Positioned(
                   left: _trackPadding + _thumbSize + 16,
@@ -243,7 +236,7 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
                     child: Text(
                       'slide_to_transfer'.tr(),
                       style: TextStyle(
-                        color: AppColors.primaryColor,
+                        color: colorScheme.primary,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -255,6 +248,37 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildThumbIcon(ColorScheme colorScheme) {
+    if (widget.isLoading) {
+      return SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          color: colorScheme.onPrimary,
+          strokeWidth: 2.5,
+          key: const ValueKey<String>('loading'),
+        ),
+      );
+    }
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 150),
+      child: _sliderValue >= 0.9
+          ? Icon(
+              Icons.check_rounded,
+              color: colorScheme.onPrimary,
+              size: 24,
+              key: const ValueKey<String>('check'),
+            )
+          : Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: colorScheme.onPrimary,
+              size: 20,
+              key: const ValueKey<String>('arrow'),
+            ),
     );
   }
 }
