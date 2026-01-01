@@ -35,6 +35,32 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
     _colorFuture = ColorOptionsApi().getColors();
   }
 
+  String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
+  }
+
+  /// Extract base color name from label by removing shade prefixes like "Light", "Dark", etc.
+  String _getBaseColorName(String label) {
+    final List<String> shadePrefixes = <String>[
+      'light ',
+      'dark ',
+      'pale ',
+      'bright ',
+      'deep ',
+      'soft ',
+      'vivid ',
+    ];
+    String lowerLabel = label.toLowerCase();
+    for (final String prefix in shadePrefixes) {
+      if (lowerLabel.startsWith(prefix)) {
+        lowerLabel = lowerLabel.substring(prefix.length);
+        break;
+      }
+    }
+    return _capitalizeFirst(lowerLabel);
+  }
+
   @override
   Widget build(BuildContext context) {
     final MarketPlaceProvider formPro = Provider.of(context, listen: false);
@@ -62,31 +88,55 @@ class _MultiColorDropdownState extends State<MultiColorDropdown> {
           return Text('no_colors_available'.tr());
         }
 
+        // Group colors by base color name and collect all shades
+        final Map<String, List<ColorOptionEntity>> colorGroups =
+            <String, List<ColorOptionEntity>>{};
+        for (final ColorOptionEntity color in colors) {
+          final String baseColor = _getBaseColorName(color.label).toLowerCase();
+          colorGroups.putIfAbsent(baseColor, () => <ColorOptionEntity>[]);
+          colorGroups[baseColor]!.add(color);
+        }
+
         return MultiSelectionDropdown<String>(
           title: widget.title,
           hint: 'color'.tr(),
           selectedItems: widget.selectedColors,
-          items: colors.map((ColorOptionEntity color) {
+          items: colorGroups.entries.map((MapEntry<String, List<ColorOptionEntity>> entry) {
+            final String baseColorName = entry.key;
+            final List<ColorOptionEntity> shades = entry.value;
+
+            // Get colors for gradient (or single color)
+            final List<Color> shadeColors = shades.map((ColorOptionEntity shade) {
+              return Color(int.parse('0xFF${shade.value.replaceAll('#', '')}'));
+            }).toList();
+
             return DropdownMenuItem<String>(
-              value: color.value,
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.spaceEvenly,
-                spacing: 2,
+              value: baseColorName,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 5,
-                    backgroundColor: Color(
-                      int.parse('0xFF${color.value.replaceAll('#', '')}'),
+                  Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: shadeColors.length > 1
+                          ? SweepGradient(colors: shadeColors)
+                          : null,
+                      color: shadeColors.length == 1 ? shadeColors.first : null,
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 0.5,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 6),
                   Text(
-                    color.label,
+                    _capitalizeFirst(baseColorName),
                     style: TextTheme.of(context)
                         .labelSmall
                         ?.copyWith(color: Theme.of(context).primaryColor),
-                  )
+                  ),
                 ],
               ),
             );
