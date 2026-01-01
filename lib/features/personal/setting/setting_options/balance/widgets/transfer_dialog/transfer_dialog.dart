@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
-import '../../provider/balance_provider.dart';
+import '../../provider/wallet_provider.dart';
 import 'widgets/transfer_dialog_header.dart';
 import 'widgets/step_indicator.dart';
 import 'widgets/transfer_visual.dart';
@@ -24,13 +24,13 @@ class TransferDialog extends StatefulWidget {
     required BuildContext context,
     required TransferDialogMode mode,
   }) {
-    final BalanceProvider provider = context.read<BalanceProvider>();
+    final WalletProvider provider = context.read<WalletProvider>();
     provider.setTransferMode(mode);
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ChangeNotifierProvider<BalanceProvider>.value(
+      builder: (_) => ChangeNotifierProvider<WalletProvider>.value(
         value: provider,
         child: TransferDialog(mode: mode),
       ),
@@ -62,14 +62,14 @@ class _TransferDialogState extends State<TransferDialog> {
     if (_isUpdatingText) return;
     final String text = _amountController.text.replaceAll(',', '.');
     final double value = double.tryParse(text) ?? 0.0;
-    final BalanceProvider provider = context.read<BalanceProvider>();
+    final WalletProvider provider = context.read<WalletProvider>();
     if (value != provider.transferAmount) {
       provider.setTransferAmount(value);
     }
   }
 
   void _setPercentage(double percentage) {
-    final BalanceProvider provider = context.read<BalanceProvider>();
+    final WalletProvider provider = context.read<WalletProvider>();
     final double amount = provider.currentBalance * percentage;
     provider.setTransferAmount(amount);
     _isUpdatingText = true;
@@ -93,7 +93,7 @@ class _TransferDialogState extends State<TransferDialog> {
   }
 
   Future<void> _onSliderEnd() async {
-    final BalanceProvider provider = context.read<BalanceProvider>();
+    final WalletProvider provider = context.read<WalletProvider>();
     if (provider.isProcessing) return;
 
     HapticFeedback.mediumImpact();
@@ -119,8 +119,8 @@ class _TransferDialogState extends State<TransferDialog> {
   Widget build(BuildContext context) {
     final bool isPayout = widget.mode == TransferDialogMode.stripeToBank;
 
-    return Consumer<BalanceProvider>(
-      builder: (BuildContext context, BalanceProvider provider, Widget? child) {
+    return Consumer<WalletProvider>(
+      builder: (BuildContext context, WalletProvider provider, Widget? child) {
         final String symbol = CountryHelper.currencySymbolHelper(
           provider.currency,
         );

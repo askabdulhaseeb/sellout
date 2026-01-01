@@ -15,27 +15,24 @@ class WalletRepositoryImpl implements WalletRepository {
 
   @override
   Future<DataState<WalletModel>> getWallet(GetWalletParams params) async {
-    final String walletId = params.walletId;
-    if (params.refresh) {
+    try {
       // Always fetch from remote, update local, return
-      final DataState<WalletModel> remoteResult = await remoteApi.getWallet(params);
+      final DataState<WalletModel> remoteResult = await remoteApi.getWallet(
+        params,
+      );
+
       if (remoteResult is DataSuccess && remoteResult.data != null) {
-        await localWallet.saveWallet(remoteResult.entity!);
+        final WalletModel wallet = remoteResult.entity!;
+        await localWallet.saveWallet(wallet);
       }
       return remoteResult;
-    } else {
-      // Try local first
-      final WalletEntity? local = localWallet.getWallet(walletId);
-      if (local != null) {
-        return DataSuccess<WalletModel>('', local as WalletModel);
-      } else {
-        // Fallback to remote, update local, return
-        final DataState<WalletModel> remoteResult = await remoteApi.getWallet(params);
-        if (remoteResult is DataSuccess && remoteResult.data != null) {
-          await localWallet.saveWallet(remoteResult.entity!);
-        }
-        return remoteResult;
+    } catch (e) {
+      // If remote fails, try local as fallback
+      final WalletEntity? local = localWallet.getWallet();
+      if (local != null && local is WalletModel) {
+        return DataSuccess<WalletModel>('', local);
       }
+      rethrow;
     }
   }
 

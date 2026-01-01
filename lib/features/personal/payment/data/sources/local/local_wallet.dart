@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import '../../../domain/entities/wallet_entity.dart';
@@ -23,13 +22,16 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
 
   /// Save or update the wallet by id
   Future<void> saveWallet(WalletEntity wallet) async {
-    await _box.put(wallet.walletId, wallet);
+    await _box.put(AppStrings.localWalletBox, wallet);
     // Notify listeners that this wallet was updated
     walletUpdatedNotifier.value = wallet.walletId;
   }
 
   /// Get wallet by id
-  WalletEntity? getWallet(String walletId) => _box.get(walletId);
+  WalletEntity? getWallet() {
+    final WalletEntity? wallet = _box.get(AppStrings.localWalletBox);
+    return wallet;
+  }
 
   /// Remove wallet by id
   Future<void> clearWallet(String walletId) async {
@@ -42,7 +44,7 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
     String walletId,
     WalletEntity Function(WalletEntity) update,
   ) async {
-    final WalletEntity? wallet = getWallet(walletId);
+    final WalletEntity? wallet = getWallet();
     if (wallet == null) return;
     final WalletEntity updated = update(wallet);
     await saveWallet(updated);
@@ -53,13 +55,13 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
 
   /// Get transaction history for a wallet
   List<dynamic> getTransactionHistory(String walletId) {
-    final WalletEntity? wallet = getWallet(walletId);
+    final WalletEntity? wallet = getWallet();
     return wallet?.transactionHistory ?? <dynamic>[];
   }
 
   /// Get funds in hold for a wallet
   List<dynamic> getFundsInHold(String walletId) {
-    final WalletEntity? wallet = getWallet(walletId);
+    final WalletEntity? wallet = getWallet();
     return wallet?.fundsInHold ?? <dynamic>[];
   }
 

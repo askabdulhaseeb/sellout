@@ -15,8 +15,8 @@ import '../widgets/transfer_dialog/transfer_dialog.dart';
 
 enum TransferState { idle, loading, success, error }
 
-class BalanceProvider extends ChangeNotifier {
-  BalanceProvider() {
+class WalletProvider extends ChangeNotifier {
+  WalletProvider() {
     LocalWallet.walletUpdatedNotifier.addListener(_onLocalWalletUpdated);
   }
 
@@ -24,13 +24,18 @@ class BalanceProvider extends ChangeNotifier {
   // for network fetch.
   void initFromCache() {
     final String currentId = LocalAuth.stripeAccountId ?? '';
-    if (currentId.isEmpty) return;
-    final WalletEntity? local = LocalWallet().getWallet(currentId);
+    if (currentId.isEmpty) {
+      _loading = true; 
+      return;
+    }
+    final WalletEntity? local = LocalWallet().getWallet();
     if (local != null) {
       _wallet = local;
       _loading = false;
       _refreshing = false;
       notifyListeners();
+    } else {
+      _loading = true; 
     }
   }
 
@@ -38,11 +43,15 @@ class BalanceProvider extends ChangeNotifier {
     final String? updatedId = LocalWallet.walletUpdatedNotifier.value;
     final String currentId = LocalAuth.stripeAccountId ?? '';
     if (updatedId == null || updatedId != currentId) return;
-    final WalletEntity? local = LocalWallet().getWallet(currentId);
+    final WalletEntity? local = LocalWallet().getWallet();
     if (local != null) {
       _wallet = local;
       _loading = false;
       _refreshing = false;
+      notifyListeners();
+    } else {
+      // Local wallet was deleted or cleared
+      _wallet = null;
       notifyListeners();
     }
   }
@@ -107,12 +116,15 @@ class BalanceProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWallet({bool isRefresh = false}) async {
+    print('🔍 WalletProvider.fetchWallet called - isRefresh: $isRefresh');
     _prepareWalletFetch(isRefresh);
     final String walletId = LocalAuth.stripeAccountId ?? '';
+    print('🔍 WalletProvider.fetchWallet - walletId: $walletId');
     final DataState<WalletEntity> result = await _getWallet(
       walletId,
       isRefresh,
     );
+    print('🔍 WalletProvider.fetchWallet - result: $result');
     _handleWalletFetchResult(result);
   }
 
@@ -136,11 +148,16 @@ class BalanceProvider extends ChangeNotifier {
   }
 
   void _handleWalletFetchResult(DataState<WalletEntity> result) {
+    print(
+      '🔍 WalletProvider._handleWalletFetchResult - result type: ${result.runtimeType}',
+    );
     if (result is DataSuccess && result.entity != null) {
+      print('🔍 WalletProvider - Success! Wallet: ${result.entity}');
       _wallet = result.entity;
       setLoading(false);
       setRefreshing(false);
     } else {
+      print('🔍 WalletProvider - Failed! Error: ${result.exception?.message}');
       _error = result.exception?.message ?? 'something_wrong'.tr();
       setLoading(false);
       setRefreshing(false);
