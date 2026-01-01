@@ -8,63 +8,67 @@ import '../../../../../providers/marketplace_provider.dart';
 import 'multi_selection_color_dropdown.dart';
 
 class MarketFilterSizeColorWidget extends StatelessWidget {
-  const MarketFilterSizeColorWidget({
-    super.key,
-  });
+  const MarketFilterSizeColorWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MarketPlaceProvider>(builder:
-        (BuildContext context, MarketPlaceProvider marketPro, Widget? child) {
-      final List<DropdownOptionEntity> clothesSizes =
-          LocalCategoriesSource.clothesSizes ?? <DropdownOptionEntity>[];
-      final List<DropdownOptionEntity> footSizes =
-          LocalCategoriesSource.footSizes ?? <DropdownOptionEntity>[];
-      final List<DropdownOptionEntity> sizeOptions =
-          marketPro.cLothFootCategory == 'clothes' ? clothesSizes : footSizes;
-      return Row(
-        spacing: 4,
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Expanded(
-              flex: 2,
-              child: MultiSelectionDropdown<DropdownOptionEntity>(
-                title: 'sizes',
-                hint: 'sizes'.tr(),
-                items: sizeOptions
-                    .map(
-                      (DropdownOptionEntity e) =>
-                          DropdownMenuItem<DropdownOptionEntity>(
-                        value: e,
-                        child: Text(e.label),
-                      ),
-                    )
-                    .toList(),
-                selectedItems: sizeOptions
-                    .where((DropdownOptionEntity opt) =>
-                        marketPro.selectedSize.contains(opt.value.value))
-                    .toList(),
-                onChanged: (List<DropdownOptionEntity> newSelection) {
-                  // Convert entities to string values
-                  final List<String> selectedValues = newSelection
-                      .map((DropdownOptionEntity e) => e.value.value)
-                      .toList();
-                  marketPro.setSize(selectedValues);
-                },
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: MultiColorDropdown(
-              selectedColors: marketPro.selectedColor,
-              onColorsChanged: (List<String> value) =>
-                  marketPro.setColor(value),
-            ),
-          ),
-        ],
-      );
-    });
+    return Consumer<MarketPlaceProvider>(
+      builder:
+          (BuildContext context, MarketPlaceProvider marketPro, Widget? child) {
+            final List<DropdownOptionEntity> clothesSizes =
+                LocalCategoriesSource.clothesSizes ?? <DropdownOptionEntity>[];
+            final List<DropdownOptionEntity> footSizes =
+                LocalCategoriesSource.footSizes ?? <DropdownOptionEntity>[];
+            final List<DropdownOptionEntity> sizeOptions =
+                marketPro.cLothFootCategory == 'clothes'
+                ? clothesSizes
+                : footSizes;
+            return Row(
+              spacing: 4,
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Expanded(
+                    flex: 2,
+                    child: MultiSelectionDropdown<DropdownOptionEntity>(
+                      title: 'sizes',
+                      hint: 'sizes'.tr(),
+                      items: sizeOptions
+                          .map(
+                            (DropdownOptionEntity e) =>
+                                DropdownMenuItem<DropdownOptionEntity>(
+                                  value: e,
+                                  child: Text(e.label),
+                                ),
+                          )
+                          .toList(),
+                      selectedItems: sizeOptions
+                          .where(
+                            (DropdownOptionEntity opt) => marketPro.selectedSize
+                                .contains(opt.value.value),
+                          )
+                          .toList(),
+                      onChanged: (List<DropdownOptionEntity> newSelection) {
+                        // Convert entities to string values
+                        final List<String> selectedValues = newSelection
+                            .map((DropdownOptionEntity e) => e.value.value)
+                            .toList();
+                        marketPro.setSize(selectedValues);
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: MultiColorDropdown(
+                    selectedColors: marketPro.selectedColor,
+                    onColorsChanged: (List<String> value) =>
+                        marketPro.setColor(value),
+                  ),
+                ),
+              ],
+            );
+          },
+    );
   }
 }
