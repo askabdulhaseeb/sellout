@@ -5,6 +5,8 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../payment/domain/entities/wallet_entity.dart';
+import '../../../../payment/domain/entities/wallet_transaction_entity.dart';
+import '../../../../payment/domain/entities/wallet_funds_in_hold_entity.dart';
 import '../../../../payment/data/sources/local/local_wallet.dart';
 import '../../../../payment/domain/params/create_payout_params.dart';
 import '../../../../payment/domain/params/get_wallet_params.dart';
@@ -93,6 +95,10 @@ class WalletProvider extends ChangeNotifier {
 
   double get walletBalance => _wallet?.withdrawableBalance ?? 0;
   double get stripeBalance => _wallet?.amountInConnectedAccount?.available ?? 0;
+  List<WalletTransactionEntity> get transactionHistory =>
+      _wallet?.transactionHistory ?? <WalletTransactionEntity>[];
+  List<WalletFundsInHoldEntity> get fundsInHold =>
+      _wallet?.fundsInHold ?? <WalletFundsInHoldEntity>[];
   String get currency {
     // Try wallet currency first, then amount_in_connected_account currency
     final String walletCurrency = _wallet?.currency ?? '';
@@ -202,6 +208,13 @@ class WalletProvider extends ChangeNotifier {
     _transferState = TransferState.error;
     _transferError = error;
     notifyListeners();
+    // Reset error state after delay to allow retry
+    Future<void>.delayed(const Duration(milliseconds: 1500), () {
+      if (_transferState == TransferState.error) {
+        _transferState = TransferState.idle;
+        notifyListeners();
+      }
+    });
   }
 
   Future<DataState<bool>> _performTransfer(String walletId) async {
