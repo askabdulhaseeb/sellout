@@ -22,16 +22,8 @@ class SocketImplementations {
   // PAYOUT STATUS UPDATED
   Future<void> handlePayoutStatusUpdated(dynamic data) async {
     try {
-      // Parse wallet data and save locally (assume same structure as wallet-updated)
-      if (data is Map<String, dynamic>) {
-        final wallet = WalletModel.fromJson(data);
-        await LocalWallet().saveWallet(wallet);
-        AppLog.info('Payout status updated and wallet saved locally.');
-      } else {
-        AppLog.error(
-          'Payout status update data is not a Map<String, dynamic>.',
-        );
-      }
+      await LocalWallet().handlePayoutStatusUpdatedEvent(data);
+      AppLog.info('Payout status updated and wallet saved locally.');
     } catch (e) {
       AppLog.error('Error in handlePayoutStatusUpdated: $e');
     }
@@ -40,14 +32,8 @@ class SocketImplementations {
   // WALLET UPDATED
   Future<void> handleWalletUpdated(dynamic data) async {
     try {
-      // Parse wallet data and save locally
-      if (data is Map<String, dynamic>) {
-        final wallet = WalletModel.fromJson(data);
-        await LocalWallet().saveWallet(wallet);
-        AppLog.info('Wallet updated and saved locally.');
-      } else {
-        AppLog.error('Wallet update data is not a Map<String, dynamic>.');
-      }
+      await LocalWallet().handleWalletUpdatedEvent(data);
+      AppLog.info('Wallet updated and saved locally.');
     } catch (e) {
       AppLog.error('Error in handleWalletUpdated: $e');
     }

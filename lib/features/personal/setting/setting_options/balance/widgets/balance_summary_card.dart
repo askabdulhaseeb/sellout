@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../payment/data/sources/local/local_wallet.dart';
+import '../../../../payment/domain/entities/wallet_entity.dart';
 import '../provider/wallet_provider.dart';
 import 'transfer_dialog/transfer_dialog.dart';
 import 'withdraw_funds_dialog/withdraw_funds_dialog.dart';
@@ -10,7 +10,6 @@ import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/theme/app_colors.dart';
-import '../../../../payment/domain/entities/wallet_entity.dart';
 
 class BalanceSummaryCard extends StatelessWidget {
   const BalanceSummaryCard({super.key});
@@ -19,15 +18,12 @@ class BalanceSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<WalletProvider>(
       builder: (BuildContext context, WalletProvider provider, Widget? child) {
-        final WalletEntity? wallet = LocalWallet().getWallet();
         final String symbol = CountryHelper.currencySymbolHelper(
-          wallet?.currency ?? '',
+          provider.currency,
         );
 
         final bool isWithdrawing = provider.isProcessing;
         final bool isRefreshing = provider.refreshing;
-        final double stripeBalance =
-            wallet?.amountInConnectedAccount?.available ?? 0;
 
         return ShadowContainer(
           child: Column(
@@ -37,21 +33,20 @@ class BalanceSummaryCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               _BalancesSection(
                 symbol: symbol,
-                wallet: wallet,
-                stripeBalance: stripeBalance,
+                walletBalance: provider.walletBalance,
+                stripeBalance: provider.stripeBalance,
               ),
               const SizedBox(height: AppSpacing.md),
               _CurrencyUpdatedSection(
-                currency: wallet?.currency ?? '',
+                currency: provider.currency,
                 updatedAt: _formatTime(),
               ),
               const SizedBox(height: AppSpacing.md),
-              _StatsSection(symbol: symbol, wallet: wallet),
+              _StatsSection(symbol: symbol, wallet: provider.wallet),
               const SizedBox(height: AppSpacing.lg),
               _WithdrawSection(
                 provider: provider,
-                wallet: wallet,
-                stripeBalance: stripeBalance,
+                stripeBalance: provider.stripeBalance,
                 isWithdrawing: isWithdrawing,
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -116,11 +111,11 @@ class _HeaderSection extends StatelessWidget {
 class _BalancesSection extends StatelessWidget {
   const _BalancesSection({
     required this.symbol,
-    required this.wallet,
+    required this.walletBalance,
     required this.stripeBalance,
   });
   final String symbol;
-  final WalletEntity? wallet;
+  final double walletBalance;
   final double stripeBalance;
 
   @override
@@ -134,8 +129,7 @@ class _BalancesSection extends StatelessWidget {
               icon: Icons.account_balance_wallet_outlined,
               iconColor: AppColors.primaryColor,
               title: 'wallet'.tr(),
-              amount:
-                  '$symbol${(wallet?.withdrawableBalance ?? 0).toStringAsFixed(2)}',
+              amount: '$symbol${walletBalance.toStringAsFixed(2)}',
               subtitle: 'available_to_transfer'.tr(),
             ),
           ),
@@ -228,12 +222,10 @@ class _StatsSection extends StatelessWidget {
 class _WithdrawSection extends StatelessWidget {
   const _WithdrawSection({
     required this.provider,
-    required this.wallet,
     required this.stripeBalance,
     required this.isWithdrawing,
   });
   final WalletProvider provider;
-  final WalletEntity? wallet;
   final double stripeBalance;
   final bool isWithdrawing;
 

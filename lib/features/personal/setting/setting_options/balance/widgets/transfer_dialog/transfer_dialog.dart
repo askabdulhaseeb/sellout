@@ -106,7 +106,9 @@ class _TransferDialogState extends State<TransferDialog> {
 
     if (success) {
       HapticFeedback.heavyImpact();
-      // Ensure dialog closes after success
+      // Show success state briefly before closing dialog
+      await Future<void>.delayed(const Duration(milliseconds: 800));
+      if (!mounted) return;
       if (navigator.canPop()) {
         navigator.pop();
       }
