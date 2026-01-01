@@ -129,34 +129,22 @@ class SocketService with WidgetsBindingObserver {
       }
     });
 
-    // Wallet updated - save payload locally
+    // Wallet updated - save full wallet payload locally
     socket!.on(AppStrings.walletUpdated, (dynamic data) async {
       AppLog.info(
-        '🟢 Wallet updated: $data',
-        name: 'SocketService.walletUpdated',
+        '💰 Wallet updated event: $data',
+        name: 'SocketService.wallet-updated',
       );
-      if (data == null) return;
-      try {
-        await LocalWallet().saveWalletFromPayload(data);
-        debugPrint('Wallet payload saved locally.');
-      } catch (e) {
-        AppLog.error('Error handling wallet-updated: $e');
-      }
+      await LocalWallet().handleWalletUpdatedEvent(data);
     });
 
-    // Payout status updated - also update wallet locally
+    // Payout status updated - update only amount_in_connected_account
     socket!.on(AppStrings.payoutStatusUpdated, (dynamic data) async {
       AppLog.info(
-        '🟢 Payout status updated: $data',
-        name: 'SocketService.payoutStatusUpdated',
+        '💰 Payout status updated: $data',
+        name: 'SocketService.payout-status-updated',
       );
-      if (data == null) return;
-      try {
-        await LocalWallet().saveWalletFromPayload(data);
-        debugPrint('Wallet payload saved locally from payout-status-updated.');
-      } catch (e) {
-        AppLog.error('Error handling payout-status-updated: $e');
-      }
+      await LocalWallet().handlePayoutStatusUpdatedEvent(data);
     });
 
     socket!.on(AppStrings.onboardingSuccess, (dynamic data) async {

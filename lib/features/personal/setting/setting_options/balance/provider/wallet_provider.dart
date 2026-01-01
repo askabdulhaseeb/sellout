@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../services/get_it.dart';
@@ -40,18 +41,20 @@ class WalletProvider extends ChangeNotifier {
   }
 
   void _onLocalWalletUpdated() {
-    final String? updatedId = LocalWallet.walletUpdatedNotifier.value;
-    final String currentId = LocalAuth.stripeAccountId ?? '';
-    if (updatedId == null || updatedId != currentId) return;
+    // The notifier emits when local wallet data changes.
+    // Simply reload from local storage and update UI.
+    debugPrint('🔔 WalletProvider._onLocalWalletUpdated triggered');
     final WalletEntity? local = LocalWallet().getWallet();
     if (local != null) {
       _wallet = local;
       _loading = false;
       _refreshing = false;
+      debugPrint('🔔 WalletProvider: Updated wallet - balance: ${local.withdrawableBalance}');
       notifyListeners();
     } else {
       // Local wallet was deleted or cleared
       _wallet = null;
+      debugPrint('🔔 WalletProvider: Wallet cleared');
       notifyListeners();
     }
   }
@@ -90,7 +93,12 @@ class WalletProvider extends ChangeNotifier {
 
   double get walletBalance => _wallet?.withdrawableBalance ?? 0;
   double get stripeBalance => _wallet?.amountInConnectedAccount?.available ?? 0;
-  String get currency => _wallet?.currency ?? 'USD';
+  String get currency {
+    // Try wallet currency first, then amount_in_connected_account currency
+    final String walletCurrency = _wallet?.currency ?? '';
+    if (walletCurrency.isNotEmpty) return walletCurrency;
+    return _wallet?.amountInConnectedAccount?.currency ?? 'USD';
+  }
 
   double get currentBalance => _currentMode == TransferDialogMode.stripeToBank
       ? stripeBalance
@@ -242,7 +250,8 @@ class WalletProvider extends ChangeNotifier {
   }
 
   bool _handlePayoutResult(DataState<bool> payoutResult) {
-    if (payoutResult is DataSuccess) {
+    if (payoutResult is DataSuccess && payoutResult.entity == true) {
+      _transferState = TransferState.success;
       notifyListeners();
       return true;
     } else {

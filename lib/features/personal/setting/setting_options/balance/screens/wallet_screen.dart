@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../payment/domain/entities/wallet_entity.dart';
-import '../../../../payment/data/sources/local/local_wallet.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../balance_skeleton.dart';
 import '../provider/wallet_provider.dart';
 import '../widgets/balance_summary_card.dart';
@@ -61,12 +59,7 @@ class _WalletScreenContent extends StatelessWidget {
                 );
               }
 
-              final String walletId = LocalAuth.stripeAccountId ?? '';
-              final WalletEntity? wallet =
-                  (walletId.isNotEmpty
-                      ? LocalWallet().getWallet()
-                      : null) ??
-                  provider.wallet;
+              final WalletEntity? wallet = provider.wallet;
               if (wallet == null) {
                 return const BalanceSkeleton();
               }

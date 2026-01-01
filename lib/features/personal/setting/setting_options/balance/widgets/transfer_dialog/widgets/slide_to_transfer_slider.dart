@@ -31,11 +31,21 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider> {
   void didUpdateWidget(SlideToTransferSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isLoading || widget.isSuccess) {
+      // Keep slider at end during loading/success
       if (_sliderValue != 1.0) {
         setState(() {
           _sliderValue = 1.0;
         });
       }
+    } else if (oldWidget.isLoading && !widget.isLoading && !widget.isSuccess) {
+      // Reset slider when loading finishes but not success (i.e., error occurred)
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted && !widget.isLoading && !widget.isSuccess) {
+          setState(() {
+            _sliderValue = 0.0;
+          });
+        }
+      });
     }
   }
 

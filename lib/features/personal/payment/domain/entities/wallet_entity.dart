@@ -65,4 +65,47 @@ class WalletEntity {
   String walletId;
   @HiveField(17)
   AmountInConnectedAccountEntity? amountInConnectedAccount;
+
+  WalletEntity copyWith({
+    double? withdrawableBalance,
+    String? nextReleaseAt,
+    String? currency,
+    String? createdAt,
+    bool? canReceive,
+    String? status,
+    double? totalEarnings,
+    List<WalletTransactionEntity>? transactionHistory,
+    double? pendingBalance,
+    double? totalBalance,
+    String? updatedAt,
+    String? entityId,
+    double? totalRefunded,
+    List<WalletFundsInHoldEntity>? fundsInHold,
+    double? totalWithdrawn,
+    bool? canWithdraw,
+    String? walletId,
+    AmountInConnectedAccountEntity? amountInConnectedAccount,
+  }) {
+    return WalletEntity(
+      withdrawableBalance: withdrawableBalance ?? this.withdrawableBalance,
+      nextReleaseAt: nextReleaseAt ?? this.nextReleaseAt,
+      currency: currency ?? this.currency,
+      createdAt: createdAt ?? this.createdAt,
+      canReceive: canReceive ?? this.canReceive,
+      status: status ?? this.status,
+      totalEarnings: totalEarnings ?? this.totalEarnings,
+      transactionHistory: transactionHistory ?? this.transactionHistory,
+      pendingBalance: pendingBalance ?? this.pendingBalance,
+      totalBalance: totalBalance ?? this.totalBalance,
+      updatedAt: updatedAt ?? this.updatedAt,
+      entityId: entityId ?? this.entityId,
+      totalRefunded: totalRefunded ?? this.totalRefunded,
+      fundsInHold: fundsInHold ?? this.fundsInHold,
+      totalWithdrawn: totalWithdrawn ?? this.totalWithdrawn,
+      canWithdraw: canWithdraw ?? this.canWithdraw,
+      walletId: walletId ?? this.walletId,
+      amountInConnectedAccount:
+          amountInConnectedAccount ?? this.amountInConnectedAccount,
+    );
+  }
 }

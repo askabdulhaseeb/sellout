@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../domain/entities/amount_in_connected_account_entity.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/entities/wallet_funds_in_hold_entity.dart';
 import '../../domain/entities/wallet_transaction_entity.dart';
@@ -7,8 +8,7 @@ import 'wallet_funds_in_hold_model.dart';
 import 'wallet_transaction_model.dart';
 
 class WalletModel extends WalletEntity {
-
-   WalletModel({
+  WalletModel({
     required super.withdrawableBalance,
     required super.nextReleaseAt,
     required super.currency,
@@ -64,40 +64,110 @@ class WalletModel extends WalletEntity {
   }
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> transactionHistoryRaw =
-        (json['transaction_history'] as List<dynamic>?) ?? <dynamic>[];
-    final List<dynamic> fundsInHoldRaw =
-        (json['funds_in_hold'] as List<dynamic>?) ?? <dynamic>[];
-    final Map<String, dynamic>? amountInConnectedAccountRaw =
-        json['amount_in_connected_account'] as Map<String, dynamic>?;
+    // Handle transaction_history - socket.io may send various List/Map types
+    final dynamic transactionHistoryRaw = json['transaction_history'];
+    final List<WalletTransactionEntity> transactionHistory = <WalletTransactionEntity>[];
+    if (transactionHistoryRaw is List) {
+      for (final dynamic item in transactionHistoryRaw) {
+        if (item is Map) {
+          transactionHistory.add(
+            WalletTransactionModel.fromJson(Map<String, dynamic>.from(item)),
+          );
+        }
+      }
+    }
+
+    // Handle funds_in_hold - socket.io may send various List/Map types
+    final dynamic fundsInHoldRaw = json['funds_in_hold'];
+    final List<WalletFundsInHoldEntity> fundsInHold = <WalletFundsInHoldEntity>[];
+    if (fundsInHoldRaw is List) {
+      for (final dynamic item in fundsInHoldRaw) {
+        if (item is Map) {
+          fundsInHold.add(
+            WalletFundsInHoldModel.fromJson(Map<String, dynamic>.from(item)),
+          );
+        }
+      }
+    }
+
+    // Handle amount_in_connected_account - socket.io may send various Map types
+    final dynamic amountInConnectedAccountRaw = json['amount_in_connected_account'];
+    AmountInConnectedAccountModel? amountInConnectedAccount;
+    if (amountInConnectedAccountRaw is Map) {
+      amountInConnectedAccount = AmountInConnectedAccountModel.fromJson(
+        Map<String, dynamic>.from(amountInConnectedAccountRaw),
+      );
+    }
+
+    // Get currency - fallback to amount_in_connected_account.currency if top-level is missing
+    String currency = (json['currency'] ?? '').toString();
+    if (currency.isEmpty && amountInConnectedAccount != null) {
+      currency = amountInConnectedAccount.currency;
+    }
 
     return WalletModel(
       withdrawableBalance: (json['withdrawable_balance'] ?? 0).toDouble(),
-      nextReleaseAt: json['next_release_at'] ?? '',
-      currency: json['currency'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      canReceive: json['can_receive'] ?? false,
-      status: json['status'] ?? '',
+      nextReleaseAt: (json['next_release_at'] ?? '').toString(),
+      currency: currency.toUpperCase(),
+      createdAt: (json['created_at'] ?? '').toString(),
+      canReceive: json['can_receive'] == true,
+      status: (json['status'] ?? '').toString(),
       totalEarnings: (json['total_earnings'] ?? 0).toDouble(),
-      transactionHistory: transactionHistoryRaw
-          .whereType<Map<String, dynamic>>()
-          .map(WalletTransactionModel.fromJson)
-          .toList(),
+      transactionHistory: transactionHistory,
       pendingBalance: (json['pending_balance'] ?? 0).toDouble(),
       totalBalance: (json['total_balance'] ?? 0).toDouble(),
-      updatedAt: json['updated_at'] ?? '',
-      entityId: json['entity_id'] ?? '',
+      updatedAt: (json['updated_at'] ?? '').toString(),
+      entityId: (json['entity_id'] ?? '').toString(),
       totalRefunded: (json['total_refunded'] ?? 0).toDouble(),
-      fundsInHold: fundsInHoldRaw
-          .whereType<Map<String, dynamic>>()
-          .map(WalletFundsInHoldModel.fromJson)
-          .toList(),
+      fundsInHold: fundsInHold,
       totalWithdrawn: (json['total_withdrawn'] ?? 0).toDouble(),
-      canWithdraw: json['can_withdraw'] ?? false,
-      walletId: json['wallet_id'] ?? '',
-      amountInConnectedAccount: amountInConnectedAccountRaw != null
-          ? AmountInConnectedAccountModel.fromJson(amountInConnectedAccountRaw)
-          : null,
+      canWithdraw: json['can_withdraw'] == true,
+      walletId: (json['wallet_id'] ?? '').toString(),
+      amountInConnectedAccount: amountInConnectedAccount,
+    );
+  }
+
+  @override
+  WalletModel copyWith({
+    double? withdrawableBalance,
+    String? nextReleaseAt,
+    String? currency,
+    String? createdAt,
+    bool? canReceive,
+    String? status,
+    double? totalEarnings,
+    List<WalletTransactionEntity>? transactionHistory,
+    double? pendingBalance,
+    double? totalBalance,
+    String? updatedAt,
+    String? entityId,
+    double? totalRefunded,
+    List<WalletFundsInHoldEntity>? fundsInHold,
+    double? totalWithdrawn,
+    bool? canWithdraw,
+    String? walletId,
+    AmountInConnectedAccountEntity? amountInConnectedAccount,
+  }) {
+    return WalletModel(
+      withdrawableBalance: withdrawableBalance ?? this.withdrawableBalance,
+      nextReleaseAt: nextReleaseAt ?? this.nextReleaseAt,
+      currency: currency ?? this.currency,
+      createdAt: createdAt ?? this.createdAt,
+      canReceive: canReceive ?? this.canReceive,
+      status: status ?? this.status,
+      totalEarnings: totalEarnings ?? this.totalEarnings,
+      transactionHistory: transactionHistory ?? this.transactionHistory,
+      pendingBalance: pendingBalance ?? this.pendingBalance,
+      totalBalance: totalBalance ?? this.totalBalance,
+      updatedAt: updatedAt ?? this.updatedAt,
+      entityId: entityId ?? this.entityId,
+      totalRefunded: totalRefunded ?? this.totalRefunded,
+      fundsInHold: fundsInHold ?? this.fundsInHold,
+      totalWithdrawn: totalWithdrawn ?? this.totalWithdrawn,
+      canWithdraw: canWithdraw ?? this.canWithdraw,
+      walletId: walletId ?? this.walletId,
+      amountInConnectedAccount:
+          amountInConnectedAccount ?? this.amountInConnectedAccount,
     );
   }
 }

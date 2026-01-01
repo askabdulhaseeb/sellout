@@ -112,7 +112,7 @@ class WalletRemoteApiImpl implements WalletRemoteApi {
             result.exception ?? CustomException('something_wrong'.tr()),
           );
         }
-        return DataSuccess<bool>(rawData, false);
+        return DataSuccess<bool>(rawData, true);
       } else {
         AppLog.error(
           '[createPayouts] API Failure: ${result.exception?.message}',
