@@ -5,34 +5,39 @@ import '../../../../payment/domain/entities/wallet_entity.dart';
 import '../../../../payment/data/sources/local/local_wallet.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../balance_skeleton.dart';
-import '../provider/balance_provider.dart';
+import '../provider/wallet_provider.dart';
 import '../widgets/balance_summary_card.dart';
 import '../widgets/funds_in_hold_section.dart';
 import '../widgets/transaction_history_section.dart';
 
-class BalanceScreen extends StatelessWidget {
-  const BalanceScreen({super.key});
-  static String routeName = '/balance';
+class WalletScreen extends StatelessWidget {
+  const WalletScreen({super.key});
+  static String routeName = '/wallet';
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BalanceProvider>(
-      create: (_) => BalanceProvider()..initFromCache(),
-      child: const _BalanceScreenContent(),
+    return ChangeNotifierProvider<WalletProvider>(
+      create: (_) {
+        final WalletProvider provider = WalletProvider()
+          ..initFromCache()
+          ..fetchWallet();
+        return provider;
+      },
+      child: const _WalletScreenContent(),
     );
   }
 }
 
-class _BalanceScreenContent extends StatelessWidget {
-  const _BalanceScreenContent();
+class _WalletScreenContent extends StatelessWidget {
+  const _WalletScreenContent();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('balance'.tr())),
-      body: Consumer<BalanceProvider>(
+      appBar: AppBar(title: Text('wallet'.tr())),
+      body: Consumer<WalletProvider>(
         builder:
-            (BuildContext context, BalanceProvider provider, Widget? child) {
+            (BuildContext context, WalletProvider provider, Widget? child) {
               if (provider.loading) {
                 return const BalanceSkeleton();
               }
@@ -59,7 +64,7 @@ class _BalanceScreenContent extends StatelessWidget {
               final String walletId = LocalAuth.stripeAccountId ?? '';
               final WalletEntity? wallet =
                   (walletId.isNotEmpty
-                      ? LocalWallet().getWallet(walletId)
+                      ? LocalWallet().getWallet()
                       : null) ??
                   provider.wallet;
               if (wallet == null) {
@@ -71,9 +76,7 @@ class _BalanceScreenContent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    BalanceSummaryCard(
-                   
-                    ),
+                    BalanceSummaryCard(),
                     const SizedBox(height: 16),
                     FundsInHoldSection(fundsInHold: wallet.fundsInHold),
                     const SizedBox(height: 16),

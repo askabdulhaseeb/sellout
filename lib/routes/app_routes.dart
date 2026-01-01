@@ -9,7 +9,7 @@ import '../features/personal/auth/find_account/view/screens/new_password_screen.
 import '../features/personal/auth/find_account/view/screens/send_code_screen.dart';
 import '../features/personal/auth/signin/views/screens/verify_two_factor_screen.dart';
 import '../features/personal/auth/welcome_screen/view/screens/welcome_screen.dart';
-import '../features/personal/setting/setting_options/balance/screens/balance_screen.dart';
+import '../features/personal/setting/setting_options/balance/screens/wallet_screen.dart';
 import '../features/personal/setting/setting_options/legal_docs/legal_docs_screen.dart';
 import '../features/personal/setting/setting_options/membership_subscription/screen/memberships_and_subscription_screen.dart';
 import '../features/personal/visits/view/visit_calender.dart/screens/visit_calender_screen.dart';
@@ -159,7 +159,7 @@ class AppRoutes {
     SavedPostsPage.routeName: (_) => const SavedPostsPage(),
     BuyAgainScreen.routeName: (_) => const BuyAgainScreen(),
     ConnectBankScreen.routeName: (_) => const ConnectBankScreen(),
-    BalanceScreen.routeName: (_) => const BalanceScreen(),
+    WalletScreen.routeName: (_) => const WalletScreen(),
     SellingAddressScreen.routeName: (_) => const SellingAddressScreen(),
     //
     VisitCalenderScreen.routeName: (_) => const VisitCalenderScreen(),
