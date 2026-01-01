@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../payment/domain/entities/wallet_entity.dart';
 import '../balance_skeleton.dart';
 import '../provider/wallet_provider.dart';
 import '../widgets/balance_summary_card.dart';
@@ -59,8 +58,7 @@ class _WalletScreenContent extends StatelessWidget {
                 );
               }
 
-              final WalletEntity? wallet = provider.wallet;
-              if (wallet == null) {
+              if (provider.wallet == null) {
                 return const BalanceSkeleton();
               }
 
@@ -71,10 +69,10 @@ class _WalletScreenContent extends StatelessWidget {
                   children: <Widget>[
                     BalanceSummaryCard(),
                     const SizedBox(height: 16),
-                    FundsInHoldSection(fundsInHold: wallet.fundsInHold),
+                    FundsInHoldSection(fundsInHold: provider.fundsInHold),
                     const SizedBox(height: 16),
                     TransactionHistorySection(
-                      transactionHistory: wallet.transactionHistory,
+                      transactionHistory: provider.transactionHistory,
                     ),
                   ],
                 ),

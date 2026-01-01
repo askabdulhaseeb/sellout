@@ -202,9 +202,11 @@ class _TransferDialogState extends State<TransferDialog> {
                           provider.transferAmount > 0 &&
                           provider.transferAmount <= balance &&
                           !provider.isProcessing &&
-                          !provider.isSuccess,
+                          !provider.isSuccess &&
+                          !provider.isError,
                       isLoading: provider.isProcessing,
                       isSuccess: provider.isSuccess,
+                      isError: provider.isError,
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
