@@ -1,53 +1,65 @@
 # Push Notification Setup
 
-## Architecture
-
-```
-Backend Server → AWS SNS → Firebase FCM → Android/iOS Device
-```
-
----
-
-## Status Summary
+## Status
 
 | Component | Status |
 |-----------|--------|
-| Flutter FCM Setup | ✅ Complete |
-| Android Config | ✅ Complete |
-| iOS Config | ✅ Complete |
-| Token retrieval | ✅ Complete |
-| Token refresh handling | ✅ Complete |
-| FCM token sent in login | ✅ Complete |
-| Update token API | ⏳ Waiting for endpoint |
-| iOS Xcode capabilities | ❌ Manual step needed |
+| Firebase initialization | ✅ Complete |
+| FCM token retrieval | ✅ Complete |
+| FCM token sent on login | ✅ Complete |
+| Token refresh → update API | ⏳ Waiting for endpoint |
+| Foreground notifications | ✅ Complete |
+| Background notifications | ✅ Complete |
+| Notification tap navigation | ✅ Complete |
+| iOS Xcode capabilities | ❌ Manual step |
 
 ---
 
-## What's Complete (Flutter Side)
+## App Implementation
 
-| Feature | File |
-|---------|------|
-| Firebase initialization | `lib/main.dart` |
-| FCM token retrieval | `lib/services/firebase_messaging_service.dart` |
-| Token refresh handling | `lib/services/firebase_messaging_service.dart` |
-| Foreground notifications | `lib/services/firebase_messaging_service.dart` |
-| Background notifications | `lib/main.dart` |
-| Notification tap → navigation | `lib/services/firebase_messaging_service.dart` |
-| Local notification display | `lib/services/system_notification_service.dart` |
-| FCM token in login request | `lib/features/personal/auth/signin/domain/params/device_details.dart` |
+### 1. Firebase Initialization (`lib/main.dart`)
+
+```dart
+// In main()
+await Firebase.initializeApp();
+FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+// After first frame
+await FirebaseMessagingService().init();
+```
+
+### 2. FCM Service (`lib/services/firebase_messaging_service.dart`)
+
+**On init:**
+- Requests notification permission
+- Gets FCM token and stores in `_fcmToken`
+- Sets up listeners for foreground messages, notification taps, and token refresh
+
+**Handlers:**
+- `_handleForegroundMessage` → Shows local notification via `SystemNotificationService`
+- `_handleMessageOpenedApp` → Navigates to appropriate screen based on `type`
+- `_onTokenRefresh` → Calls update API (endpoint needed)
+
+### 3. FCM Token in Login (`lib/features/personal/auth/signin/domain/params/device_details.dart`)
+
+FCM token is included in `login_info.device_token` when user logs in:
+
+```dart
+final String? fcmToken = FirebaseMessagingService().fcmToken;
+// ...
+'device_token': fcmToken ?? '',
+```
 
 ---
 
-## How FCM Token is Sent
+## Communication with Backend
 
 ### On Login
 
-FCM token is sent as `device_token` in the `login_info` object:
+**Endpoint:** `POST /userAuth/login`
 
+**Request Body:**
 ```json
-POST /userAuth/login
-
-Body:
 {
   "email": "user@example.com",
   "password": "****",
@@ -59,97 +71,81 @@ Body:
     "app_version": 1.0,
     "platform": "Android",
     "language": "en_US",
-    "device_token": "fcm_token_here..."   // <-- FCM Token
+    "device_token": "fcm_token_here..."
   }
 }
 ```
 
----
+### On App Restart (TODO)
 
-## Backend API Required
+**When called:** When mobile app starts and FCM token has changed (old token expired)
 
-### Update FCM Token API (on token refresh)
+**Endpoint:** `FCM_TOKEN_ENDPOINT` from `.env` (default: `/api/user/fcm-token`)
 
-**When called**: When FCM token refreshes (happens automatically)
-
-**Request**:
+**Request Body:**
 ```json
-PUT /api/user/fcm-token/update
-
-Headers:
-  Authorization: Bearer <user_token>
-  Content-Type: application/json
-
-Body:
 {
-  "fcm_token": "newToken123...",
+  "fcm_token": "new_token...",
   "user_id": "user_123",
-  "platform": "android" | "ios"
+  "platform": "android"
 }
 ```
+
+**Note:** Backend needs to provide this endpoint to update expired tokens.
 
 ---
 
-## What Flutter Still Needs
+## Receiving Notifications from Backend
 
-### 1. Add update endpoint to `.env` files
+Backend sends notifications via AWS SNS → FCM. App expects this payload format:
 
-Once backend provides the endpoint:
-
-```env
-# In dev.env and prod.env
-FCM_TOKEN_UPDATE_ENDPOINT=/api/user/fcm-token/update
+### Payload Structure
+```json
+{
+  "notification": {
+    "title": "Notification Title",
+    "body": "Notification message"
+  },
+  "data": {
+    "type": "chat|order|post",
+    "chat_id": "123",
+    "order_id": "456",
+    "post_id": "789",
+    "for": "buyer|seller"
+  }
+}
 ```
 
-### 2. iOS: Add Push Notification capability in Xcode
+### Navigation Based on `type`
 
-1. Open `ios/Runner.xcworkspace` in Xcode
-2. Select **Runner** target → **Signing & Capabilities**
-3. Add **Push Notifications** capability
-4. Add **Background Modes** → Check "Remote notifications"
+| `type` | Screen | Required `data` fields |
+|--------|--------|------------------------|
+| `chat` | ChatScreen | `chat_id` |
+| `order` | OrderBuyerScreen / OrderSellerScreen | `order_id`, `for` |
+| `post` | PostDetailScreen | `post_id` |
+| (other) | NotificationsScreen | - |
 
 ---
 
-## Notification Payload Format
+## Files
 
-Backend should send notifications in this format:
-
-### Chat
-```json
-{
-  "notification": { "title": "New Message", "body": "John: Hello!" },
-  "data": { "type": "chat", "chat_id": "123" }
-}
-```
-
-### Order
-```json
-{
-  "notification": { "title": "Order Update", "body": "Order shipped" },
-  "data": { "type": "order", "order_id": "456", "for": "buyer" }
-}
-```
-
-### Post
-```json
-{
-  "notification": { "title": "New Like", "body": "John liked your post" },
-  "data": { "type": "post", "post_id": "789" }
-}
-```
-
-### Supported Types
-| type | Navigates to | Required fields |
-|------|--------------|-----------------|
-| `chat` | Chat Screen | `chat_id` |
-| `order` | Order Screen | `order_id`, `for` |
-| `post` | Post Detail | `post_id` |
-| other | Notifications Screen | - |
+| File | Purpose |
+|------|---------|
+| `lib/main.dart` | Firebase init, background handler registration |
+| `lib/services/firebase_messaging_service.dart` | FCM token, message handling, navigation |
+| `lib/services/system_notification_service.dart` | Local notification display |
+| `lib/features/personal/auth/signin/domain/params/device_details.dart` | Includes FCM token in login |
+| `android/app/google-services.json` | Android Firebase config |
+| `ios/Runner/GoogleService-Info.plist` | iOS Firebase config |
 
 ---
 
-## Questions for Backend
+## TODO
 
-1. What is the **update** API endpoint for token refresh?
-2. Confirm you're reading `device_token` from `login_info`?
-3. What notification types will you send?
+1. **Backend:** Provide token update API endpoint for token refresh
+2. **App:** Add `FCM_TOKEN_UPDATE_ENDPOINT` to `.env` once provided
+3. **iOS:** Add Push Notification capability in Xcode:
+   - Open `ios/Runner.xcworkspace`
+   - Runner target → Signing & Capabilities
+   - Add "Push Notifications"
+   - Add "Background Modes" → Remote notifications
