@@ -2,16 +2,27 @@ import UIKit
 import Flutter
 import app_links
 import GoogleMaps
+import FirebaseCore
+import FirebaseMessaging
 
-//@main
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // Initialize Firebase
+    FirebaseApp.configure()
+
     GMSServices.provideAPIKey("AIzaSyDMx5CKiZB-XCvYt3y1j-UoqQHyxw4MgrE")
     GeneratedPluginRegistrant.register(with: self)
+
+    // Register for remote notifications
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+    application.registerForRemoteNotifications()
+
     // Retrieve the link from parameters
     if let url = AppLinks.shared.getLink(launchOptions: launchOptions) {
         // We have a link, propagate it to your Flutter app or not

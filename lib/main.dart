@@ -1,4 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,6 +17,16 @@ import 'core/utilities/app_localization.dart';
 import 'services/get_it.dart';
 import 'routes/app_linking.dart';
 import 'routes/app_routes.dart';
+import 'services/firebase_messaging_service.dart';
+
+/// Background message handler - must be a top-level function
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  if (kDebugMode) {
+    print('Handling background message: ${message.messageId}');
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +34,11 @@ void main() async {
   AppNavigator().init();
   await HiveDB.init();
   await dotenv.load(fileName: kDebugMode ? 'dev.env' : 'prod.env');
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
   await Stripe.instance.applySettings();
   setupLocator();
@@ -39,6 +56,7 @@ void main() async {
   WidgetsBinding.instance.addPostFrameCallback((_) async {
     FlutterNativeSplash.remove();
     await SystemNotificationService().init();
+    await FirebaseMessagingService().init();
     SocketService(locator()).initAndListen();
     AppDataService().fetchAllData();
   });
