@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
+import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
@@ -44,6 +46,9 @@ class ChatProvider extends ChangeNotifier {
   bool _expandVisitingMessage = true;
   bool _showPinnedMessage = true;
 
+  /// Cache for sender display names to avoid repeated async lookups
+  final Map<String, String> _senderNameCache = <String, String>{};
+
 //
 
   GettedMessageEntity? get gettedMessage => _gettedMessage;
@@ -80,6 +85,7 @@ class ChatProvider extends ChangeNotifier {
 //
   void setChat(BuildContext context, ChatEntity? value) {
     _chat = value;
+    clearSenderNameCache();
     Provider.of<SendMessageProvider>(context, listen: false).setChat(value);
     _key = MessageLastEvaluatedKeyModel(
       chatID: _chat?.chatId ?? '',
@@ -133,6 +139,51 @@ class ChatProvider extends ChangeNotifier {
     return (next != null && current.sendBy == next.sendBy)
         ? current.createdAt.difference(next.createdAt)
         : const Duration(days: 5);
+  }
+
+  /// Gets sender display name from cache, or returns null if not cached.
+  /// Use [prefetchSenderNames] to populate the cache first.
+  String? getSenderName(String senderId) => _senderNameCache[senderId];
+
+  /// Prefetches sender names for all messages to avoid N+1 async lookups.
+  /// Should be called after messages are loaded.
+  Future<void> prefetchSenderNames(List<MessageEntity> messages) async {
+    final Set<String> uniqueSenderIds = <String>{};
+    for (final MessageEntity message in messages) {
+      if (!_senderNameCache.containsKey(message.sendBy)) {
+        uniqueSenderIds.add(message.sendBy);
+      }
+    }
+
+    if (uniqueSenderIds.isEmpty) return;
+
+    final List<Future<void>> futures = <Future<void>>[];
+    for (final String senderId in uniqueSenderIds) {
+      futures.add(_fetchAndCacheSenderName(senderId));
+    }
+    await Future.wait(futures);
+  }
+
+  Future<void> _fetchAndCacheSenderName(String senderId) async {
+    if (_senderNameCache.containsKey(senderId)) return;
+
+    final bool isBusiness = senderId.startsWith('BU');
+    String? displayName;
+
+    if (isBusiness) {
+      final business = await LocalBusiness().getBusiness(senderId);
+      displayName = business?.displayName;
+    } else {
+      final user = await LocalUser().user(senderId);
+      displayName = user?.displayName;
+    }
+
+    _senderNameCache[senderId] = displayName ?? 'na'.tr();
+  }
+
+  /// Clears the sender name cache. Called when switching chats.
+  void clearSenderNameCache() {
+    _senderNameCache.clear();
   }
 
   // Helper to filter messages after join time

@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import '../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';
@@ -26,6 +27,7 @@ class MessageEntity {
     this.offerDetail,
     this.quoteDetail,
     this.postDetail,
+    this.status,
   });
 
   @HiveField(0)
@@ -63,6 +65,10 @@ class MessageEntity {
   @HiveField(14)
   final MessagePostDetailEntity? postDetail;
 
+  /// Message delivery status (sent, delivered, read, failed)
+  @HiveField(16)
+  final MessageStatus? status;
+
   String? get postImage => fileUrl.first.url;
 
   MessageEntity copyWith({
@@ -82,6 +88,7 @@ class MessageEntity {
     OfferDetailEntity? offerDetail,
     QuoteDetailEntity? quoteDetail,
     MessagePostDetailEntity? postDetail,
+    MessageStatus? status,
   }) {
     return MessageEntity(
       persons: persons ?? this.persons,
@@ -100,6 +107,7 @@ class MessageEntity {
       offerDetail: offerDetail ?? this.offerDetail,
       quoteDetail: quoteDetail ?? this.quoteDetail,
       postDetail: postDetail ?? this.postDetail,
+      status: status ?? this.status,
     );
   }
 }

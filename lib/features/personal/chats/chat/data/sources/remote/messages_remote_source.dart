@@ -64,7 +64,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         data,
         chatID,
       );
-      await LocalChatMessage().save(chatID,getted);
+      await LocalChatMessage().save(chatID, getted);
       return DataSuccess<GettedMessageEntity>(result.data ?? '', getted);
     } else {
       AppLog.error(

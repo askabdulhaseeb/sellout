@@ -101,6 +101,7 @@ import '../../enums/listing/core/delivery_type.dart';
 import '../../enums/listing/core/item_condition_type.dart';
 import '../../enums/listing/core/listing_type.dart';
 import '../../enums/listing/core/privacy_type.dart';
+import '../../enums/message/message_status.dart';
 import '../../enums/message/message_type.dart';
 import '../../enums/routine/day_type.dart';
 import '../../widgets/phone_number/data/sources/local_country.dart';
@@ -219,6 +220,7 @@ class HiveDB {
     Hive.registerAdapter(WalletTransactionEntityAdapter()); //93
     Hive.registerAdapter(WalletFundsInHoldEntityAdapter()); //94
     Hive.registerAdapter(AmountInConnectedAccountEntityAdapter()); //95
+    Hive.registerAdapter(MessageStatusAdapter()); //96
 
     // Hive box Open
     await refresh();

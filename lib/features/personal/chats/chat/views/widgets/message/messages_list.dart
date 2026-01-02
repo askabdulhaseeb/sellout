@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
@@ -24,19 +23,20 @@ class _MessagesListState extends State<MessagesList> {
   int _previousMessageCount = 0;
   List<Widget> _cachedWidgets = <Widget>[];
   String? _lastMessageHash;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _jumpToBottom();
-    });
-  }
+  bool _hasInitiallyScrolled = false;
 
   void _jumpToBottom() {
     if (widget.controller.hasClients) {
       widget.controller.jumpTo(widget.controller.position.maxScrollExtent);
     }
+  }
+
+  void _scheduleInitialScroll() {
+    if (_hasInitiallyScrolled) return;
+    _hasInitiallyScrolled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _jumpToBottom();
+    });
   }
 
   void _scrollToBottomIfNeeded() {
@@ -151,8 +151,14 @@ class _MessagesListState extends State<MessagesList> {
           );
         }
 
+        // Prefetch sender names for performance (runs async, doesn't block)
+        chatProvider.prefetchSenderNames(messages);
+
         // Build widgets only when messages change (cached)
         final List<Widget> widgets = _buildWidgetsIfNeeded(messages);
+
+        // Scroll to bottom on initial load
+        _scheduleInitialScroll();
 
         // Scroll when new messages arrive (only triggers when count increases)
         _onMessagesChanged(messages.length);

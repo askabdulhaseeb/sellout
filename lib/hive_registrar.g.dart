@@ -14,6 +14,7 @@ import 'package:sellout/core/enums/listing/core/delivery_type.dart';
 import 'package:sellout/core/enums/listing/core/item_condition_type.dart';
 import 'package:sellout/core/enums/listing/core/listing_type.dart';
 import 'package:sellout/core/enums/listing/core/privacy_type.dart';
+import 'package:sellout/core/enums/message/message_status.dart';
 import 'package:sellout/core/enums/message/message_type.dart';
 import 'package:sellout/core/enums/routine/day_type.dart';
 import 'package:sellout/core/widgets/phone_number/domain/entities/country_entity.dart';
@@ -59,7 +60,10 @@ import 'package:sellout/features/personal/order/domain/entities/order_entity.dar
 import 'package:sellout/features/personal/order/domain/entities/order_payment_detail_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/postage_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/shipping_detail_entity.dart';
-import 'package:sellout/features/personal/payment/payment.dart';
+import 'package:sellout/features/personal/payment/domain/entities/amount_in_connected_account_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_funds_in_hold_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_transaction_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/discount_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/feed/feed_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/meetup/availability_entity.dart';
@@ -136,6 +140,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(MessageEntityAdapter());
     registerAdapter(MessageLastEvaluatedKeyEntityAdapter());
     registerAdapter(MessagePostDetailEntityAdapter());
+    registerAdapter(MessageStatusAdapter());
     registerAdapter(MessageTypeAdapter());
     registerAdapter(NotificationEntityAdapter());
     registerAdapter(NotificationMetadataEntityAdapter());
@@ -231,6 +236,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(MessageEntityAdapter());
     registerAdapter(MessageLastEvaluatedKeyEntityAdapter());
     registerAdapter(MessagePostDetailEntityAdapter());
+    registerAdapter(MessageStatusAdapter());
     registerAdapter(MessageTypeAdapter());
     registerAdapter(NotificationEntityAdapter());
     registerAdapter(NotificationMetadataEntityAdapter());

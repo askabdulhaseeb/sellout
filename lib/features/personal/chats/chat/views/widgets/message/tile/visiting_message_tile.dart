@@ -2,12 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
-import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../visits/view/book_visit/widgets/visiting_update_buttons_widget.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../common/currency_display.dart';
+import '../common/message_container.dart';
 
 class VisitingMessageTile extends StatelessWidget {
   const VisitingMessageTile({
@@ -19,7 +20,6 @@ class VisitingMessageTile extends StatelessWidget {
   final MessageEntity message;
   final bool showButtons;
 
-  /// Title changes according to status
   String _statusTitle(StatusType status) {
     switch (status) {
       case StatusType.accepted:
@@ -35,7 +35,6 @@ class VisitingMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(message.visitingDetail?.status.json);
     return FutureBuilder<PostEntity?>(
       future: LocalPost().getPost(message.visitingDetail?.postID ?? ''),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
@@ -51,20 +50,12 @@ class VisitingMessageTile extends StatelessWidget {
         final String meet = post?.meetUpLocation?.address ?? '';
         final StatusType status =
             message.visitingDetail?.status ?? StatusType.pending;
-        // dynamic title & one subtitle
         final String statusTitle = _statusTitle(status);
         final String subtitle = tr('your_booking_details');
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: showButtons
-                  ? Colors.transparent
-                  : ColorScheme.of(context).outlineVariant,
-            ),
-          ),
-          margin: EdgeInsets.all(showButtons ? 0 : 16),
+
+        return MessageContainer(
+          showBorder: !showButtons,
+          borderRadius: 16,
           padding: showButtons
               ? const EdgeInsets.symmetric(horizontal: 16)
               : const EdgeInsets.all(16),
@@ -140,13 +131,13 @@ class VisitingMessageTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    '${CountryHelper.currencySymbolHelper(currency)} $price',
+                  CurrencyDisplay(
+                    currency: currency,
+                    price: price,
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall
                         ?.copyWith(fontWeight: FontWeight.w600),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
