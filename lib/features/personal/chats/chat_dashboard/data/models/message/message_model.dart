@@ -1,3 +1,4 @@
+import '../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
@@ -25,6 +26,7 @@ class MessageModel extends MessageEntity {
     super.offerDetail,
     super.quoteDetail,
     super.postDetail,
+    super.status,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class MessageModel extends MessageEntity {
           ? null
           : MessagePostDetailEntity.fromJson(json['post_detail']),
       fileStatus: json['file_status']?.toString(),
+      status: MessageStatus.fromJson(json['status']?.toString()),
     );
   }
 }
