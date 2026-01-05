@@ -9,6 +9,7 @@ import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart'
 import '../../../domain/entities/getted_message_entity.dart';
 import '../../helpers/date_label_helper.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/send_message_provider.dart';
 
 class MessagesList extends StatefulWidget {
   const MessagesList({required this.chat, required this.controller, super.key});
@@ -66,12 +67,14 @@ class _MessagesListState extends State<MessagesList> {
     _previousMessageCount = newCount;
   }
 
-  /// Generates a hash based on message IDs and update times to detect changes
+  /// Generates a hash based on message IDs, update times, and status to detect changes
   String _generateMessageHash(List<MessageEntity> messages) {
     if (messages.isEmpty) return '';
     final StringBuffer buffer = StringBuffer();
     for (final MessageEntity m in messages) {
-      buffer.write('${m.messageId}:${m.updatedAt.millisecondsSinceEpoch}');
+      buffer.write(
+        '${m.messageId}:${m.updatedAt.millisecondsSinceEpoch}:${m.status?.code ?? ""}|',
+      );
     }
     return buffer.toString();
   }
@@ -108,6 +111,8 @@ class _MessagesListState extends State<MessagesList> {
   @override
   Widget build(BuildContext context) {
     final ChatProvider chatProvider = context.watch<ChatProvider>();
+    final SendMessageProvider sendMessageProvider = context
+        .watch<SendMessageProvider>();
     final String? chatId = chatProvider.chat?.chatId;
     final bool isLoading = chatProvider.isLoading;
 
@@ -127,53 +132,65 @@ class _MessagesListState extends State<MessagesList> {
     return ValueListenableBuilder<Box<GettedMessageEntity>>(
       valueListenable: box.listenable(keys: <dynamic>[chatId]),
       builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
-        final GettedMessageEntity? stored = box.get(chatId);
-        final List<MessageEntity> messages = stored == null
-            ? <MessageEntity>[]
-            : chatProvider.getFilteredMessages(stored);
+        // Also listen to pending messages for optimistic UI
+        return ValueListenableBuilder<List<MessageEntity>>(
+          valueListenable: sendMessageProvider.pendingMessages,
+          builder: (BuildContext context, List<MessageEntity> pending, _) {
+            final GettedMessageEntity? stored = box.get(chatId);
+            final List<MessageEntity> storedMessages = stored == null
+                ? <MessageEntity>[]
+                : chatProvider.getFilteredMessages(stored);
 
-        // Show loading indicator when loading and no messages yet
-        if (isLoading && messages.isEmpty) {
-          return const Expanded(
-            child: Center(child: CupertinoActivityIndicator()),
-          );
-        }
+            // Combine stored messages with pending messages
+            final List<MessageEntity> messages = <MessageEntity>[
+              ...storedMessages,
+              ...pending.where((MessageEntity p) => p.chatId == chatId),
+            ];
 
-        // Show empty state when not loading and no messages
-        if (!isLoading && messages.isEmpty) {
-          return Expanded(
-            child: SingleChildScrollView(
-              child: EmptyPageWidget(
-                icon: CupertinoIcons.chat_bubble_2,
-                childBelow: const Text('no_messages_yet').tr(),
+            // Show loading indicator when loading and no messages yet
+            if (isLoading && messages.isEmpty) {
+              return const Expanded(
+                child: Center(child: CupertinoActivityIndicator()),
+              );
+            }
+
+            // Show empty state when not loading and no messages
+            if (!isLoading && messages.isEmpty) {
+              return Expanded(
+                child: SingleChildScrollView(
+                  child: EmptyPageWidget(
+                    icon: CupertinoIcons.chat_bubble_2,
+                    childBelow: const Text('no_messages_yet').tr(),
+                  ),
+                ),
+              );
+            }
+
+            // Prefetch sender names for performance (runs async, doesn't block)
+            chatProvider.prefetchSenderNames(messages);
+
+            // Build widgets only when messages change (cached)
+            final List<Widget> widgets = _buildWidgetsIfNeeded(messages);
+
+            // Scroll to bottom on initial load
+            _scheduleInitialScroll();
+
+            // Scroll when new messages arrive (only triggers when count increases)
+            _onMessagesChanged(messages.length);
+
+            return Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
+                cacheExtent: 500,
+                controller: widget.controller,
+                itemCount: widgets.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return widgets[index];
+                },
               ),
-            ),
-          );
-        }
-
-        // Prefetch sender names for performance (runs async, doesn't block)
-        chatProvider.prefetchSenderNames(messages);
-
-        // Build widgets only when messages change (cached)
-        final List<Widget> widgets = _buildWidgetsIfNeeded(messages);
-
-        // Scroll to bottom on initial load
-        _scheduleInitialScroll();
-
-        // Scroll when new messages arrive (only triggers when count increases)
-        _onMessagesChanged(messages.length);
-
-        return Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            physics: const BouncingScrollPhysics(),
-            cacheExtent: 500,
-            controller: widget.controller,
-            itemCount: widgets.length,
-            itemBuilder: (BuildContext context, int index) {
-              return widgets[index];
-            },
-          ),
+            );
+          },
         );
       },
     );

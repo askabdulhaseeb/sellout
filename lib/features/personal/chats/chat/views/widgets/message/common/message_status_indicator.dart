@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/enums/message/message_status.dart';
 
-/// Displays message delivery status (sent, delivered, read) with checkmark icons.
+/// Displays message delivery status (sent, delivered, read) with icons.
+/// Uses Instagram-style sending arrow for pending messages.
 /// Only shows for outgoing messages (isMe = true).
 class MessageStatusIndicator extends StatelessWidget {
   const MessageStatusIndicator({
@@ -35,11 +36,8 @@ class MessageStatusIndicator extends StatelessWidget {
 
     switch (status) {
       case MessageStatus.pending:
-        return Icon(
-          Icons.access_time,
-          size: size,
-          color: defaultColor,
-        );
+        // Instagram-style sending arrow (rotated send icon)
+        return _SendingArrow(size: size, color: defaultColor);
       case MessageStatus.sent:
         return Icon(
           Icons.check,
@@ -64,6 +62,96 @@ class MessageStatusIndicator extends StatelessWidget {
         );
     }
   }
+}
+
+/// Instagram-style sending arrow indicator (hollow circle with arrow pointing up-right)
+class _SendingArrow extends StatelessWidget {
+  const _SendingArrow({
+    required this.size,
+    required this.color,
+  });
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        size: Size(size, size),
+        painter: _SendingArrowPainter(color: color),
+      ),
+    );
+  }
+}
+
+/// Custom painter for the Instagram-style sending arrow
+class _SendingArrowPainter extends CustomPainter {
+  _SendingArrowPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
+    final double radius = size.width / 2 - 1;
+
+    // Draw hollow circle
+    canvas.drawCircle(Offset(centerX, centerY), radius, paint);
+
+    // Draw arrow pointing up-right (like Instagram's send arrow)
+    final double arrowSize = size.width * 0.35;
+    final double arrowCenterX = centerX;
+    final double arrowCenterY = centerY;
+
+    // Arrow stem (diagonal line going up-right)
+    final Path arrowPath = Path();
+
+    // Start from bottom-left, go to top-right
+    arrowPath.moveTo(
+      arrowCenterX - arrowSize * 0.5,
+      arrowCenterY + arrowSize * 0.5,
+    );
+    arrowPath.lineTo(
+      arrowCenterX + arrowSize * 0.5,
+      arrowCenterY - arrowSize * 0.5,
+    );
+
+    // Arrow head (two small lines from the tip)
+    // Horizontal part of arrowhead
+    arrowPath.moveTo(
+      arrowCenterX + arrowSize * 0.5,
+      arrowCenterY - arrowSize * 0.5,
+    );
+    arrowPath.lineTo(
+      arrowCenterX,
+      arrowCenterY - arrowSize * 0.5,
+    );
+
+    // Vertical part of arrowhead
+    arrowPath.moveTo(
+      arrowCenterX + arrowSize * 0.5,
+      arrowCenterY - arrowSize * 0.5,
+    );
+    arrowPath.lineTo(
+      arrowCenterX + arrowSize * 0.5,
+      arrowCenterY,
+    );
+
+    canvas.drawPath(arrowPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Double checkmark icon for delivered/read states
