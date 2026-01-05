@@ -1,6 +1,10 @@
 import 'package:get_it/get_it.dart';
-import '../core/sockets/socket_implementations.dart';
+import '../core/sockets/handlers/presence_handler.dart';
+import '../core/sockets/handlers/socket_handler_registry.dart';
 import '../core/sockets/socket_service.dart';
+import '../features/personal/chats/chat_dashboard/data/sources/socket/chat_socket_handler.dart';
+import '../features/personal/notifications/data/source/socket/notification_socket_handler.dart';
+import '../features/personal/payment/data/sources/socket/wallet_socket_handler.dart';
 import '../features/business/business_page/domain/usecase/get_bookings_by_service_id_usecase.dart';
 import '../features/business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../features/personal/address/add_address/domain/usecase/add_selling_address_usecase.dart';
@@ -732,11 +736,30 @@ void _addlisting() {
 }
 
 void _sockets() {
-  // SocketImplementations must be a singleton to share online status across the app
-  locator.registerLazySingleton<SocketImplementations>(
-    () => SocketImplementations(),
+  // Core handler - presence is cross-cutting, stays in core
+  locator.registerLazySingleton<PresenceHandler>(() => PresenceHandler());
+
+  // Feature handlers - each lives in its feature's sources/socket folder
+  locator.registerLazySingleton<ChatSocketHandler>(() => ChatSocketHandler());
+  locator.registerLazySingleton<WalletSocketHandler>(() => WalletSocketHandler());
+  locator.registerLazySingleton<NotificationSocketHandler>(
+    () => NotificationSocketHandler(),
   );
-  locator.registerFactory<SocketService>(() => SocketService(locator()));
+
+  // Registry with default handlers registered
+  locator.registerLazySingleton<SocketHandlerRegistry>(() {
+    final SocketHandlerRegistry registry = SocketHandlerRegistry();
+    registry.registerHandler(locator<PresenceHandler>());
+    registry.registerHandler(locator<ChatSocketHandler>());
+    registry.registerHandler(locator<WalletSocketHandler>());
+    registry.registerHandler(locator<NotificationSocketHandler>());
+    return registry;
+  });
+
+  // SocketService with registry dependency
+  locator.registerFactory<SocketService>(
+    () => SocketService(locator<SocketHandlerRegistry>()),
+  );
 }
 
 void _addaddress() {
