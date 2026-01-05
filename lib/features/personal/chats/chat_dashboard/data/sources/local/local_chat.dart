@@ -17,7 +17,8 @@ class LocalChat extends LocalHiveBox<ChatEntity> {
   @override
   bool get requiresEncryption => true;
 
-  static Box<ChatEntity> get _box => Hive.box<ChatEntity>(AppStrings.localChatsBox);
+  static Box<ChatEntity> get _box =>
+      Hive.box<ChatEntity>(AppStrings.localChatsBox);
   static Box<ChatEntity> get boxLive => _box;
 
   static Future<Box<ChatEntity>> get openBox async =>

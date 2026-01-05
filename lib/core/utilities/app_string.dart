@@ -339,6 +339,9 @@ class AppStrings {
   static String get onboardingSuccess => 'onboarding-success';
   static String get updatePinnedMessage => 'update-pinned-message';
   static String get newPinnedMessage => 'new-pinned-message';
+  static String get joinChat => 'joinChat';
+  static String get leaveChat => 'leaveChat';
+  static String get uploadProgress => 'uploadProgress';
   // MARK: Audio Files
   static const String recordingDeleteSound =
       'assets/audio/delete_recording_sound.mp3';
