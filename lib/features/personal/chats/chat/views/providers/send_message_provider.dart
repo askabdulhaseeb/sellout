@@ -1,5 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+import '../../../../../../core/enums/message/message_status.dart';
+import '../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
@@ -7,12 +10,14 @@ import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../search/domain/entities/search_entity.dart';
 import '../../../../search/domain/enums/search_entity_type.dart';
 import '../../../../search/domain/params/search_enum.dart';
 import '../../../../search/domain/usecase/search_usecase.dart';
 import '../../../../user/profiles/data/models/user_model.dart';
 import '../../../chat_dashboard/data/models/chat/chat_model.dart';
+import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../domain/params/send_message_param.dart';
 import '../../domain/usecase/send_message_usecase.dart';
 
@@ -40,6 +45,10 @@ class SendMessageProvider extends ChangeNotifier {
   bool _hasMoreUsers = true;
   bool _isUserLoading = false;
   TextSelection lastSelection = const TextSelection.collapsed(offset: 0);
+
+  /// Pending messages being sent (optimistic UI)
+  final ValueNotifier<List<MessageEntity>> pendingMessages =
+      ValueNotifier<List<MessageEntity>>(<MessageEntity>[]);
 
   //getters
   bool get isLoading => _isLoading;
@@ -300,27 +309,117 @@ class SendMessageProvider extends ChangeNotifier {
   }
 
   Future<void> sendMessage(BuildContext context) async {
-    setLoading(true);
+    final String messageText = _message.text;
+    final String chatId = _chat?.chatId ?? '';
+    final List<String> persons = _chat?.persons ?? <String>[];
+
+    // Don't send empty messages
+    if (messageText.isEmpty && _attachments.isEmpty) return;
+
+    // Create a temporary message ID for tracking
+    final String tempMessageId = const Uuid().v4();
+
+    // Create optimistic message entity with pending status
+    final MessageEntity pendingMessage = MessageEntity(
+      messageId: tempMessageId,
+      chatId: chatId,
+      text: messageText.isEmpty ? '' : messageText,
+      displayText: messageText.isEmpty ? '' : messageText,
+      sendBy: LocalAuth.uid ?? '',
+      persons: persons,
+      fileUrl: <AttachmentEntity>[],
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      type: MessageType.text,
+      status: MessageStatus.pending,
+    );
+
+    // Add to pending messages for immediate UI display
+    pendingMessages.value = <MessageEntity>[
+      ...pendingMessages.value,
+      pendingMessage,
+    ];
+
+    // Clear input immediately for better UX
+    _message.clear();
+    final List<PickedAttachment> attachmentsToSend =
+        List<PickedAttachment>.from(_attachments);
+    _attachments.clear();
+    notifyListeners();
+
+    // Now send to server
     final SendMessageParam param = SendMessageParam(
-      chatID: _chat?.chatId ?? '',
-      text: _message.text.isEmpty ? 'null' : _message.text,
-      persons: _chat?.persons ?? <String>[],
-      files: _attachments,
+      chatID: chatId,
+      text: messageText.isEmpty ? 'null' : messageText,
+      persons: persons,
+      files: attachmentsToSend,
       source: 'application',
     );
+
     final DataState<bool> result = await _sendMessageUsecase(param);
+
     if (result is DataSuccess) {
-      _message.clear();
-      _attachments.clear();
-      setLoading(false);
+      // Remove from pending messages (server will add the real message via socket/local)
+      _removePendingMessage(tempMessageId);
+      AppLog.info('Message sent successfully', name: tag);
     } else {
+      // Update pending message to failed status
+      _updatePendingMessageStatus(tempMessageId, MessageStatus.failed);
       AppSnackBar.showSnackBar(
         // ignore: use_build_context_synchronously
         context,
         result.exception?.message ?? 'something_wrong'.tr(),
       );
     }
-    setLoading(false);
+  }
+
+  /// Removes a pending message by its temporary ID
+  void _removePendingMessage(String tempMessageId) {
+    pendingMessages.value = pendingMessages.value
+        .where((MessageEntity m) => m.messageId != tempMessageId)
+        .toList();
+  }
+
+  /// Updates a pending message's status (e.g., to failed)
+  void _updatePendingMessageStatus(String tempMessageId, MessageStatus status) {
+    pendingMessages.value = pendingMessages.value.map((MessageEntity m) {
+      if (m.messageId == tempMessageId) {
+        return m.copyWith(status: status);
+      }
+      return m;
+    }).toList();
+  }
+
+  /// Retry sending a failed message
+  Future<void> retryMessage(
+    BuildContext context,
+    MessageEntity failedMessage,
+  ) async {
+    // Update status to pending
+    _updatePendingMessageStatus(failedMessage.messageId, MessageStatus.pending);
+
+    // Retry sending
+    final SendMessageParam param = SendMessageParam(
+      chatID: failedMessage.chatId,
+      text: failedMessage.text.isEmpty ? 'null' : failedMessage.text,
+      persons: failedMessage.persons,
+      files: <PickedAttachment>[],
+      source: 'application',
+    );
+
+    final DataState<bool> result = await _sendMessageUsecase(param);
+
+    if (result is DataSuccess) {
+      _removePendingMessage(failedMessage.messageId);
+      AppLog.info('Message retry successful', name: tag);
+    } else {
+      _updatePendingMessageStatus(failedMessage.messageId, MessageStatus.failed);
+      AppSnackBar.showSnackBar(
+        // ignore: use_build_context_synchronously
+        context,
+        result.exception?.message ?? 'something_wrong'.tr(),
+      );
+    }
   }
 
   Future<void> sendDocument(BuildContext context) async {

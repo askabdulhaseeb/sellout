@@ -80,7 +80,16 @@ class ChatSocketHandler extends BaseSocketHandler {
       if (data is! Map<String, dynamic>) return;
 
       final MessageModel newMsg = MessageModel.fromMap(data);
-      final String chatId = data['chat_id'];
+      // Use chatId from parsed model (handles null safely) instead of raw data
+      final String chatId = newMsg.chatId;
+
+      if (chatId.isEmpty) {
+        AppLog.error(
+          'Missing chat_id in newMessage data: $data',
+          name: 'ChatSocketHandler',
+        );
+        return;
+      }
 
       // Fetch existing chat messages
       final List<MessageEntity> existingMessages = LocalChatMessage().messages(
@@ -124,8 +133,8 @@ class ChatSocketHandler extends BaseSocketHandler {
         messages: existingMessages,
         lastEvaluatedKey: MessageLastEvaluatedKeyModel(
           chatID: chatId,
-          createdAt: data['created_at'],
-          paginationKey: data['message_id'],
+          createdAt: data['created_at']?.toString() ?? newMsg.createdAt.toIso8601String(),
+          paginationKey: data['message_id']?.toString() ?? newMsg.messageId,
         ),
       );
       LocalChatMessage().saveGettedMessageEntity(updatedEntity, chatId);
@@ -143,8 +152,12 @@ class ChatSocketHandler extends BaseSocketHandler {
         'New message saved | chatId: $chatId | messageId: ${newMsg.messageId}',
         name: 'ChatSocketHandler',
       );
-    } catch (e) {
-      AppLog.error('Error saving new message: $e', name: 'ChatSocketHandler');
+    } catch (e, stackTrace) {
+      AppLog.error(
+        'Error saving new message: $e',
+        stackTrace: stackTrace,
+        name: 'ChatSocketHandler',
+      );
     }
   }
 
