@@ -18,10 +18,12 @@ class CustomException {
     this.message, {
     this.code,
     this.detail,
+    this.raw,
     String? reason,
   }) : reason = reason ?? message;
   final int? code;
   final String? detail;
+  final String? raw;
   final String? reason;
   final String message;
 }

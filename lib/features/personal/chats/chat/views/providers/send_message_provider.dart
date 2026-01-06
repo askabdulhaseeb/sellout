@@ -1,14 +1,11 @@
 import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../services/get_it.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
@@ -324,7 +321,8 @@ class SendMessageProvider extends ChangeNotifier {
     if (messageText.isEmpty && _attachments.isEmpty) return;
 
     // Create a temporary message ID for tracking
-    final String tempMessageId = const Uuid().v4();
+    final String tempMessageId = DateTime.now().millisecondsSinceEpoch
+        .toString();
 
     // Create optimistic message entity with pending status
     final MessageEntity pendingMessage = MessageEntity(

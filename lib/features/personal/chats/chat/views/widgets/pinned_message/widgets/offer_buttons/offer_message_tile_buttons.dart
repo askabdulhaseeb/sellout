@@ -11,10 +11,7 @@ import 'offer_message_tile_buyer_buttons.dart';
 import 'offer_message_tile_seller_buttons.dart';
 
 class OfferMessageTileButtons extends HookWidget {
-  const OfferMessageTileButtons({
-    required this.message,
-    super.key,
-  });
+  const OfferMessageTileButtons({required this.message, super.key});
 
   final MessageEntity message;
 
@@ -31,19 +28,23 @@ class OfferMessageTileButtons extends HookWidget {
         final bool isPending = offerDetail.offerStatus == StatusType.pending;
         final bool isAccepted = offerDetail.offerStatus == StatusType.accepted;
 
-//
+        //
         final CounterOfferEnum? counterBy = offerDetail.counterBy;
 
-//
+        //
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (isSeller && counterBy == CounterOfferEnum.seller && isPending)
-              OfferTileUpdateButons(message: message),
-            if (isBuyer && counterBy == CounterOfferEnum.buyer && isPending)
-              OfferTileUpdateButons(message: message),
-            if (isSeller && counterBy == null && isPending)
-              OfferTileUpdateButons(message: message),
+            // Seller countered: buyer sees accept/reject only (no counter)
+            if (isBuyer && counterBy == CounterOfferEnum.seller && isPending)
+              OfferTileUpdateButons(message: message, counterBy: counterBy),
+            // Buyer made initial offer: buyer sees counter/decline (not showing buttons - seller side handles it)
+            if (isBuyer && counterBy == null && isPending)
+              OfferTileUpdateButons(message: message, counterBy: counterBy),
+            // Seller with initial offer or buyer countered: seller sees all buttons
+            if (isSeller && isPending)
+              OfferTileUpdateButons(message: message, counterBy: counterBy),
+            // Buyer and offer accepted: show buy-now
             if (isBuyer && isAccepted) OfferTileBuyerButtons(message: message),
           ],
         );

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
-
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sockets/handlers/base_socket_handler.dart';
