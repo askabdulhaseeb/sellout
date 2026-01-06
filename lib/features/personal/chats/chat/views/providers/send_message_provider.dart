@@ -6,7 +6,6 @@ import 'package:uuid/uuid.dart';
 import '../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../core/functions/app_log.dart';
-import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../services/get_it.dart';
@@ -554,9 +553,6 @@ class SendMessageProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    // Clear typing indicator before disposing
-    clearTypingIndicator();
-
     // Cancel all pending failure timers to prevent memory leaks
     for (final Timer timer in _failureTimers.values) {
       timer.cancel();

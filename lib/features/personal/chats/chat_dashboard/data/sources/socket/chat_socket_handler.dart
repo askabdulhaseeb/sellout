@@ -36,32 +36,12 @@ class UploadProgressData {
   bool get isFailed => status == 'failed';
 }
 
-/// Data for tracking who is typing in a chat.
-class TypingUser {
-  TypingUser({
-    required this.chatId,
-    required this.userId,
-    required this.timestamp,
-    this.displayName,
-  });
-
-  final String chatId;
-  final String userId;
-  final DateTime timestamp;
-  final String? displayName;
-}
-
-/// Handles chat-related socket events (messages, pinned messages, upload progress, typing).
+/// Handles chat-related socket events (messages, pinned messages, upload progress).
 class ChatSocketHandler extends BaseSocketHandler {
   /// Notifier for upload progress updates.
   /// Maps messageId -> UploadProgressData for tracking multiple uploads.
   final ValueNotifier<Map<String, UploadProgressData>> uploadProgressNotifier =
       ValueNotifier<Map<String, UploadProgressData>>(<String, UploadProgressData>{});
-
-  /// Notifier for typing indicators.
-  /// Maps chatId -> List of users currently typing in that chat.
-  final ValueNotifier<Map<String, List<TypingUser>>> typingUsersNotifier =
-      ValueNotifier<Map<String, List<TypingUser>>>(<String, List<TypingUser>>{});
 
   /// Notifier for read receipts - emits (chatId, userId, lastReadMessageId).
   final ValueNotifier<Map<String, Map<String, String>>> readReceiptsNotifier =
@@ -74,8 +54,6 @@ class ChatSocketHandler extends BaseSocketHandler {
         AppStrings.newPinnedMessage,
         AppStrings.updatePinnedMessage,
         AppStrings.uploadProgress,
-        AppStrings.userTyping,
-        AppStrings.userStopTyping,
         AppStrings.messagesRead,
       ];
 
@@ -100,12 +78,6 @@ class ChatSocketHandler extends BaseSocketHandler {
         break;
       case 'uploadProgress':
         _handleUploadProgress(data);
-        break;
-      case 'userTyping':
-        _handleUserTyping(data);
-        break;
-      case 'userStopTyping':
-        _handleUserStopTyping(data);
         break;
       case 'messagesRead':
         _handleMessagesRead(data);
@@ -443,115 +415,6 @@ class ChatSocketHandler extends BaseSocketHandler {
     uploadProgressNotifier.value = currentMap;
   }
 
-  // ============ Typing Indicator Handlers ============
-
-  void _handleUserTyping(dynamic data) {
-    try {
-      if (data is! Map<String, dynamic>) return;
-
-      final String? chatId = data['chat_id']?.toString();
-      final String? userId = data['user_id']?.toString();
-      final String? displayName = data['display_name']?.toString();
-
-      if (chatId == null || userId == null) {
-        AppLog.error(
-          'Missing chat_id or user_id in userTyping data',
-          name: 'ChatSocketHandler',
-        );
-        return;
-      }
-
-      final TypingUser typingUser = TypingUser(
-        chatId: chatId,
-        userId: userId,
-        timestamp: DateTime.now(),
-        displayName: displayName,
-      );
-
-      final Map<String, List<TypingUser>> currentMap =
-          Map<String, List<TypingUser>>.from(typingUsersNotifier.value);
-
-      final List<TypingUser> chatTypingUsers =
-          List<TypingUser>.from(currentMap[chatId] ?? <TypingUser>[]);
-
-      // Remove existing entry for this user (if any) and add new one
-      chatTypingUsers.removeWhere((TypingUser u) => u.userId == userId);
-      chatTypingUsers.add(typingUser);
-
-      currentMap[chatId] = chatTypingUsers;
-      typingUsersNotifier.value = currentMap;
-
-      AppLog.info(
-        'User typing | chatId: $chatId | userId: $userId',
-        name: 'ChatSocketHandler',
-      );
-
-      // Auto-remove typing indicator after 5 seconds (in case stopTyping is not received)
-      Future<void>.delayed(const Duration(seconds: 5), () {
-        _removeTypingUser(chatId, userId);
-      });
-    } catch (e) {
-      AppLog.error('Error handling userTyping: $e', name: 'ChatSocketHandler');
-    }
-  }
-
-  void _handleUserStopTyping(dynamic data) {
-    try {
-      if (data is! Map<String, dynamic>) return;
-
-      final String? chatId = data['chat_id']?.toString();
-      final String? userId = data['user_id']?.toString();
-
-      if (chatId == null || userId == null) {
-        AppLog.error(
-          'Missing chat_id or user_id in userStopTyping data',
-          name: 'ChatSocketHandler',
-        );
-        return;
-      }
-
-      _removeTypingUser(chatId, userId);
-
-      AppLog.info(
-        'User stopped typing | chatId: $chatId | userId: $userId',
-        name: 'ChatSocketHandler',
-      );
-    } catch (e) {
-      AppLog.error('Error handling userStopTyping: $e', name: 'ChatSocketHandler');
-    }
-  }
-
-  void _removeTypingUser(String chatId, String userId) {
-    final Map<String, List<TypingUser>> currentMap =
-        Map<String, List<TypingUser>>.from(typingUsersNotifier.value);
-
-    final List<TypingUser>? chatTypingUsers = currentMap[chatId];
-    if (chatTypingUsers == null) return;
-
-    final List<TypingUser> updated = chatTypingUsers
-        .where((TypingUser u) => u.userId != userId)
-        .toList();
-
-    if (updated.isEmpty) {
-      currentMap.remove(chatId);
-    } else {
-      currentMap[chatId] = updated;
-    }
-
-    typingUsersNotifier.value = currentMap;
-  }
-
-  /// Get list of users typing in a specific chat.
-  List<TypingUser> getTypingUsers(String chatId) {
-    return typingUsersNotifier.value[chatId] ?? <TypingUser>[];
-  }
-
-  /// Check if anyone is typing in a chat.
-  bool isAnyoneTyping(String chatId) {
-    final List<TypingUser>? users = typingUsersNotifier.value[chatId];
-    return users != null && users.isNotEmpty;
-  }
-
   // ============ Read Receipt Handlers ============
 
   void _handleMessagesRead(dynamic data) async {
@@ -616,7 +479,6 @@ class ChatSocketHandler extends BaseSocketHandler {
   @override
   void dispose() {
     uploadProgressNotifier.dispose();
-    typingUsersNotifier.dispose();
     readReceiptsNotifier.dispose();
   }
 }
