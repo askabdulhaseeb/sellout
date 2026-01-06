@@ -161,6 +161,8 @@ import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/offer_payment_usecase.dart';
+import '../features/personal/post/domain/usecase/get_buy_now_shipping_rates_usecase.dart';
+import '../features/personal/post/domain/usecase/add_buy_now_shipping_usecase.dart';
 import '../features/personal/promo/domain/usecase/get_promo_of_followers_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
@@ -439,6 +441,12 @@ void _message() {
 
   locator.registerFactory<OfferPaymentUsecase>(
     () => OfferPaymentUsecase(locator()),
+  );
+  locator.registerFactory<GetBuyNowShippingRatesUsecase>(
+    () => GetBuyNowShippingRatesUsecase(locator()),
+  );
+  locator.registerFactory<AddBuyNowShippingUsecase>(
+    () => AddBuyNowShippingUsecase(locator()),
   );
   locator.registerFactory<SendGroupInviteUsecase>(
     () => SendGroupInviteUsecase(locator()),

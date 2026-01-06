@@ -1,91 +1,64 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../domain/entities/message_group_entity.dart';
 import '../widgets/message/message_tile.dart';
 import '../widgets/message/message_time_divider.dart';
+import 'message_grouper.dart';
 
+/// Helper class for building message list widgets with date labels.
+/// Uses MessageGrouper for data transformation and handles widget creation.
 class DateLabelHelper {
+  /// Singleton MessageGrouper instance for caching across calls.
+  static final MessageGrouper _grouper = MessageGrouper();
+
+  /// Builds widgets from messages with date dividers.
+  /// Uses cached grouping from MessageGrouper for performance.
   static List<Widget> buildLabeledWidgets(
     List<MessageEntity> msgs,
     Map<String, Duration> timeDiffMap,
   ) {
-    // sort oldest → newest
-    msgs.sort((MessageEntity a, MessageEntity b) =>
-        a.createdAt.compareTo(b.createdAt));
+    if (msgs.isEmpty) return <Widget>[];
+
+    // Use MessageGrouper for cached date grouping
+    final GroupedMessages grouped = _grouper.groupMessages(msgs);
 
     final List<Widget> widgets = <Widget>[];
-    String? lastLabel;
 
-    for (final MessageEntity m in msgs) {
-      final String label = _labelFor(m.createdAt);
-      if (label != lastLabel) {
-        widgets.add(MessageTimeDivider(label: label));
-        lastLabel = label;
+    for (final MessageGroup group in grouped.groups) {
+      // Add date divider at the start of each group
+      widgets.add(MessageTimeDivider(label: group.label));
+
+      // Add message tiles for this group
+      for (final MessageEntity m in group.messages) {
+        widgets.add(_buildMessageTile(m, timeDiffMap));
       }
-      // Use ValueKey with messageId + updatedAt + fileStatus to ensure rebuild on updates
-      final String keyValue =
-          '${m.messageId}_${m.updatedAt.millisecondsSinceEpoch}_${m.fileStatus ?? ""}_${m.status?.code ?? ""}';
-      widgets.add(
-        MessageTile(
-          key: ValueKey<String>(keyValue),
-          message: m,
-          timeDiff: timeDiffMap[m.messageId] ?? const Duration(days: 5),
-        ),
-      );
     }
+
     return widgets;
   }
 
-  static String _labelFor(DateTime time) {
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
-    final DateTime yesterday = today.subtract(const Duration(days: 1));
-    final DateTime messageDate = DateTime(time.year, time.month, time.day);
+  /// Builds a single message tile with proper key for efficient updates.
+  static Widget _buildMessageTile(
+    MessageEntity m,
+    Map<String, Duration> timeDiffMap,
+  ) {
+    // Include fileUrl in key for audio/document messages that update after upload
+    final String fileUrlHash = m.fileUrl.isNotEmpty
+        ? m.fileUrl.map((AttachmentEntity f) => f.url).join(',')
+        : '';
+    final String keyValue =
+        '${m.messageId}_${m.updatedAt.millisecondsSinceEpoch}_${m.fileStatus ?? ""}_${m.status?.code ?? ""}_$fileUrlHash';
 
-    if (now.difference(time).inMinutes < 5 && messageDate == today) {
-      return 'new_messages'.tr(); // you can also add key "now" in json
-    }
-    if (messageDate == today) return 'today'.tr();
-    if (messageDate == yesterday) return 'yesterday'.tr();
-    if (now.difference(messageDate).inDays < 7) {
-      return _weekday(messageDate.weekday).tr();
-    }
-    // e.g. "12 August 2024"
-    final int day = time.day;
-    final String month = _month(time.month).tr();
-    final int year = time.year;
-    return '$day $month $year';
+    return MessageTile(
+      key: ValueKey<String>(keyValue),
+      message: m,
+      timeDiff: timeDiffMap[m.messageId] ?? const Duration(days: 5),
+    );
   }
 
-  static String _weekday(int d) {
-    const List<String> names = <String>[
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday'
-    ];
-    return names[d % 7];
-  }
-
-  static String _month(int m) {
-    const List<String> months = <String>[
-      '',
-      'january',
-      'february',
-      'march',
-      'april',
-      'may',
-      'june',
-      'july',
-      'august',
-      'september',
-      'october',
-      'november',
-      'december'
-    ];
-    return months[m];
+  /// Clears the grouper cache. Call when chat changes.
+  static void clearCache() {
+    _grouper.clearCache();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import '../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/local/local_hive_box.dart';
 import '../../../../../../../core/utilities/app_string.dart';
@@ -146,5 +147,53 @@ class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
       (MessageEntity a, MessageEntity b) => b.createdAt.compareTo(a.createdAt),
     );
     return msgs;
+  }
+
+  /// Mark messages as read up to (and including) the specified message ID.
+  /// Updates the status of all sent messages from the current user up to lastReadMessageId.
+  Future<void> markMessagesAsRead(
+    String chatId,
+    String lastReadMessageId,
+    String currentUserId,
+  ) async {
+    final GettedMessageEntity? entity = _box.get(chatId);
+    if (entity == null) return;
+
+    final List<MessageEntity> updatedMessages = <MessageEntity>[];
+    bool foundLastRead = false;
+
+    // Messages are sorted newest first, so we process in reverse
+    final List<MessageEntity> sortedMessages = List<MessageEntity>.from(
+      entity.messages,
+    )..sort(
+        (MessageEntity a, MessageEntity b) => a.createdAt.compareTo(b.createdAt),
+      );
+
+    for (final MessageEntity msg in sortedMessages) {
+      // Only update messages sent by current user that are delivered (not already read)
+      final bool isFromCurrentUser = msg.sendBy == currentUserId;
+      final bool isDeliveredOrSent = msg.status == MessageStatus.sent ||
+          msg.status == MessageStatus.delivered;
+
+      if (isFromCurrentUser && isDeliveredOrSent && !foundLastRead) {
+        // Update status to read
+        updatedMessages.add(msg.copyWith(
+          status: MessageStatus.read,
+        ));
+      } else {
+        updatedMessages.add(msg);
+      }
+
+      // Check if we've reached the last read message
+      if (msg.messageId == lastReadMessageId) {
+        foundLastRead = true;
+      }
+    }
+
+    final GettedMessageEntity updatedEntity = entity.copyWith(
+      messages: updatedMessages,
+    );
+    await _box.put(chatId, updatedEntity);
+    AppLog.info('📖 Marked messages as read up to: $lastReadMessageId');
   }
 }

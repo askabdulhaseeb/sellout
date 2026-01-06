@@ -10,6 +10,7 @@ import '../../../../../../../auth/signin/data/models/address_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../../basket/views/providers/cart_provider.dart';
+import '../../../../../../../post/domain/entities/offer/offer_payment_response.dart';
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
 
@@ -27,13 +28,15 @@ class OfferBuyNowButton extends StatelessWidget {
   }
 
   Future<void> _selectAddress(
-      BuildContext context, CartProvider cartPro) async {
+    BuildContext context,
+    CartProvider cartPro,
+  ) async {
     final AddressEntity? selectedAddress =
         await showModalBottomSheet<AddressEntity?>(
-      context: context,
-      builder: (BuildContext context) =>
-          AddressBottomSheet(initAddress: cartPro.address),
-    );
+          context: context,
+          builder: (BuildContext context) =>
+              AddressBottomSheet(initAddress: cartPro.address),
+        );
     if (selectedAddress != null) {
       cartPro.setAddress(selectedAddress);
     }
@@ -63,7 +66,9 @@ class OfferBuyNowButton extends StatelessWidget {
                       elevation: 6,
                       behavior: SnackBarBehavior.floating,
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -85,10 +90,10 @@ class OfferBuyNowButton extends StatelessWidget {
                   buyerAddress: AddressModel.fromEntity(addressRes),
                 );
 
-                final DataState<String> result =
+                final DataState<OfferPaymentResponse> result =
                     await OfferPaymentUsecase(locator()).call(params);
                 debugPrint('💬 Offer ID for payment: $offerId');
-                final String? clientSecret = result.entity;
+                final String? clientSecret = result.entity?.clientSecret;
 
                 if (clientSecret == null || clientSecret.isEmpty) {
                   throw CustomException('client_secret_missing'.tr());
@@ -110,8 +115,8 @@ class OfferBuyNowButton extends StatelessWidget {
                 debugPrint('❌ Payment error: $e');
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content:
-                          Text('${'payment_failed'.tr()}: ${e.toString()}')),
+                    content: Text('${'payment_failed'.tr()}: ${e.toString()}'),
+                  ),
                 );
               }
             },
