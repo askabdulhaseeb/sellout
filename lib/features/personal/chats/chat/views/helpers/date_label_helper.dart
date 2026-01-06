@@ -22,9 +22,12 @@ class DateLabelHelper {
         widgets.add(MessageTimeDivider(label: label));
         lastLabel = label;
       }
+      // Use ValueKey with messageId + updatedAt + fileStatus to ensure rebuild on updates
+      final String keyValue =
+          '${m.messageId}_${m.updatedAt.millisecondsSinceEpoch}_${m.fileStatus ?? ""}_${m.status?.code ?? ""}';
       widgets.add(
         MessageTile(
-          key: PageStorageKey<String>(m.messageId),
+          key: ValueKey<String>(keyValue),
           message: m,
           timeDiff: timeDiffMap[m.messageId] ?? const Duration(days: 5),
         ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -49,6 +51,10 @@ class SendMessageProvider extends ChangeNotifier {
   /// Pending messages being sent (optimistic UI)
   final ValueNotifier<List<MessageEntity>> pendingMessages =
       ValueNotifier<List<MessageEntity>>(<MessageEntity>[]);
+
+  /// Timers that delay marking a pending message as failed.
+  /// Keyed by temporary message id.
+  final Map<String, Timer> _failureTimers = <String, Timer>{};
 
   //getters
   bool get isLoading => _isLoading;
@@ -363,13 +369,10 @@ class SendMessageProvider extends ChangeNotifier {
       _removePendingMessage(tempMessageId);
       AppLog.info('Message sent successfully', name: tag);
     } else {
-      // Update pending message to failed status
-      _updatePendingMessageStatus(tempMessageId, MessageStatus.failed);
-      AppSnackBar.showSnackBar(
-        // ignore: use_build_context_synchronously
-        context,
-        result.exception?.message ?? 'something_wrong'.tr(),
-      );
+      // Don't mark failed immediately. Keep as pending and schedule failure
+      // after a grace period (2 minutes) so the UI shows "sending".
+      _scheduleFailureTimeout(tempMessageId, result.exception?.message);
+      AppLog.info('Message send delayed failure handling scheduled', name: tag);
     }
   }
 
@@ -378,6 +381,8 @@ class SendMessageProvider extends ChangeNotifier {
     pendingMessages.value = pendingMessages.value
         .where((MessageEntity m) => m.messageId != tempMessageId)
         .toList();
+    // Cancel any failure timer
+    _failureTimers.remove(tempMessageId)?.cancel();
   }
 
   /// Updates a pending message's status (e.g., to failed)
@@ -388,6 +393,28 @@ class SendMessageProvider extends ChangeNotifier {
       }
       return m;
     }).toList();
+    if (status == MessageStatus.failed) {
+      // Cancel timer when marking failed
+      _failureTimers.remove(tempMessageId)?.cancel();
+    }
+  }
+
+  void _scheduleFailureTimeout(String tempMessageId, String? errorMessage) {
+    // Cancel existing timer if any
+    _failureTimers.remove(tempMessageId)?.cancel();
+    // Schedule marking message as failed after 2 minutes
+    final Timer timer = Timer(const Duration(minutes: 2), () {
+      _updatePendingMessageStatus(tempMessageId, MessageStatus.failed);
+      // Optionally show a snackbar notifying user of failure
+      if (errorMessage != null && errorMessage.isNotEmpty) {
+        AppLog.info(
+          'Message marked failed: $tempMessageId error=$errorMessage',
+          name: tag,
+        );
+      }
+      _failureTimers.remove(tempMessageId);
+    });
+    _failureTimers[tempMessageId] = timer;
   }
 
   /// Retry sending a failed message
@@ -396,6 +423,8 @@ class SendMessageProvider extends ChangeNotifier {
     MessageEntity failedMessage,
   ) async {
     // Update status to pending
+    // Cancel any previous failure timer and mark pending
+    _failureTimers.remove(failedMessage.messageId)?.cancel();
     _updatePendingMessageStatus(failedMessage.messageId, MessageStatus.pending);
 
     // Retry sending
@@ -413,7 +442,11 @@ class SendMessageProvider extends ChangeNotifier {
       _removePendingMessage(failedMessage.messageId);
       AppLog.info('Message retry successful', name: tag);
     } else {
-      _updatePendingMessageStatus(failedMessage.messageId, MessageStatus.failed);
+      // Keep as pending and schedule failure after timeout again
+      _scheduleFailureTimeout(
+        failedMessage.messageId,
+        result.exception?.message,
+      );
       AppSnackBar.showSnackBar(
         // ignore: use_build_context_synchronously
         context,
@@ -515,5 +548,21 @@ class SendMessageProvider extends ChangeNotifier {
       'sendVoiceNote(): end (voiceNoteLen=${_voiceNote.length})',
       name: tag,
     );
+  }
+
+  @override
+  void dispose() {
+    // Cancel all pending failure timers to prevent memory leaks
+    for (final Timer timer in _failureTimers.values) {
+      timer.cancel();
+    }
+    _failureTimers.clear();
+    pendingMessages.dispose();
+    isRecordingAudio.dispose();
+    isAttachmentMenuOpen.dispose();
+    isEmojiPickerOpen.dispose();
+    _message.dispose();
+    messageFocusNode.dispose();
+    super.dispose();
   }
 }

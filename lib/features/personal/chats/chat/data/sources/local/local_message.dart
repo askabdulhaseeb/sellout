@@ -92,25 +92,33 @@ class LocalChatMessage extends LocalHiveBox<GettedMessageEntity> {
       await _put(id, value);
       return;
     } else {
-      final List<MessageEntity> old = result.messages;
-      final List<MessageEntity> neww = value.messages;
+      // Create a new list to avoid mutating the original
+      final List<MessageEntity> mergedMessages = List<MessageEntity>.from(
+        result.messages,
+      );
+      final List<MessageEntity> newMessages = value.messages;
       AppLog.info(
-        'New Message - old: ${old.length} - new: ${neww.length}',
+        'New Message - old: ${mergedMessages.length} - new: ${newMessages.length}',
         name: chatID,
       );
-      // if (old.length != neww.length) {
-      for (MessageEntity element in neww) {
-        if (old.any((MessageEntity e) => e.messageId == element.messageId)) {
-          continue;
+
+      for (final MessageEntity newMsg in newMessages) {
+        final int existingIndex = mergedMessages.indexWhere(
+          (MessageEntity e) => e.messageId == newMsg.messageId,
+        );
+        if (existingIndex != -1) {
+          // Update existing message with new data (e.g., fileStatus, fileUrl)
+          mergedMessages[existingIndex] = newMsg;
         } else {
-          old.add(element);
+          // Add new message
+          mergedMessages.add(newMsg);
         }
-        // }
       }
-      AppLog.info('New Message - updated: ${old.length}', name: chatID);
+
+      AppLog.info('New Message - updated: ${mergedMessages.length}', name: chatID);
       final GettedMessageEntity newGettedMessage = GettedMessageEntity(
         chatID: id,
-        messages: old,
+        messages: mergedMessages,
         lastEvaluatedKey: value.lastEvaluatedKey,
       );
       await _put(id, newGettedMessage);

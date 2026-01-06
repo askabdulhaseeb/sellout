@@ -165,12 +165,14 @@ class ChatSocketHandler extends BaseSocketHandler {
     try {
       if (data is! Map<String, dynamic>) return;
 
-      final String? chatId = data['chat_id'];
-      final String? updatedMessageId = data['message_id'];
+      final MessageModel updatedMsg = MessageModel.fromMap(data);
+      // Use chatId from parsed model (handles null safely)
+      final String chatId = updatedMsg.chatId;
+      final String updatedMessageId = updatedMsg.messageId;
 
-      if (chatId == null || updatedMessageId == null) {
+      if (chatId.isEmpty || updatedMessageId.isEmpty) {
         AppLog.error(
-          'Missing chatId or updatedMessageId in the data.',
+          'Missing chatId or messageId in updatedMessage data: $data',
           name: 'ChatSocketHandler',
         );
         return;
@@ -194,17 +196,28 @@ class ChatSocketHandler extends BaseSocketHandler {
       );
 
       if (index == -1) {
-        AppLog.error(
-          'Message with messageId: $updatedMessageId not found in chatId: $chatId',
+        // Message not found locally - add it as a new message
+        AppLog.info(
+          'Message not found locally, adding as new | chatId: $chatId | messageId: $updatedMessageId',
           name: 'ChatSocketHandler',
         );
+        final List<MessageEntity> messagesWithNew = List<MessageEntity>.from(
+          existing.messages,
+        )..add(updatedMsg);
+
+        final GettedMessageEntity entityWithNew = GettedMessageEntity(
+          chatID: existing.chatID,
+          messages: messagesWithNew,
+          lastEvaluatedKey: existing.lastEvaluatedKey,
+        );
+        await box.put(chatId, entityWithNew);
         return;
       }
 
       final List<MessageEntity> updatedMessages = List<MessageEntity>.from(
         existing.messages,
       );
-      updatedMessages[index] = MessageModel.fromMap(data);
+      updatedMessages[index] = updatedMsg;
 
       final GettedMessageEntity updatedEntity = GettedMessageEntity(
         chatID: existing.chatID,

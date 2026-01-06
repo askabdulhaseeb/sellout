@@ -46,7 +46,12 @@ class MessageTile extends StatelessWidget {
               MessageType.none == message.type
                   ? Text(message.displayText)
                   : MessageType.text == message.type
-                  ? TextMessageTile(message: message)
+                  ? TextMessageTile(
+                      key: ValueKey<String>(
+                        '${message.messageId}_${message.fileStatus ?? ""}_${message.status?.code ?? ""}',
+                      ),
+                      message: message,
+                    )
                   : MessageType.invitationParticipant == message.type ||
                         MessageType.acceptInvitation == message.type ||
                         MessageType.removeParticipant == message.type ||

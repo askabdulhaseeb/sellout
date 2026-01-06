@@ -15,6 +15,16 @@ class SystemNotificationService {
       FlutterLocalNotificationsPlugin();
 
   bool _isInitialized = false;
+  // Tracks whether the app is currently in the foreground. When true,
+  // system notifications will be suppressed to avoid showing notifications
+  // while the user is actively using the app.
+  bool _isAppInForeground = false;
+
+  /// Set whether the app is in foreground. Call this from a lifecycle observer.
+  void setAppInForeground(bool value) {
+    _isAppInForeground = value;
+    debugPrint('SystemNotificationService: app in foreground = $value');
+  }
 
   /// Initialize the notification service. Call this at app startup.
   Future<void> init() async {
@@ -72,6 +82,14 @@ class SystemNotificationService {
   Future<void> showNotification(NotificationEntity notification) async {
     if (!_isInitialized) {
       debugPrint('SystemNotificationService not initialized');
+      return;
+    }
+
+    // If app is in foreground, skip showing a system notification.
+    if (_isAppInForeground) {
+      debugPrint(
+        'App is in foreground - skipping system notification: ${notification.title}',
+      );
       return;
     }
 
