@@ -73,6 +73,21 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     }
   }
 
+  @override
+  void didUpdateWidget(covariant AudioMessageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the message was updated (e.g., file uploaded), re-prepare audio
+    if (oldWidget.message.fileStatus != widget.message.fileStatus ||
+        oldWidget.message.fileUrl.length != widget.message.fileUrl.length ||
+        (oldWidget.message.fileUrl.isNotEmpty &&
+            widget.message.fileUrl.isNotEmpty &&
+            oldWidget.message.fileUrl.first.url !=
+                widget.message.fileUrl.first.url)) {
+      _cachedFilePath = null;
+      _prepareAudio();
+    }
+  }
+
   void _subscribeToPlayerEvents() {
     _posSub = _playerController.onCurrentDurationChanged.listen((int ms) {
       if (!mounted) return;
@@ -116,13 +131,24 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
 
   Future<void> _prepareAudio() async {
     if (!mounted) return;
+
+    // Check if file URL is available (message might still be uploading)
+    if (widget.message.fileUrl.isEmpty ||
+        widget.message.fileUrl.first.url.isEmpty) {
+      setState(() {
+        _audioState = AudioState.loading;
+        _downloadProgress = 0.0;
+      });
+      return;
+    }
+
     setState(() {
       _audioState = AudioState.loading;
       _downloadProgress = 0.0;
     });
 
     try {
-      final String url = widget.message.fileUrl[0].url;
+      final String url = widget.message.fileUrl.first.url;
       _cachedFilePath ??= await _downloadOrGetFile(url);
       await _setupPlayer(_cachedFilePath!);
     } catch (e) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
+import '../../../providers/send_message_provider.dart';
 import '../common/message_status_indicator.dart';
 import '../message_bg_widget.dart';
 import 'contact_message_tile.dart';
@@ -25,8 +27,9 @@ class TextMessageTile extends StatelessWidget {
     Widget messageBubble = MessageBgWidget(
       isMe: isMe,
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           // Handle non-image/video attachments
@@ -61,7 +64,7 @@ class TextMessageTile extends StatelessWidget {
 
     // For pending/failed messages, show the sending arrow OUTSIDE the bubble
     if (isMe && (isPending || isFailed)) {
-      return Padding(
+      final Widget content = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -81,6 +84,20 @@ class TextMessageTile extends StatelessWidget {
           ],
         ),
       );
+
+      // If failed, allow tapping the message to retry sending
+      if (isFailed) {
+        return GestureDetector(
+          onTap: () {
+            final SendMessageProvider sendProvider =
+                Provider.of<SendMessageProvider>(context, listen: false);
+            sendProvider.retryMessage(context, message);
+          },
+          child: content,
+        );
+      }
+
+      return content;
     }
 
     // For sent/delivered/read messages, show normally

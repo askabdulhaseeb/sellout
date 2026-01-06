@@ -4,6 +4,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../domain/entities/getted_message_entity.dart';
@@ -67,26 +68,25 @@ class _MessagesListState extends State<MessagesList> {
     _previousMessageCount = newCount;
   }
 
-  /// Generates a hash based on message IDs, update times, and status to detect changes
   String _generateMessageHash(List<MessageEntity> messages) {
     if (messages.isEmpty) return '';
     final StringBuffer buffer = StringBuffer();
     for (final MessageEntity m in messages) {
+      // Include file info for audio/document messages that update after upload
+      final String fileHash = m.fileUrl.isNotEmpty
+          ? '${m.fileUrl.length}:${m.fileUrl.map((AttachmentEntity f) => f.url).join(",")}'
+          : '';
       buffer.write(
-        '${m.messageId}:${m.updatedAt.millisecondsSinceEpoch}:${m.status?.code ?? ""}|',
+        '${m.messageId}:${m.updatedAt.millisecondsSinceEpoch}:${m.status?.code ?? ""}:${m.fileStatus ?? ""}:$fileHash|',
       );
     }
     return buffer.toString();
   }
 
-  /// Builds widgets only when messages have changed
   List<Widget> _buildWidgetsIfNeeded(List<MessageEntity> messages) {
     final String currentHash = _generateMessageHash(messages);
-
     if (currentHash != _lastMessageHash) {
       _lastMessageHash = currentHash;
-
-      // Calculate time gaps
       final Map<String, Duration> timeDiffMap = <String, Duration>{};
       for (int i = 0; i < messages.length; i++) {
         final MessageEntity current = messages[i];
@@ -129,6 +129,7 @@ class _MessagesListState extends State<MessagesList> {
     final Box<GettedMessageEntity> box = Hive.box<GettedMessageEntity>(
       AppStrings.localChatMessagesBox,
     );
+
     return ValueListenableBuilder<Box<GettedMessageEntity>>(
       valueListenable: box.listenable(keys: <dynamic>[chatId]),
       builder: (BuildContext context, Box<GettedMessageEntity> box, _) {
@@ -140,20 +141,17 @@ class _MessagesListState extends State<MessagesList> {
             final List<MessageEntity> storedMessages = stored == null
                 ? <MessageEntity>[]
                 : chatProvider.getFilteredMessages(stored);
-
             // Combine stored messages with pending messages
             final List<MessageEntity> messages = <MessageEntity>[
               ...storedMessages,
               ...pending.where((MessageEntity p) => p.chatId == chatId),
             ];
-
             // Show loading indicator when loading and no messages yet
             if (isLoading && messages.isEmpty) {
               return const Expanded(
                 child: Center(child: CupertinoActivityIndicator()),
               );
             }
-
             // Show empty state when not loading and no messages
             if (!isLoading && messages.isEmpty) {
               return Expanded(
@@ -165,16 +163,12 @@ class _MessagesListState extends State<MessagesList> {
                 ),
               );
             }
-
             // Prefetch sender names for performance (runs async, doesn't block)
             chatProvider.prefetchSenderNames(messages);
-
             // Build widgets only when messages change (cached)
             final List<Widget> widgets = _buildWidgetsIfNeeded(messages);
-
             // Scroll to bottom on initial load
             _scheduleInitialScroll();
-
             // Scroll when new messages arrive (only triggers when count increases)
             _onMessagesChanged(messages.length);
 
