@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 
+import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sockets/handlers/base_socket_handler.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../services/get_it.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../chat/data/models/message_last_evaluated_key.dart';
 import '../../../../chat/data/sources/local/local_message.dart';
 import '../../../../chat/domain/entities/getted_message_entity.dart';
@@ -34,12 +36,36 @@ class UploadProgressData {
   bool get isFailed => status == 'failed';
 }
 
-/// Handles chat-related socket events (messages, pinned messages, upload progress).
+/// Data for tracking who is typing in a chat.
+class TypingUser {
+  TypingUser({
+    required this.chatId,
+    required this.userId,
+    required this.timestamp,
+    this.displayName,
+  });
+
+  final String chatId;
+  final String userId;
+  final DateTime timestamp;
+  final String? displayName;
+}
+
+/// Handles chat-related socket events (messages, pinned messages, upload progress, typing).
 class ChatSocketHandler extends BaseSocketHandler {
   /// Notifier for upload progress updates.
   /// Maps messageId -> UploadProgressData for tracking multiple uploads.
   final ValueNotifier<Map<String, UploadProgressData>> uploadProgressNotifier =
       ValueNotifier<Map<String, UploadProgressData>>(<String, UploadProgressData>{});
+
+  /// Notifier for typing indicators.
+  /// Maps chatId -> List of users currently typing in that chat.
+  final ValueNotifier<Map<String, List<TypingUser>>> typingUsersNotifier =
+      ValueNotifier<Map<String, List<TypingUser>>>(<String, List<TypingUser>>{});
+
+  /// Notifier for read receipts - emits (chatId, userId, lastReadMessageId).
+  final ValueNotifier<Map<String, Map<String, String>>> readReceiptsNotifier =
+      ValueNotifier<Map<String, Map<String, String>>>(<String, Map<String, String>>{});
 
   @override
   List<String> get supportedEvents => <String>[
@@ -48,6 +74,9 @@ class ChatSocketHandler extends BaseSocketHandler {
         AppStrings.newPinnedMessage,
         AppStrings.updatePinnedMessage,
         AppStrings.uploadProgress,
+        AppStrings.userTyping,
+        AppStrings.userStopTyping,
+        AppStrings.messagesRead,
       ];
 
   @override
@@ -72,6 +101,15 @@ class ChatSocketHandler extends BaseSocketHandler {
       case 'uploadProgress':
         _handleUploadProgress(data);
         break;
+      case 'userTyping':
+        _handleUserTyping(data);
+        break;
+      case 'userStopTyping':
+        _handleUserStopTyping(data);
+        break;
+      case 'messagesRead':
+        _handleMessagesRead(data);
+        break;
     }
   }
 
@@ -81,7 +119,18 @@ class ChatSocketHandler extends BaseSocketHandler {
 
       final MessageModel newMsg = MessageModel.fromMap(data);
       // Use chatId from parsed model (handles null safely) instead of raw data
-      final String chatId = newMsg.chatId;
+      String chatId = newMsg.chatId;
+
+      // If chat_id is missing but message_id exists, this might be a partial update
+      // (server sometimes sends file upload completion as newMessage with only updated fields)
+      if (chatId.isEmpty && newMsg.messageId.isNotEmpty) {
+        AppLog.info(
+          'newMessage missing chat_id, treating as update | messageId: ${newMsg.messageId}',
+          name: 'ChatSocketHandler',
+        );
+        await _handlePartialUpdate(data, newMsg.messageId);
+        return;
+      }
 
       if (chatId.isEmpty) {
         AppLog.error(
@@ -155,6 +204,88 @@ class ChatSocketHandler extends BaseSocketHandler {
     } catch (e, stackTrace) {
       AppLog.error(
         'Error saving new message: $e',
+        stackTrace: stackTrace,
+        name: 'ChatSocketHandler',
+      );
+    }
+  }
+
+  /// Handles partial message updates (e.g., file upload completion sent as newMessage
+  /// with only the updated fields like file_url, file_status, but missing chat_id).
+  /// Finds the existing message by messageId and merges the updated fields.
+  Future<void> _handlePartialUpdate(
+    Map<String, dynamic> data,
+    String messageId,
+  ) async {
+    try {
+      final Box<GettedMessageEntity> box = Hive.box<GettedMessageEntity>(
+        AppStrings.localChatMessagesBox,
+      );
+
+      // Search all chats for the message with this ID
+      for (final GettedMessageEntity entity in box.values) {
+        final int index = entity.messages.indexWhere(
+          (MessageEntity m) => m.messageId == messageId,
+        );
+
+        if (index != -1) {
+          final MessageEntity existingMsg = entity.messages[index];
+
+          // Merge the partial update with existing message data
+          final Map<String, dynamic> mergedData = <String, dynamic>{
+            'message_id': existingMsg.messageId,
+            'chat_id': existingMsg.chatId,
+            'send_by': existingMsg.sendBy,
+            'persons': existingMsg.persons,
+            'text': existingMsg.text,
+            'display_text': data['display_text'] ?? existingMsg.displayText,
+            'type': existingMsg.type?.code,
+            'source': existingMsg.source,
+            'created_at': existingMsg.createdAt.toIso8601String(),
+            'updated_at': data['updated_at'] ??
+                existingMsg.updatedAt.toIso8601String(),
+            'file_status': data['file_status'] ?? existingMsg.fileStatus,
+            'file_url': data['file_url'] ??
+                existingMsg.fileUrl
+                    .map((AttachmentEntity f) => <String, dynamic>{
+                          'url': f.url,
+                          'type': f.type.json,
+                          'original_name': f.originalName,
+                          'file_id': f.fileId,
+                          'created_at': f.createdAt.toIso8601String(),
+                        })
+                    .toList(),
+          };
+
+          final MessageModel updatedMsg = MessageModel.fromMap(mergedData);
+
+          final List<MessageEntity> updatedMessages = List<MessageEntity>.from(
+            entity.messages,
+          );
+          updatedMessages[index] = updatedMsg;
+
+          final GettedMessageEntity updatedEntity = GettedMessageEntity(
+            chatID: entity.chatID,
+            messages: updatedMessages,
+            lastEvaluatedKey: entity.lastEvaluatedKey,
+          );
+
+          await box.put(entity.chatID, updatedEntity);
+          AppLog.info(
+            'Partial update applied | chatId: ${entity.chatID} | messageId: $messageId',
+            name: 'ChatSocketHandler',
+          );
+          return;
+        }
+      }
+
+      AppLog.error(
+        'Message not found for partial update | messageId: $messageId',
+        name: 'ChatSocketHandler',
+      );
+    } catch (e, stackTrace) {
+      AppLog.error(
+        'Error handling partial update: $e',
         stackTrace: stackTrace,
         name: 'ChatSocketHandler',
       );
@@ -312,8 +443,180 @@ class ChatSocketHandler extends BaseSocketHandler {
     uploadProgressNotifier.value = currentMap;
   }
 
+  // ============ Typing Indicator Handlers ============
+
+  void _handleUserTyping(dynamic data) {
+    try {
+      if (data is! Map<String, dynamic>) return;
+
+      final String? chatId = data['chat_id']?.toString();
+      final String? userId = data['user_id']?.toString();
+      final String? displayName = data['display_name']?.toString();
+
+      if (chatId == null || userId == null) {
+        AppLog.error(
+          'Missing chat_id or user_id in userTyping data',
+          name: 'ChatSocketHandler',
+        );
+        return;
+      }
+
+      final TypingUser typingUser = TypingUser(
+        chatId: chatId,
+        userId: userId,
+        timestamp: DateTime.now(),
+        displayName: displayName,
+      );
+
+      final Map<String, List<TypingUser>> currentMap =
+          Map<String, List<TypingUser>>.from(typingUsersNotifier.value);
+
+      final List<TypingUser> chatTypingUsers =
+          List<TypingUser>.from(currentMap[chatId] ?? <TypingUser>[]);
+
+      // Remove existing entry for this user (if any) and add new one
+      chatTypingUsers.removeWhere((TypingUser u) => u.userId == userId);
+      chatTypingUsers.add(typingUser);
+
+      currentMap[chatId] = chatTypingUsers;
+      typingUsersNotifier.value = currentMap;
+
+      AppLog.info(
+        'User typing | chatId: $chatId | userId: $userId',
+        name: 'ChatSocketHandler',
+      );
+
+      // Auto-remove typing indicator after 5 seconds (in case stopTyping is not received)
+      Future<void>.delayed(const Duration(seconds: 5), () {
+        _removeTypingUser(chatId, userId);
+      });
+    } catch (e) {
+      AppLog.error('Error handling userTyping: $e', name: 'ChatSocketHandler');
+    }
+  }
+
+  void _handleUserStopTyping(dynamic data) {
+    try {
+      if (data is! Map<String, dynamic>) return;
+
+      final String? chatId = data['chat_id']?.toString();
+      final String? userId = data['user_id']?.toString();
+
+      if (chatId == null || userId == null) {
+        AppLog.error(
+          'Missing chat_id or user_id in userStopTyping data',
+          name: 'ChatSocketHandler',
+        );
+        return;
+      }
+
+      _removeTypingUser(chatId, userId);
+
+      AppLog.info(
+        'User stopped typing | chatId: $chatId | userId: $userId',
+        name: 'ChatSocketHandler',
+      );
+    } catch (e) {
+      AppLog.error('Error handling userStopTyping: $e', name: 'ChatSocketHandler');
+    }
+  }
+
+  void _removeTypingUser(String chatId, String userId) {
+    final Map<String, List<TypingUser>> currentMap =
+        Map<String, List<TypingUser>>.from(typingUsersNotifier.value);
+
+    final List<TypingUser>? chatTypingUsers = currentMap[chatId];
+    if (chatTypingUsers == null) return;
+
+    final List<TypingUser> updated = chatTypingUsers
+        .where((TypingUser u) => u.userId != userId)
+        .toList();
+
+    if (updated.isEmpty) {
+      currentMap.remove(chatId);
+    } else {
+      currentMap[chatId] = updated;
+    }
+
+    typingUsersNotifier.value = currentMap;
+  }
+
+  /// Get list of users typing in a specific chat.
+  List<TypingUser> getTypingUsers(String chatId) {
+    return typingUsersNotifier.value[chatId] ?? <TypingUser>[];
+  }
+
+  /// Check if anyone is typing in a chat.
+  bool isAnyoneTyping(String chatId) {
+    final List<TypingUser>? users = typingUsersNotifier.value[chatId];
+    return users != null && users.isNotEmpty;
+  }
+
+  // ============ Read Receipt Handlers ============
+
+  void _handleMessagesRead(dynamic data) async {
+    try {
+      if (data is! Map<String, dynamic>) return;
+
+      final String? chatId = data['chat_id']?.toString();
+      final String? userId = data['user_id']?.toString();
+      final String? lastReadMessageId = data['last_read_message_id']?.toString();
+
+      if (chatId == null || userId == null) {
+        AppLog.error(
+          'Missing chat_id or user_id in messagesRead data',
+          name: 'ChatSocketHandler',
+        );
+        return;
+      }
+
+      final Map<String, Map<String, String>> currentMap =
+          Map<String, Map<String, String>>.from(readReceiptsNotifier.value);
+
+      final Map<String, String> chatReadReceipts =
+          Map<String, String>.from(currentMap[chatId] ?? <String, String>{});
+
+      if (lastReadMessageId != null) {
+        chatReadReceipts[userId] = lastReadMessageId;
+      }
+
+      currentMap[chatId] = chatReadReceipts;
+      readReceiptsNotifier.value = currentMap;
+
+      // Update local message status to 'read' for messages sent by current user
+      // This happens when the other user reads our messages
+      final String? currentUserId = LocalAuth.uid;
+      if (lastReadMessageId != null && currentUserId != null && userId != currentUserId) {
+        await LocalChatMessage().markMessagesAsRead(
+          chatId,
+          lastReadMessageId,
+          currentUserId,
+        );
+      }
+
+      AppLog.info(
+        'Messages read | chatId: $chatId | userId: $userId | lastRead: $lastReadMessageId',
+        name: 'ChatSocketHandler',
+      );
+    } catch (e) {
+      AppLog.error('Error handling messagesRead: $e', name: 'ChatSocketHandler');
+    }
+  }
+
+  /// Get the last read message ID for a user in a chat.
+  String? getLastReadMessageId(String chatId, String userId) {
+    return readReceiptsNotifier.value[chatId]?[userId];
+  }
+
+  /// Get all read receipts for a chat.
+  Map<String, String> getChatReadReceipts(String chatId) {
+    return readReceiptsNotifier.value[chatId] ?? <String, String>{};
+  }
+
   @override
   void dispose() {
     uploadProgressNotifier.dispose();
+    typingUsersNotifier.dispose();
+    readReceiptsNotifier.dispose();
   }
 }

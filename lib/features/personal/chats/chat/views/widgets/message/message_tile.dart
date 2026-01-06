@@ -48,7 +48,7 @@ class MessageTile extends StatelessWidget {
                   : MessageType.text == message.type
                   ? TextMessageTile(
                       key: ValueKey<String>(
-                        '${message.messageId}_${message.fileStatus ?? ""}_${message.status?.code ?? ""}',
+                        '${message.messageId}_${message.fileStatus ?? ""}_${message.status?.code ?? ""}_${message.fileUrl.isNotEmpty ? message.fileUrl.first.url : ""}',
                       ),
                       message: message,
                     )
@@ -89,7 +89,6 @@ class MessageSenderName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use cached sender name from provider (populated by prefetchSenderNames)
     final String? cachedName =
         context.read<ChatProvider>().getSenderName(senderId);
     final String displayName = cachedName ?? 'na'.tr();
