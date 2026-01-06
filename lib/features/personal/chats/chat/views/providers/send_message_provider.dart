@@ -58,13 +58,6 @@ class SendMessageProvider extends ChangeNotifier {
   /// Keyed by temporary message id.
   final Map<String, Timer> _failureTimers = <String, Timer>{};
 
-  // ============ Typing Indicator State ============
-  Timer? _typingDebounceTimer;
-  Timer? _stopTypingTimer;
-  bool _isTyping = false;
-  static const Duration _typingDebounceDelay = Duration(milliseconds: 300);
-  static const Duration _stopTypingDelay = Duration(seconds: 3);
-
   //getters
   bool get isLoading => _isLoading;
   ChatEntity? get chat => _chat;
@@ -145,7 +138,6 @@ class SendMessageProvider extends ChangeNotifier {
 
   void onTextChange(String value) {
     lastSelection = _message.selection;
-    _handleTypingIndicator(value);
     notifyListeners();
   }
 
@@ -158,82 +150,6 @@ class SendMessageProvider extends ChangeNotifier {
     }
 
     message.text = value;
-    _handleTypingIndicator(value);
-  }
-
-  // ============ Typing Indicator Methods ============
-
-  /// Handles typing indicator emission with debouncing.
-  /// Emits 'typing' when user starts typing, and 'stopTyping' after they stop.
-  void _handleTypingIndicator(String value) {
-    final String? chatId = _chat?.chatId;
-    if (chatId == null || chatId.isEmpty) return;
-
-    // Cancel previous debounce timer
-    _typingDebounceTimer?.cancel();
-
-    if (value.isNotEmpty) {
-      // Debounce the typing emission to avoid spamming the server
-      _typingDebounceTimer = Timer(_typingDebounceDelay, () {
-        _emitTyping(chatId);
-      });
-    } else {
-      // Text cleared - stop typing immediately
-      _emitStopTyping(chatId);
-    }
-  }
-
-  void _emitTyping(String chatId) {
-    if (_isTyping) {
-      // Already typing, just reset the stop timer
-      _resetStopTypingTimer(chatId);
-      return;
-    }
-
-    _isTyping = true;
-    final SocketService socketService = locator<SocketService>();
-    socketService.emit('typing', <String, dynamic>{
-      'chat_id': chatId,
-      'user_id': LocalAuth.uid,
-    });
-
-    AppLog.info('Emitted typing event | chatId: $chatId', name: tag);
-
-    // Set up auto stop typing after delay
-    _resetStopTypingTimer(chatId);
-  }
-
-  void _resetStopTypingTimer(String chatId) {
-    _stopTypingTimer?.cancel();
-    _stopTypingTimer = Timer(_stopTypingDelay, () {
-      _emitStopTyping(chatId);
-    });
-  }
-
-  void _emitStopTyping(String chatId) {
-    if (!_isTyping) return;
-
-    _isTyping = false;
-    _stopTypingTimer?.cancel();
-    _stopTypingTimer = null;
-
-    final SocketService socketService = locator<SocketService>();
-    socketService.emit('stopTyping', <String, dynamic>{
-      'chat_id': chatId,
-      'user_id': LocalAuth.uid,
-    });
-
-    AppLog.info('Emitted stopTyping event | chatId: $chatId', name: tag);
-  }
-
-  /// Call when leaving the chat screen to ensure typing indicator is cleared.
-  void clearTypingIndicator() {
-    final String? chatId = _chat?.chatId;
-    if (chatId != null && _isTyping) {
-      _emitStopTyping(chatId);
-    }
-    _typingDebounceTimer?.cancel();
-    _stopTypingTimer?.cancel();
   }
 
   void insertEmoji(String emoji) {
@@ -407,11 +323,6 @@ class SendMessageProvider extends ChangeNotifier {
 
     // Don't send empty messages
     if (messageText.isEmpty && _attachments.isEmpty) return;
-
-    // Stop typing indicator when sending a message
-    if (chatId.isNotEmpty) {
-      _emitStopTyping(chatId);
-    }
 
     // Create a temporary message ID for tracking
     final String tempMessageId = const Uuid().v4();

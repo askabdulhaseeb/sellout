@@ -342,10 +342,6 @@ class AppStrings {
   static String get joinChat => 'joinChat';
   static String get leaveChat => 'leaveChat';
   static String get uploadProgress => 'uploadProgress';
-  static String get typing => 'typing';
-  static String get stopTyping => 'stopTyping';
-  static String get userTyping => 'userTyping';
-  static String get userStopTyping => 'userStopTyping';
   static String get markRead => 'markRead';
   static String get messagesRead => 'messagesRead';
   // MARK: Audio Files
