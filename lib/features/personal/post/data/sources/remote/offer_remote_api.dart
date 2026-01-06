@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
@@ -81,7 +80,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         AppLog.error(
           result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
           name: 'PostRemoteApiImpl.updateOffer - else',
-          error: result.exception?.reason,
+          error: result.exception?.raw,
         );
         return DataFailer<bool>(
           result.exception ?? CustomException('something_wrong'.tr()),
@@ -196,7 +195,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
       }
 
       AppLog.error(
-        result.exception?.reason ?? 'Unknown error during buy-now rates',
+        result.exception?.raw ?? 'Unknown error during buy-now rates',
         name: 'OfferRemoteApiImpl.getBuyNowShippingRates - Else',
         error: result.exception?.detail,
       );

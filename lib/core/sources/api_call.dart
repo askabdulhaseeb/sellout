@@ -69,7 +69,10 @@ class ApiCall<T> {
   /// Sanitizes a string value by escaping dangerous characters.
   static String _sanitizeString(String value) {
     // Remove null bytes and other control characters (except newline, tab)
-    String sanitized = value.replaceAll(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F]'), '');
+    String sanitized = value.replaceAll(
+      RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F]'),
+      '',
+    );
 
     // Trim excessive whitespace
     sanitized = sanitized.trim();
@@ -158,8 +161,9 @@ class ApiCall<T> {
       );
 
       /// Request Fields (sanitized)
-      final Map<String, String>? sanitizedFields =
-          _validateAndSanitizeFields(fieldsMap);
+      final Map<String, String>? sanitizedFields = _validateAndSanitizeFields(
+        fieldsMap,
+      );
       if (sanitizedFields != null && sanitizedFields.isNotEmpty) {
         request.bodyFields = sanitizedFields;
       }
@@ -227,10 +231,7 @@ class ApiCall<T> {
             url: url,
             encodedData: data,
           );
-          await LocalRequestHistory().save(
-            url.toSHA256(),
-            apiRequestEntity,
-          );
+          await LocalRequestHistory().save(url.toSHA256(), apiRequestEntity);
           return DataSuccess<T>(data, null);
         }
       } else {
@@ -243,10 +244,12 @@ class ApiCall<T> {
           name: 'ApiCall.call',
         );
 
-        // Parse response for user-facing message only
+        // Parse response for user-facing message and capture raw response
         String userMessage = safeMessage;
+        String rawResponse = '';
         try {
           final String data = await response.stream.bytesToString();
+          rawResponse = data;
           final Map<String, dynamic> decoded = jsonDecode(data);
           // Only use 'message' field if it exists and is non-empty
           final String? apiMessage = decoded['message']?.toString();
@@ -257,14 +260,16 @@ class ApiCall<T> {
           // Ignore JSON parsing errors, use safe message
         }
 
-        return DataFailer<T>(CustomException(userMessage));
+        return DataFailer<T>(
+          CustomException(
+            userMessage,
+            raw: rawResponse.isNotEmpty ? rawResponse : null,
+          ),
+        );
       }
     } catch (e) {
       // Log generic error without exposing internal details
-      AppLog.error(
-        'Request failed: $endpoint',
-        name: 'ApiCall.call',
-      );
+      AppLog.error('Request failed: $endpoint', name: 'ApiCall.call');
       return DataFailer<T>(CustomException('Request failed'));
     }
   }
@@ -296,8 +301,9 @@ class ApiCall<T> {
       );
 
       /// Sanitize and add fields
-      final Map<String, String>? sanitizedFields =
-          _validateAndSanitizeFields(fieldsMap);
+      final Map<String, String>? sanitizedFields = _validateAndSanitizeFields(
+        fieldsMap,
+      );
       if (sanitizedFields != null && sanitizedFields.isNotEmpty) {
         request.fields.addAll(sanitizedFields);
       }
@@ -366,10 +372,7 @@ class ApiCall<T> {
             url: url,
             encodedData: data,
           );
-          await LocalRequestHistory().save(
-            url.toSHA256(),
-            apiRequestEntity,
-          );
+          await LocalRequestHistory().save(url.toSHA256(), apiRequestEntity);
           return DataSuccess<T>(data, null);
         }
       } else {
@@ -382,10 +385,12 @@ class ApiCall<T> {
           name: 'ApiCall.callFormData',
         );
 
-        // Parse response for user-facing message only
+        // Parse response for user-facing message and capture raw response
         String userMessage = safeMessage;
+        String rawResponse = '';
         try {
           final String data = await response.stream.bytesToString();
+          rawResponse = data;
           final Map<String, dynamic> decoded = jsonDecode(data);
           // Only use 'message' field if it exists and is non-empty
           final String? apiMessage = decoded['message']?.toString();
@@ -396,14 +401,16 @@ class ApiCall<T> {
           // Ignore JSON parsing errors, use safe message
         }
 
-        return DataFailer<T>(CustomException(userMessage));
+        return DataFailer<T>(
+          CustomException(
+            userMessage,
+            raw: rawResponse.isNotEmpty ? rawResponse : null,
+          ),
+        );
       }
     } catch (e) {
       // Log generic error without exposing internal details
-      AppLog.error(
-        'Request failed: $endpoint',
-        name: 'ApiCall.callFormData',
-      );
+      AppLog.error('Request failed: $endpoint', name: 'ApiCall.callFormData');
       return DataFailer<T>(CustomException('Request failed'));
     }
   }
