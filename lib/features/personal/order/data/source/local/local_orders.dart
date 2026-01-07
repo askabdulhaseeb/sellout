@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/sources/local/local_hive_box.dart';
@@ -20,16 +21,16 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
 
   /// Fetches order from local storage first, then from API if not found
   Future<OrderEntity?> fetchOrder(String orderId) async {
-    print('🔍 Fetching order: $orderId');
+    debugPrint('🔍 Fetching order: $orderId');
 
     // Try local first
     final OrderEntity? localOrder = get(orderId);
     if (localOrder != null) {
-      print('   ✅ Found in local storage');
+      debugPrint('   ✅ Found in local storage');
       return localOrder;
     }
 
-    print('   ⚠️ Not in local storage, fetching from API...');
+    debugPrint('   ⚠️ Not in local storage, fetching from API...');
 
     try {
       // Get the usecase from your DI container
@@ -41,21 +42,21 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
       if (result is DataSuccess<List<OrderEntity>>) {
         final List<OrderEntity> orders = result.entity ?? <OrderEntity>[];
         if (orders.isNotEmpty) {
-          print('   ✅ Fetched from API successfully');
+          debugPrint('   ✅ Fetched from API successfully');
           // Save to local storage
           await _box.put(orderId, orders.first);
           return orders.first;
         }
-        print('   ❌ Failed to fetch order: No orders found in response');
+        debugPrint('   ❌ Failed to fetch order: No orders found in response');
       } else if (result is DataFailer<List<OrderEntity>>) {
-        print(
+        debugPrint(
           '   ❌ Failed to fetch order: ${result.exception?.message ?? "Unknown error"}',
         );
       }
 
       return null;
     } catch (e) {
-      print('   ❌ Failed to fetch order - Exception: $e');
+      debugPrint('   ❌ Failed to fetch order - Exception: $e');
       return null;
     }
   }

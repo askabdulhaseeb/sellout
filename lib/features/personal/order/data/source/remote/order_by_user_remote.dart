@@ -163,35 +163,35 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
     ReturnEligibilityParams params,
   ) async {
+    const String endpoint = '/orders/return/eligibility';
+    AppLog.info(
+      'POST $endpoint - orderId=${params.orderId}, objectId=${params.objectId}',
+      name: 'OrderByUserRemoteImpl.checkReturnEligibility - start',
+    );
+
     try {
-      final String endpoint = '/orders/return/eligibility/${params.orderId}';
-      final Map<String, dynamic> body = <String, dynamic>{
-        'order_id': params.orderId,
-        'object_id': params.objectId,
-      };
-      debugPrint(
-        'checkReturnEligibility: POST $endpoint (orderId=${params.orderId}, objectId=${params.objectId})',
-      );
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
-        body: jsonEncode(body),
+        body: jsonEncode(params.toMap()),
         isAuth: true,
       );
-      debugPrint('Return eligibility raw response: ${result.data}');
 
       if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
+        AppLog.info('Response: $raw', name: 'checkReturnEligibility');
         final ReturnEligibilityModel? model = ReturnEligibilityModel.fromRaw(
           raw,
         );
-        debugPrint(
-          'checkReturnEligibility: returning success (allowed=${model?.allowed}, reason=${model?.reason})',
+        AppLog.info(
+          'Parsed: allowed=${model?.allowed}, reason=${model?.reason}',
+          name: 'OrderByUserRemoteImpl.checkReturnEligibility - parsed',
         );
         return DataSuccess<ReturnEligibilityModel>(raw, model);
       } else {
-        debugPrint(
-          'checkReturnEligibility: returning failure (${result.exception?.message ?? 'unknown_error'})',
+        AppLog.error(
+          'Failed: ${result.exception?.message ?? 'unknown_error'}',
+          name: 'OrderByUserRemoteImpl.checkReturnEligibility - else',
         );
         return DataFailer<ReturnEligibilityModel>(
           result.exception ?? CustomException('failed_to_check_return'),
@@ -204,7 +204,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         error: e,
         stackTrace: stc,
       );
-      debugPrint('checkReturnEligibility: returning failure (catch)');
       return DataFailer<ReturnEligibilityModel>(
         CustomException('failed_to_check_return'),
       );

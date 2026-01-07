@@ -6,4 +6,9 @@ class ReturnEligibilityParams {
 
   final String orderId;
   final String objectId;
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+    'order_id': orderId,
+    'object_id': objectId,
+  };
 }
