@@ -35,14 +35,13 @@ class OfferMessageTileButtons extends HookWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Seller countered: buyer sees accept/reject only (no counter)
-            if (isBuyer && counterBy == CounterOfferEnum.seller && isPending)
+            // Show buttons to seller if counterBy is null or by buyer
+            if (isSeller &&
+                isPending &&
+                (counterBy == null || counterBy == CounterOfferEnum.buyer))
               OfferTileUpdateButons(message: message, counterBy: counterBy),
-            // Buyer made initial offer: buyer sees counter/decline (not showing buttons - seller side handles it)
-            if (isBuyer && counterBy == null && isPending)
-              OfferTileUpdateButons(message: message, counterBy: counterBy),
-            // Seller with initial offer or buyer countered: seller sees all buttons
-            if (isSeller && isPending)
+            // Show buttons to buyer if counterBy is by seller
+            if (isBuyer && isPending && counterBy == CounterOfferEnum.seller)
               OfferTileUpdateButons(message: message, counterBy: counterBy),
             // Buyer and offer accepted: show buy-now
             if (isBuyer && isAccepted) OfferTileBuyerButtons(message: message),
