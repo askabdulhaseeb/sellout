@@ -17,6 +17,7 @@ import '../../../../../../../post/domain/params/buy_now_shipping_rates_params.da
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/get_buy_now_shipping_rates_usecase.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
+import '../../../../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'offer_shipping_rates_bottom_sheet.dart';
 import 'payment_success_bottom_sheet.dart';
@@ -204,6 +205,11 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
       );
 
       await Stripe.instance.presentPaymentSheet();
+
+      // Clear pinned message after successful payment
+      if (widget.message?.chatId != null) {
+        await LocalChat().clearPinnedMessage(widget.message!.chatId);
+      }
 
       if (mounted) {
         // Show success bottom sheet with animation
