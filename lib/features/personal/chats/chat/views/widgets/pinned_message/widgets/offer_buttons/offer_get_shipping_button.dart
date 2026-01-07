@@ -5,6 +5,7 @@ import '../../../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../services/get_it.dart';
+import '../../../../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../../../../../../../postage/data/models/postage_detail_repsonse_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../auth/signin/domain/entities/address_entity.dart';
@@ -37,8 +38,9 @@ class _OfferGetShippingButtonState extends State<OfferGetShippingButton> {
 
   AddressEntity? get _defaultAddress {
     if (_userAddresses.isEmpty) return null;
-    final Iterable<AddressEntity> defaults =
-        _userAddresses.where((AddressEntity e) => e.isDefault);
+    final Iterable<AddressEntity> defaults = _userAddresses.where(
+      (AddressEntity e) => e.isDefault,
+    );
     if (defaults.isNotEmpty) return defaults.first;
     return _userAddresses.first;
   }
@@ -51,9 +53,8 @@ class _OfferGetShippingButtonState extends State<OfferGetShippingButton> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => AddressBottomSheet(
-        initAddress: _selectedAddress ?? _defaultAddress,
-      ),
+      builder: (_) =>
+          AddressBottomSheet(initAddress: _selectedAddress ?? _defaultAddress),
     );
   }
 
@@ -109,32 +110,29 @@ class _OfferGetShippingButtonState extends State<OfferGetShippingButton> {
       }
 
       // 3) Show rates bottom sheet
-      final bool? shippingAdded = await showModalBottomSheet<bool?>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (_) => OfferShippingRatesBottomSheet(
-          response: ratesState.entity!,
-          postId: widget.postId,
-        ),
-      );
+      final BuyNowAddShippingResponseModel? shippingResponse =
+          await showModalBottomSheet<BuyNowAddShippingResponseModel?>(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (_) => OfferShippingRatesBottomSheet(
+              response: ratesState.entity!,
+              postId: widget.postId,
+            ),
+          );
 
-      if (shippingAdded == true) {
+      if (shippingResponse != null) {
         widget.onShippingAdded();
       }
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'OfferGetShippingButton',
-        error: e,
-      );
+      AppLog.error(e.toString(), name: 'OfferGetShippingButton', error: e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('something_wrong'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
       }
     } finally {
       if (mounted) {

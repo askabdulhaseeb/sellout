@@ -36,6 +36,12 @@ class CurrencyDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final String symbol = CountryHelper.currencySymbolHelper(currency);
     final String priceText = price?.toString() ?? '';
+
+    // Show fallback text if price is empty
+    if (priceText.isEmpty) {
+      return Text('—', style: style);
+    }
+
     final String displayText =
         '${prefix ?? ''}$symbol $priceText${suffix ?? ''}';
 
@@ -68,17 +74,25 @@ class CurrencyDisplayWithOriginal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String offerPriceText = offerPrice?.toString() ?? '';
+    final String originalPriceText = originalPrice?.toString() ?? '';
+
+    // Show fallback if both prices are empty
+    if (offerPriceText.isEmpty && originalPriceText.isEmpty) {
+      return Text('—', style: offerStyle);
+    }
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         CurrencyDisplay(
           currency: currency,
           price: offerPrice,
-          style: offerStyle ??
-              Theme.of(context)
-                  .textTheme
-                  .labelSmall
-                  ?.copyWith(fontWeight: FontWeight.w700),
+          style:
+              offerStyle ??
+              Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         SizedBox(width: spacing),
         CurrencyDisplay(
