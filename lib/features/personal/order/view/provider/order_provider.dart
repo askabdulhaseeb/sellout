@@ -31,6 +31,12 @@ class OrderProvider extends ChangeNotifier {
 
   OrderEntity? get order => _sellerOrder;
 
+  void setInitialOrder(OrderEntity order) {
+    _sellerOrder = order;
+    _currentOrderId = order.orderId;
+    notifyListeners();
+  }
+
   void _onBoxEvent(event) {
     if (_currentOrderId != null && event.key == _currentOrderId) {
       // Order changed in box, reload and notify
@@ -53,10 +59,7 @@ class OrderProvider extends ChangeNotifier {
     try {
       _sellerOrder = await LocalOrders().fetchOrder(orderId);
     } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'OrderProvider.loadOrder',
-      );
+      AppLog.error(e.toString(), name: 'OrderProvider.loadOrder');
       _sellerOrder = null;
     } finally {
       _isLoadingOrder = false;

@@ -277,6 +277,7 @@
   "error": "Error",
   "type": "Type",
   "start_order":"Start Order",
+  "order_not_found":"Order not found.",
   "postage_return_and_payment": "Postage, Return and Payment",
   "inquiry":"Inquiry",
   "est_delivery": "Est. Delivery",
