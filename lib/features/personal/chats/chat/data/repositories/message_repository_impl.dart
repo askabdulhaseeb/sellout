@@ -7,7 +7,7 @@ import '../../../../post/domain/params/buy_now_shipping_rates_params.dart';
 import '../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../post/domain/params/share_in_chat_params.dart';
 import '../../../../post/domain/params/update_offer_params.dart';
-import '../../../../basket/data/models/cart/add_shipping_response_model.dart';
+import '../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/params/leave_group_params.dart';
 import '../../domain/params/post_inquiry_params.dart';
@@ -69,7 +69,7 @@ class MessageRepositoryImpl implements MessageRepository {
   Future<DataState<OfferPaymentResponse>> offerPayment(
     OfferPaymentParams param,
   ) async {
-    return await offerRemoteApi.offerPayment(param);
+    return await offerRemoteApi.buyNowPayment(param);
   }
 
   @override
@@ -80,7 +80,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<DataState<AddShippingResponseModel>> addBuyNowShipping(
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
     BuyNowAddShippingParam param,
   ) async {
     return await offerRemoteApi.addBuyNowShipping(param);

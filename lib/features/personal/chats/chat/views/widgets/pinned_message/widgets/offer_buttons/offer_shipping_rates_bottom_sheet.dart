@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../postage/domain/entities/postage_detail_response_entity.dart';
-import '../../../../../../../basket/data/models/cart/add_shipping_response_model.dart';
+import '../../../../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../../../../../../order/view/screens/order_postage_item_card.dart';
 import '../../../../../../../post/domain/params/buy_now_add_shipping_param.dart';
 import '../../../../../../../post/domain/usecase/add_buy_now_shipping_usecase.dart';
@@ -49,7 +51,7 @@ class _OfferShippingRatesBottomSheetState
         name: 'OfferShippingRatesBottomSheet',
       );
 
-      final DataState<AddShippingResponseModel> result =
+      final DataState<BuyNowAddShippingResponseModel> result =
           await AddBuyNowShippingUsecase(locator()).call(
             BuyNowAddShippingParam(
               postId: widget.postId,
@@ -59,24 +61,28 @@ class _OfferShippingRatesBottomSheetState
 
       if (!mounted) return;
 
-      if (result is DataSuccess<AddShippingResponseModel>) {
+      if (result is DataSuccess<BuyNowAddShippingResponseModel>) {
         AppLog.info(
           'Shipping added successfully',
           name: 'OfferShippingRatesBottomSheet',
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('shipping_added'.tr())),
+        AppLog.info(
+          'Add shipping raw response: ${jsonEncode(result.entity?.toJson())}',
+          name: 'OfferShippingRatesBottomSheet',
         );
-        Navigator.of(context).pop(true); // Return true to indicate success
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('shipping_added'.tr())));
+        Navigator.of(context).pop(result.entity);
       } else {
         AppLog.error(
           result.exception?.reason ?? 'Failed to add shipping',
           name: 'OfferShippingRatesBottomSheet',
           error: result.exception,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('failed_to_add_shipping'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('failed_to_add_shipping'.tr())));
       }
     } catch (e) {
       AppLog.error(
@@ -85,9 +91,9 @@ class _OfferShippingRatesBottomSheetState
         error: e,
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('something_wrong'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
       }
     } finally {
       if (mounted) {
@@ -159,10 +165,9 @@ class _OfferShippingRatesBottomSheetState
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed:
-                    (_selectedObjectId == null || _isAddingShipping)
-                        ? null
-                        : _addShipping,
+                onPressed: (_selectedObjectId == null || _isAddingShipping)
+                    ? null
+                    : _addShipping,
                 child: _isAddingShipping
                     ? const SizedBox(
                         width: 20,

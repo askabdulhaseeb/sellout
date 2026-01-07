@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../postage/data/models/postage_detail_repsonse_model.dart';
-import '../../../../basket/data/models/cart/add_shipping_response_model.dart';
+import '../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../../domain/entities/offer/offer_payment_response.dart';
 import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/buy_now_add_shipping_param.dart';
@@ -14,13 +14,13 @@ import '../../../domain/params/update_offer_params.dart';
 abstract interface class OfferRemoteApi {
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-  Future<DataState<OfferPaymentResponse>> offerPayment(
+  Future<DataState<OfferPaymentResponse>> buyNowPayment(
     OfferPaymentParams param,
   );
   Future<DataState<PostageDetailResponseModel>> getBuyNowShippingRates(
     BuyNowShippingRatesParams param,
   );
-  Future<DataState<AddShippingResponseModel>> addBuyNowShipping(
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
     BuyNowAddShippingParam param,
   );
 }
@@ -98,7 +98,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
   }
 
   @override
-  Future<DataState<OfferPaymentResponse>> offerPayment(
+  Future<DataState<OfferPaymentResponse>> buyNowPayment(
     OfferPaymentParams param,
   ) async {
     const String endpoint = '/payment/buy-now';
@@ -164,6 +164,11 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
 
       if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
+        // Log full payload for debugging offer/buy-now shipping rates.
+        AppLog.info(
+          'Buy-now shipping rates response: $raw',
+          name: 'OfferRemoteApiImpl.getBuyNowShippingRates',
+        );
         if (raw.isEmpty) {
           AppLog.error(
             'Empty buy-now shipping rates response',
@@ -216,7 +221,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
   }
 
   @override
-  Future<DataState<AddShippingResponseModel>> addBuyNowShipping(
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
     BuyNowAddShippingParam param,
   ) async {
     const String endpoint = '/buy-now/add/shipping';
@@ -231,12 +236,17 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
 
       if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
+        // Log full payload for debugging add-shipping flow on offers/buy-now.
+        AppLog.info(
+          'Add buy-now shipping response: $raw',
+          name: 'OfferRemoteApiImpl.addBuyNowShipping',
+        );
         if (raw.isEmpty) {
           AppLog.error(
             'Empty addBuyNowShipping response',
             name: 'OfferRemoteApiImpl.addBuyNowShipping - Empty',
           );
-          return DataFailer<AddShippingResponseModel>(
+          return DataFailer<BuyNowAddShippingResponseModel>(
             CustomException('something_wrong'.tr()),
           );
         }
@@ -244,9 +254,9 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         try {
           final dynamic decoded = jsonDecode(raw);
           if (decoded is Map<String, dynamic>) {
-            final AddShippingResponseModel model =
-                AddShippingResponseModel.fromJson(decoded);
-            return DataSuccess<AddShippingResponseModel>(raw, model);
+            final BuyNowAddShippingResponseModel model =
+                BuyNowAddShippingResponseModel.fromJson(decoded);
+            return DataSuccess<BuyNowAddShippingResponseModel>(raw, model);
           }
         } catch (e) {
           AppLog.error(
@@ -256,7 +266,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
           );
         }
 
-        return DataFailer<AddShippingResponseModel>(
+        return DataFailer<BuyNowAddShippingResponseModel>(
           CustomException('something_wrong'.tr()),
         );
       }
@@ -266,7 +276,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         name: 'OfferRemoteApiImpl.addBuyNowShipping - Else',
         error: result.exception?.detail,
       );
-      return DataFailer<AddShippingResponseModel>(
+      return DataFailer<BuyNowAddShippingResponseModel>(
         CustomException(result.exception?.message ?? 'something_wrong'.tr()),
       );
     } catch (e, stc) {
@@ -276,7 +286,7 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         error: e,
         stackTrace: stc,
       );
-      return DataFailer<AddShippingResponseModel>(
+      return DataFailer<BuyNowAddShippingResponseModel>(
         CustomException('something_wrong'.tr()),
       );
     }
