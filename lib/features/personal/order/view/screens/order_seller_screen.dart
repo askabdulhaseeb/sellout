@@ -24,14 +24,22 @@ class OrderSellerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Object? args = ModalRoute.of(context)?.settings.arguments;
-    final String orderId = (args is Map<String, dynamic>)
-        ? (args['order-id'] ?? '')
-        : '';
+    final Map<String, dynamic> argMap = (args is Map<String, dynamic>)
+        ? args
+        : <String, dynamic>{};
+    final String orderId = (argMap['order-id'] ?? '') as String;
+    final OrderEntity? passedOrder = argMap['order'] as OrderEntity?;
 
     final OrderProvider orderPro = Provider.of<OrderProvider>(
       context,
       listen: false,
     );
+    if (passedOrder != null &&
+        (orderPro.order == null ||
+            orderPro.order?.orderId != passedOrder.orderId)) {
+      orderPro.setInitialOrder(passedOrder);
+    }
+
     if (orderPro.order?.orderId != orderId && orderId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         orderPro.loadOrder(orderId);
@@ -71,17 +79,17 @@ class OrderSellerScreen extends StatelessWidget {
           body: isLoading
               ? const Center(child: CircularProgressIndicator())
               : order == null
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Text(
-                          'No order found.',
-                          style: Theme.of(context).textTheme.titleMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Text(
+                      'No order found.',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
         );
       },
     );

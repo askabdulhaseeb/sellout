@@ -20,66 +20,72 @@ class NotificationOrderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? postId = notification.postId;
-    final OrderPaymentDetailEntity? paymentDetail = notification.metadata.paymentDetail;
+    final OrderPaymentDetailEntity? paymentDetail =
+        notification.metadata.paymentDetail;
     return FutureBuilder<UserEntity?>(
       future: _getOtherUser(context, paymentDetail),
       builder: (BuildContext context, AsyncSnapshot<UserEntity?> userSnapshot) {
-        final UserEntity? user = userSnapshot.data;
         return FutureBuilder<PostEntity?>(
           future: postId != null
               ? LocalPost().getPost(postId)
               : Future.value(null),
-          builder: (BuildContext context, AsyncSnapshot<PostEntity?> postSnapshot) {
-            final PostEntity? post = postSnapshot.data;
-            // Determine if current user is buyer or seller
-            final CurrentUserEntity? currentUser = LocalAuth.currentUser;
-            final bool isBuyer =
-                currentUser != null &&
-                paymentDetail != null &&
-                currentUser.userID == paymentDetail.buyerCurrency;
-            final double? price = paymentDetail != null
-                ? (isBuyer ? paymentDetail.price : paymentDetail.convertedPrice)
-                : null;
-            final String? currency = paymentDetail != null
-                ? (isBuyer
-                      ? paymentDetail.buyerCurrency
-                      : paymentDetail.postCurrency)
-                : null;
-            return Row(
-              children: <Widget>[
-                Flexible(
-                  child: Text(
-                    post?.title ?? notification.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: isUnread ? FontWeight.w700 : FontWeight.w600,
-                    ),
-                  ),
-                ),
-                if (price != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      '$price ${currency ?? ''}',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+          builder:
+              (BuildContext context, AsyncSnapshot<PostEntity?> postSnapshot) {
+                final PostEntity? post = postSnapshot.data;
+                // Determine if current user is buyer or seller
+                final CurrentUserEntity? currentUser = LocalAuth.currentUser;
+                final bool isSeller =
+                    currentUser != null &&
+                    paymentDetail != null &&
+                    currentUser.userID == paymentDetail.sellerId;
+                final double? price = paymentDetail != null
+                    ? (isSeller
+                          ? paymentDetail.convertedPrice
+                          : paymentDetail.price)
+                    : null;
+                final String? currency = paymentDetail != null
+                    ? (isSeller
+                          ? paymentDetail.postCurrency
+                          : paymentDetail.buyerCurrency)
+                    : null;
+                return Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: Text(
+                        post?.title ?? notification.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: isUnread
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                const SizedBox(width: 8),
-                Text(
-                  timeText,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
-            );
-          },
+                    if (price != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          '$price ${currency ?? ''}',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    const SizedBox(width: 8),
+                    Text(
+                      timeText,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ],
+                );
+              },
         );
       },
     );
@@ -91,11 +97,13 @@ class NotificationOrderHeader extends StatelessWidget {
   ) async {
     final CurrentUserEntity? currentUser = LocalAuth.currentUser;
     if (currentUser == null || paymentDetail == null) return null;
-    // If current user is buyer, show seller; if seller, show buyer
-    final bool isBuyer = currentUser.userID == paymentDetail.buyerCurrency;
-    final String otherUserId = isBuyer
-        ? paymentDetail.sellerId
-        : paymentDetail.buyerCurrency;
+    // If current user is buyer, show seller; if seller, attempt to show buyer
+    final bool isSeller = currentUser.userID == paymentDetail.sellerId;
+    final String? otherUserId = isSeller
+        // For seller, prefer senderId from notification metadata as buyer id
+        ? notification.senderId ?? notification.userId
+        : paymentDetail.sellerId;
+    if (otherUserId == null || otherUserId.isEmpty) return null;
     return await LocalUser().user(otherUserId);
   }
 }
