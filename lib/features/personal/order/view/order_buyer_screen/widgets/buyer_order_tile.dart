@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../routes/app_linking.dart';
@@ -61,19 +62,9 @@ class BuyerOrderTileWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      FutureBuilder<String>(
-                        future: post!.getPriceStr(),
-                        builder:
-                            (
-                              BuildContext context,
-                              AsyncSnapshot<String> snapshot,
-                            ) {
-                              if (!snapshot.hasData) {
-                                return const Text('...');
-                              }
-
-                              return Text(snapshot.data!);
-                            },
+                      Text(
+                        '${CountryHelper.currencySymbolHelper(post!.currency ?? '')}${orderData.totalAmount.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                       const SizedBox(width: 8),
                       Text(
