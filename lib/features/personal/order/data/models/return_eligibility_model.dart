@@ -11,10 +11,14 @@ class ReturnEligibilityModel extends ReturnEligibilityEntity {
   });
 
   factory ReturnEligibilityModel.fromJson(Map<String, dynamic> json) {
+    // eligibility object contains allowed and daysRemaining
+    final Map<String, dynamic>? eligibility =
+        json['eligibility'] as Map<String, dynamic>?;
+
     return ReturnEligibilityModel(
       success: json['success'] == true,
       orderId: json['order_id'] as String?,
-      allowed: json['allowed'] as bool?,
+      allowed: eligibility?['allowed'] as bool?,
       currentStatus: json['current_status'] as String?,
       returnAlreadyRequested: json['return_already_requested'] as bool?,
     );

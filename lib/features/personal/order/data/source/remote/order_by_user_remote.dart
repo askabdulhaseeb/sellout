@@ -163,7 +163,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
     ReturnEligibilityParams params,
   ) async {
-    const String endpoint = '/orders/return/eligibility';
+    final String endpoint = '/orders/return/eligibility/${params.orderId}';
     AppLog.info(
       'POST $endpoint - orderId=${params.orderId}, objectId=${params.objectId}',
       name: 'OrderByUserRemoteImpl.checkReturnEligibility - start',
@@ -172,7 +172,7 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     try {
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
-        requestType: ApiRequestType.post,
+        requestType: ApiRequestType.get,
         body: jsonEncode(params.toMap()),
         isAuth: true,
       );

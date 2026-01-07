@@ -4,17 +4,23 @@ import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../services/get_it.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
+import '../../../data/models/return_eligibility_model.dart';
 import '../../../domain/entities/order_entity.dart';
-import '../../../domain/entities/return_eligibility_entity.dart';
 import '../../../domain/params/return_eligibility_params.dart';
 import '../../../domain/usecase/check_return_eligibility_usecase.dart';
 import 'cancel_order_button.dart';
 import 'request_return_bottom_sheet.dart';
 
 class OrderBuyerScreenBottomButtons extends StatefulWidget {
-  const OrderBuyerScreenBottomButtons({required this.order, super.key});
+  const OrderBuyerScreenBottomButtons({
+    required this.order,
+    this.post,
+    super.key,
+  });
 
   final OrderEntity order;
+  final PostEntity? post;
 
   @override
   State<OrderBuyerScreenBottomButtons> createState() =>
@@ -23,112 +29,106 @@ class OrderBuyerScreenBottomButtons extends StatefulWidget {
 
 class _OrderBuyerScreenBottomButtonsState
     extends State<OrderBuyerScreenBottomButtons> {
-  bool _isCheckingEligibility = false;
   bool _isEligibleForReturn = false;
-  bool _hasCheckedEligibility = false;
+  bool _isCheckingEligibility = false;
+
+  bool get _canShowReturnButton =>
+      widget.order.orderStatus == StatusType.completed ||
+      widget.order.orderStatus == StatusType.delivered;
+
+  bool get _hasActions =>
+      (_canShowReturnButton && _isEligibleForReturn) ||
+      widget.order.orderStatus == StatusType.pending;
 
   @override
   void initState() {
     super.initState();
-    _checkReturnEligibility();
+    if (_canShowReturnButton) {
+      _checkReturnEligibility();
+    }
   }
 
   Future<void> _checkReturnEligibility() async {
-    if (widget.order.orderStatus != StatusType.completed &&
-        widget.order.orderStatus != StatusType.delivered) {
-      return;
-    }
-
-    final String? objectId = _getObjectId();
-    if (objectId == null) return;
+    if (widget.post == null) return;
 
     setState(() => _isCheckingEligibility = true);
 
     try {
-      final DataState<ReturnEligibilityEntity> result =
+      final DataState<ReturnEligibilityModel> result =
           await CheckReturnEligibilityUsecase(locator()).call(
             ReturnEligibilityParams(
               orderId: widget.order.orderId,
-              objectId: objectId,
+              objectId:
+                  widget.order.shippingDetails?.postage.first.rateObjectId ??
+                  '',
             ),
           );
 
-      if (mounted) {
+      if (result is DataSuccess<ReturnEligibilityModel> &&
+          result.entity != null) {
         setState(() {
-          _isCheckingEligibility = false;
-          _hasCheckedEligibility = true;
-          if (result is DataSuccess<ReturnEligibilityEntity>) {
-            _isEligibleForReturn = result.entity?.allowed == true;
-          }
+          _isEligibleForReturn =
+              result.entity!.allowed == true &&
+              result.entity!.returnAlreadyRequested != true;
         });
       }
-    } catch (_) {
-      if (mounted) {
-        setState(() {
-          _isCheckingEligibility = false;
-          _hasCheckedEligibility = true;
-          _isEligibleForReturn = false;
-        });
-      }
+    } catch (e) {
+      // If check fails, don't show the button
+      setState(() => _isEligibleForReturn = false);
+    } finally {
+      setState(() => _isCheckingEligibility = false);
     }
   }
-
-  String? _getObjectId() {
-    if (widget.order.shippingDetails != null &&
-        widget.order.shippingDetails!.postage.isNotEmpty) {
-      return widget.order.shippingDetails!.postage.first.rateObjectId;
-    }
-    return null;
-  }
-
-  bool get _canShowReturnButton =>
-      (widget.order.orderStatus == StatusType.completed ||
-          widget.order.orderStatus == StatusType.delivered) &&
-      _hasCheckedEligibility &&
-      _isEligibleForReturn;
 
   @override
   Widget build(BuildContext context) {
+    if (_isCheckingEligibility) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+
+    if (!_hasActions) {
+      return const SizedBox.shrink();
+    }
+
     return Row(
       children: <Widget>[
-        SizedBox(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'more_actions'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'more_actions'.tr(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            if (_canShowReturnButton && _isEligibleForReturn)
+              CustomElevatedButton(
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.all(0),
+                isLoading: false,
+                onTap: () async {
+                  await showRequestReturnBottomSheet(
+                    context: context,
+                    order: widget.order,
+                    post: widget.post,
+                  );
+                },
+                title: 'request_return'.tr(),
+                bgColor: Colors.transparent,
+                textStyle: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              const SizedBox(height: 8),
-              if (_isCheckingEligibility)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              else if (_canShowReturnButton)
-                CustomElevatedButton(
-                  padding: const EdgeInsets.all(0),
-                  margin: const EdgeInsets.all(0),
-                  isLoading: false,
-                  onTap: () async {
-                    await showRequestReturnBottomSheet(
-                      context: context,
-                      order: widget.order,
-                    );
-                  },
-                  title: 'request_return'.tr(),
-                  bgColor: Colors.transparent,
-                  textStyle: TextStyle(color: Theme.of(context).primaryColor),
-                ),
-              if (widget.order.orderStatus == StatusType.pending)
-                CancelOrderButton(order: widget.order),
-            ],
-          ),
+            if (widget.order.orderStatus == StatusType.pending)
+              CancelOrderButton(order: widget.order),
+          ],
         ),
         const Spacer(),
       ],

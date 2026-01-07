@@ -82,7 +82,7 @@ class OrderBuyerScreen extends StatelessWidget {
                       post: post,
                     ),
                     const SizedBox(height: 24),
-                    OrderBuyerScreenBottomButtons(order: orderData),
+                    OrderBuyerScreenBottomButtons(order: orderData, post: post),
                   ],
                 ),
               );
