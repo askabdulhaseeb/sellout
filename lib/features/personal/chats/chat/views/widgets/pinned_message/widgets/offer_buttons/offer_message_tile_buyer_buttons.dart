@@ -9,7 +9,6 @@ class OfferTileBuyerButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String offerId = message.offerDetail?.offerId ?? '';
     final String postId = message.offerDetail?.postId ?? '';
 
     // Show Buy Now directly; flow handles address, shipping, and payment sheet
