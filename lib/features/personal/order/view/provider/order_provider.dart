@@ -42,10 +42,26 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
-  void loadOrder(String orderId) {
+  bool _isLoadingOrder = false;
+  bool get isLoadingOrder => _isLoadingOrder;
+
+  Future<void> loadOrder(String orderId) async {
     _currentOrderId = orderId;
-    _sellerOrder = LocalOrders().get(orderId);
+    _isLoadingOrder = true;
     notifyListeners();
+
+    try {
+      _sellerOrder = await LocalOrders().fetchOrder(orderId);
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderProvider.loadOrder',
+      );
+      _sellerOrder = null;
+    } finally {
+      _isLoadingOrder = false;
+      notifyListeners();
+    }
   }
 
   void refreshOrder(String orderId) {

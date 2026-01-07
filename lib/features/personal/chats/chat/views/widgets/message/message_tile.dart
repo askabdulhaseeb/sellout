@@ -13,7 +13,6 @@ import 'tile/quote_message_tile.dart';
 import 'tile/visiting_message_tile.dart';
 import 'tile/text_message_tile.dart';
 import 'inquiry_message_tile.dart';
-import 'message_bg_widget.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({required this.message, required this.timeDiff, super.key});
@@ -23,9 +22,6 @@ class MessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isMe = message.sendBy == LocalAuth.uid;
-    final MessageType? messageType = message.type;
-    final bool isUnknownType =
-        messageType == null || messageType == MessageType.none;
 
     return MessageType.invitationParticipant == message.type ||
             MessageType.acceptInvitation == message.type ||
@@ -47,33 +43,8 @@ class MessageTile extends StatelessWidget {
                     timestamp: message.createdAt.timeOnly,
                   ),
                 ),
-              isUnknownType
-                  ? MessageBgWidget(
-                      isMe: isMe,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.block_rounded,
-                            size: 16,
-                            color: Theme.of(context).disabledColor,
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              message.displayText.isNotEmpty
-                                  ? message.displayText
-                                  : 'message_not_supported_detail'.tr(),
-                              style: TextStyle(
-                                color: Theme.of(context).disabledColor,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+              MessageType.none == message.type
+                  ? Text(message.displayText)
                   : MessageType.text == message.type
                   ? TextMessageTile(
                       key: ValueKey<String>(
@@ -98,32 +69,7 @@ class MessageTile extends StatelessWidget {
                   ? SimpleMessageTile(message: message)
                   : MessageType.inquiry == message.type
                   ? InquiryMessageTile(message: message)
-                  : MessageBgWidget(
-                      isMe: isMe,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.block_rounded,
-                            size: 16,
-                            color: Theme.of(context).disabledColor,
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              message.displayText.isNotEmpty
-                                  ? message.displayText
-                                  : 'message_not_supported_detail'.tr(),
-                              style: TextStyle(
-                                color: Theme.of(context).disabledColor,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  : Text('${message.displayText} - ${message.type?.code.tr()}'),
             ],
           );
   }

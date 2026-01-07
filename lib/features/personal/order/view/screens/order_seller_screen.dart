@@ -38,9 +38,10 @@ class OrderSellerScreen extends StatelessWidget {
       });
     }
 
-    return Selector<OrderProvider, OrderEntity?>(
-      selector: (_, OrderProvider provider) => provider.order,
-      builder: (BuildContext context, OrderEntity? order, _) {
+    return Consumer<OrderProvider>(
+      builder: (BuildContext context, OrderProvider provider, _) {
+        final OrderEntity? order = provider.order;
+        final bool isLoading = provider.isLoadingOrder;
         final GetSpecificPostUsecase getPostUsecase = GetSpecificPostUsecase(
           locator(),
         );
@@ -67,18 +68,20 @@ class OrderSellerScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          body: order == null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Text(
-                      'No order found.',
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
+          body: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : order == null
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Text(
+                          'No order found.',
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
         );
       },
     );

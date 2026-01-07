@@ -16,7 +16,7 @@ class OfferTileBuyerButtons extends StatelessWidget {
     return Row(
       spacing: 4,
       children: <Widget>[
-        OfferBuyNowButton(offerId: offerId, postId: postId, isOffer: true),
+        OfferBuyNowButton(message: message, postId: postId, isOffer: true),
       ],
     );
   }

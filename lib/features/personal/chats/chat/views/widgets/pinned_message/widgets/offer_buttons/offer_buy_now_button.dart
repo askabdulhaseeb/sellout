@@ -17,17 +17,18 @@ import '../../../../../../../post/domain/params/buy_now_shipping_rates_params.da
 import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/get_buy_now_shipping_rates_usecase.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
+import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'offer_shipping_rates_bottom_sheet.dart';
 import 'payment_success_bottom_sheet.dart';
 
 class OfferBuyNowButton extends StatefulWidget {
   const OfferBuyNowButton({
     required this.postId,
-    this.offerId,
+    this.message,
     this.isOffer = true,
     super.key,
   });
-  final String? offerId;
+  final MessageEntity? message;
   final String postId;
   final bool isOffer;
 
@@ -40,7 +41,8 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
   AddressEntity? _selectedAddress;
 
   bool get _isOfferFlow =>
-      widget.isOffer && (widget.offerId?.isNotEmpty ?? false);
+      widget.isOffer &&
+      (widget.message?.offerDetail?.offerId.isNotEmpty ?? false);
 
   List<AddressEntity> get _userAddresses =>
       LocalAuth.currentUser?.address ?? <AddressEntity>[];
@@ -86,7 +88,7 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
     try {
       // Step 2: fetch shipping rates for offer
       AppLog.info(
-        'Fetching shipping rates for post: ${widget.postId}, offer: ${widget.offerId}',
+        'Fetching shipping rates for post: ${widget.postId}, offer: ${widget.message?.offerDetail?.offerId}',
         name: 'OfferBuyNowButton',
       );
 
@@ -96,7 +98,9 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
               postId: widget.postId,
               buyerAddress: address,
               isOffer: _isOfferFlow,
-              offerId: _isOfferFlow ? widget.offerId : null,
+              offerId: _isOfferFlow
+                  ? widget.message?.offerDetail?.offerId
+                  : null,
             ),
           );
 
@@ -146,15 +150,17 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
 
       // Step 4: create payment intent and show payment sheet
       AppLog.info(
-        'Creating payment intent for ${_isOfferFlow ? 'offer' : 'post'}: ${widget.offerId ?? widget.postId}',
+        'Creating payment intent for ${_isOfferFlow ? 'offer' : 'post'}: ${widget.message?.offerDetail?.offerId ?? widget.postId}',
         name: 'OfferBuyNowButton',
       );
 
       final OfferPaymentParams params = OfferPaymentParams(
         postId: widget.postId,
         isOffer: _isOfferFlow,
-        offerId: _isOfferFlow ? widget.offerId : null,
+        offerId: _isOfferFlow ? widget.message?.offerDetail?.offerId : null,
         ratesKey: shippingResponse.ratesKey,
+        chatId: widget.message?.chatId,
+        messageId: widget.message?.messageId,
       );
 
       final DataState<OfferPaymentResponse> result = await OfferPaymentUsecase(

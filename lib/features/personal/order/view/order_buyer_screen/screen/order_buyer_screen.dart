@@ -39,7 +39,7 @@ class OrderBuyerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String orderId = args['order-id'];
+    final String orderId = args['order-id'] ?? '';
 
     return Scaffold(
       appBar: AppBar(
