@@ -9,7 +9,7 @@ import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/buy_now_add_shipping_param.dart';
 import '../../../domain/params/buy_now_shipping_rates_params.dart';
 import '../../../domain/params/offer_payment_params.dart';
-import '../../../domain/params/update_offer_params.dart';
+import '../../../domain/params/update_offer_params.dart'; 
 
 abstract interface class OfferRemoteApi {
   Future<DataState<bool>> createOffer(CreateOfferparams param);
@@ -104,11 +104,17 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
     const String endpoint = '/payment/buy-now';
 
     try {
+      final Map<String, dynamic> payload = param.toMap();
+      AppLog.info(
+        'Buy-now payment payload: ${json.encode(payload)}',
+        name: 'OfferRemoteApiImpl.buyNowPayment',
+      );
+
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         isAuth: true,
-        body: json.encode(param.toMap()),
+        body: json.encode(payload),
       );
       if (result is DataSuccess) {
         final Map<String, dynamic> data =

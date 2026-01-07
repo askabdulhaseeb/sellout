@@ -51,28 +51,26 @@ enum MessageType {
   final String json;
 
   static MessageType fromJson(String? value) {
-    if (value != null &&
-        value != 'invitation_participant' &&
-        value != 'accept_invitation' &&
-        value != 'remove_participant' &&
-        value != 'offer' &&
-        value != 'visiting' &&
-        value != 'leave_group' &&
-        value != 'request_quote' &&
-        value != 'quote' &&
-        value != 'simple' &&
-        value != 'inquiry') {
+    if (value == null || value.isEmpty) {
       AppLog.error(
-        'MessageType.fromvalue: $value',
-        name: 'MessageType.fromJson - if',
+        'MessageType.fromJson: null/empty value',
+        name: 'MessageType.fromJson - null check',
+      );
+      return MessageType.none;
+    }
+
+    final MessageType matched = values.firstWhere(
+      (MessageType e) => e.json == value,
+      orElse: () => MessageType.none,
+    );
+
+    if (matched == MessageType.none) {
+      AppLog.error(
+        'MessageType.fromJson: unknown value -> $value',
+        name: 'MessageType.fromJson - unknown',
       );
     }
-    if (value == null) {
-      return MessageType.text;
-    }
-    return values.firstWhere(
-      (MessageType e) => e.json == value,
-      orElse: () => MessageType.text,
-    );
+
+    return matched;
   }
 }

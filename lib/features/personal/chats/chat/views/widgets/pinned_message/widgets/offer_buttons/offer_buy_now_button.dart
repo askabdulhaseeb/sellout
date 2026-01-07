@@ -18,6 +18,7 @@ import '../../../../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../../../../post/domain/usecase/get_buy_now_shipping_rates_usecase.dart';
 import '../../../../../../../post/domain/usecase/offer_payment_usecase.dart';
 import 'offer_shipping_rates_bottom_sheet.dart';
+import 'payment_success_bottom_sheet.dart';
 
 class OfferBuyNowButton extends StatefulWidget {
   const OfferBuyNowButton({
@@ -199,9 +200,13 @@ class _OfferBuyNowButtonState extends State<OfferBuyNowButton> {
       await Stripe.instance.presentPaymentSheet();
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('payment_successful'.tr())));
+        // Show success bottom sheet with animation
+        await showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (BuildContext context) => const PaymentSuccessBottomSheet(),
+        );
       }
     } catch (e) {
       AppLog.error(e.toString(), name: 'OfferBuyNowButton', error: e);
