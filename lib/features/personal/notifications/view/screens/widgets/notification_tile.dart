@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
+import '../../../../post/data/sources/local/local_post.dart';
+import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../domain/entities/notification_entity.dart';
 import '../../provider/notification_provider.dart';
@@ -37,20 +39,21 @@ class _NotificationTileState extends State<NotificationTile>
   String get _primaryAction {
     final String type = widget.notification.type.toLowerCase();
 
-    if (type.contains('post') ||
-        type.contains('like') ||
-        type.contains('comment') ||
-        type.contains('follow') ||
-        widget.notification.hasPost) {
-      return 'post';
+    // Prioritize orders if they exist
+    if (type.contains('order') || widget.notification.hasOrder) {
+      return 'order';
     }
     if (type.contains('chat') ||
         type.contains('message') ||
         widget.notification.hasChat) {
       return 'chat';
     }
-    if (type.contains('order') || widget.notification.hasOrder) {
-      return 'order';
+    if (type.contains('post') ||
+        type.contains('like') ||
+        type.contains('comment') ||
+        type.contains('follow') ||
+        widget.notification.hasPost) {
+      return 'post';
     }
     return 'none';
   }
@@ -108,6 +111,42 @@ class _NotificationTileState extends State<NotificationTile>
       placeholder: user.displayName.isNotEmpty ? user.displayName : 'na'.tr(),
     ),
   );
+
+  Widget _buildLeading(UserEntity user) {
+    if (_primaryAction == 'order') {
+      final String? postId = widget.notification.postId;
+      if (postId == null || postId.isEmpty) return _buildAvatar(user);
+
+      return FutureBuilder<PostEntity?>(
+        future: LocalPost().getPost(postId),
+        builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
+          final PostEntity? post = snapshot.data;
+          final String? image = post?.imageURL;
+
+          if (image != null && image.isNotEmpty) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CustomNetworkImage(
+                imageURL: image,
+                size: 52,
+                placeholder: post?.title ?? 'na'.tr(),
+              ),
+            );
+          }
+
+          return _buildAvatar(user);
+        },
+      );
+    }
+
+    // Chats should show the other person
+    if (_primaryAction == 'chat') {
+      return _buildAvatar(user);
+    }
+
+    // Default fallback
+    return _buildAvatar(user);
+  }
 
   Widget _buildHeader(UserEntity user, String timeText, bool isUnread) {
     switch (_primaryAction) {
@@ -227,7 +266,7 @@ class _NotificationTileState extends State<NotificationTile>
               ),
               child: Row(
                 children: <Widget>[
-                  _buildAvatar(user),
+                  _buildLeading(user),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(

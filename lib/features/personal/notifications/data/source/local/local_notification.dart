@@ -106,6 +106,11 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
     }
   }
 
+  /// Get a notification by its ID
+  static Future<NotificationEntity?> getNotificationById(String id) async {
+    return _box.get(id);
+  }
+
   /// Get count of unread notifications
   static Future<int> getUnreadCount() async {
     return _box.values.where((NotificationEntity e) => !e.isViewed).length;

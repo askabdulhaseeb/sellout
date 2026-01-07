@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../services/get_it.dart' show locator;
 import '../../../../post/domain/entities/post/post_entity.dart';
@@ -29,7 +30,25 @@ class OrderBuyerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final OrderEntity order = args['order'] as OrderEntity;
+
+    // Support both 'order' object (legacy) and 'order-id' string (new)
+    late OrderEntity order;
+    if (args.containsKey('order-id')) {
+      final String orderId = args['order-id'] as String;
+      final OrderEntity? fetchedOrder = LocalOrders().get(orderId);
+      if (fetchedOrder == null) {
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const AppBarTitle(titleKey: 'order_details'),
+          ),
+          body: Center(child: Text('order_not_found'.tr())),
+        );
+      }
+      order = fetchedOrder;
+    } else {
+      order = args['order'] as OrderEntity;
+    }
 
     return Scaffold(
       appBar: AppBar(

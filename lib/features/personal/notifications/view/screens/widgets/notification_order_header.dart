@@ -4,7 +4,6 @@ import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../domain/entities/notification_entity.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 
 class NotificationOrderHeader extends StatelessWidget {
@@ -21,67 +20,33 @@ class NotificationOrderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? postId = notification.postId;
-    final paymentDetail = notification.metadata.paymentDetail;
+    final OrderPaymentDetailEntity? paymentDetail = notification.metadata.paymentDetail;
     return FutureBuilder<UserEntity?>(
       future: _getOtherUser(context, paymentDetail),
-      builder: (context, userSnapshot) {
-        final user = userSnapshot.data;
+      builder: (BuildContext context, AsyncSnapshot<UserEntity?> userSnapshot) {
+        final UserEntity? user = userSnapshot.data;
         return FutureBuilder<PostEntity?>(
           future: postId != null
               ? LocalPost().getPost(postId)
               : Future.value(null),
-          builder: (context, postSnapshot) {
-            final post = postSnapshot.data;
+          builder: (BuildContext context, AsyncSnapshot<PostEntity?> postSnapshot) {
+            final PostEntity? post = postSnapshot.data;
             // Determine if current user is buyer or seller
-            final currentUser = LocalAuth.currentUser;
-            final isBuyer =
+            final CurrentUserEntity? currentUser = LocalAuth.currentUser;
+            final bool isBuyer =
                 currentUser != null &&
                 paymentDetail != null &&
                 currentUser.userID == paymentDetail.buyerCurrency;
-            final price = paymentDetail != null
+            final double? price = paymentDetail != null
                 ? (isBuyer ? paymentDetail.price : paymentDetail.convertedPrice)
                 : null;
-            final currency = paymentDetail != null
+            final String? currency = paymentDetail != null
                 ? (isBuyer
                       ? paymentDetail.buyerCurrency
                       : paymentDetail.postCurrency)
                 : null;
             return Row(
               children: <Widget>[
-                Stack(
-                  alignment: Alignment.bottomLeft,
-                  children: [
-                    if (post?.imageURL != null && post!.imageURL.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: CustomNetworkImage(
-                          imageURL: post.imageURL,
-                          size: 48,
-                          placeholder: post.title,
-                        ),
-                      ),
-                    if (user != null)
-                      Positioned(
-                        left: 0,
-                        bottom: 0,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            padding: const EdgeInsets.all(1),
-                            child: CustomNetworkImage(
-                              imageURL: user.profilePhotoURL,
-                              size: 20,
-                              placeholder: user.displayName.isNotEmpty
-                                  ? user.displayName
-                                  : 'na',
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(width: 12),
                 Flexible(
                   child: Text(
                     post?.title ?? notification.title,
@@ -124,11 +89,11 @@ class NotificationOrderHeader extends StatelessWidget {
     BuildContext context,
     OrderPaymentDetailEntity? paymentDetail,
   ) async {
-    final currentUser = LocalAuth.currentUser;
+    final CurrentUserEntity? currentUser = LocalAuth.currentUser;
     if (currentUser == null || paymentDetail == null) return null;
     // If current user is buyer, show seller; if seller, show buyer
-    final isBuyer = currentUser.userID == paymentDetail.buyerCurrency;
-    final otherUserId = isBuyer
+    final bool isBuyer = currentUser.userID == paymentDetail.buyerCurrency;
+    final String otherUserId = isBuyer
         ? paymentDetail.sellerId
         : paymentDetail.buyerCurrency;
     return await LocalUser().user(otherUserId);

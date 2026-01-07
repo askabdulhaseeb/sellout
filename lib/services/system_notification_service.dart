@@ -4,6 +4,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../features/personal/notifications/domain/entities/notification_entity.dart';
 import '../routes/app_linking.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
+import '../features/personal/notifications/data/source/local/local_notification.dart';
+import '../features/personal/order/view/order_buyer_screen/screen/order_buyer_screen.dart';
+import '../features/personal/order/view/screens/order_seller_screen.dart';
+import '../features/personal/order/data/source/local/local_orders.dart';
 
 class SystemNotificationService {
   factory SystemNotificationService() => _instance;
@@ -72,10 +76,72 @@ class SystemNotificationService {
     debugPrint('SystemNotificationService initialized');
   }
 
-  /// Handle notification tap - navigate to notification screen
-  void _onNotificationTapped(NotificationResponse response) {
+  /// Handle notification tap - navigate based on notification type
+  void _onNotificationTapped(NotificationResponse response) async {
     debugPrint('Notification tapped: ${response.payload}');
+
+    final String? notificationId = response.payload;
+    if (notificationId == null || notificationId.isEmpty) {
+      AppNavigator.pushNamed(NotificationsScreen.routeName);
+      return;
+    }
+
+    // Try to get the notification from local storage
+    final NotificationEntity? notification =
+        await LocalNotifications.getNotificationById(notificationId);
+
+    if (notification != null) {
+      debugPrint(
+        'Found notification: type=${notification.type}, orderId=${notification.orderId}',
+      );
+
+      // If it has an order, always open the order screen regardless of type
+      if (notification.orderId != null) {
+        debugPrint('Opening order: ${notification.orderId}');
+        // Mark as viewed
+        await LocalNotifications.markAsViewed(notificationId);
+
+        _navigateToOrder(notification);
+        return;
+      }
+    }
+
+    // Default: navigate to notifications screen
     AppNavigator.pushNamed(NotificationsScreen.routeName);
+  }
+
+  /// Navigate to the appropriate order screen based on notification
+  void _navigateToOrder(NotificationEntity notification) {
+    final String? orderId = notification.orderId;
+    if (orderId == null || orderId.isEmpty) {
+      return;
+    }
+
+    // Get the order from local storage
+    final orderData = LocalOrders().get(orderId);
+    if (orderData == null) {
+      debugPrint('Order not found in local storage: $orderId');
+      return;
+    }
+
+    final String notificationFor = notification.notificationFor.toLowerCase();
+    final bool forSeller =
+        notificationFor.contains('seller') ||
+        notificationFor.contains('business');
+
+    if (forSeller) {
+      debugPrint('Navigating to SELLER order: $orderId');
+      AppNavigator.pushNamed(
+        OrderSellerScreen.routeName,
+        arguments: <String, dynamic>{'order': orderData},
+      );
+    } else {
+      debugPrint('Navigating to BUYER order: $orderId');
+      AppNavigator.pushNamed(
+        OrderBuyerScreen.routeName,
+        arguments: <String, dynamic>{'order': orderData},
+      );
+    }
   }
 
   /// Show a system notification for a new notification entity
