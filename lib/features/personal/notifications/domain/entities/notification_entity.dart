@@ -68,4 +68,12 @@ class NotificationEntity {
   bool get isChatNotification =>
       type.toLowerCase().contains('chat') ||
       type.toLowerCase().contains('message');
+
+  /// Determine if a notification belongs to the seller based on payment detail.
+  bool isSellerFor(String? localUserId) {
+    final String? sellerId = metadata.paymentDetail?.sellerId;
+    if (sellerId == null || sellerId.isEmpty) return false;
+    if (localUserId == null || localUserId.isEmpty) return false;
+    return sellerId == localUserId;
+  }
 }

@@ -81,7 +81,7 @@ class _MessagesListState extends State<MessagesList> {
 
   void _scheduleInitialScroll() {
     if (_hasInitiallyScrolled) return;
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _jumpToBottom();
     });
   }
@@ -142,18 +142,16 @@ class _MessagesListState extends State<MessagesList> {
   @override
   Widget build(BuildContext context) {
     final ChatProvider chatProvider = context.watch<ChatProvider>();
-    final SendMessageProvider sendMessageProvider =
-        context.watch<SendMessageProvider>();
+    final SendMessageProvider sendMessageProvider = context
+        .watch<SendMessageProvider>();
     final String? chatId = chatProvider.chat?.chatId;
     final bool isLoading = chatProvider.isLoading;
 
     if (chatId == null) {
-      return Expanded(
-        child: SingleChildScrollView(
-          child: EmptyPageWidget(
-            icon: CupertinoIcons.chat_bubble_2,
-            childBelow: const Text('no_messages_yet').tr(),
-          ),
+      return SingleChildScrollView(
+        child: EmptyPageWidget(
+          icon: CupertinoIcons.chat_bubble_2,
+          childBelow: const Text('no_messages_yet').tr(),
         ),
       );
     }
@@ -181,19 +179,15 @@ class _MessagesListState extends State<MessagesList> {
 
             // Show loading indicator when loading and no messages yet
             if (isLoading && messages.isEmpty) {
-              return const Expanded(
-                child: Center(child: CupertinoActivityIndicator()),
-              );
+              return const Center(child: CupertinoActivityIndicator());
             }
 
             // Show empty state when not loading and no messages
             if (!isLoading && messages.isEmpty) {
-              return Expanded(
-                child: SingleChildScrollView(
-                  child: EmptyPageWidget(
-                    icon: CupertinoIcons.chat_bubble_2,
-                    childBelow: const Text('no_messages_yet').tr(),
-                  ),
+              return SingleChildScrollView(
+                child: EmptyPageWidget(
+                  icon: CupertinoIcons.chat_bubble_2,
+                  childBelow: const Text('no_messages_yet').tr(),
                 ),
               );
             }
@@ -213,37 +207,35 @@ class _MessagesListState extends State<MessagesList> {
             final Map<String, Duration> timeDiffs =
                 _cachedTimeDiffs ?? <String, Duration>{};
 
-            return Expanded(
-              child: CustomScrollView(
-                controller: widget.controller,
-                physics: const BouncingScrollPhysics(),
-                slivers: <Widget>[
-                  // Loading indicator at top for pagination
-                  if (_isLoadingMore)
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(child: CupertinoActivityIndicator()),
-                      ),
+            return CustomScrollView(
+              controller: widget.controller,
+              physics: const BouncingScrollPhysics(),
+              slivers: <Widget>[
+                // Loading indicator at top for pagination
+                if (_isLoadingMore)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CupertinoActivityIndicator()),
                     ),
+                  ),
 
-                  // Build slivers for each message group
-                  for (final MessageGroup group in grouped.groups) ...<Widget>[
-                    // Date divider
-                    SliverToBoxAdapter(
-                      child: MessageTimeDivider(label: group.label),
-                    ),
-                    // Messages in this group using SliverList.builder for efficiency
-                    SliverList.builder(
-                      itemCount: group.messages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final MessageEntity message = group.messages[index];
-                        return _buildMessageTile(message, timeDiffs);
-                      },
-                    ),
-                  ],
+                // Build slivers for each message group
+                for (final MessageGroup group in grouped.groups) ...<Widget>[
+                  // Date divider
+                  SliverToBoxAdapter(
+                    child: MessageTimeDivider(label: group.label),
+                  ),
+                  // Messages in this group using SliverList.builder for efficiency
+                  SliverList.builder(
+                    itemCount: group.messages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final MessageEntity message = group.messages[index];
+                      return _buildMessageTile(message, timeDiffs);
+                    },
+                  ),
                 ],
-              ),
+              ],
             );
           },
         );

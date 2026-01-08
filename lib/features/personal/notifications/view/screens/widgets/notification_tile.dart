@@ -75,8 +75,7 @@ class _NotificationTileState extends State<NotificationTile>
       case 'order':
         await NotificationOrderAction.navigate(
           context: context,
-          orderId: widget.notification.orderId,
-          notificationFor: widget.notification.notificationFor,
+          notification: widget.notification,
         );
       default:
         break;

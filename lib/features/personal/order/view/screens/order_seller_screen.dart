@@ -255,6 +255,12 @@ class ViewInvoiceButton extends StatelessWidget {
     return Consumer<OrderProvider>(
       builder: (BuildContext context, OrderProvider pro, Widget? child) {
         final OrderEntity order = pro.order!;
+
+        // Only show invoice button if order is delivered
+        if (order.orderStatus != StatusType.delivered) {
+          return const SizedBox.shrink();
+        }
+
         return InkWell(
           onTap: () {
             Navigator.push(context, InvoiceScreen.route(order));
