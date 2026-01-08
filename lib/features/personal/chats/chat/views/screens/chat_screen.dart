@@ -83,7 +83,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Column(
                     children: <Widget>[
                       ChatPinnedMessage(chatId: chat.chatId),
-                      MessagesList(chat: chat, controller: scrollController),
+                      Expanded(
+                        child: MessagesList(
+                          chat: chat,
+                          controller: scrollController,
+                        ),
+                      ),
                       const ChatInteractionPanel(),
                     ],
                   ),

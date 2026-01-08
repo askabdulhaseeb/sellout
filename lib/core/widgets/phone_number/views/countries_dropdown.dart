@@ -16,12 +16,14 @@ class CountryDropdownField extends StatefulWidget {
     required this.onChanged,
     this.initialValue,
     this.validator,
+    this.allowedCountryCodes,
     super.key,
   });
 
   final CountryEntity? initialValue;
   final void Function(CountryEntity) onChanged;
   final String? Function(bool?)? validator;
+  final List<String>? allowedCountryCodes;
 
   @override
   State<CountryDropdownField> createState() => _CountryDropdownFieldState();
@@ -72,7 +74,20 @@ class _CountryDropdownFieldState extends State<CountryDropdownField> {
     final List<CountryEntity> countries = (remote != null && remote.isNotEmpty)
         ? remote
         : LocalCountry().activeCountries;
-    return countries.where((CountryEntity e) => e.isActive).toList();
+
+    List<CountryEntity> filtered = countries
+        .where((CountryEntity e) => e.isActive)
+        .toList();
+
+    // Filter by allowed country codes if provided
+    if (widget.allowedCountryCodes != null &&
+        widget.allowedCountryCodes!.isNotEmpty) {
+      filtered = filtered.where((CountryEntity country) {
+        return widget.allowedCountryCodes!.contains(country.countryCode);
+      }).toList();
+    }
+
+    return filtered;
   }
 
   @override

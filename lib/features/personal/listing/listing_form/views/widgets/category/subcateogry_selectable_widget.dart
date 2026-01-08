@@ -56,13 +56,15 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
         selectedSubSubCategory = null;
       });
       debugPrint(
-          '🟢 Updated selectedSubCategory: ${selectedSubCategory?.title}');
+        '🟢 Updated selectedSubCategory: ${selectedSubCategory?.title}',
+      );
     }
   }
 
   List<SubCategoryEntity> _getFilteredSubCategories() {
     debugPrint(
-        '🔵 [FILTER] Getting filtered subcategories for listType: ${widget.listType?.json}, cid: ${widget.cid}');
+      '🔵 [FILTER] Getting filtered subcategories for listType: ${widget.listType?.json}, cid: ${widget.cid}',
+    );
 
     switch (widget.listType) {
       case ListingType.items:
@@ -101,7 +103,9 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
   }
 
   Future<void> _handleCategorySelection(
-      List<SubCategoryEntity> subCategories, BuildContext context) async {
+    List<SubCategoryEntity> subCategories,
+    BuildContext context,
+  ) async {
     debugPrint('🟣 [ACTION] User tapped to select a category');
     debugPrint('📋 Available subcategories: ${subCategories.length}');
 
@@ -113,14 +117,14 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
     final SubCategoryEntity? selected =
         await showModalBottomSheet<SubCategoryEntity>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (_) {
-        debugPrint('🧩 Showing CategorySelectionBottomSheet...');
-        return CategorySelectionBottomSheet(subCategories: subCategories);
-      },
-    );
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (_) {
+            debugPrint('🧩 Showing CategorySelectionBottomSheet...');
+            return CategorySelectionBottomSheet(subCategories: subCategories);
+          },
+        );
 
     if (selected == null) {
       debugPrint('⚪ User closed bottom sheet without selecting');
@@ -156,7 +160,8 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
   Widget _buildMainUI(BuildContext context) {
     final List<SubCategoryEntity> subCategories = _getFilteredSubCategories();
     debugPrint(
-        '🧩 [UI] Building main UI, ${subCategories.length} subcategories loaded');
+      '🧩 [UI] Building main UI, ${subCategories.length} subcategories loaded',
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,9 +185,10 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
                     overflow: TextOverflow.ellipsis,
                     style: selectedSubCategory == null
                         ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: ColorScheme.of(context)
-                                .onSurface
-                                .withValues(alpha: 0.6))
+                            color: ColorScheme.of(
+                              context,
+                            ).onSurface.withValues(alpha: 0.2),
+                          )
                         : Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
+import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../order/domain/entities/order_payment_detail_entity.dart';
 part 'notification_metadata_entity.g.dart';
 
@@ -105,6 +106,7 @@ class NotificationMetadataEntity {
   final OrderPaymentDetailEntity? paymentDetail;
 
   bool get hasOrder => orderId != null && orderId!.isNotEmpty;
+  bool get isSeller => paymentDetail?.sellerId == LocalAuth.uid;
   bool get hasPost => postId != null && postId!.isNotEmpty;
   bool get hasChat => chatId != null && chatId!.isNotEmpty;
 }
