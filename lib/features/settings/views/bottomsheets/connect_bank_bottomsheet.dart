@@ -78,14 +78,16 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
     );
 
     final DataState<String> result = await getSessionUseCase.call(params);
-    setState(() => _isLoading = false);
 
     final String url = result.entity ?? '';
 
     if (url.isNotEmpty && mounted) {
       AppLog.info('Stripe Onboarding URL: $url');
       Navigator.pop(context);
-      _openSecureStripeOnboarding(url);
+      await _openSecureStripeOnboarding(url);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
       // Navigator.push(
       //   context,
       //   MaterialPageRoute<StripeOnboardingScreen>(
@@ -93,6 +95,9 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
       //   ),
       // );
     } else {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
     }
   }
