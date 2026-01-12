@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import '../../../../core/functions/app_log.dart';
 import '../../../../core/sources/data_state.dart';
 import '../../../../core/constants/app_spacings.dart';
@@ -27,6 +28,35 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
   final TextEditingController _emailController = TextEditingController();
   CountryEntity? _selectedCountry;
   bool _isLoading = false;
+  Future<void> _openSecureStripeOnboarding(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      await launchUrl(
+        uri,
+        customTabsOptions: CustomTabsOptions(
+          browser: const CustomTabsBrowserConfiguration(
+            prefersDefaultBrowser: true,
+          ),
+          colorSchemes: CustomTabsColorSchemes.defaults(),
+          showTitle: true,
+          shareState: CustomTabsShareState.on,
+        ),
+        safariVCOptions: SafariViewControllerOptions(
+          preferredBarTintColor: Theme.of(context).colorScheme.surface,
+          preferredControlTintColor: Theme.of(context).colorScheme.onSurface,
+          dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+          entersReaderIfAvailable: false,
+        ),
+      );
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -54,7 +84,8 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
 
     if (url.isNotEmpty && mounted) {
       AppLog.info('Stripe Onboarding URL: $url');
-      // Navigator.pop(context);
+      Navigator.pop(context);
+      _openSecureStripeOnboarding(url);
       // Navigator.push(
       //   context,
       //   MaterialPageRoute<StripeOnboardingScreen>(
@@ -82,7 +113,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
           ),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 16,
               offset: const Offset(0, -3),
             ),

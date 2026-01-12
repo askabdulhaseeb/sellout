@@ -148,6 +148,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(NumberFormatEntityAdapter());
     registerAdapter(OfferAmountInfoEntityAdapter());
     registerAdapter(OfferDetailEntityAdapter());
+    registerAdapter(OrderContextEntityAdapter());
     registerAdapter(OrderEntityAdapter());
     registerAdapter(OrderPaymentDetailEntityAdapter());
     registerAdapter(PackageDetailEntityAdapter());
@@ -244,6 +245,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(NumberFormatEntityAdapter());
     registerAdapter(OfferAmountInfoEntityAdapter());
     registerAdapter(OfferDetailEntityAdapter());
+    registerAdapter(OrderContextEntityAdapter());
     registerAdapter(OrderEntityAdapter());
     registerAdapter(OrderPaymentDetailEntityAdapter());
     registerAdapter(PackageDetailEntityAdapter());

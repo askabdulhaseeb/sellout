@@ -9,7 +9,6 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';

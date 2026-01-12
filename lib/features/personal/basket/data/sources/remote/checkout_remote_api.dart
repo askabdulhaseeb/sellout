@@ -22,18 +22,23 @@ class CheckoutRemoteAPIImpl implements CheckoutRemoteAPI {
         final PaymentIntentEntity paymentIntent =
             PaymentIntentModel.fromRawJson(result.data ?? '');
         AppLog.info(result.data.toString());
-        AppLog.info('Payment intent created successfully',
-            name: 'CheckoutRemoteAPIImpl.cartPayIntent - success');
+        AppLog.info(
+          'Payment intent created successfully',
+          name: 'CheckoutRemoteAPIImpl.cartPayIntent - success',
+        );
         return DataSuccess<PaymentIntentEntity>(
-            result.data ?? '', paymentIntent);
+          result.data ?? '',
+          paymentIntent,
+        );
       } else {
         AppLog.error(
           '',
           name: 'CheckoutRemoteAPIImpl.cartPayIntent - Else',
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
+          error: result.exception?.raw ?? 'something_wrong'.tr(),
         );
         return DataFailer<PaymentIntentEntity>(
-            CustomException('Failed to create payment intent'));
+          CustomException('Failed to create payment intent'),
+        );
       }
     } catch (e, stc) {
       AppLog.error(

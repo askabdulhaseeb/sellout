@@ -203,12 +203,21 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           CustomException('Invalid add shipping response structure'),
         );
       } else {
-        AppLog.error(
-          jsonEncode(param.toJson()),
-          name: 'PostageRemoteApiImpl.addShipping - Else',
-          level: result.exception?.code ?? 0,
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
-        );
+        try {
+          AppLog.error(
+            result.exception?.message ?? 'somthing_wrong'.tr(),
+            name: 'PostageRemoteApiImpl.addShipping - Else',
+            level: result.exception?.code ?? 0,
+            error: result.exception?.reason ?? 'something_wrong'.tr(),
+          );
+        } catch (e) {
+          AppLog.error(
+            'Failed to serialize param for logging: $e',
+            name: 'PostageRemoteApiImpl.addShipping - catch',
+            level: result.exception?.code ?? 0,
+            error: result.exception?.reason ?? 'something_wrong'.tr(),
+          );
+        }
         return DataFailer<AddShippingResponseModel>(
           result.exception ?? CustomException('Failed to add shipping'),
         );

@@ -107,7 +107,6 @@ import '../../enums/routine/day_type.dart';
 import '../../widgets/phone_number/data/sources/local_country.dart';
 import '../../widgets/phone_number/domain/entities/country_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'encryption_key_manager.dart';
 import 'local_request_history.dart';
 
@@ -221,6 +220,7 @@ class HiveDB {
     Hive.registerAdapter(WalletFundsInHoldEntityAdapter()); //94
     Hive.registerAdapter(AmountInConnectedAccountEntityAdapter()); //95
     Hive.registerAdapter(MessageStatusAdapter()); //96
+    Hive.registerAdapter(OrderContextEntityAdapter()); //97
 
     // Hive box Open
     await refresh();

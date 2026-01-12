@@ -4,6 +4,7 @@ import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';
 import '../../../../order/view/screens/order_seller_screen.dart';
+import '../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../domain/entities/notification_entity.dart';
 
 class NotificationOrderAction {
@@ -13,6 +14,19 @@ class NotificationOrderAction {
     required BuildContext context,
     required NotificationEntity notification,
   }) async {
+    // If notification has a postId, navigate to post detail screen
+    final String? postId = notification.postId;
+    if (postId != null && postId.isNotEmpty) {
+      if (context.mounted) {
+        AppNavigator.pushNamed(
+          PostDetailScreen.routeName,
+          arguments: <String, String>{'pid': postId},
+        );
+      }
+      return;
+    }
+
+    // Otherwise, navigate to order screen
     final String? orderId = notification.metadata.orderId;
     if (orderId == null || orderId.isEmpty) {
       if (context.mounted) {
