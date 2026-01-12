@@ -69,20 +69,70 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
       );
 
       if (result is DataSuccess) {
-        // Decode the raw response JSON
-        final Map<String, dynamic> jsonData = json.decode(result.data!);
-        final String? sessionUrl = jsonData['url'] as String?;
+        final String? raw = result.data;
+        if (raw == null || raw.trim().isEmpty) {
+          return DataFailer<String>(CustomException('something_wrong'.tr()));
+        }
+
+        String? sessionUrl;
+
+        bool _looksLikeUrl(String s) => s.startsWith('http');
+
+        try {
+          final dynamic decoded = json.decode(raw);
+          if (decoded is Map<String, dynamic>) {
+            // Common key candidates for URL
+            const List<String> keys = <String>[
+              'url',
+              'session_url',
+              'redirect_url',
+              'link',
+              'sessionUrl',
+            ];
+            for (final String k in keys) {
+              final dynamic v = decoded[k];
+              if (v is String && v.isNotEmpty) {
+                sessionUrl = v;
+                break;
+              }
+            }
+            // Nested `data` object case
+            if (sessionUrl == null && decoded['data'] is Map<String, dynamic>) {
+              final Map<String, dynamic> dataNode =
+                  decoded['data'] as Map<String, dynamic>;
+              for (final String k in keys) {
+                final dynamic v = dataNode[k];
+                if (v is String && v.isNotEmpty) {
+                  sessionUrl = v;
+                  break;
+                }
+              }
+            }
+            // Single-item map: take the first value if it's a URL
+            if (sessionUrl == null && decoded.length == 1) {
+              final dynamic onlyValue = decoded.values.first;
+              if (onlyValue is String && _looksLikeUrl(onlyValue)) {
+                sessionUrl = onlyValue;
+              }
+            }
+          } else if (decoded is String && _looksLikeUrl(decoded)) {
+            sessionUrl = decoded;
+          }
+        } catch (_) {
+          // Not JSON; treat raw as potential URL
+          if (_looksLikeUrl(raw)) sessionUrl = raw;
+        }
 
         if (sessionUrl == null || sessionUrl.isEmpty) {
           AppLog.error(
             'Missing session url in response',
             name: 'SettingRemoteApiImpl.connectAccountSession - no url',
-            error: jsonData,
+            error: raw,
           );
           return DataFailer<String>(CustomException('something_wrong'.tr()));
         }
 
-        return DataSuccess<String>(result.data ?? '', sessionUrl);
+        return DataSuccess<String>(raw, sessionUrl);
       } else if (result is DataFailer) {
         return DataFailer<String>(
           CustomException(result.exception?.message ?? 'something_wrong'.tr()),
