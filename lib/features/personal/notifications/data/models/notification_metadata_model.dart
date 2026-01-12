@@ -13,6 +13,11 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
     super.status,
     super.createdAt,
     super.paymentDetail,
+    super.quantity,
+    super.totalAmount,
+    super.currency,
+    super.itemTitle,
+    super.event,
   });
 
   factory NotificationMetadataModel.fromJson(Map<String, dynamic> json) {
@@ -53,14 +58,35 @@ class NotificationMetadataModel extends NotificationMetadataEntity {
               map['payment_detail'] as Map<String, dynamic>,
             )
           : null,
+      quantity: _asIntOrNull(map['quantity']),
+      totalAmount: _asDoubleOrNull(map['total_amount']),
+      currency: _asStringOrNull(map['currency']),
+      itemTitle: _asStringOrNull(map['item_title']),
+      event: _asStringOrNull(map['event']),
     );
   }
-
 
   static String? _asStringOrNull(dynamic value) {
     if (value == null) return null;
     final String str = value.toString().trim();
     return str.isEmpty ? null : str;
+  }
+
+  static int? _asIntOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    if (value is num) return value.toInt();
+    return null;
+  }
+
+  static double? _asDoubleOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    if (value is num) return value.toDouble();
+    return null;
   }
 
   static DateTime? _asDateTimeOrNull(dynamic value) {

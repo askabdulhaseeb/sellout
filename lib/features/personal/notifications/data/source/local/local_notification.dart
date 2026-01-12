@@ -61,6 +61,7 @@ class LocalNotifications extends LocalHiveBox<NotificationEntity> {
             notificationFor: e.notificationFor,
             timestamps: e.timestamps,
             status: e.status,
+            orderContext: e.orderContext,
           ),
         )
         .toList();

@@ -23,6 +23,11 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
   Future<OrderEntity?> fetchOrder(String orderId) async {
     debugPrint('🔍 Fetching order: $orderId');
 
+    if (orderId.isEmpty) {
+      debugPrint('   ❌ Order ID is empty');
+      return null;
+    }
+
     // Try local first
     final OrderEntity? localOrder = get(orderId);
     if (localOrder != null) {
@@ -30,7 +35,7 @@ class LocalOrders extends LocalHiveBox<OrderEntity> {
       return localOrder;
     }
 
-    debugPrint('   ⚠️ Not in local storage, fetching from API...');
+    debugPrint('   ! Not in local storage, fetching from API...');
 
     try {
       // Get the usecase from your DI container

@@ -26,8 +26,8 @@ class OrderBuyerScreen extends StatelessWidget {
     return (postResult is DataSuccess<PostEntity>) ? postResult.entity : null;
   }
 
-  Future<OrderEntity?> _loadOrder(String orderId) async {
-    return LocalOrders().fetchOrder(orderId);
+  Future<OrderEntity?> _loadOrder(String? orderId) async {
+    return LocalOrders().fetchOrder(orderId ?? '');
   }
 
   @override
@@ -36,7 +36,6 @@ class OrderBuyerScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     final String? orderId = args['order-id'] as String?;
-    final OrderEntity? passedOrder = args['order'] as OrderEntity?;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +43,7 @@ class OrderBuyerScreen extends StatelessWidget {
         title: const AppBarTitle(titleKey: 'order_details'),
       ),
       body: FutureBuilder<OrderEntity?>(
-        future: orderId != null
-            ? _loadOrder(orderId)
-            : Future.value(passedOrder),
+        future: _loadOrder(orderId),
         builder:
             (BuildContext context, AsyncSnapshot<OrderEntity?> orderSnapshot) {
               if (orderSnapshot.connectionState == ConnectionState.waiting) {
