@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../domain/entities/notification_entity.dart';
 import 'notification_metadata_model.dart';
@@ -48,9 +49,7 @@ class NotificationModel extends NotificationEntity {
       ),
       timestamps: _asDateTime(timestampsValue),
       status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
-      orderContext: map['order_context'] == null
-          ? null
-          : OrderContextModel.fromMap(map['order_context']),
+      orderContext: OrderContextModel.fromMap(map['order_context']),
     );
   }
 
@@ -89,37 +88,34 @@ class OrderContextModel extends OrderContextEntity {
     required super.postId,
     required super.buyerId,
     required super.orderId,
-    super.businessId,
     required super.trackId,
     required super.sellerId,
+    super.businessId,
   });
   factory OrderContextModel.fromRawJson(String json) {
     final Map<String, dynamic> map = jsonDecode(json);
     return OrderContextModel.fromMap(map);
   }
+
   factory OrderContextModel.fromMap(Map<String, dynamic> map) {
+    debugPrint('🔍 Parsing OrderContextModel from map: $map');
+    final String postId = map['post_id'] ?? '';
+    final String buyerId = map['buyer_id'] ?? '';
+    final String orderId = map['order_id'] ?? '';
+    final String? businessId = map['business_id'];
+    final String trackId = map['track_id'] ?? '';
+    final String sellerId = map['seller_id'] ?? '';
     return OrderContextModel(
-      postId: _asString(map['post_id']),
-      buyerId: _asString(map['buyer_id']),
-      orderId: _asString(map['order_id']),
-      businessId: map['business_id']?.toString(),
-      trackId: _asString(map['track_id']),
-      sellerId: _asString(map['seller_id']),
+      postId: postId,
+      buyerId: buyerId,
+      orderId: orderId,
+      businessId: businessId,
+      trackId: trackId,
+      sellerId: sellerId,
     );
   }
-
-  static String _asString(dynamic value) => value?.toString() ?? '';
 }
 
-//         "order_context": {
-//             "post_id": "c609bea2-9b89-40bb-a9f9-f4775475ca04-PL",
-//             "buyer_id": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
-//             "order_id": "Test-ORD-10eb5e03-7c44-4af0-bc9f-83f087e10e31",
-//             "business_id": null,
-//             "track_id": "df99b9c3-691b-48fa-887c-367cf5a08083",
-//             "seller_id": "cbd0b3a2-c337-4f01-9d72-9b4ed6354952-U"
-//         },
-// [
 //     {
 //         "metadata": {
 //             "quantity": 1,

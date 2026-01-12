@@ -76,6 +76,11 @@ class NotificationMetadataEntity {
     this.status,
     this.createdAt,
     this.paymentDetail,
+    this.quantity,
+    this.totalAmount,
+    this.currency,
+    this.itemTitle,
+    this.event,
   });
 
   @HiveField(0)
@@ -104,6 +109,21 @@ class NotificationMetadataEntity {
 
   @HiveField(8)
   final OrderPaymentDetailEntity? paymentDetail;
+
+  @HiveField(9)
+  final int? quantity;
+
+  @HiveField(10)
+  final double? totalAmount;
+
+  @HiveField(11)
+  final String? currency;
+
+  @HiveField(12)
+  final String? itemTitle;
+
+  @HiveField(13)
+  final String? event;
 
   bool get hasOrder => orderId != null && orderId!.isNotEmpty;
   bool get isSeller => paymentDetail?.sellerId == LocalAuth.uid;

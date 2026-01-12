@@ -28,17 +28,11 @@ class OrderSellerScreen extends StatelessWidget {
         ? args
         : <String, dynamic>{};
     final String orderId = (argMap['order-id'] ?? '') as String;
-    final OrderEntity? passedOrder = argMap['order'] as OrderEntity?;
 
     final OrderProvider orderPro = Provider.of<OrderProvider>(
       context,
       listen: false,
     );
-    if (passedOrder != null &&
-        (orderPro.order == null ||
-            orderPro.order?.orderId != passedOrder.orderId)) {
-      orderPro.setInitialOrder(passedOrder);
-    }
 
     if (orderPro.order?.orderId != orderId && orderId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

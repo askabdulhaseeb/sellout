@@ -69,15 +69,35 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params) async {
     try {
+      if (params == null || params.isEmpty) {
+        return DataFailer<List<OrderEntity>>(
+          CustomException('Order ID is required'),
+        );
+      }
+
       final String endpoint = '/orders/$params';
       // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
+        isAuth: true,
       );
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
+
+        // Handle single order response: { "order": {...} }
+        final dynamic orderData = parsed['order'];
+        if (orderData != null && orderData is Map<String, dynamic>) {
+          final OrderEntity order = OrderModel.fromJson(orderData);
+
+          // Save to local storage
+          await LocalOrders().save(order.orderId, order);
+
+          return DataSuccess<List<OrderEntity>>(raw, <OrderEntity>[order]);
+        }
+
+        // Fallback: try array format for backward compatibility
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
             .where((dynamic e) => e != null)
@@ -86,17 +106,15 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
             )
             .toList();
 
-        // Check if orders list is empty
-        if (orders.isEmpty) {
-          return DataFailer<List<OrderEntity>>(
-            CustomException('order_not_found'),
-          );
+        if (orders.isNotEmpty) {
+          // Save to local storage
+          await LocalOrders().save(orders.first.orderId, orders.first);
+          return DataSuccess<List<OrderEntity>>(raw, orders);
         }
 
-        // 🔄 Optional: still save locally
-        await LocalOrders().save(orders.first.orderId, orders.first);
-
-        return DataSuccess<List<OrderEntity>>(raw, orders);
+        return DataFailer<List<OrderEntity>>(
+          CustomException('order_not_found'),
+        );
       } else {
         return DataFailer<List<OrderEntity>>(
           result.exception ?? CustomException('Failed to get orders'),
