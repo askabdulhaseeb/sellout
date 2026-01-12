@@ -82,7 +82,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
           AppLog.error(
             result.exception?.message ?? 'AddToCartError',
             name: 'post_buy_now_button.dart',
-            error: result.exception,
+            error: result.exception?.reason,
           );
           if (mounted) {
             AppSnackBar.showSnackBar(

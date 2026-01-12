@@ -16,6 +16,7 @@ class NotificationEntity {
     required this.metadata,
     required this.notificationFor,
     required this.timestamps,
+    this.orderContext,
     this.status,
   });
 
@@ -52,6 +53,9 @@ class NotificationEntity {
   @HiveField(10)
   final StatusType? status;
 
+  @HiveField(11)
+  final OrderContextEntity? orderContext;
+
   /// Convenience getters that delegate to metadata
   String? get postId => metadata.postId;
   String? get orderId => metadata.orderId;
@@ -77,3 +81,35 @@ class NotificationEntity {
     return sellerId == localUserId;
   }
 }
+
+@HiveType(typeId: 97)
+class OrderContextEntity {
+  const OrderContextEntity({
+    required this.postId,
+    required this.buyerId,
+    required this.orderId,
+    this.businessId,
+    required this.trackId,
+    required this.sellerId,
+  });
+  @HiveField(0)
+  final String postId;
+  @HiveField(1)
+  final String buyerId;
+  @HiveField(2)
+  final String orderId;
+  @HiveField(3)
+  final String? businessId;
+  @HiveField(4)
+  final String trackId;
+  @HiveField(5)
+  final String sellerId;
+}
+//         "order_context": {
+//             "post_id": "c609bea2-9b89-40bb-a9f9-f4775475ca04-PL",
+//             "buyer_id": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
+//             "order_id": "Test-ORD-10eb5e03-7c44-4af0-bc9f-83f087e10e31",
+//             "business_id": null,
+//             "track_id": "df99b9c3-691b-48fa-887c-367cf5a08083",
+//             "seller_id": "cbd0b3a2-c337-4f01-9d72-9b4ed6354952-U"
+//         },

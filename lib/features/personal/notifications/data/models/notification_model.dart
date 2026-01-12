@@ -15,6 +15,7 @@ class NotificationModel extends NotificationEntity {
     required super.metadata,
     required super.notificationFor,
     required super.timestamps,
+    super.orderContext,
     super.status,
   });
 
@@ -47,6 +48,9 @@ class NotificationModel extends NotificationEntity {
       ),
       timestamps: _asDateTime(timestampsValue),
       status: statusRaw != null ? StatusType.fromJson(statusRaw) : null,
+      orderContext: map['order_context'] == null
+          ? null
+          : OrderContextModel.fromMap(map['order_context']),
     );
   }
 
@@ -79,3 +83,74 @@ class NotificationModel extends NotificationEntity {
     return DateTime.now();
   }
 }
+
+class OrderContextModel extends OrderContextEntity {
+  const OrderContextModel({
+    required super.postId,
+    required super.buyerId,
+    required super.orderId,
+    super.businessId,
+    required super.trackId,
+    required super.sellerId,
+  });
+  factory OrderContextModel.fromRawJson(String json) {
+    final Map<String, dynamic> map = jsonDecode(json);
+    return OrderContextModel.fromMap(map);
+  }
+  factory OrderContextModel.fromMap(Map<String, dynamic> map) {
+    return OrderContextModel(
+      postId: _asString(map['post_id']),
+      buyerId: _asString(map['buyer_id']),
+      orderId: _asString(map['order_id']),
+      businessId: map['business_id']?.toString(),
+      trackId: _asString(map['track_id']),
+      sellerId: _asString(map['seller_id']),
+    );
+  }
+
+  static String _asString(dynamic value) => value?.toString() ?? '';
+}
+
+//         "order_context": {
+//             "post_id": "c609bea2-9b89-40bb-a9f9-f4775475ca04-PL",
+//             "buyer_id": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
+//             "order_id": "Test-ORD-10eb5e03-7c44-4af0-bc9f-83f087e10e31",
+//             "business_id": null,
+//             "track_id": "df99b9c3-691b-48fa-887c-367cf5a08083",
+//             "seller_id": "cbd0b3a2-c337-4f01-9d72-9b4ed6354952-U"
+//         },
+// [
+//     {
+//         "metadata": {
+//             "quantity": 1,
+//             "post_id": "c609bea2-9b89-40bb-a9f9-f4775475ca04-PL",
+//             "total_amount": 120,
+//             "track_id": "df99b9c3-691b-48fa-887c-367cf5a08083",
+//             "currency": "GBP",
+//             "item_title": "test item ",
+//             "order_id": "Test-ORD-10eb5e03-7c44-4af0-bc9f-83f087e10e31"
+//         },
+//         "event": "order_placed",
+//         "order_context": {
+//             "post_id": "c609bea2-9b89-40bb-a9f9-f4775475ca04-PL",
+//             "buyer_id": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
+//             "order_id": "Test-ORD-10eb5e03-7c44-4af0-bc9f-83f087e10e31",
+//             "business_id": null,
+//             "track_id": "df99b9c3-691b-48fa-887c-367cf5a08083",
+//             "seller_id": "cbd0b3a2-c337-4f01-9d72-9b4ed6354952-U"
+//         },
+//         "notification_for": "personal",
+//         "message": "Your order for test item  has been placed successfully",
+//         "recipient_type": "buyer",
+//         "requires_action": false,
+//         "user_id": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
+//         "deliver_to": "de528e11-0d96-49fe-b890-3c0b1809fcf9-U",
+//         "action_type": null,
+//         "notification_id": "NT-8f4a0f3e-7543-47eb-be00-c557a49cbeb8",
+//         "is_viewed": true,
+//         "timestamps": "2026-01-12T13:57:17.191Z",
+//         "title": "Order Confirmed",
+//         "viewed_at": "2026-01-12T13:57:28.711Z",
+//         "type": "order_placed"
+//     }
+// ]
