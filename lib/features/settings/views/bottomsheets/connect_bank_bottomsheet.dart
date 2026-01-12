@@ -171,7 +171,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
                   const SizedBox(height: AppSpacing.vMd),
                   CountryDropdownField(
                     initialValue: _selectedCountry,
-                    allowedCountryCodes: const <String>['US', 'GB'],
+                    allowedCountryCodes: const <String>['+1', '+44'],
                     onChanged: (CountryEntity country) {
                       setState(() => _selectedCountry = country);
                     },
