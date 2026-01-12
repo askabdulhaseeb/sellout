@@ -5,10 +5,7 @@ import '../../../domain/entities/post/post_entity.dart';
 import 'post_rating_section.dart';
 
 class ConditionDeliveryWidget extends StatelessWidget {
-  const ConditionDeliveryWidget({
-    required this.post,
-    super.key,
-  });
+  const ConditionDeliveryWidget({required this.post, super.key});
 
   final PostEntity post;
 
@@ -23,7 +20,7 @@ class ConditionDeliveryWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               PostRatingSection(post: post),
               if (post.listID == ListingType.items.json ||
@@ -60,45 +57,47 @@ class ConditionDeliveryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(BuildContext context,
-      {required Color iconColor,
-      required String label,
-      required String value}) {
+  Widget _buildInfoItem(
+    BuildContext context, {
+    required Color iconColor,
+    required String label,
+    required String value,
+  }) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Icon(Icons.circle, size: 8, color: iconColor),
-        const SizedBox(width: 6),
-        ConstrainedBox(
-          constraints:
-              BoxConstraints(maxWidth: screenWidth * 0.25), // Responsive width
-          child: Text.rich(
-            TextSpan(
-              children: <InlineSpan>[
-                TextSpan(
-                  text: '$label: ',
-                  style: textTheme.labelSmall
-                      ?.copyWith(color: colorScheme.outline),
-                ),
-                TextSpan(
-                  text: value,
-                  style: textTheme.bodySmall?.copyWith(
-                    overflow: TextOverflow.ellipsis,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Icon(Icons.circle, size: 8, color: iconColor),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text.rich(
+              TextSpan(
+                children: <InlineSpan>[
+                  TextSpan(
+                    text: '$label: ',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.outline,
+                    ),
                   ),
-                ),
-              ],
+                  TextSpan(
+                    text: value,
+                    style: textTheme.bodySmall?.copyWith(
+                      overflow: TextOverflow.ellipsis,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

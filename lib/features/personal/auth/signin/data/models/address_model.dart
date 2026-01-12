@@ -56,8 +56,7 @@ class AddressModel extends AddressEntity {
       postalCode: json['postal_code']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
       state: _parseState(localCountry, rawCountryName, rawStateName),
-      country:
-          localCountry.country(rawCountryName) ?? CountryEntity.empty(),
+      country: localCountry.country(rawCountryName) ?? CountryEntity.empty(),
       isDefault: isDefault,
     );
   }
@@ -107,6 +106,7 @@ class AddressModel extends AddressEntity {
 
   Map<String, dynamic> toJson() => _addressToJson();
   Map<String, dynamic> toShippingJson() => _addressToJson();
+  Map<String, dynamic> toOfferMap() => _addressToJson();
 
   String toOfferJson() => json.encode(_addressToJson());
 

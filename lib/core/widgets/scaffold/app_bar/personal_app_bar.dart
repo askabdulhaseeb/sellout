@@ -6,6 +6,7 @@ import '../../../../features/personal/auth/signin/data/sources/local/local_auth.
 import '../../../../features/personal/basket/data/models/cart/cart_item_model.dart';
 import '../../../../features/personal/basket/data/sources/local/local_cart.dart';
 import '../../../../features/personal/basket/views/screens/personal_shopping_basket_screen.dart';
+import '../../../../features/personal/notifications/data/source/local/local_notification.dart';
 import '../../../../features/personal/notifications/view/screens/notification_screen.dart';
 import '../../../../features/personal/search/view/view/search_screen.dart';
 import '../../../../features/personal/user/profiles/data/sources/local/local_user.dart';
@@ -84,16 +85,45 @@ AppBar personalAppbar(BuildContext context) {
       ],
     ),
     actions: <Widget>[
-      _IconButton(
-        icon: AppStrings.selloutNotificationBellIcon,
-        onPressed: () {
-          AppNavigator.pushNamed(NotificationsScreen.routeName);
+      ValueListenableBuilder<int>(
+        valueListenable: LocalNotifications.unreadCountNotifier,
+        builder: (BuildContext context, int unreadCount, _) {
+          return Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              _IconButton(
+                icon: AppStrings.selloutNotificationBellIcon,
+                onPressed: () {
+                  AppNavigator.pushNamed(NotificationsScreen.routeName);
+                },
+              ),
+              if (unreadCount > 0)
+                Positioned(
+                  right: 0,
+                  top: -8,
+                  child: Container(
+                    height: 24,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: FittedBox(
+                      child: Text(
+                        unreadCount > 99 ? '99+' : unreadCount.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
         },
       ),
       if (me.isNotEmpty)
         ValueListenableBuilder<Box<CartEntity>>(
           valueListenable: LocalCart().listenable(),
-          builder: (BuildContext context, Box<CartEntity> cartBox, __) {
+          builder: (BuildContext context, Box<CartEntity> cartBox, _) {
             final CartEntity cart = cartBox.values.firstWhere(
               (CartEntity element) => element.cartID == me,
               orElse: () => CartModel(),

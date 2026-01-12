@@ -3,10 +3,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
+import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../services/get_it.dart';
+import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
+import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
@@ -44,11 +48,20 @@ class ChatProvider extends ChangeNotifier {
   bool _expandVisitingMessage = true;
   bool _showPinnedMessage = true;
 
+  /// Cache for sender display names to avoid repeated async lookups
+  final Map<String, String> _senderNameCache = <String, String>{};
+
+  // ============ Read Receipt State ============
+  Timer? _readReceiptDebounceTimer;
+  String? _lastReadMessageId;
+  static const Duration _readReceiptDebounceDelay = Duration(milliseconds: 500);
+
 //
 
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   DateTime? get chatAT => _chatAt;
   ChatEntity? get chat => _chat;
+  bool get isLoading => _isLoading;
   bool get expandVisitingMessage => _expandVisitingMessage;
   bool get showPinnedMessage => _showPinnedMessage;
 //
@@ -79,6 +92,8 @@ class ChatProvider extends ChangeNotifier {
 //
   void setChat(BuildContext context, ChatEntity? value) {
     _chat = value;
+    clearSenderNameCache();
+    clearReadReceiptState();
     Provider.of<SendMessageProvider>(context, listen: false).setChat(value);
     _key = MessageLastEvaluatedKeyModel(
       chatID: _chat?.chatId ?? '',
@@ -132,6 +147,119 @@ class ChatProvider extends ChangeNotifier {
     return (next != null && current.sendBy == next.sendBy)
         ? current.createdAt.difference(next.createdAt)
         : const Duration(days: 5);
+  }
+
+  /// Gets sender display name from cache, or returns null if not cached.
+  /// Use [prefetchSenderNames] to populate the cache first.
+  String? getSenderName(String senderId) => _senderNameCache[senderId];
+
+  /// Prefetches sender names for all messages to avoid N+1 async lookups.
+  /// Should be called after messages are loaded.
+  Future<void> prefetchSenderNames(List<MessageEntity> messages) async {
+    final Set<String> uniqueSenderIds = <String>{};
+    for (final MessageEntity message in messages) {
+      if (!_senderNameCache.containsKey(message.sendBy)) {
+        uniqueSenderIds.add(message.sendBy);
+      }
+    }
+
+    if (uniqueSenderIds.isEmpty) return;
+
+    final List<Future<void>> futures = <Future<void>>[];
+    for (final String senderId in uniqueSenderIds) {
+      futures.add(_fetchAndCacheSenderName(senderId));
+    }
+    await Future.wait(futures);
+  }
+
+  Future<void> _fetchAndCacheSenderName(String senderId) async {
+    if (_senderNameCache.containsKey(senderId)) return;
+
+    final bool isBusiness = senderId.startsWith('BU');
+    String? displayName;
+
+    if (isBusiness) {
+      final business = await LocalBusiness().getBusiness(senderId);
+      displayName = business?.displayName;
+    } else {
+      final user = await LocalUser().user(senderId);
+      displayName = user?.displayName;
+    }
+
+    _senderNameCache[senderId] = displayName ?? 'na'.tr();
+  }
+
+  /// Clears the sender name cache. Called when switching chats.
+  void clearSenderNameCache() {
+    _senderNameCache.clear();
+  }
+
+  // ============ Read Receipt Methods ============
+
+  /// Marks messages as read with debouncing to batch multiple reads.
+  /// Call this when messages become visible in the chat view.
+  void markMessagesAsRead(List<MessageEntity> visibleMessages) {
+    final String? chatId = _chat?.chatId;
+    final String? currentUserId = LocalAuth.uid;
+    if (chatId == null || currentUserId == null) return;
+
+    // Filter messages not sent by current user
+    final List<MessageEntity> unreadMessages = visibleMessages
+        .where((MessageEntity m) => m.sendBy != currentUserId)
+        .toList();
+
+    if (unreadMessages.isEmpty) return;
+
+    // Find the latest message ID
+    unreadMessages.sort((MessageEntity a, MessageEntity b) =>
+        b.createdAt.compareTo(a.createdAt));
+    final String latestMessageId = unreadMessages.first.messageId;
+
+    // Don't re-emit if we already marked this message as read
+    if (_lastReadMessageId == latestMessageId) return;
+
+    // Debounce the read receipt emission
+    _readReceiptDebounceTimer?.cancel();
+    _readReceiptDebounceTimer = Timer(_readReceiptDebounceDelay, () {
+      _emitReadReceipt(chatId, latestMessageId);
+    });
+  }
+
+  /// Marks a single message as read immediately.
+  void markSingleMessageAsRead(MessageEntity message) {
+    final String? chatId = _chat?.chatId;
+    final String? currentUserId = LocalAuth.uid;
+    if (chatId == null || currentUserId == null) return;
+
+    // Don't mark own messages as read
+    if (message.sendBy == currentUserId) return;
+
+    // Don't re-emit if we already marked this message as read
+    if (_lastReadMessageId == message.messageId) return;
+
+    _emitReadReceipt(chatId, message.messageId);
+  }
+
+  void _emitReadReceipt(String chatId, String lastReadMessageId) {
+    _lastReadMessageId = lastReadMessageId;
+
+    final SocketService socketService = locator<SocketService>();
+    socketService.emit('markRead', <String, dynamic>{
+      'chat_id': chatId,
+      'user_id': LocalAuth.uid,
+      'last_read_message_id': lastReadMessageId,
+    });
+
+    AppLog.info(
+      'Emitted markRead | chatId: $chatId | lastReadMessageId: $lastReadMessageId',
+      name: 'ChatProvider',
+    );
+  }
+
+  /// Clears read receipt state when switching chats.
+  void clearReadReceiptState() {
+    _readReceiptDebounceTimer?.cancel();
+    _lastReadMessageId = null;
   }
 
   // Helper to filter messages after join time

@@ -9,6 +9,7 @@ import '../../../../chat_dashboard/domain/entities/chat/participant/invitation_e
 import '../../providers/chat_provider.dart';
 import 'group_invite_action_widget.dart/group_invite_action_widget.dart';
 import 'send_message_panel/send_message_panel.dart';
+import 'send_message_panel/widgets/send_message_attachment_bottomsheets/send_message_emogi_picker_bottomsheet.dart';
 
 class ChatInteractionPanel extends StatelessWidget {
   const ChatInteractionPanel({super.key});
@@ -33,7 +34,13 @@ class ChatInteractionPanel extends StatelessWidget {
 
         if (pro.chat?.type == ChatType.group) {
           if (isParticipant) {
-            return const SendMessagePanel();
+            return const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SendMessagePanel(),
+                InlineEmojiPicker(),
+              ],
+            );
           } else if (isInvited) {
             return const GroupInviteActionWidget();
           } else {
@@ -43,7 +50,13 @@ class ChatInteractionPanel extends StatelessWidget {
 
         if (pro.chat?.type == ChatType.private ||
             pro.chat?.type == ChatType.product) {
-          return const SendMessagePanel();
+          return const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SendMessagePanel(),
+              InlineEmojiPicker(),
+            ],
+          );
         }
 
         // Default fallback

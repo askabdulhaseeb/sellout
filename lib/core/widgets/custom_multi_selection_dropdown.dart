@@ -46,8 +46,9 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
           builder: (BuildContext context, setModalState) {
             return Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  backgroundBlendMode: BlendMode.color),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                backgroundBlendMode: BlendMode.color,
+              ),
               width: double.infinity,
               margin: const EdgeInsets.all(16),
               child: Column(
@@ -57,9 +58,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       const CloseButton(),
-                      AppBarTitle(
-                        titleKey: widget.hint ?? '',
-                      ),
+                      AppBarTitle(titleKey: widget.hint ?? ''),
                       TextButton(
                         onPressed: () {
                           setModalState(() {
@@ -83,15 +82,17 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                         spacing: 12,
                         runSpacing: 12,
                         children: widget.items.map((DropdownMenuItem<T> item) {
-                          final bool isSelected =
-                              tempSelected.contains(item.value);
+                          final bool isSelected = tempSelected.contains(
+                            item.value,
+                          );
                           return ChoiceChip(
                             showCheckmark: false,
                             side: BorderSide(
-                                width: isSelected ? 2 : 1,
-                                color: isSelected
-                                    ? Theme.of(context).primaryColor
-                                    : Theme.of(context).colorScheme.outline),
+                              width: isSelected ? 2 : 1,
+                              color: isSelected
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).colorScheme.outline,
+                            ),
                             label: item.child,
                             selected: isSelected,
                             shape: RoundedRectangleBorder(
@@ -107,11 +108,12 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                               });
                               widget.onChanged?.call(tempSelected);
                             },
-                            selectedColor: Theme.of(context)
-                                .primaryColor
-                                .withValues(alpha: 0.2),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.surface,
+                            selectedColor: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.2),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
                           );
                         }).toList(),
                       ),
@@ -155,10 +157,10 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
                 child: Text(
                   widget.hint ?? 'select'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: widget.selectedItems.isNotEmpty
-                            ? colorScheme.primary
-                            : colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
+                    color: widget.selectedItems.isNotEmpty
+                        ? colorScheme.primary
+                        : colorScheme.onSurface.withValues(alpha: 0.2),
+                  ),
                 ),
               ),
               Icon(

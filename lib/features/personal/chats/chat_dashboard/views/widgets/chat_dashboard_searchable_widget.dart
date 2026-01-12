@@ -13,62 +13,80 @@ class ChatDashboardSearchableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatDashboardProvider>(
-        builder: (BuildContext context, ChatDashboardProvider pagePro, _) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: SearchableTextfield(
-                borderRadius: 8,
-                controller: pagePro.searchController,
-                onChanged: (String value) {
-                  if (ChatPageType.orders == pagePro.currentPage) {
-                    pagePro.updateSearchQuery(value);
-                  } else if (ChatPageType.services == pagePro.currentPage) {
-                    pagePro.updateSearchQuery(value);
-                  } else if (ChatPageType.groups == pagePro.currentPage) {
-                    pagePro.updateSearchQuery(value);
-                  }
-                },
+      builder: (BuildContext context, ChatDashboardProvider pagePro, _) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: SearchableTextfield(
+                  borderRadius: 8,
+                  controller: pagePro.searchController,
+                  onChanged: (String value) {
+                    if (ChatPageType.orders == pagePro.currentPage) {
+                      pagePro.updateSearchQuery(value);
+                    } else if (ChatPageType.services == pagePro.currentPage) {
+                      pagePro.updateSearchQuery(value);
+                    } else if (ChatPageType.groups == pagePro.currentPage) {
+                      pagePro.updateSearchQuery(value);
+                    }
+                  },
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            pagePro.currentPage == ChatPageType.orders
-                ? GestureDetector(
-                    onTap: () => Navigator.push(
+              const SizedBox(width: 8),
+              pagePro.currentPage == ChatPageType.orders
+                  ? GestureDetector(
+                      onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute<CreatePrivateChatBottomsheet>(
-                            builder: (BuildContext context) =>
-                                CreatePrivateChatBottomsheet())),
-                    child: Container(
+                          builder: (BuildContext context) =>
+                              CreatePrivateChatBottomsheet(),
+                        ),
+                      ),
+                      child: Container(
                         padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
-                            border: Border.all(
-                                color: ColorScheme.of(context)
-                                    .onSurface
-                                    .withValues(alpha: 0.4)),
-                            borderRadius: BorderRadius.circular(8)),
+                          border: Border.all(
+                            color: ColorScheme.of(
+                              context,
+                            ).onSurface.withValues(alpha: 0.4),
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: const CustomSvgIcon(
-                            assetPath: AppStrings.selloutAddChatIcon)))
-                : pagePro.currentPage == ChatPageType.groups
-                    ? GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute<CreateGroupBottomSheet>(
-                                builder: (BuildContext context) =>
-                                    const CreateGroupBottomSheet())),
-                        child: Container(
-                            padding: const EdgeInsets.all(11),
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: ColorScheme.of(context).outlineVariant),
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const CustomSvgIcon(assetPath: AppStrings.selloutAddChatIcon)))
-                    : const SizedBox.shrink()
-          ],
-        ),
-      );
-    });
+                          assetPath: AppStrings.selloutAddChatIcon,
+                        ),
+                      ),
+                    )
+                  : pagePro.currentPage == ChatPageType.groups
+                  ? GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute<CreateGroupBottomSheet>(
+                          builder: (BuildContext context) =>
+                              const CreateGroupBottomSheet(),
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: ColorScheme.of(
+                              context,
+                            ).onSurface.withValues(alpha: 0.4),
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const CustomSvgIcon(
+                          assetPath: AppStrings.selloutAddChatIcon,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

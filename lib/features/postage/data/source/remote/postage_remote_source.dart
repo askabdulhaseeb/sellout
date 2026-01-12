@@ -2,10 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/rendering.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../core/enums/core/status_type.dart';
 import '../../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../../personal/basket/domain/param/submit_shipping_param.dart';
-import '../../../domain/params/add_lable_params.dart';
+import '../../../../personal/order/data/models/shipping_detail_model.dart';
+import '../../../../personal/order/data/source/local/local_orders.dart';
+import '../../../../personal/order/domain/entities/order_entity.dart';
+import '../../../domain/params/add_label_params.dart';
+import '../../../domain/params/add_order_label_params.dart';
 import '../../../domain/params/get_order_postage_detail_params.dart';
 import '../../models/postage_detail_repsonse_model.dart';
 
@@ -20,9 +25,64 @@ abstract interface class PostageRemoteApi {
     GetOrderPostageDetailParam param,
   );
   Future<DataState<bool>> buylabel(BuyLabelParams param);
+
+  /// Adds shipping to an order
+  Future<DataState<bool>> addOrderShipping(AddOrderShippingParams params);
 }
 
 class PostageRemoteApiImpl implements PostageRemoteApi {
+  @override
+  Future<DataState<bool>> addOrderShipping(
+    AddOrderShippingParams params,
+  ) async {
+    try {
+      const String endpoint = '/orders/shipping/add';
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(params.toJson()),
+      );
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        AppLog.info('addOrderShipping response: $raw');
+        // Parse response JSON
+        final dynamic parsed = jsonDecode(raw);
+        final String? orderId = parsed['order_id'];
+        final dynamic shippingDetailJson = parsed['shipping_detail'];
+        if (orderId != null && shippingDetailJson != null) {
+          // Get the existing order from LocalOrders
+          final OrderEntity? order = LocalOrders().get(orderId);
+          if (order != null) {
+            // Update the order with new shipping details
+            final OrderEntity updatedOrder = order.copyWith(
+              shippingDetail: ShippingDetailModel.fromJson(shippingDetailJson),
+            );
+            await LocalOrders().save(orderId, updatedOrder);
+          }
+        }
+        return DataSuccess<bool>(raw, true);
+      } else {
+        AppLog.error(
+          params.toJson().toString(),
+          name: 'PostageRemoteApiImpl.addOrderShipping - Else',
+          error: result.exception?.reason ?? 'something_wrong'.tr(),
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('Failed to add order shipping'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostageRemoteApiImpl.addOrderShipping - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
   @override
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
     GetPostageDetailParam param,
@@ -73,11 +133,12 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           CustomException('Failed to get postage details'),
         );
       }
-    } catch (e) {
+    } catch (e, stc) {
       AppLog.error(
-        e.toString(),
+        '',
         name: 'PostageRemoteApiImpl.getPostageDetails - Catch',
         error: e,
+        stackTrace: stc,
       );
       return DataFailer<PostageDetailResponseModel>(
         CustomException(e.toString()),
@@ -142,12 +203,21 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
           CustomException('Invalid add shipping response structure'),
         );
       } else {
-        AppLog.error(
-          jsonEncode(param.toJson()),
-          name: 'PostageRemoteApiImpl.addShipping - Else',
-          level: result.exception?.code ?? 0,
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
-        );
+        try {
+          AppLog.error(
+            result.exception?.message ?? 'somthing_wrong'.tr(),
+            name: 'PostageRemoteApiImpl.addShipping - Else',
+            level: result.exception?.code ?? 0,
+            error: result.exception?.reason ?? 'something_wrong'.tr(),
+          );
+        } catch (e) {
+          AppLog.error(
+            'Failed to serialize param for logging: $e',
+            name: 'PostageRemoteApiImpl.addShipping - catch',
+            level: result.exception?.code ?? 0,
+            error: result.exception?.reason ?? 'something_wrong'.tr(),
+          );
+        }
         return DataFailer<AddShippingResponseModel>(
           result.exception ?? CustomException('Failed to add shipping'),
         );
@@ -233,23 +303,77 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         body: jsonEncode(param.toJson()),
       );
       debugPrint('Buy label result: ${param.toJson()}');
-      if (result is DataSuccess<bool>) {
+      if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
         AppLog.info(
           param.toJson().toString(),
           name: 'PostageRemoteApiImpl.buylabel - If',
         );
 
+        if (raw.isNotEmpty) {
+          try {
+            final dynamic decoded = jsonDecode(raw);
+            final Map<String, dynamic> json = (decoded is Map<String, dynamic>)
+                ? decoded
+                : <String, dynamic>{};
+
+            // Try to obtain shipping detail and order id from response
+            final dynamic shippingDetailJson =
+                json['shipping_detail'] ?? json['shippingDetails'];
+            String? orderId;
+            if (json.containsKey('order_id')) {
+              orderId = json['order_id']?.toString();
+            } else {
+              final dynamic requestJson = param.toJson();
+              if (requestJson is Map<String, dynamic>) {
+                orderId =
+                    requestJson['order_id']?.toString() ??
+                    requestJson['orderId']?.toString();
+              }
+            }
+
+            if (orderId != null && shippingDetailJson != null) {
+              final OrderEntity? order = LocalOrders().get(orderId);
+              if (order != null) {
+                final OrderEntity updatedOrder = order.copyWith(
+                  shippingDetail: ShippingDetailModel.fromJson(
+                    shippingDetailJson,
+                  ),
+                  orderStatus: StatusType.readyToShip,
+                );
+                await LocalOrders().save(orderId, updatedOrder);
+                final bool exists = LocalOrders().containsKey(orderId);
+                final OrderEntity? after = LocalOrders().get(orderId);
+                AppLog.info(
+                  'Local order $orderId updated with shipping detail. exists=$exists, after!=null=${after != null}',
+                  name: 'PostageRemoteApiImpl.buylabel - LocalUpdate',
+                );
+              }
+            }
+          } catch (e, stc) {
+            AppLog.error(
+              'Failed to parse buylabel response: $e',
+              name: 'PostageRemoteApiImpl.buylabel - ParseError',
+              error: e,
+              stackTrace: stc,
+            );
+          }
+        }
+
         AppLog.info(
-          'Fetched postage details',
+          'Fetched postage details ${raw.toString()}',
           name: 'PostageRemoteApiImpl.buylabel - Success',
         );
         return DataSuccess<bool>(raw, true);
       } else {
         AppLog.error(
-          '',
+          param.toJson().toString(),
           name: 'PostageRemoteApiImpl.buylabel - Else',
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
+          error:
+              result.exception?.reason ??
+              result.exception?.message ??
+              result.exception?.code ??
+              'something_wrong'.tr(),
         );
         return DataFailer<bool>(
           CustomException('Failed to get postage details'),

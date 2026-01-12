@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../domain/entities/checkout/payment_item_entity.dart';
-import '../../../../../domain/entities/checkout/shipping_details_entity.dart';
+import '../../../../../domain/entities/checkout/payment_item_shipping_details_entity.dart';
+import 'package:flutter/material.dart';
 
 class ReviewItemCard extends StatelessWidget {
   const ReviewItemCard({required this.detail, super.key});
@@ -13,16 +13,12 @@ class ReviewItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Otherwise fetch post, then seller
-    return _ReviewItemContent(
-      detail: detail,
-    );
+    return _ReviewItemContent(detail: detail);
   }
 }
 
 class _ReviewItemContent extends StatelessWidget {
-  const _ReviewItemContent({
-    required this.detail,
-  });
+  const _ReviewItemContent({required this.detail});
 
   final PaymentItemEntity? detail;
 
@@ -37,10 +33,10 @@ class _ReviewItemContent extends StatelessWidget {
     final List<Widget> attributeChips = <Widget>[];
 
     // Get the first shipping detail if available
-    final ShippingDetailsEntity? shipping =
+    final PaymentItemShippingDetailsEntity? shipping =
         (detail?.shippingDetails.isNotEmpty ?? false)
-            ? detail!.shippingDetails.first
-            : null;
+        ? detail!.shippingDetails.first
+        : null;
     final String shippingProvider = shipping?.provider ?? '-';
     final String shippingService = shipping?.serviceName ?? '-';
     final double shippingPrice = shipping?.convertedBufferAmount ?? 0.0;
@@ -69,14 +65,12 @@ class _ReviewItemContent extends StatelessWidget {
                     ),
                     if (attributeChips.isNotEmpty) ...<Widget>[
                       const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 6,
-                        children: attributeChips,
-                      ),
+                      Wrap(spacing: 8, runSpacing: 6, children: attributeChips),
                     ],
                     // Show shipping provider/service if available
-                    if (shipping != null) ...<Widget>[
+                    if (shipping != null &&
+                        shippingProvider != '' &&
+                        shippingService != '') ...<Widget>[
                       const SizedBox(height: 8),
                       Text(
                         '${'shipping_provider'.tr()}: $shippingProvider',
@@ -98,8 +92,9 @@ class _ReviewItemContent extends StatelessWidget {
             unitPrice: double.tryParse(detail?.price ?? '') ?? 0.0,
             quantity: quantity,
             shippingPrice: shippingPrice,
-            currency:
-                CountryHelper.currencySymbolHelper(shipping?.convertedCurrency),
+            currency: CountryHelper.currencySymbolHelper(
+              shipping?.convertedCurrency,
+            ),
           ),
         ],
       ),

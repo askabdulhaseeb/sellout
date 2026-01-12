@@ -36,9 +36,11 @@ class PostDetailScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Icon(Icons.arrow_back_ios_new_rounded,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 Text('back'.tr()),
               ],
             ),
@@ -46,64 +48,61 @@ class PostDetailScreen extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<DataState<PostEntity>>(
-        future: Provider.of<PostDetailProvider>(context, listen: false)
-            .getPost(postID),
+        future: Provider.of<PostDetailProvider>(
+          context,
+          listen: false,
+        ).getPost(postID),
         initialData: LocalPost().dataState(postID),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<DataState<PostEntity>> snapshot,
-        ) {
-          final PostEntity? post =
-              snapshot.data?.entity ?? LocalPost().post(postID);
-          if (post == null) {
-            return const SizedBox();
-          }
+        builder:
+            (
+              BuildContext context,
+              AsyncSnapshot<DataState<PostEntity>> snapshot,
+            ) {
+              final PostEntity? post =
+                  snapshot.data?.entity ?? LocalPost().post(postID);
+              if (post == null) {
+                return const SizedBox();
+              }
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // Attachments slider (if any)
-                if ((post.fileUrls).isNotEmpty) ...<Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: PostDetailAttachmentSlider.remote(
-                      attachments: post.fileUrls,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  PostDetailTitleAmountSection(post: post),
-                  ConditionDeliveryWidget(post: post),
-                  PostButtonSection(
-                    detailWidget: true,
-                    post: post,
-                  ),
-                ],
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child:
-
-                      // Details section based on listing type
-                      post.listID == ListingType.items.json
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    // Attachments slider (if any)
+                    if ((post.fileUrls).isNotEmpty) ...<Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: PostDetailAttachmentSlider.remote(
+                          attachments: post.fileUrls,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      PostDetailTitleAmountSection(post: post),
+                      ConditionDeliveryWidget(post: post),
+                      PostButtonSection(detailWidget: true, post: post),
+                    ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child:
+                          // Details section based on listing type
+                          post.listID == ListingType.items.json
                           ? ItemPostDetailSection(post: post)
                           : post.listID == ListingType.clothAndFoot.json
-                              ? ClothFootPostDetailSection(post: post)
-                              : post.listID == ListingType.foodAndDrink.json
-                                  ? FoodDrinkPostDetailSection(post: post)
-                                  : post.listID == ListingType.property.json
-                                      ? PropertyPostDetailSection(post: post)
-                                      : post.listID == ListingType.pets.json
-                                          ? PetsPostDetailSection(post: post)
-                                          : post.listID ==
-                                                  ListingType.vehicle.json
-                                              ? VehiclePostDetailSection(
-                                                  post: post)
-                                              : const SizedBox.shrink(),
-                )
-              ],
-            ),
-          );
-        },
+                          ? ClothFootPostDetailSection(post: post)
+                          : post.listID == ListingType.foodAndDrink.json
+                          ? FoodDrinkPostDetailSection(post: post)
+                          : post.listID == ListingType.property.json
+                          ? PropertyPostDetailSection(post: post)
+                          : post.listID == ListingType.pets.json
+                          ? PetsPostDetailSection(post: post)
+                          : post.listID == ListingType.vehicle.json
+                          ? VehiclePostDetailSection(post: post)
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+              );
+            },
       ),
     );
   }

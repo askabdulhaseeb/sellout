@@ -2,6 +2,8 @@ import 'package:hive_ce/hive.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import 'order_payment_detail_entity.dart';
+import 'shipping_detail_entity.dart';
+
 part 'order_entity.g.dart';
 
 @HiveType(typeId: 61)
@@ -28,6 +30,7 @@ class OrderEntity {
     this.transactionId,
     this.trackId,
     this.deliveryPaidBy,
+    this.shippingDetails,
   });
 
   @HiveField(0)
@@ -92,6 +95,10 @@ class OrderEntity {
 
   @HiveField(20)
   final String? deliveryPaidBy;
+
+  @HiveField(21)
+  final ShippingDetailEntity? shippingDetails;
+
   OrderEntity copyWith({
     String? orderId,
     String? buyerId,
@@ -114,8 +121,10 @@ class OrderEntity {
     String? transactionId,
     String? trackId,
     String? deliveryPaidBy,
+    ShippingDetailEntity? shippingDetail,
   }) {
     return OrderEntity(
+      shippingDetails: shippingDetail ?? this.shippingDetails,
       orderId: orderId ?? this.orderId,
       buyerId: buyerId ?? this.buyerId,
       sellerId: sellerId ?? this.sellerId,

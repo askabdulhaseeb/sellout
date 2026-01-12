@@ -28,6 +28,7 @@ import '../features/personal/services/services_screen/providers/services_page_pr
 import '../features/personal/setting/setting_dashboard/view/providers/personal_setting_provider.dart';
 import '../features/personal/setting/setting_options/security/provider/setting_security_provider.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
+import '../features/personal/user/profiles/views/user_profile/providers/user_profile_provider.dart';
 import '../features/personal/auth/signin/views/providers/signin_provider.dart';
 import '../features/personal/visits/view/visit_calender.dart/providers/visit_calender_provider.dart';
 import 'get_it.dart';
@@ -35,103 +36,150 @@ import 'get_it.dart';
 final List<SingleChildWidget> appProviders = <SingleChildWidget>[
   // Add your providers here
   ChangeNotifierProvider<SigninProvider>.value(
-      value: SigninProvider(
-    locator(),
-    locator(),
-    locator(),
-  )),
+    value: SigninProvider(locator(), locator(), locator()),
+  ),
   ChangeNotifierProvider<SignupProvider>.value(
-      value: SignupProvider(
-          locator(), locator(), locator(), locator(), locator(), locator())),
+    value: SignupProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
   ChangeNotifierProvider<FindAccountProvider>.value(
-      value: FindAccountProvider(locator(), locator(), locator(), locator())),
+    value: FindAccountProvider(locator(), locator(), locator(), locator()),
+  ),
   //
   ChangeNotifierProvider<PersonalBottomNavProvider>.value(
-      value: PersonalBottomNavProvider()),
+    value: PersonalBottomNavProvider(),
+  ),
 
   ChangeNotifierProvider<AddListingFormProvider>.value(
-      value: AddListingFormProvider(locator(), locator())),
+    value: AddListingFormProvider(locator(), locator()),
+  ),
   ChangeNotifierProvider<PickedMediaProvider>.value(
-      value: PickedMediaProvider()),
+    value: PickedMediaProvider(),
+  ),
   //
   ChangeNotifierProvider<ChatDashboardProvider>.value(
-      value: ChatDashboardProvider(locator())),
+    value: ChatDashboardProvider(locator()),
+  ),
   ChangeNotifierProvider<SendMessageProvider>.value(
-      value: SendMessageProvider(
-    locator(),
-    locator(),
-  )),
+    value: SendMessageProvider(locator(), locator()),
+  ),
   ChangeNotifierProvider<ChatProvider>.value(
-      value: ChatProvider(
-    locator(),
-    locator(),
-    locator(),
-    locator(),
-    locator(),
-  )),
+    value: ChatProvider(locator(), locator(), locator(), locator(), locator()),
+  ),
 
   ChangeNotifierProvider<CreateChatGroupProvider>.value(
-      value: CreateChatGroupProvider(locator())),
+    value: CreateChatGroupProvider(locator()),
+  ),
   ChangeNotifierProvider<CreatePrivateChatProvider>.value(
-      value: CreatePrivateChatProvider(locator())),
+    value: CreatePrivateChatProvider(locator()),
+  ),
   //
   ChangeNotifierProvider<ProfileProvider>.value(
-      value: ProfileProvider(locator(), locator(), locator(), locator(),
-          locator(), locator(), locator(), locator())),
+    value: ProfileProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
+  ChangeNotifierProvider<UserProfileProvider>.value(
+    value: UserProfileProvider(locator(), locator(), locator()),
+  ),
   ChangeNotifierProvider<OrderProvider>.value(value: OrderProvider(locator())),
   //
   ChangeNotifierProvider<FeedProvider>.value(
-      value: FeedProvider(
-    locator(),
-    locator(),
-    locator(),
-    locator(),
-  )),
+    value: FeedProvider(locator(), locator(), locator(), locator()),
+  ),
   ChangeNotifierProvider<PromoProvider>.value(
-      value: PromoProvider(
-    locator(),
-    locator(),
-  )),
+    value: PromoProvider(locator(), locator()),
+  ),
   ChangeNotifierProvider<PostDetailProvider>.value(
-      value: PostDetailProvider(locator(), locator())),
+    value: PostDetailProvider(locator(), locator()),
+  ),
   //
   ChangeNotifierProvider<ServicesPageProvider>.value(
-      value: ServicesPageProvider(
-          locator(), locator(), locator(), locator(), locator())),
+    value: ServicesPageProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
 
   ChangeNotifierProvider<CartProvider>.value(
-      value: CartProvider(locator(), locator(), locator(), locator(), locator(),
-          locator(), locator())),
+    value: CartProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
   ChangeNotifierProvider<ReviewProvider>.value(
-      value: ReviewProvider(locator())),
+    value: ReviewProvider(locator()),
+  ),
   //
   ChangeNotifierProvider<AppointmentTileProvider>.value(
-      value:
-          AppointmentTileProvider(locator(), locator(), locator(), locator())),
+    value: AppointmentTileProvider(locator(), locator(), locator(), locator()),
+  ),
   // Business
   ChangeNotifierProvider<BusinessPageProvider>.value(
-      value: BusinessPageProvider(
-          locator(), locator(), locator(), locator(), locator())),
+    value: BusinessPageProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
   ChangeNotifierProvider<AddServiceProvider>.value(
-      value: AddServiceProvider(locator(), locator())),
-//
+    value: AddServiceProvider(locator(), locator()),
+  ),
+  //
   ChangeNotifierProvider<BookingProvider>.value(
-      value: BookingProvider(locator(), locator(), locator(), locator(),
-          locator(), locator(), locator())),
-//
+    value: BookingProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
+  ),
+  //
   ChangeNotifierProvider<SearchProvider>.value(
-      value: SearchProvider(locator())),
-//
+    value: SearchProvider(locator()),
+  ),
+  //
   ChangeNotifierProvider<PersonalSettingProvider>.value(
-      value: PersonalSettingProvider(locator())),
+    value: PersonalSettingProvider(locator()),
+  ),
   ChangeNotifierProvider<SettingSecurityProvider>.value(
-      value: SettingSecurityProvider(locator(), locator())),
+    value: SettingSecurityProvider(locator(), locator()),
+  ),
   ChangeNotifierProvider<MarketPlaceProvider>.value(
-      value: MarketPlaceProvider(locator())),
+    value: MarketPlaceProvider(locator()),
+  ),
   ChangeNotifierProvider<VisitCalenderProvider>.value(
-      value: VisitCalenderProvider(locator())),
+    value: VisitCalenderProvider(locator()),
+  ),
   ChangeNotifierProvider<NotificationProvider>.value(
-      value: NotificationProvider(locator())),
+    value: NotificationProvider(locator(), locator(), locator(), locator()),
+  ),
   ChangeNotifierProvider<QuoteProvider>.value(
-      value: QuoteProvider(locator(), locator(), locator(), locator())),
+    value: QuoteProvider(locator(), locator(), locator(), locator()),
+  ),
 ]; //

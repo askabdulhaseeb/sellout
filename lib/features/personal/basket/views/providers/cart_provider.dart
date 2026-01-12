@@ -69,14 +69,18 @@ class CartProvider extends ChangeNotifier {
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
 
   void updateShippingSelection(String cartItemId, String objectId) {
-    final int idx = _selectedShippingItems
-        .indexWhere((ShippingItemParam item) => item.cartItemId == cartItemId);
+    final int idx = _selectedShippingItems.indexWhere(
+      (ShippingItemParam item) => item.cartItemId == cartItemId,
+    );
     if (idx >= 0) {
-      _selectedShippingItems[idx] =
-          ShippingItemParam(cartItemId: cartItemId, objectId: objectId);
+      _selectedShippingItems[idx] = ShippingItemParam(
+        cartItemId: cartItemId,
+        objectId: objectId,
+      );
     } else {
-      _selectedShippingItems
-          .add(ShippingItemParam(cartItemId: cartItemId, objectId: objectId));
+      _selectedShippingItems.add(
+        ShippingItemParam(cartItemId: cartItemId, objectId: objectId),
+      );
     }
     notifyListeners();
   }
@@ -102,7 +106,8 @@ class CartProvider extends ChangeNotifier {
     for (final PostageItemDetailEntity detail
         in _postageResponseEntity!.detail) {
       final DeliveryType deliveryType = detail.originalDeliveryType;
-      final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
+      final bool isDeliveryNeeded =
+          deliveryType == DeliveryType.paid ||
           detail.fastDelivery.requested == true;
       if (!isDeliveryNeeded) continue;
       final bool hasRates = detail.shippingDetails
@@ -122,7 +127,8 @@ class CartProvider extends ChangeNotifier {
     // List case
     for (final PostageItemDetailEntity detail in details) {
       final DeliveryType deliveryType = detail.originalDeliveryType;
-      final bool isDeliveryNeeded = deliveryType == DeliveryType.paid ||
+      final bool isDeliveryNeeded =
+          deliveryType == DeliveryType.paid ||
           deliveryType == DeliveryType.fastDelivery;
       if (!isDeliveryNeeded) continue;
 
@@ -210,13 +216,19 @@ class CartProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        AppLog.error('Failed to get cart: ${state.exception?.message}',
-            name: 'CartProvider.getCart');
+        AppLog.error(
+          'Failed to get cart: ${state.exception?.message}',
+          name: 'CartProvider.getCart',
+        );
         return false;
       }
     } catch (e, st) {
-      AppLog.error('Error getting cart',
-          name: 'CartProvider.getCart', error: e, stackTrace: st);
+      AppLog.error(
+        'Error getting cart',
+        name: 'CartProvider.getCart',
+        error: e,
+        stackTrace: st,
+      );
       return false;
     } finally {
       _isFetchingCart = false;
@@ -230,13 +242,15 @@ class CartProvider extends ChangeNotifier {
         return DataFailer<bool>(CustomException('Invalid cart item ID'));
       }
 
-      final DataState<bool> result =
-          await _cartItemStatusUpdateUsecase(CartItemModel.fromEntity(item));
+      final DataState<bool> result = await _cartItemStatusUpdateUsecase(
+        CartItemModel.fromEntity(item),
+      );
 
       if (result is DataSuccess) {
         // Update local state if successful
-        final int index = _cartItems
-            .indexWhere((CartItemEntity e) => e.cartItemID == item.cartItemID);
+        final int index = _cartItems.indexWhere(
+          (CartItemEntity e) => e.cartItemID == item.cartItemID,
+        );
         if (index >= 0) {
           _cartItems[index] = item;
           notifyListeners();
@@ -245,8 +259,11 @@ class CartProvider extends ChangeNotifier {
 
       return result;
     } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.updateStatus - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.updateStatus - Catch',
+        error: e,
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
@@ -268,8 +285,11 @@ class CartProvider extends ChangeNotifier {
 
       return result;
     } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.removeItem - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.removeItem - Catch',
+        error: e,
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
@@ -283,7 +303,8 @@ class CartProvider extends ChangeNotifier {
 
       if (qty <= 0) {
         return DataFailer<bool>(
-            CustomException('Quantity must be greater than 0'));
+          CustomException('Quantity must be greater than 0'),
+        );
       }
 
       final DataState<bool> result = await _cartUpdateQtyUsecase(
@@ -292,8 +313,9 @@ class CartProvider extends ChangeNotifier {
 
       if (result is DataSuccess) {
         // Update local state if successful
-        final int index = _cartItems
-            .indexWhere((CartItemEntity e) => e.cartItemID == item.cartItemID);
+        final int index = _cartItems.indexWhere(
+          (CartItemEntity e) => e.cartItemID == item.cartItemID,
+        );
         if (index >= 0) {
           _cartItems[index].quantity = qty;
           notifyListeners();
@@ -302,8 +324,11 @@ class CartProvider extends ChangeNotifier {
 
       return result;
     } catch (e) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.updateQty - Catch', error: e);
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.updateQty - Catch',
+        error: e,
+      );
       return DataFailer<bool>(CustomException(e.toString()));
     }
   }
@@ -316,7 +341,8 @@ class CartProvider extends ChangeNotifier {
       if (_address == null) {
         setPostageLoading(false);
         return DataFailer<PostageDetailResponseEntity>(
-            CustomException('No address found'));
+          CustomException('No address found'),
+        );
       }
       final GetPostageDetailParam params = GetPostageDetailParam(
         buyerAddress: _address!,
@@ -330,28 +356,30 @@ class CartProvider extends ChangeNotifier {
         // Refresh selectedShippingItems to match available rates for each cart item
         _selectedShippingItems.clear();
         if (_postageResponseEntity != null) {
-          for (PostageItemDetailEntity detail in _postageResponseEntity!.detail) {
-              final List<RateEntity> rates = detail.shippingDetails
-                  .expand((PostageDetailShippingDetailEntity sd) =>
-                      sd.ratesBuffered)
-                  .toList();
-              final Set<String> seen = <String>{};
-              final List<RateEntity> uniqueRates = <RateEntity>[];
-              for (final RateEntity rate in rates) {
-                if (!seen.contains(rate.objectId)) {
-                  seen.add(rate.objectId);
-                  uniqueRates.add(rate);
-                }
-              }
-              if (uniqueRates.isNotEmpty) {
-                _selectedShippingItems.add(
-                  ShippingItemParam(
-                    cartItemId: detail.cartItemId,
-                    objectId: uniqueRates.first.objectId,
-                  ),
-                );
+          for (PostageItemDetailEntity detail
+              in _postageResponseEntity!.detail) {
+            final List<RateEntity> rates = detail.shippingDetails
+                .expand(
+                  (PostageDetailShippingDetailEntity sd) => sd.ratesBuffered,
+                )
+                .toList();
+            final Set<String> seen = <String>{};
+            final List<RateEntity> uniqueRates = <RateEntity>[];
+            for (final RateEntity rate in rates) {
+              if (!seen.contains(rate.objectId)) {
+                seen.add(rate.objectId);
+                uniqueRates.add(rate);
               }
             }
+            if (uniqueRates.isNotEmpty) {
+              _selectedShippingItems.add(
+                ShippingItemParam(
+                  cartItemId: detail.cartItemId,
+                  objectId: uniqueRates.first.objectId,
+                ),
+              );
+            }
+          }
         }
         setPostageLoading(false);
         return result;
@@ -361,10 +389,15 @@ class CartProvider extends ChangeNotifier {
       }
     } catch (e, st) {
       setPostageLoading(false);
-      AppLog.error('Failed to fetch postage details',
-          name: 'CartProvider.checkout', error: e, stackTrace: st);
+      AppLog.error(
+        'Failed to fetch postage details',
+        name: 'CartProvider.checkout',
+        error: e,
+        stackTrace: st,
+      );
       return DataFailer<PostageDetailResponseEntity>(
-          CustomException(e.toString()));
+        CustomException(e.toString()),
+      );
     }
   }
 
@@ -378,34 +411,56 @@ class CartProvider extends ChangeNotifier {
     try {
       final List<ShippingItemParam> shippingList = _selectedShippingItems;
       if (shippingList.isEmpty) {
-        AppLog.error('No shipping items to submit',
-            name: 'CartProvider.submitShipping');
+        AppLog.error(
+          'No shipping items to submit',
+          name: 'CartProvider.submitShipping',
+        );
         return DataFailer<AddShippingResponseModel>(
-            CustomException('No shipping items to submit'));
+          CustomException('No shipping items to submit'),
+        );
       }
 
-      final SubmitShippingParam payload =
-          SubmitShippingParam(shipping: _selectedShippingItems);
+      if (_address == null) {
+        AppLog.error(
+          'No address available for shipping',
+          name: 'CartProvider.submitShipping',
+        );
+        return DataFailer<AddShippingResponseModel>(
+          CustomException('No address available for shipping'),
+        );
+      }
+
+      final SubmitShippingParam payload = SubmitShippingParam(
+        shipping: _selectedShippingItems,
+        // toAddress: _address,
+      );
       final DataState<AddShippingResponseModel> result =
           await _addShippingUsecase(payload);
 
       if (result is DataSuccess<AddShippingResponseModel>) {
-        AppLog.info('Shipping submitted successfully',
-            name: 'CartProvider.submitShipping');
+        AppLog.info(
+          'Shipping submitted successfully',
+          name: 'CartProvider.submitShipping',
+        );
         return result;
       } else {
-        AppLog.error('Failed to submit shipping',
-            name: 'CartProvider.submitShipping',
-            error: result.exception?.reason);
+        AppLog.error(
+          'Failed to submit shipping',
+          name: 'CartProvider.submitShipping',
+          error: result.exception?.reason,
+        );
         return result;
       }
     } catch (e, st) {
-      AppLog.error(e.toString(),
-          name: 'CartProvider.submitShipping - Catch',
-          error: e,
-          stackTrace: st);
+      AppLog.error(
+        e.toString(),
+        name: 'CartProvider.submitShipping - Catch',
+        error: e,
+        stackTrace: st,
+      );
       return DataFailer<AddShippingResponseModel>(
-          CustomException(e.toString()));
+        CustomException(e.toString()),
+      );
     }
   }
 
@@ -413,17 +468,23 @@ class CartProvider extends ChangeNotifier {
   Future<DataState<PaymentIntentEntity>> getBillingDetails() async {
     setPostageLoading(true);
     try {
-      final DataState<PaymentIntentEntity> state =
-          await _payIntentUsecase.call('');
+      final DataState<PaymentIntentEntity> state = await _payIntentUsecase.call(
+        '',
+      );
       if (state is DataSuccess<PaymentIntentEntity>) {
         _orderBilling = state.entity;
         return state;
       }
       return DataFailer<PaymentIntentEntity>(
-          CustomException('Failed to get billing details'));
+        CustomException('Failed to get billing details'),
+      );
     } catch (e, st) {
-      AppLog.error('Billing details error',
-          name: 'CartProvider.getBillingDetails', error: e, stackTrace: st);
+      AppLog.error(
+        'Billing details error',
+        name: 'CartProvider.getBillingDetails',
+        error: e,
+        stackTrace: st,
+      );
       return DataFailer<PaymentIntentEntity>(CustomException(e.toString()));
     } finally {
       setPostageLoading(false);
@@ -438,8 +499,10 @@ class CartProvider extends ChangeNotifier {
         return;
       }
 
-      final PaymentIntent intent =
-          await presentStripePaymentSheet(clientSecret, context);
+      final PaymentIntent intent = await presentStripePaymentSheet(
+        clientSecret,
+        context,
+      );
 
       if (intent.status == PaymentIntentsStatus.Succeeded) {
         showModalBottomSheet(
@@ -456,14 +519,20 @@ class CartProvider extends ChangeNotifier {
         AppSnackBar.show('payment_not_completed'.tr());
       }
     } catch (e, st) {
-      AppLog.error('Payment error',
-          name: 'CartProvider.processPayment', error: e, stackTrace: st);
+      AppLog.error(
+        'Payment error',
+        name: 'CartProvider.processPayment',
+        error: e,
+        stackTrace: st,
+      );
       AppSnackBar.show('something_wrong'.tr());
     }
   }
 
   Future<PaymentIntent> presentStripePaymentSheet(
-      String clientSecret, BuildContext context) async {
+    String clientSecret,
+    BuildContext context,
+  ) async {
     try {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -474,10 +543,12 @@ class CartProvider extends ChangeNotifier {
       await Stripe.instance.presentPaymentSheet();
       return await Stripe.instance.retrievePaymentIntent(clientSecret);
     } catch (e, st) {
-      AppLog.error('Stripe error',
-          name: 'CartProvider.presentStripePaymentSheet',
-          error: e,
-          stackTrace: st);
+      AppLog.error(
+        'Stripe error',
+        name: 'CartProvider.presentStripePaymentSheet',
+        error: e,
+        stackTrace: st,
+      );
       AppSnackBar.show('payment_failed'.tr());
       rethrow;
     }
@@ -498,13 +569,14 @@ class CartProvider extends ChangeNotifier {
     _basketItemStatus = CartItemStatusType.cart;
     _cartType = CartType.shoppingBasket;
     _shoppingBasketType = ShoppingBasketPageType.basket;
-    _address = (LocalAuth.currentUser?.address != null &&
+    _address =
+        (LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address
                 .where((AddressEntity e) => e.isDefault)
                 .isNotEmpty)
         ? LocalAuth.currentUser!.address
-            .where((AddressEntity e) => e.isDefault)
-            .first
+              .where((AddressEntity e) => e.isDefault)
+              .first
         : null;
     notifyListeners();
   }

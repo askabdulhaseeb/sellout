@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -9,6 +8,7 @@ import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../post/feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_post_detail_entity.dart';
+import 'common/currency_display.dart';
 import 'message_bg_widget.dart';
 
 class InquiryMessageTile extends StatelessWidget {
@@ -78,8 +78,9 @@ class InquiryMessageTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      '${CountryHelper.currencySymbolHelper(post.currency)}${post.price}',
+                    CurrencyDisplay(
+                      currency: post.currency,
+                      price: post.price,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

@@ -325,12 +325,25 @@ class AppStrings {
   static String get localNotificationBox => 'com.sellout.local-notifications';
   static String get localServiceCategoriesBox =>
       'com.sellout.local-service-categories';
+  static String get localWalletBox => 'com.sellout.local-wallet';
   // Socket Events
-  static String get newMessage => 'new_message';
-  static String get updatedMessage => 'updated_message';
+  static String get newMessage => 'newMessage';
+  static String get updatedMessage => 'updatedMessage';
   static String get getOnlineUsers => 'getOnlineUsers';
   static String get newNotification => 'new-notification';
   static String get lastSeen => 'lastSeen';
+  static String get userOnline => 'userOnline';
+  static String get userOffline => 'userOffline';
+  static String get walletUpdated => 'wallet-updated';
+  static String get payoutStatusUpdated => 'payout-status-updated';
+  static String get onboardingSuccess => 'onboarding-success';
+  static String get updatePinnedMessage => 'update-pinned-message';
+  static String get newPinnedMessage => 'new-pinned-message';
+  static String get joinChat => 'joinChat';
+  static String get leaveChat => 'leaveChat';
+  static String get uploadProgress => 'uploadProgress';
+  static String get markRead => 'markRead';
+  static String get messagesRead => 'messagesRead';
   // MARK: Audio Files
   static const String recordingDeleteSound =
       'assets/audio/delete_recording_sound.mp3';

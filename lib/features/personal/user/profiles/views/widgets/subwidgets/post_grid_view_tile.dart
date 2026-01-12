@@ -9,7 +9,6 @@ import '../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -25,7 +24,8 @@ class PostGridViewTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMe = (post.createdBy == (LocalAuth.uid ?? '') ||
+    final bool isMe =
+        (post.createdBy == (LocalAuth.uid ?? '') ||
         post.createdBy == LocalAuth.currentUser?.businessID);
 
     return GestureDetector(
@@ -47,13 +47,16 @@ class PostGridViewTile extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CustomNetworkImage(
-                        fit: BoxFit.cover, imageURL: post.imageURL),
+                      fit: BoxFit.cover,
+                      imageURL: post.imageURL,
+                    ),
                   ),
                 ),
                 if (!isMe &&
-                    ListingType.storeList
-                        .contains(ListingType.fromJson(post.listID)))
-                  PostGridViewTileBasketButton(post: post)
+                    ListingType.storeList.contains(
+                      ListingType.fromJson(post.listID),
+                    ))
+                  PostGridViewTileBasketButton(post: post),
               ],
             ),
           ),
@@ -79,14 +82,17 @@ class PostGridViewTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     FutureBuilder<String>(
                       future: post.getPriceStr(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Text('...');
-                        }
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<String> snapshot,
+                          ) {
+                            if (!snapshot.hasData) {
+                              return const Text('...');
+                            }
 
-                        return Text(snapshot.data!);
-                      },
+                            return Text(snapshot.data!);
+                          },
                     ),
                   ],
                 ),
@@ -105,27 +111,28 @@ class PostGridViewTile extends StatelessWidget {
                       bgColor: Theme.of(context).primaryColor.withAlpha(40),
                       icon: AppStrings.selloutPostGridTileEditIcon,
                       onPressed: () {
-                        Provider.of<AddListingFormProvider>(context,
-                                listen: false)
-                            .startediting(post);
+                        Provider.of<AddListingFormProvider>(
+                          context,
+                          listen: false,
+                        ).startediting(post);
                       },
                     ),
-                    InDevMode(
-                      child: CustomIconButton(
-                        iconSize: 16,
-                        iconColor: Theme.of(context).colorScheme.secondary,
-                        padding: const EdgeInsets.all(4),
-                        margin: EdgeInsets.zero,
-                        bgColor: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withAlpha(40),
-                        icon: AppStrings.selloutPostGridTilePromoteIcon,
-                        onPressed: () {},
-                      ),
-                    ),
+                    // InDevMode(
+                    //   child: CustomIconButton(
+                    //     iconSize: 16,
+                    //     iconColor: Theme.of(context).colorScheme.secondary,
+                    //     padding: const EdgeInsets.all(4),
+                    //     margin: EdgeInsets.zero,
+                    //     bgColor: Theme.of(context)
+                    //         .colorScheme
+                    //         .secondary
+                    //         .withAlpha(40),
+                    //     icon: AppStrings.selloutPostGridTilePromoteIcon,
+                    //     onPressed: () {},
+                    //   ),
+                    // ),
                   ],
-                )
+                ),
             ],
           ),
         ],
@@ -147,7 +154,9 @@ class PostGridViewTileBasketButton extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return PostTileClothFootDialog(
-                  post: post, actionType: PostTileClothFootType.add);
+                post: post,
+                actionType: PostTileClothFootType.add,
+              );
             },
           );
         } else {
@@ -156,10 +165,7 @@ class PostGridViewTileBasketButton extends StatelessWidget {
             AddToCartParam(post: post, quantity: 1),
           );
           if (result is DataSuccess && context.mounted) {
-            AppSnackBar.success(
-              context,
-              'successfull_add_to_basket'.tr(),
-            );
+            AppSnackBar.success(context, 'successfull_add_to_basket'.tr());
           } else {
             AppLog.error(
               result.exception?.message ?? 'AddToCartError',

@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../entities/api_request_entity.dart';
-import '../../extension/duration_ext.dart';
 import '../../extension/string_ext.dart';
 import '../../utilities/app_string.dart';
 import 'local_hive_box.dart';
@@ -31,12 +29,8 @@ class LocalRequestHistory extends LocalHiveBox<ApiRequestEntity> {
     ApiRequestEntity? result = _box.get(url.toSHA256());
     if (result == null) return null;
     if (!result.timesAgo(duration)) {
-      if (!url.contains('/user/') && !url.contains('/post/')) {
-        debugPrint('🟢 Less then ${duration.display()} - $url');
-      }
       return result;
     } else {
-      debugPrint('🔴 More then ${duration.display()} - $url');
       await delete(url);
       return null;
     }

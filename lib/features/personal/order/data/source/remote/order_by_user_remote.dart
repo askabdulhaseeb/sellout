@@ -1,16 +1,22 @@
+import 'package:flutter/widgets.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/sources/local/local_request_history.dart';
 import '../../../domain/entities/order_entity.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/params/get_order_params.dart';
 import '../local/local_orders.dart';
+import '../../../domain/params/return_eligibility_params.dart';
+import '../../../domain/params/order_return_params.dart';
+import '../../models/return_eligibility_model.dart';
 
 abstract interface class OrderByUserRemote {
   Future<DataState<List<OrderEntity>>> getOrderByQuery(GetOrderParams? userId);
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params);
-  Future<DataState<bool>> createOrder(List<OrderModel> orderData);
   Future<DataState<bool>> updateOrder(UpdateOrderParams params);
+  Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
+    ReturnEligibilityParams params,
+  );
+  Future<DataState<bool>> orderReturn(OrderReturnParams params);
 }
 
 class OrderByUserRemoteImpl implements OrderByUserRemote {
@@ -22,30 +28,11 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
     if (endpoint.isEmpty) {
       return DataFailer<List<OrderEntity>>(CustomException('invalid_endpoint'));
     }
-
     try {
-      final ApiRequestEntity? local = await LocalRequestHistory().request(
-        endpoint: endpoint,
-        duration: const Duration(days: 1),
-      );
-      if (local != null) {
-        final dynamic parsed = json.decode(local.encodedData);
-        final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
-        final List<OrderEntity> orders = ordersJson
-            .where((dynamic e) => e != null)
-            .map<OrderEntity>(
-              (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
-            )
-            .toList();
-
-        await LocalOrders().saveAllOrders(orders);
-        return DataSuccess<List<OrderEntity>>(local.encodedData, orders);
-      }
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
       );
-
       if (result is DataSuccess<String>) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
@@ -56,14 +43,10 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
               (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
             )
             .toList();
-
-        // save fresh response to cache
-        await LocalRequestHistory().save(
-          endpoint,
-          ApiRequestEntity(url: endpoint, encodedData: raw),
-        );
-
-        await LocalOrders().saveAllOrders(orders);
+        // Save all fetched orders locally
+        for (final OrderEntity order in orders) {
+          await LocalOrders().save(order.orderId, order);
+        }
         return DataSuccess<List<OrderEntity>>(raw, orders);
       } else {
         return DataFailer<List<OrderEntity>>(
@@ -86,15 +69,35 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
   @override
   Future<DataState<List<OrderEntity>>> getOrderByOrderId(String? params) async {
     try {
+      if (params == null || params.isEmpty) {
+        return DataFailer<List<OrderEntity>>(
+          CustomException('Order ID is required'),
+        );
+      }
+
       final String endpoint = '/orders/$params';
       // 🌐 Always hit network
       final DataState<String> result = await ApiCall<String>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.get,
+        isAuth: true,
       );
       if (result is DataSuccess) {
         final String raw = result.data ?? '';
         final dynamic parsed = json.decode(raw);
+
+        // Handle single order response: { "order": {...} }
+        final dynamic orderData = parsed['order'];
+        if (orderData != null && orderData is Map<String, dynamic>) {
+          final OrderEntity order = OrderModel.fromJson(orderData);
+
+          // Save to local storage
+          await LocalOrders().save(order.orderId, order);
+
+          return DataSuccess<List<OrderEntity>>(raw, <OrderEntity>[order]);
+        }
+
+        // Fallback: try array format for backward compatibility
         final List<dynamic> ordersJson = parsed['orders'] ?? <dynamic>[];
         final List<OrderEntity> orders = ordersJson
             .where((dynamic e) => e != null)
@@ -102,10 +105,16 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
               (dynamic e) => OrderModel.fromJson(e as Map<String, dynamic>),
             )
             .toList();
-        // 🔄 Optional: still save locally
-        await LocalOrders().save(orders.first.orderId, orders.first);
 
-        return DataSuccess<List<OrderEntity>>(raw, orders);
+        if (orders.isNotEmpty) {
+          // Save to local storage
+          await LocalOrders().save(orders.first.orderId, orders.first);
+          return DataSuccess<List<OrderEntity>>(raw, orders);
+        }
+
+        return DataFailer<List<OrderEntity>>(
+          CustomException('order_not_found'),
+        );
       } else {
         return DataFailer<List<OrderEntity>>(
           result.exception ?? CustomException('Failed to get orders'),
@@ -121,38 +130,6 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
       return DataFailer<List<OrderEntity>>(
         CustomException('Failed to get Order by user'),
       );
-    }
-  }
-
-  @override
-  Future<DataState<bool>> createOrder(List<OrderModel> orderData) async {
-    try {
-      final List<Map<String, dynamic>> jsonOrders = orderData
-          .map((OrderModel e) => e.toJson())
-          .toList();
-
-      final DataState<bool> result = await ApiCall<bool>().call(
-        endpoint: '/orders/create',
-        requestType: ApiRequestType.post,
-        body: json.encode(jsonOrders),
-        isAuth: true,
-      );
-      AppLog.info('ceate order data ${result.data ?? ''}');
-      if (result is DataSuccess) {
-        return DataSuccess<bool>(result.data ?? '', true);
-      } else {
-        return DataFailer<bool>(
-          result.exception ?? CustomException('Failed to create order'),
-        );
-      }
-    } catch (e, stc) {
-      AppLog.error(
-        e.toString(),
-        name: 'PostByUserRemoteImpl.createOrder - catch',
-        error: e,
-        stackTrace: stc,
-      );
-      return DataFailer<bool>(CustomException('Failed to create order'));
     }
   }
 
@@ -197,6 +174,97 @@ class OrderByUserRemoteImpl implements OrderByUserRemote {
         stackTrace: stc,
       );
       return DataFailer<bool>(CustomException('Failed to update order'));
+    }
+  }
+
+  @override
+  Future<DataState<ReturnEligibilityModel>> checkReturnEligibility(
+    ReturnEligibilityParams params,
+  ) async {
+    final String endpoint = '/orders/return/eligibility/${params.orderId}';
+    AppLog.info(
+      'POST $endpoint - orderId=${params.orderId}, objectId=${params.objectId}',
+      name: 'OrderByUserRemoteImpl.checkReturnEligibility - start',
+    );
+
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        body: jsonEncode(params.toMap()),
+        isAuth: true,
+      );
+
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        AppLog.info('Response: $raw', name: 'checkReturnEligibility');
+        final ReturnEligibilityModel? model = ReturnEligibilityModel.fromRaw(
+          raw,
+        );
+        AppLog.info(
+          'Parsed: allowed=${model?.allowed}, reason=${model?.reason}',
+          name: 'OrderByUserRemoteImpl.checkReturnEligibility - parsed',
+        );
+        return DataSuccess<ReturnEligibilityModel>(raw, model);
+      } else {
+        AppLog.error(
+          'Failed: ${result.exception?.message ?? 'unknown_error'}',
+          name: 'OrderByUserRemoteImpl.checkReturnEligibility - else',
+        );
+        return DataFailer<ReturnEligibilityModel>(
+          result.exception ?? CustomException('failed_to_check_return'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderByUserRemoteImpl.checkReturnEligibility - catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<ReturnEligibilityModel>(
+        CustomException('failed_to_check_return'),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<bool>> orderReturn(OrderReturnParams params) async {
+    // legacy: keep parity with checkReturnEligibility; consider simplifying
+    try {
+      final String endpoint = '/orders/return/request';
+      final Map<String, dynamic> body = params.toMap();
+      debugPrint(
+        'orderReturn: POST $endpoint (orderId=${params.orderId}, objectId=${params.objectId}, reasonLength=${params.reason.length})',
+      );
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(body),
+        isAuth: true,
+      );
+      debugPrint('Order return response: ${result.data}');
+
+      if (result is DataSuccess<bool>) {
+        debugPrint('orderReturn: returning success');
+        return DataSuccess<bool>(result.data ?? '', true);
+      } else {
+        debugPrint(
+          'orderReturn: returning failure (${result.exception?.message ?? 'unknown_error'})',
+        );
+        return DataFailer<bool>(
+          result.exception ?? CustomException('failed_to_request_return'),
+        );
+      }
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OrderByUserRemoteImpl.orderReturn - catch',
+        error: e,
+        stackTrace: stc,
+      );
+      debugPrint('orderReturn: returning failure (catch)');
+      return DataFailer<bool>(CustomException('failed_to_request_return'));
     }
   }
 }

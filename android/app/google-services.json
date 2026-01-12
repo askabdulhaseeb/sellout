@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "604249316484",
+    "project_id": "sellout-mobile",
+    "storage_bucket": "sellout-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604249316484:android:e6eafb654f1f6578b4b6d1",
+        "android_client_info": {
+          "package_name": "com.sellout.sellout"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC10SuUVnN_QrcgXzHemwG4wxcxojY7qMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

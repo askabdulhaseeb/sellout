@@ -17,7 +17,8 @@ class LocalChat extends LocalHiveBox<ChatEntity> {
   @override
   bool get requiresEncryption => true;
 
-  static Box<ChatEntity> get _box => Hive.box<ChatEntity>(AppStrings.localChatsBox);
+  static Box<ChatEntity> get _box =>
+      Hive.box<ChatEntity>(AppStrings.localChatsBox);
   static Box<ChatEntity> get boxLive => _box;
 
   static Future<Box<ChatEntity>> get openBox async =>
@@ -63,6 +64,28 @@ class LocalChat extends LocalHiveBox<ChatEntity> {
         newMsg.chatId,
         updated,
       ); // This notifies listeners if UI is listening
+    }
+  }
+
+  Future<void> clearPinnedMessage(String chatId) async {
+    final ChatEntity? existing = _box.get(chatId);
+    if (existing != null) {
+      final ChatEntity updated = ChatEntity(
+        updatedAt: existing.updatedAt,
+        createdAt: existing.createdAt,
+        ids: existing.ids,
+        createdBy: existing.createdBy,
+        lastMessage: existing.lastMessage,
+        persons: existing.persons,
+        chatId: existing.chatId,
+        type: existing.type,
+        productInfo: existing.productInfo,
+        participants: existing.participants,
+        deletedBy: existing.deletedBy,
+        groupInfo: existing.groupInfo,
+        pinnedMessage: null,
+      );
+      await _box.put(chatId, updated);
     }
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/intl.dart';
+import '../../../../../../services/firebase_messaging_service.dart';
 
 class DeviceInfoUtil {
   static Future<Map<String, dynamic>> getLoginDeviceInfo() async {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    final String? fcmToken = FirebaseMessagingService().fcmToken;
 
     if (Platform.isAndroid) {
       final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -17,6 +18,7 @@ class DeviceInfoUtil {
         'app_version': 1.0,
         'platform': 'Android',
         'language': Intl.getCurrentLocale(),
+        'device_token': fcmToken ?? '',
       };
     } else if (Platform.isIOS) {
       final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -28,6 +30,7 @@ class DeviceInfoUtil {
         'app_version': 1.0,
         'platform': 'iOS',
         'language': Intl.getCurrentLocale(),
+        'device_token': fcmToken ?? '',
       };
     } else {
       return <String, dynamic>{
@@ -38,6 +41,7 @@ class DeviceInfoUtil {
         'app_version': 1.0,
         'platform': 'Unknown',
         'language': Intl.getCurrentLocale(),
+        'device_token': fcmToken ?? '',
       };
     }
   }

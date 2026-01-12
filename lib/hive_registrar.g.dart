@@ -14,6 +14,7 @@ import 'package:sellout/core/enums/listing/core/delivery_type.dart';
 import 'package:sellout/core/enums/listing/core/item_condition_type.dart';
 import 'package:sellout/core/enums/listing/core/listing_type.dart';
 import 'package:sellout/core/enums/listing/core/privacy_type.dart';
+import 'package:sellout/core/enums/message/message_status.dart';
 import 'package:sellout/core/enums/message/message_type.dart';
 import 'package:sellout/core/enums/routine/day_type.dart';
 import 'package:sellout/core/widgets/phone_number/domain/entities/country_entity.dart';
@@ -28,7 +29,7 @@ import 'package:sellout/features/personal/auth/signin/domain/entities/address_en
 import 'package:sellout/features/personal/auth/signin/domain/entities/current_user_entity.dart';
 import 'package:sellout/features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import 'package:sellout/features/personal/auth/signin/domain/entities/login_info_entity.dart';
-import 'package:sellout/features/personal/auth/signin/domain/entities/stripe_connect_account_entity.dart';
+import 'package:sellout/features/personal/auth/stripe/domain/entities/stripe_connect_account_entity.dart';
 import 'package:sellout/features/personal/basket/domain/entities/cart/cart_entity.dart';
 import 'package:sellout/features/personal/basket/domain/entities/cart/cart_item_entity.dart';
 import 'package:sellout/features/personal/bookings/domain/entity/booking_entity.dart';
@@ -54,8 +55,15 @@ import 'package:sellout/features/personal/listing/listing_form/domain/entities/s
 import 'package:sellout/features/personal/location/domain/entities/location_entity.dart';
 import 'package:sellout/features/personal/notifications/domain/entities/notification_entity.dart';
 import 'package:sellout/features/personal/notifications/domain/entities/notification_metadata_entity.dart';
+import 'package:sellout/features/personal/order/domain/entities/fast_delivery_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/order_entity.dart';
 import 'package:sellout/features/personal/order/domain/entities/order_payment_detail_entity.dart';
+import 'package:sellout/features/personal/order/domain/entities/postage_entity.dart';
+import 'package:sellout/features/personal/order/domain/entities/shipping_detail_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/amount_in_connected_account_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_funds_in_hold_entity.dart';
+import 'package:sellout/features/personal/payment/domain/entities/wallet_transaction_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/discount_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/feed/feed_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/meetup/availability_entity.dart';
@@ -77,7 +85,7 @@ import 'package:sellout/features/personal/promo/domain/entities/promo_entity.dar
 import 'package:sellout/features/personal/review/domain/entities/review_entity.dart';
 import 'package:sellout/features/personal/services/domain/entity/service_category_entity.dart';
 import 'package:sellout/features/personal/services/domain/entity/service_type_entity.dart';
-import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
+import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import 'package:sellout/features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import 'package:sellout/features/personal/user/profiles/domain/entities/business_profile_detail_entity.dart';
@@ -88,6 +96,7 @@ import 'package:sellout/features/personal/user/profiles/domain/entities/user_str
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AddressEntityAdapter());
+    registerAdapter(AmountInConnectedAccountEntityAdapter());
     registerAdapter(ApiRequestEntityAdapter());
     registerAdapter(AttachmentEntityAdapter());
     registerAdapter(AttachmentTypeAdapter());
@@ -119,6 +128,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(DiscountEntityAdapter());
     registerAdapter(DropdownOptionDataEntityAdapter());
     registerAdapter(DropdownOptionEntityAdapter());
+    registerAdapter(FastDeliveryEntityAdapter());
     registerAdapter(FeedEntityAdapter());
     registerAdapter(GettedMessageEntityAdapter());
     registerAdapter(GroupInfoEntityAdapter());
@@ -130,6 +140,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(MessageEntityAdapter());
     registerAdapter(MessageLastEvaluatedKeyEntityAdapter());
     registerAdapter(MessagePostDetailEntityAdapter());
+    registerAdapter(MessageStatusAdapter());
     registerAdapter(MessageTypeAdapter());
     registerAdapter(NotificationEntityAdapter());
     registerAdapter(NotificationMetadataEntityAdapter());
@@ -137,6 +148,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(NumberFormatEntityAdapter());
     registerAdapter(OfferAmountInfoEntityAdapter());
     registerAdapter(OfferDetailEntityAdapter());
+    registerAdapter(OrderContextEntityAdapter());
     registerAdapter(OrderEntityAdapter());
     registerAdapter(OrderPaymentDetailEntityAdapter());
     registerAdapter(PackageDetailEntityAdapter());
@@ -148,6 +160,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(PostPetEntityAdapter());
     registerAdapter(PostPropertyEntityAdapter());
     registerAdapter(PostVehicleEntityAdapter());
+    registerAdapter(PostageEntityAdapter());
     registerAdapter(PrivacySettingsEntityAdapter());
     registerAdapter(PrivacyTypeAdapter());
     registerAdapter(ProfileBusinessDetailEntityAdapter());
@@ -159,6 +172,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(ServiceEmployeeEntityAdapter());
     registerAdapter(ServiceEntityAdapter());
     registerAdapter(ServiceTypeEntityAdapter());
+    registerAdapter(ShippingDetailEntityAdapter());
     registerAdapter(SizeColorEntityAdapter());
     registerAdapter(StateEntityAdapter());
     registerAdapter(StatusTypeAdapter());
@@ -170,12 +184,16 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(UserEntityAdapter());
     registerAdapter(UserStripeAccountEntityAdapter());
     registerAdapter(VisitingEntityAdapter());
+    registerAdapter(WalletEntityAdapter());
+    registerAdapter(WalletFundsInHoldEntityAdapter());
+    registerAdapter(WalletTransactionEntityAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(AddressEntityAdapter());
+    registerAdapter(AmountInConnectedAccountEntityAdapter());
     registerAdapter(ApiRequestEntityAdapter());
     registerAdapter(AttachmentEntityAdapter());
     registerAdapter(AttachmentTypeAdapter());
@@ -207,6 +225,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(DiscountEntityAdapter());
     registerAdapter(DropdownOptionDataEntityAdapter());
     registerAdapter(DropdownOptionEntityAdapter());
+    registerAdapter(FastDeliveryEntityAdapter());
     registerAdapter(FeedEntityAdapter());
     registerAdapter(GettedMessageEntityAdapter());
     registerAdapter(GroupInfoEntityAdapter());
@@ -218,6 +237,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(MessageEntityAdapter());
     registerAdapter(MessageLastEvaluatedKeyEntityAdapter());
     registerAdapter(MessagePostDetailEntityAdapter());
+    registerAdapter(MessageStatusAdapter());
     registerAdapter(MessageTypeAdapter());
     registerAdapter(NotificationEntityAdapter());
     registerAdapter(NotificationMetadataEntityAdapter());
@@ -225,6 +245,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(NumberFormatEntityAdapter());
     registerAdapter(OfferAmountInfoEntityAdapter());
     registerAdapter(OfferDetailEntityAdapter());
+    registerAdapter(OrderContextEntityAdapter());
     registerAdapter(OrderEntityAdapter());
     registerAdapter(OrderPaymentDetailEntityAdapter());
     registerAdapter(PackageDetailEntityAdapter());
@@ -236,6 +257,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(PostPetEntityAdapter());
     registerAdapter(PostPropertyEntityAdapter());
     registerAdapter(PostVehicleEntityAdapter());
+    registerAdapter(PostageEntityAdapter());
     registerAdapter(PrivacySettingsEntityAdapter());
     registerAdapter(PrivacyTypeAdapter());
     registerAdapter(ProfileBusinessDetailEntityAdapter());
@@ -247,6 +269,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(ServiceEmployeeEntityAdapter());
     registerAdapter(ServiceEntityAdapter());
     registerAdapter(ServiceTypeEntityAdapter());
+    registerAdapter(ShippingDetailEntityAdapter());
     registerAdapter(SizeColorEntityAdapter());
     registerAdapter(StateEntityAdapter());
     registerAdapter(StatusTypeAdapter());
@@ -258,5 +281,8 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(UserEntityAdapter());
     registerAdapter(UserStripeAccountEntityAdapter());
     registerAdapter(VisitingEntityAdapter());
+    registerAdapter(WalletEntityAdapter());
+    registerAdapter(WalletFundsInHoldEntityAdapter());
+    registerAdapter(WalletTransactionEntityAdapter());
   }
 }

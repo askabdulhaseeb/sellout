@@ -12,6 +12,7 @@ class VideoWidget extends StatefulWidget {
     this.showTime = true,
     this.square = false,
     this.durationFontSize = 12,
+    this.onCompleted,
   });
 
   final dynamic videoSource;
@@ -20,6 +21,7 @@ class VideoWidget extends StatefulWidget {
   final bool showTime;
   final bool square;
   final double durationFontSize;
+  final VoidCallback? onCompleted;
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();
@@ -40,7 +42,7 @@ class _VideoWidgetState extends State<VideoWidget> {
     'avi',
     'flv',
     '3gp',
-    'm4v'
+    'm4v',
   ];
 
   @override
@@ -116,13 +118,19 @@ class _VideoWidgetState extends State<VideoWidget> {
       if (widget.play) _controller!.play();
 
       _controller!.addListener(() {
-        if (mounted) {
-          final VideoPlayerValue v = _controller!.value;
-          if (v.position >= v.duration && !v.isPlaying && !_ended) {
-            setState(() => _ended = true);
-          }
-          setState(() {});
+        if (!mounted) return;
+        final VideoPlayerValue v = _controller!.value;
+        final bool isCompleted =
+            v.isInitialized &&
+            v.duration != Duration.zero &&
+            v.position >= v.duration &&
+            !v.isPlaying;
+        if (isCompleted && !_ended) {
+          setState(() => _ended = true);
+          widget.onCompleted?.call();
+          return;
         }
+        setState(() {});
       });
 
       if (mounted) setState(() => _initialized = true);
@@ -170,8 +178,8 @@ class _VideoWidgetState extends State<VideoWidget> {
     final double aspectRatio = widget.square
         ? 1.0
         : (_controller!.value.aspectRatio == 0
-            ? 16 / 9
-            : _controller!.value.aspectRatio);
+              ? 16 / 9
+              : _controller!.value.aspectRatio);
 
     final Duration position = _controller!.value.position;
     final Duration duration = _controller!.value.duration;
@@ -179,10 +187,7 @@ class _VideoWidgetState extends State<VideoWidget> {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        AspectRatio(
-          aspectRatio: aspectRatio,
-          child: VideoPlayer(_controller!),
-        ),
+        AspectRatio(aspectRatio: aspectRatio, child: VideoPlayer(_controller!)),
         if (widget.play)
           GestureDetector(
             onTap: _togglePlayPause,

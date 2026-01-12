@@ -2,14 +2,27 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
+import '../../../../../postage/data/models/postage_detail_repsonse_model.dart';
+import '../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
+import '../../../domain/entities/offer/offer_payment_response.dart';
 import '../../../domain/params/create_offer_params.dart';
+import '../../../domain/params/buy_now_add_shipping_param.dart';
+import '../../../domain/params/buy_now_shipping_rates_params.dart';
 import '../../../domain/params/offer_payment_params.dart';
-import '../../../domain/params/update_offer_params.dart';
+import '../../../domain/params/update_offer_params.dart'; 
 
 abstract interface class OfferRemoteApi {
   Future<DataState<bool>> createOffer(CreateOfferparams param);
   Future<DataState<bool>> updateOffer(UpdateOfferParams param);
-  Future<DataState<String>> offerPayment(OfferPaymentParams param);
+  Future<DataState<OfferPaymentResponse>> buyNowPayment(
+    OfferPaymentParams param,
+  );
+  Future<DataState<PostageDetailResponseModel>> getBuyNowShippingRates(
+    BuyNowShippingRatesParams param,
+  );
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
+    BuyNowAddShippingParam param,
+  );
 }
 
 class OfferRemoteApiImpl implements OfferRemoteApi {
@@ -58,14 +71,16 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         body: json.encode(param.toMap()),
       );
       if (result is DataSuccess) {
-        AppLog.info('${result.data}',
-            name: 'OfferRemoteApi.updateOffer - success');
+        AppLog.info(
+          '${result.data}',
+          name: 'OfferRemoteApi.updateOffer - success',
+        );
         return DataSuccess<bool>(result.data!, true);
       } else {
         AppLog.error(
           result.exception?.message ?? 'PostRemoteApiImpl.updateOffer - else',
           name: 'PostRemoteApiImpl.updateOffer - else',
-          error: result.exception?.reason,
+          error: result.exception?.raw,
         );
         return DataFailer<bool>(
           result.exception ?? CustomException('something_wrong'.tr()),
@@ -83,35 +98,47 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
   }
 
   @override
-  Future<DataState<String>> offerPayment(OfferPaymentParams param) async {
-    const String endpoint = '/payment/offer';
+  Future<DataState<OfferPaymentResponse>> buyNowPayment(
+    OfferPaymentParams param,
+  ) async {
+    const String endpoint = '/payment/buy-now';
 
     try {
+      final Map<String, dynamic> payload = param.toMap();
+      AppLog.info(
+        'Buy-now payment payload: ${json.encode(payload)}',
+        name: 'OfferRemoteApiImpl.buyNowPayment',
+      );
+
       final DataState<bool> result = await ApiCall<bool>().call(
         endpoint: endpoint,
         requestType: ApiRequestType.post,
         isAuth: true,
-        body: json.encode(param.toMap()),
+        body: json.encode(payload),
       );
       if (result is DataSuccess) {
-        debugPrint('✅ Offer payment success: ${result.data}');
-        final Map<String, dynamic> data = jsonDecode(result.data ?? '');
-        final String clientSecret = data['clientSecret'];
-        return DataSuccess<String>(result.data!, clientSecret);
+        final Map<String, dynamic> data =
+            jsonDecode(result.data ?? '{}') as Map<String, dynamic>;
+        final OfferPaymentResponse response = OfferPaymentResponse.fromJson(
+          data,
+        );
+        debugPrint('✅ Buy-now payment success: ${response.offerId}');
+
+        return DataSuccess<OfferPaymentResponse>(result.data ?? '{}', response);
       } else {
-        debugPrint('❌ Offer payment failed at response stage');
+        debugPrint('❌ Buy-now payment failed at response stage');
         AppLog.error(
-          result.exception?.reason ?? 'Unknown error during offer payment',
+          result.exception?.reason ?? 'Unknown error during buy-now payment',
           name:
               'PostRemoteApiImpl.offerPayment - else ,Status code:${result.data}}',
           error: result.exception?.detail,
         );
-        return DataFailer<String>(
+        return DataFailer<OfferPaymentResponse>(
           CustomException(result.exception?.message ?? 'something_wrong'.tr()),
         );
       }
     } catch (e, stc) {
-      debugPrint('🔥 Exception during offer payment');
+      debugPrint('🔥 Exception during buy-now payment');
       debugPrint('❗ Params causing issue: ${param.toMap()}');
       debugPrint('❗ Error: $e');
 
@@ -122,7 +149,150 @@ class OfferRemoteApiImpl implements OfferRemoteApi {
         stackTrace: stc,
       );
 
-      return DataFailer<String>(
+      return DataFailer<OfferPaymentResponse>(
+        CustomException('something_wrong'.tr()),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<PostageDetailResponseModel>> getBuyNowShippingRates(
+    BuyNowShippingRatesParams param,
+  ) async {
+    const String endpoint = '/buy-now/shipping-rates';
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: json.encode(param.toMap()),
+      );
+
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        // Log full payload for debugging offer/buy-now shipping rates.
+        AppLog.info(
+          'Buy-now shipping rates response: $raw',
+          name: 'OfferRemoteApiImpl.getBuyNowShippingRates',
+        );
+        if (raw.isEmpty) {
+          AppLog.error(
+            'Empty buy-now shipping rates response',
+            name: 'OfferRemoteApiImpl.getBuyNowShippingRates - Empty',
+          );
+          return DataFailer<PostageDetailResponseModel>(
+            CustomException('something_wrong'.tr()),
+          );
+        }
+
+        try {
+          final dynamic decoded = jsonDecode(raw);
+          if (decoded is Map<String, dynamic>) {
+            final PostageDetailResponseModel model =
+                PostageDetailResponseModel.fromJson(decoded);
+            return DataSuccess<PostageDetailResponseModel>(raw, model);
+          }
+        } catch (e) {
+          AppLog.error(
+            'Parse error: $e',
+            name: 'OfferRemoteApiImpl.getBuyNowShippingRates - Parse',
+            error: e,
+          );
+        }
+
+        return DataFailer<PostageDetailResponseModel>(
+          CustomException('something_wrong'.tr()),
+        );
+      }
+
+      AppLog.error(
+        result.exception?.raw ?? 'Unknown error during buy-now rates',
+        name: 'OfferRemoteApiImpl.getBuyNowShippingRates - Else',
+        error: result.exception?.detail,
+      );
+      return DataFailer<PostageDetailResponseModel>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OfferRemoteApiImpl.getBuyNowShippingRates - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<PostageDetailResponseModel>(
+        CustomException('something_wrong'.tr()),
+      );
+    }
+  }
+
+  @override
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
+    BuyNowAddShippingParam param,
+  ) async {
+    const String endpoint = '/buy-now/add/shipping';
+
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        isAuth: true,
+        body: json.encode(param.toMap()),
+      );
+
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        // Log full payload for debugging add-shipping flow on offers/buy-now.
+        AppLog.info(
+          'Add buy-now shipping response: $raw',
+          name: 'OfferRemoteApiImpl.addBuyNowShipping',
+        );
+        if (raw.isEmpty) {
+          AppLog.error(
+            'Empty addBuyNowShipping response',
+            name: 'OfferRemoteApiImpl.addBuyNowShipping - Empty',
+          );
+          return DataFailer<BuyNowAddShippingResponseModel>(
+            CustomException('something_wrong'.tr()),
+          );
+        }
+
+        try {
+          final dynamic decoded = jsonDecode(raw);
+          if (decoded is Map<String, dynamic>) {
+            final BuyNowAddShippingResponseModel model =
+                BuyNowAddShippingResponseModel.fromJson(decoded);
+            return DataSuccess<BuyNowAddShippingResponseModel>(raw, model);
+          }
+        } catch (e) {
+          AppLog.error(
+            'Parse error: $e',
+            name: 'OfferRemoteApiImpl.addBuyNowShipping - Parse',
+            error: e,
+          );
+        }
+
+        return DataFailer<BuyNowAddShippingResponseModel>(
+          CustomException('something_wrong'.tr()),
+        );
+      }
+
+      AppLog.error(
+        result.exception?.reason ?? 'Unknown error during add buy-now shipping',
+        name: 'OfferRemoteApiImpl.addBuyNowShipping - Else',
+        error: result.exception?.detail,
+      );
+      return DataFailer<BuyNowAddShippingResponseModel>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
+    } catch (e, stc) {
+      AppLog.error(
+        e.toString(),
+        name: 'OfferRemoteApiImpl.addBuyNowShipping - Catch',
+        error: e,
+        stackTrace: stc,
+      );
+      return DataFailer<BuyNowAddShippingResponseModel>(
         CustomException('something_wrong'.tr()),
       );
     }

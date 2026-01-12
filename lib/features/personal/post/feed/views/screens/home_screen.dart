@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,9 @@ class HomeScreen extends HookWidget {
     final FeedProvider feedProvider = context.read<FeedProvider>();
     const String type = 'post';
 
+    // Track if we're currently loading to prevent duplicate calls
+    final ValueNotifier<bool> isLoadingMore = useValueNotifier<bool>(false);
+
     // Initial feed load
     useEffect(() {
       if (feedProvider.posts.isEmpty) {
@@ -23,15 +27,22 @@ class HomeScreen extends HookWidget {
       return null;
     }, <Object?>[]);
 
-    // Scroll listener for pagination
+    // Scroll listener for pagination with proper cleanup
     useEffect(() {
-      scrollController.addListener(() {
-        if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 400) {
-          feedProvider.loadMoreFeed(type);
+      void onScroll() {
+        if (isLoadingMore.value) return;
+
+        final ScrollPosition position = scrollController.position;
+        if (position.pixels >= position.maxScrollExtent - 400) {
+          isLoadingMore.value = true;
+          feedProvider.loadMoreFeed(type).whenComplete(() {
+            isLoadingMore.value = false;
+          });
         }
-      });
-      return null;
+      }
+
+      scrollController.addListener(onScroll);
+      return () => scrollController.removeListener(onScroll);
     }, <Object?>[scrollController]);
 
     return PersonalScaffold(
@@ -42,7 +53,8 @@ class HomeScreen extends HookWidget {
         },
         child: CustomScrollView(
           controller: scrollController,
-          physics: const BouncingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
+          cacheExtent: 500,
           slivers: const <Widget>[
             SliverToBoxAdapter(child: HomePromoListSection()),
             SliverToBoxAdapter(child: SizedBox(height: 16)),

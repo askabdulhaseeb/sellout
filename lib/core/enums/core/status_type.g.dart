@@ -27,6 +27,10 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         return StatusType.cancelled;
       case 24:
         return StatusType.canceled;
+      case 25:
+        return StatusType.rejectedBySeller;
+      case 26:
+        return StatusType.returned;
       case 31:
         return StatusType.accepted;
       case 32:
@@ -42,7 +46,15 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
       case 37:
         return StatusType.processing;
       case 38:
+        return StatusType.readyToShip;
+      case 39:
         return StatusType.paid;
+      case 40:
+        return StatusType.succeeded;
+      case 41:
+        return StatusType.released;
+      case 42:
+        return StatusType.authorized;
       default:
         return StatusType.pending;
     }
@@ -65,6 +77,10 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         writer.writeByte(23);
       case StatusType.canceled:
         writer.writeByte(24);
+      case StatusType.rejectedBySeller:
+        writer.writeByte(25);
+      case StatusType.returned:
+        writer.writeByte(26);
       case StatusType.accepted:
         writer.writeByte(31);
       case StatusType.completed:
@@ -79,8 +95,16 @@ class StatusTypeAdapter extends TypeAdapter<StatusType> {
         writer.writeByte(36);
       case StatusType.processing:
         writer.writeByte(37);
-      case StatusType.paid:
+      case StatusType.readyToShip:
         writer.writeByte(38);
+      case StatusType.paid:
+        writer.writeByte(39);
+      case StatusType.succeeded:
+        writer.writeByte(40);
+      case StatusType.released:
+        writer.writeByte(41);
+      case StatusType.authorized:
+        writer.writeByte(42);
     }
   }
 

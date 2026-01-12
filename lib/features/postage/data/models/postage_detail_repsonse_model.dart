@@ -1,5 +1,6 @@
 import '../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../personal/auth/signin/data/models/address_model.dart';
+import '../../../personal/order/data/models/fast_delivery_model.dart';
 import '../../domain/entities/postage_detail_response_entity.dart';
 
 class PostageDetailResponseModel extends PostageDetailResponseEntity {
@@ -101,7 +102,9 @@ class PostageItemDetailModel extends PostageItemDetailEntity {
           ? json['package_detail']
           : <String, dynamic>{},
       fromAddress: AddressModel.fromJson(
-          json['fromAddress']),
+          json['fromAddress'] is Map<String, dynamic>
+              ? json['fromAddress']
+              : <String, dynamic>{}),
       toAddress: AddressModel.fromJson(json['toAddress'] is Map<String, dynamic>
           ? json['toAddress']
           : <String, dynamic>{}),
@@ -426,28 +429,6 @@ class ParcelModel extends ParcelEntity {
         'distanceUnit': distanceUnit,
         'weight': weight,
         'massUnit': massUnit,
-      };
-}
-
-class FastDeliveryModel extends FastDeliveryEntity {
-  FastDeliveryModel({
-    required super.requested,
-    required super.available,
-    required super.message,
-  });
-
-  factory FastDeliveryModel.fromJson(Map<String, dynamic> json) {
-    return FastDeliveryModel(
-      requested: json['requested'] ?? false,
-      available: json['available'] ?? false,
-      message: json['message'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'requested': requested,
-        'available': available,
-        'message': message,
       };
 }
 

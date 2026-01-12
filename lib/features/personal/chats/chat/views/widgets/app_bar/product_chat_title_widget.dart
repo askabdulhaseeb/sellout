@@ -5,6 +5,7 @@ import '../../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../chat_dashboard/views/widgets/chat_profile_with_status.dart';
 import '../../providers/chat_provider.dart';
@@ -19,50 +20,69 @@ class ProductChatTitleWidget extends StatelessWidget {
         final String otherPersonId = pro.chat?.otherPerson() ?? '';
         final bool isBusiness = otherPersonId.toUpperCase().startsWith('BU');
 
-        final BusinessEntity? business =
-            isBusiness ? LocalBusiness().business(otherPersonId) : null;
+        final BusinessEntity? business = isBusiness
+            ? LocalBusiness().business(otherPersonId)
+            : null;
 
-        final UserEntity? user =
-            !isBusiness ? LocalUser().userEntity(otherPersonId) : null;
+        final UserEntity? user = !isBusiness
+            ? LocalUser().userEntity(otherPersonId)
+            : null;
 
-        final PostEntity? post =
-            LocalPost().post(pro.chat?.productInfo?.id ?? '');
+        final PostEntity? post = LocalPost().post(
+          pro.chat?.productInfo?.id ?? '',
+        );
 
-        return Row(
-          children: <Widget>[
-            ProfilePictureWithStatus(
-              isProduct: true,
-              postImageUrl: post?.imageURL ?? '',
-              userImageUrl: isBusiness
-                  ? (business?.logo?.url ?? '')
-                  : (user?.profilePhotoURL ?? user?.displayName ?? ''),
-              userDisplayName: isBusiness
-                  ? (business?.displayName ?? '')
-                  : (user?.displayName ?? post?.title ?? ''),
-              userId:
-                  isBusiness ? (business?.businessID ?? '') : (user?.uid ?? ''),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    post?.title ?? '',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  Text('tap_here_to_open_post'.tr(),
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: ColorScheme.of(context)
-                              .onSurface
-                              .withValues(alpha: 0.3)))
-                ],
+        return GestureDetector(
+          onTap: () {
+            if (post != null && post.postID.isNotEmpty) {
+              Navigator.of(context).pushNamed(
+                PostDetailScreen.routeName,
+                arguments: <String, dynamic>{'pid': post.postID},
+              );
+            }
+          },
+          child: Row(
+            children: <Widget>[
+              ProfilePictureWithStatus(
+                isProduct: true,
+                postImageUrl: post?.imageURL ?? '',
+                userImageUrl: isBusiness
+                    ? (business?.logo?.url ?? '')
+                    : (user?.profilePhotoURL ?? user?.displayName ?? ''),
+                userDisplayName: isBusiness
+                    ? (business?.displayName ?? '')
+                    : (user?.displayName ?? post?.title ?? ''),
+                userId: isBusiness
+                    ? (business?.businessID ?? '')
+                    : (user?.uid ?? ''),
               ),
-            )
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      post?.title ?? '',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      'tap_here_to_open_post'.tr(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: ColorScheme.of(
+                          context,
+                        ).onSurface.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

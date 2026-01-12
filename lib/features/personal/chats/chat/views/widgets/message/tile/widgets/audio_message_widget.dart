@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +13,8 @@ import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../../providers/send_message_provider.dart';
 
+enum AudioState { loading, ready, playing, paused, error }
+
 class AudioMessageWidget extends StatefulWidget {
   const AudioMessageWidget({required this.message, super.key});
   final MessageEntity message;
@@ -22,13 +24,17 @@ class AudioMessageWidget extends StatefulWidget {
 }
 
 class _AudioMessageWidgetState extends State<AudioMessageWidget>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   @override
-  bool get wantKeepAlive => true; // Keep widget alive in ListView
+  bool get wantKeepAlive => true;
 
   late final PlayerController _playerController;
-  bool _isLoading = true;
+  late final AnimationController _playbackSpeedController;
+
+  AudioState _audioState = AudioState.loading;
   String? _cachedFilePath;
+  double _downloadProgress = 0.0;
+  double _playbackSpeed = 1.0;
 
   Duration _currentPos = Duration.zero;
   Duration _totalDur = Duration.zero;
@@ -40,10 +46,16 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   static PlayerController? _currentlyPlayingController;
   static void Function(PlayerController?)? onGlobalPlayChanged;
 
+  static const List<double> _speedOptions = <double>[1.0, 1.5, 2.0];
+
   @override
   void initState() {
     super.initState();
     _playerController = PlayerController();
+    _playbackSpeedController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
     _subscribeToPlayerEvents();
     _prepareAudio();
   }
@@ -52,16 +64,27 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final SendMessageProvider messageProvider =
-        context.watch<SendMessageProvider>();
+    final SendMessageProvider messageProvider = context
+        .watch<SendMessageProvider>();
     if (messageProvider.isRecordingAudio.value) {
-      if (_playerController.playerState.isPlaying) {
-        _playerController.pauseAllPlayers();
-        if (_currentlyPlayingController == _playerController) {
-          _currentlyPlayingController = null;
-        }
-        setState(() {});
+      if (_audioState == AudioState.playing) {
+        _pausePlayer();
       }
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant AudioMessageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the message was updated (e.g., file uploaded), re-prepare audio
+    if (oldWidget.message.fileStatus != widget.message.fileStatus ||
+        oldWidget.message.fileUrl.length != widget.message.fileUrl.length ||
+        (oldWidget.message.fileUrl.isNotEmpty &&
+            widget.message.fileUrl.isNotEmpty &&
+            oldWidget.message.fileUrl.first.url !=
+                widget.message.fileUrl.first.url)) {
+      _cachedFilePath = null;
+      _prepareAudio();
     }
   }
 
@@ -72,31 +95,66 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     });
 
     _completeSub = _playerController.onCompletion.listen((_) async {
-      await _playerController.stopPlayer();
       if (!mounted) return;
-      setState(() => _currentPos = Duration.zero);
+      setState(() {
+        _currentPos = Duration.zero;
+        _audioState = AudioState.ready;
+      });
+      // Re-prepare player after completion so it can play again
+      if (_cachedFilePath != null) {
+        await _refreshPlayer();
+      }
     });
 
     onGlobalPlayChanged = (PlayerController? activeController) {
       if (!mounted) return;
-      if (activeController != _playerController) {
-        _playerController.pauseAllPlayers();
+      if (activeController != _playerController &&
+          _audioState == AudioState.playing) {
+        _pausePlayer();
       }
     };
   }
 
+  /// Re-prepare player without showing loading state
+  Future<void> _refreshPlayer() async {
+    if (_cachedFilePath == null) return;
+    try {
+      await _playerController.preparePlayer(
+        noOfSamples: 50,
+        path: _cachedFilePath!,
+        shouldExtractWaveform: false,
+      );
+    } catch (e) {
+      debugPrint('Error refreshing player: $e');
+    }
+  }
+
   Future<void> _prepareAudio() async {
     if (!mounted) return;
-    setState(() => _isLoading = true);
+
+    // Check if file URL is available (message might still be uploading)
+    if (widget.message.fileUrl.isEmpty ||
+        widget.message.fileUrl.first.url.isEmpty) {
+      setState(() {
+        _audioState = AudioState.loading;
+        _downloadProgress = 0.0;
+      });
+      return;
+    }
+
+    setState(() {
+      _audioState = AudioState.loading;
+      _downloadProgress = 0.0;
+    });
 
     try {
-      final String url = widget.message.fileUrl[0].url;
+      final String url = widget.message.fileUrl.first.url;
       _cachedFilePath ??= await _downloadOrGetFile(url);
       await _setupPlayer(_cachedFilePath!);
     } catch (e) {
       debugPrint('Error preparing audio: $e');
       if (!mounted) return;
-      setState(() => _isLoading = false);
+      setState(() => _audioState = AudioState.error);
     }
   }
 
@@ -108,8 +166,33 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     final File file = File(filePath);
 
     if (!file.existsSync()) {
-      final http.Response response = await http.get(Uri.parse(url));
-      await file.writeAsBytes(response.bodyBytes);
+      final http.Client client = http.Client();
+      try {
+        final http.Request request = http.Request('GET', Uri.parse(url));
+        final http.StreamedResponse response = await client.send(request);
+
+        final int totalBytes = response.contentLength ?? 0;
+        int receivedBytes = 0;
+        final List<int> bytes = <int>[];
+
+        await for (final List<int> chunk in response.stream) {
+          bytes.addAll(chunk);
+          receivedBytes += chunk.length;
+          if (totalBytes > 0 && mounted) {
+            setState(() {
+              _downloadProgress = receivedBytes / totalBytes;
+            });
+          }
+        }
+
+        await file.writeAsBytes(bytes);
+      } finally {
+        client.close();
+      }
+    } else {
+      if (mounted) {
+        setState(() => _downloadProgress = 1.0);
+      }
     }
 
     return filePath;
@@ -117,7 +200,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
 
   Future<void> _setupPlayer(String path) async {
     await _playerController.preparePlayer(
-      noOfSamples: 30,
+      noOfSamples: 50,
       path: path,
       shouldExtractWaveform: true,
     );
@@ -126,32 +209,39 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     if (!mounted) return;
     setState(() {
       _totalDur = Duration(milliseconds: totalMs);
-      _isLoading = false;
+      _audioState = AudioState.ready;
     });
   }
 
+  Future<void> _pausePlayer() async {
+    await _playerController.pausePlayer();
+    if (_currentlyPlayingController == _playerController) {
+      _currentlyPlayingController = null;
+    }
+    if (mounted) {
+      setState(() => _audioState = AudioState.paused);
+    }
+  }
+
   Future<void> _playPause() async {
-    final SendMessageProvider messageProvider =
-        context.read<SendMessageProvider>();
+    final SendMessageProvider messageProvider = context
+        .read<SendMessageProvider>();
 
     if (messageProvider.isRecordingAudio.value) return;
 
-    if (_playerController.playerState.isPlaying) {
-      await _playerController.pauseAllPlayers();
+    // Handle error state - retry
+    if (_audioState == AudioState.error) {
+      _cachedFilePath = null;
+      _prepareAudio();
       return;
     }
 
-    // Replay if finished
-    final int currentMs =
-        await _playerController.getDuration(DurationType.current);
-    final int totalMs = await _playerController.getDuration(DurationType.max);
+    // Don't allow interaction while loading
+    if (_audioState == AudioState.loading) return;
 
-    if (currentMs >= totalMs) {
-      await _playerController.stopPlayer();
-      _currentPos = Duration.zero;
-      if (_cachedFilePath != null) {
-        await _setupPlayer(_cachedFilePath!);
-      }
+    if (_audioState == AudioState.playing) {
+      await _pausePlayer();
+      return;
     }
 
     // Pause other active players
@@ -159,19 +249,41 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     if (_currentlyPlayingController != null &&
         _currentlyPlayingController != _playerController) {
       await _currentlyPlayingController!.pausePlayer();
-      setState(() {});
     }
 
     _currentlyPlayingController = _playerController;
     onGlobalPlayChanged?.call(_playerController);
 
     await _playerController.startPlayer(forceRefresh: true);
+    if (mounted) {
+      setState(() => _audioState = AudioState.playing);
+    }
+  }
+
+  Future<void> _seekTo(double progress) async {
+    if (_audioState == AudioState.loading || _audioState == AudioState.error) {
+      return;
+    }
+
+    final int seekMs = (progress * _totalDur.inMilliseconds).toInt();
+    await _playerController.seekTo(seekMs);
+    setState(() => _currentPos = Duration(milliseconds: seekMs));
+  }
+
+  void _cyclePlaybackSpeed() {
+    final int currentIndex = _speedOptions.indexOf(_playbackSpeed);
+    final int nextIndex = (currentIndex + 1) % _speedOptions.length;
+    setState(() {
+      _playbackSpeed = _speedOptions[nextIndex];
+    });
+    _playerController.setRate(_playbackSpeed);
   }
 
   @override
   void dispose() {
     _posSub?.cancel();
     _completeSub?.cancel();
+    _playbackSpeedController.dispose();
     _playerController.dispose();
     if (_currentlyPlayingController == _playerController) {
       _currentlyPlayingController = null;
@@ -181,7 +293,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for keep-alive
+    super.build(context);
     final bool isMe = widget.message.sendBy == LocalAuth.uid;
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
@@ -189,106 +301,301 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget>
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        width: 320,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: _isLoading
-            ? _buildLoadingUI(isMe, colorScheme)
-            : _buildPlayerUI(isMe, colorScheme),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        child: _buildContent(isMe, theme, colorScheme),
       ),
     );
   }
 
-  Widget _buildLoadingUI(bool isMe, ColorScheme colorScheme) => Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.play_circle_fill_outlined,
-                  color: Theme.of(context).primaryColor,
-                  size: 30,
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              '00:00',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colorScheme.outline,
-                  ),
-            ),
-          ),
-        ],
-      );
+  Widget _buildContent(bool isMe, ThemeData theme, ColorScheme colorScheme) {
+    switch (_audioState) {
+      case AudioState.loading:
+        return _buildLoadingUI(colorScheme, theme);
+      case AudioState.error:
+        return _buildErrorUI(colorScheme, theme);
+      case AudioState.ready:
+      case AudioState.playing:
+      case AudioState.paused:
+        return _buildPlayerUI(isMe, colorScheme, theme);
+    }
+  }
 
-  Widget _buildPlayerUI(bool isMe, ColorScheme colorScheme) => Column(
-        children: <Widget>[
-          Row(
-            spacing: 2,
-            children: <Widget>[
-              CustomIconButton(
-                padding: const EdgeInsets.all(0),
-                margin: const EdgeInsets.all(0),
-                onPressed: _playPause,
-                icon: _playerController.playerState.isPlaying
-                    ? Icons.pause_circle
-                    : Icons.play_circle_fill_outlined,
-                iconColor: Theme.of(context).primaryColor,
-                bgColor: Colors.transparent,
-                iconSize: 40,
+  Widget _buildLoadingUI(ColorScheme colorScheme, ThemeData theme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    value: _downloadProgress > 0 ? _downloadProgress : null,
+                    strokeWidth: 2.5,
+                    color: theme.primaryColor,
+                    backgroundColor: colorScheme.onSurface.withValues(
+                      alpha: 0.2,
+                    ),
+                  ),
+                  Icon(
+                    Icons.mic_rounded,
+                    color: colorScheme.onSurface,
+                    size: 18,
+                  ),
+                ],
               ),
-              Expanded(
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _downloadProgress > 0
+                        ? '${(_downloadProgress * 100).toInt()}%'
+                        : 'Loading...',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildErrorUI(ColorScheme colorScheme, ThemeData theme) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            CustomIconButton(
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero,
+              onPressed: _playPause,
+              icon: Icons.refresh_rounded,
+              iconColor: colorScheme.error,
+              bgColor: colorScheme.error.withValues(alpha: 0.1),
+              iconSize: 40,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: colorScheme.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 12,
+                        color: colorScheme.error,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Failed to load. Tap to retry',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.error,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlayerUI(bool isMe, ColorScheme colorScheme, ThemeData theme) {
+    final bool isPlaying = _audioState == AudioState.playing;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            // Play/Pause button
+            CustomIconButton(
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero,
+              onPressed: _playPause,
+              icon: isPlaying
+                  ? Icons.pause_circle_filled
+                  : Icons.play_circle_filled,
+              iconColor: theme.primaryColor,
+              bgColor: Colors.transparent,
+              iconSize: 42,
+            ),
+            const SizedBox(width: 4),
+            // Waveform with seek gesture
+            Expanded(
+              child: GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  final RenderBox box =
+                      context.findRenderObject()! as RenderBox;
+                  final double localX = details.localPosition.dx;
+                  // Account for play button width (46) and spacing (4)
+                  final double waveformWidth = box.size.width - 46 - 4 - 24;
+                  final double progress = (localX / waveformWidth).clamp(
+                    0.0,
+                    1.0,
+                  );
+                  _seekTo(progress);
+                },
+                onHorizontalDragUpdate: (DragUpdateDetails details) {
+                  final RenderBox box =
+                      context.findRenderObject()! as RenderBox;
+                  final double localX = details.localPosition.dx;
+                  final double waveformWidth = box.size.width - 46 - 4 - 24;
+                  final double progress = (localX / waveformWidth).clamp(
+                    0.0,
+                    1.0,
+                  );
+                  _seekTo(progress);
+                },
                 child: AudioFileWaveforms(
-                  enableSeekGesture: false,
-                  continuousWaveform: false,
+                  enableSeekGesture: true,
+                  continuousWaveform: true,
                   waveformType: WaveformType.fitWidth,
-                  size: const Size(150, 40),
+                  size: const Size(double.infinity, 36),
                   playerController: _playerController,
                   playerWaveStyle: PlayerWaveStyle(
-                    scaleFactor: 5,
-                    fixedWaveColor: colorScheme.outline,
-                    liveWaveColor: Theme.of(context).primaryColor,
+                    scaleFactor: 80,
+                    fixedWaveColor: colorScheme.onSurface.withValues(
+                      alpha: 0.6,
+                    ),
+                    liveWaveColor: theme.primaryColor,
                     showSeekLine: false,
                     seekLineColor: Colors.transparent,
+                    spacing: 4,
+                    waveThickness: 3,
+                    waveCap: StrokeCap.round,
                   ),
                 ),
               ),
-              CustomSvgIcon(
-                color: _playerController.playerState.isPlaying
-                    ? Theme.of(context).primaryColor
-                    : colorScheme.outline,
-                assetPath: AppStrings.selloutVoiceNoteSpeakerIcon,
-                size: 18,
-              )
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              _playerController.playerState.isPlaying
+            ),
+            const SizedBox(width: 4),
+            // Speaker icon or speed indicator
+            GestureDetector(
+              onTap: isPlaying ? _cyclePlaybackSpeed : null,
+              child: isPlaying && _playbackSpeed != 1.0
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${_playbackSpeed}x',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.primaryColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
+                      ),
+                    )
+                  : CustomSvgIcon(
+                      color: isPlaying
+                          ? theme.primaryColor
+                          : colorScheme.onSurface.withValues(alpha: 0.4),
+                      assetPath: AppStrings.selloutVoiceNoteSpeakerIcon,
+                      size: 20,
+                    ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        // Time row
+        Row(
+          children: <Widget>[
+            const SizedBox(width: 46),
+            Text(
+              isPlaying || _currentPos.inMilliseconds > 0
                   ? DurationFormatHelper.format(_currentPos)
                   : DurationFormatHelper.format(_totalDur),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colorScheme.outline,
-                  ),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface,
+                fontSize: 11,
+                fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+              ),
             ),
-          ),
-        ],
-      );
+            if (isPlaying || _currentPos.inMilliseconds > 0) ...<Widget>[
+              Text(
+                ' / ',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 11,
+                ),
+              ),
+              Text(
+                DurationFormatHelper.format(_totalDur),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 11,
+                  fontFeatures: const <FontFeature>[
+                    FontFeature.tabularFigures(),
+                  ],
+                ),
+              ),
+            ],
+            const Spacer(),
+            // Playback speed button (visible when playing)
+            if (isPlaying)
+              GestureDetector(
+                onTap: _cyclePlaybackSpeed,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.onSurface.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '${_playbackSpeed}x',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 }

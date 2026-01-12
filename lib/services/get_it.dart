@@ -1,6 +1,10 @@
 import 'package:get_it/get_it.dart';
-import '../core/sockets/socket_implementations.dart';
+import '../core/sockets/handlers/presence_handler.dart';
+import '../core/sockets/handlers/socket_handler_registry.dart';
 import '../core/sockets/socket_service.dart';
+import '../features/personal/chats/chat_dashboard/data/sources/socket/chat_socket_handler.dart';
+import '../features/personal/notifications/data/source/socket/notification_socket_handler.dart';
+import '../features/personal/payment/data/sources/socket/wallet_socket_handler.dart';
 import '../features/business/business_page/domain/usecase/get_bookings_by_service_id_usecase.dart';
 import '../features/business/business_page/domain/usecase/get_my_bookings_usecase.dart';
 import '../features/personal/address/add_address/domain/usecase/add_selling_address_usecase.dart';
@@ -51,6 +55,7 @@ import '../features/personal/auth/signin/data/repositories/signin_repository_imp
 import '../features/personal/auth/signin/data/sources/signin_remote_source.dart';
 import '../features/personal/auth/signin/domain/repositories/signin_repository.dart';
 import '../features/personal/auth/signin/domain/usecase/login_usecase.dart';
+import '../features/personal/auth/signin/domain/usecase/logout_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.dart';
 import '../features/personal/auth/signin/domain/usecase/resend_twofactor_code.dart';
 import '../features/personal/auth/signin/domain/usecase/verify_two_factor_usecsae.dart';
@@ -85,11 +90,8 @@ import '../features/personal/location/domain/repo/location_repo.dart';
 import '../features/personal/location/domain/usecase/location_name_usecase.dart';
 import '../features/personal/location/view/provider/location_field_provider.dart';
 import '../features/personal/marketplace/data/source/marketplace_remote_source.dart';
-import '../features/personal/payment/data/repositories/payment_repository_impl.dart';
-import '../features/personal/payment/data/sources/remote/payment_remote_api.dart';
-import '../features/personal/payment/domain/repositories/payment_repository.dart';
-import '../features/personal/payment/domain/usecase/get_exchange_rate_usecase.dart';
-import '../features/personal/payment/domain/usecase/get_wallet_usecase.dart';
+import '../features/personal/order/domain/usecase/get_order_by_order_id.dart';
+import '../features/personal/payment/payment.dart';
 import '../features/personal/services/domain/usecase/get_service_categories_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../features/personal/visits/domain/usecase/book_service_usecase.dart';
@@ -144,6 +146,9 @@ import '../features/personal/notifications/data/repo/notification_repo_impl.dart
 import '../features/personal/notifications/data/source/remote/remote_notification.dart';
 import '../features/personal/notifications/domain/repo/notification_repo.dart';
 import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
+import '../features/personal/notifications/domain/usecase/view_all_notifications_usecase.dart';
+import '../features/personal/notifications/domain/usecase/view_single_notification_usecase.dart';
+import '../features/personal/notifications/domain/usecase/delete_notifications_usecase.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/data/repo/order_repo_impl.dart';
 import '../features/personal/order/domain/repo/order_repo.dart';
@@ -156,6 +161,8 @@ import '../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../features/personal/post/domain/usecase/create_offer_usecase.dart';
 import '../features/personal/post/domain/usecase/get_feed_usecase.dart';
 import '../features/personal/post/domain/usecase/offer_payment_usecase.dart';
+import '../features/personal/post/domain/usecase/get_buy_now_shipping_rates_usecase.dart';
+import '../features/personal/post/domain/usecase/add_buy_now_shipping_usecase.dart';
 import '../features/personal/promo/domain/usecase/get_promo_of_followers_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
@@ -205,11 +212,13 @@ import '../features/personal/user/profiles/domain/usecase/get_post_by_id_usecase
 import '../features/personal/user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../features/personal/order/domain/usecase/update_order_usecase.dart';
 import '../features/personal/user/profiles/views/providers/profile_provider.dart';
+import '../features/personal/user/profiles/views/user_profile/providers/user_profile_provider.dart';
 import '../features/postage/data/repository/postage_repository_impl.dart';
 import '../features/postage/data/source/remote/postage_remote_source.dart';
 import '../features/postage/domain/repository/postage_repository.dart';
+import '../features/postage/domain/usecase/add_order_shipping_usecase.dart';
 import '../features/postage/domain/usecase/add_shipping_usecase.dart';
-import '../features/postage/domain/usecase/buy_label_usecsae.dart';
+import '../features/postage/domain/usecase/buy_label_usecase.dart';
 import '../features/postage/domain/usecase/get_order_postage_detail_usecase.dart';
 import '../features/postage/domain/usecase/get_postage_detail_usecase.dart';
 
@@ -252,6 +261,7 @@ void _auth() {
     () => SigninRepositoryImpl(locator()),
   );
   locator.registerFactory<LoginUsecase>(() => LoginUsecase(locator()));
+  locator.registerFactory<LogoutUsecase>(() => LogoutUsecase(locator()));
   locator.registerFactory<RefreshTokenUsecase>(
     () => RefreshTokenUsecase(locator()),
   );
@@ -380,8 +390,10 @@ void _profile() {
       locator(),
       locator(),
       locator(),
-      locator(),
     ),
+  );
+  locator.registerLazySingleton<UserProfileProvider>(
+    () => UserProfileProvider(locator(), locator(), locator()),
   );
 }
 
@@ -429,6 +441,12 @@ void _message() {
 
   locator.registerFactory<OfferPaymentUsecase>(
     () => OfferPaymentUsecase(locator()),
+  );
+  locator.registerFactory<GetBuyNowShippingRatesUsecase>(
+    () => GetBuyNowShippingRatesUsecase(locator()),
+  );
+  locator.registerFactory<AddBuyNowShippingUsecase>(
+    () => AddBuyNowShippingUsecase(locator()),
   );
   locator.registerFactory<SendGroupInviteUsecase>(
     () => SendGroupInviteUsecase(locator()),
@@ -726,8 +744,30 @@ void _addlisting() {
 }
 
 void _sockets() {
-  locator.registerFactory<SocketService>(() => SocketService(locator()));
-  locator.registerFactory<SocketImplementations>(() => SocketImplementations());
+  // Core handler - presence is cross-cutting, stays in core
+  locator.registerLazySingleton<PresenceHandler>(() => PresenceHandler());
+
+  // Feature handlers - each lives in its feature's sources/socket folder
+  locator.registerLazySingleton<ChatSocketHandler>(() => ChatSocketHandler());
+  locator.registerLazySingleton<WalletSocketHandler>(() => WalletSocketHandler());
+  locator.registerLazySingleton<NotificationSocketHandler>(
+    () => NotificationSocketHandler(),
+  );
+
+  // Registry with default handlers registered
+  locator.registerLazySingleton<SocketHandlerRegistry>(() {
+    final SocketHandlerRegistry registry = SocketHandlerRegistry();
+    registry.registerHandler(locator<PresenceHandler>());
+    registry.registerHandler(locator<ChatSocketHandler>());
+    registry.registerHandler(locator<WalletSocketHandler>());
+    registry.registerHandler(locator<NotificationSocketHandler>());
+    return registry;
+  });
+
+  // SocketService with registry dependency
+  locator.registerFactory<SocketService>(
+    () => SocketService(locator<SocketHandlerRegistry>()),
+  );
 }
 
 void _addaddress() {
@@ -816,6 +856,10 @@ void _order() {
   locator.registerFactory<GetOrderByUidUsecase>(
     () => GetOrderByUidUsecase(locator()),
   );
+  locator.registerFactory<GetOrderByOrderIdUsecase>(
+    () => GetOrderByOrderIdUsecase(locator()),
+  );
+
   locator.registerFactory<UpdateOrderUsecase>(
     () => UpdateOrderUsecase(locator()),
   );
@@ -837,10 +881,19 @@ void _notification() {
   locator.registerFactory<GetAllNotificationsUseCase>(
     () => GetAllNotificationsUseCase(locator()),
   );
+  locator.registerFactory<ViewAllNotificationsUseCase>(
+    () => ViewAllNotificationsUseCase(locator()),
+  );
+  locator.registerFactory<ViewSingleNotificationUseCase>(
+    () => ViewSingleNotificationUseCase(locator()),
+  );
+  locator.registerFactory<DeleteNotificationsUseCase>(
+    () => DeleteNotificationsUseCase(locator()),
+  );
 
   // Providers
   locator.registerFactory<NotificationProvider>(
-    () => NotificationProvider(locator()),
+    () => NotificationProvider(locator(), locator(), locator(), locator()),
   );
 }
 
@@ -898,10 +951,21 @@ void _payment() {
   locator.registerFactory<PaymentRepository>(
     () => PaymentRepositoryImpl(locator()),
   );
+  locator.registerFactory<WalletRemoteApi>(() => WalletRemoteApiImpl());
+  locator.registerFactory<WalletRepository>(
+    () => WalletRepositoryImpl(locator(), locator()),
+  );
+  locator.registerLazySingleton<LocalWallet>(() => LocalWallet());
   locator.registerFactory<GetExchangeRateUsecase>(
     () => GetExchangeRateUsecase(locator()),
   );
   locator.registerFactory<GetWalletUsecase>(() => GetWalletUsecase(locator()));
+  locator.registerFactory<TransferFundsUsecase>(
+    () => TransferFundsUsecase(locator()),
+  );
+  locator.registerFactory<CreatePayoutsUsecase>(
+    () => CreatePayoutsUsecase(locator()),
+  );
 }
 
 void _postage() {
@@ -917,7 +981,9 @@ void _postage() {
   locator.registerFactory<GetOrderPostageDetailUsecase>(
     () => GetOrderPostageDetailUsecase(locator()),
   );
-
+  locator.registerFactory<AddOrderShippingUsecase>(
+    () => AddOrderShippingUsecase(locator()),
+  );
   locator.registerFactory<AddShippingUsecase>(
     () => AddShippingUsecase(locator()),
   );

@@ -64,7 +64,7 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         data,
         chatID,
       );
-      await LocalChatMessage().save(chatID,getted);
+      await LocalChatMessage().save(chatID, getted);
       return DataSuccess<GettedMessageEntity>(result.data ?? '', getted);
     } else {
       AppLog.error(
@@ -102,13 +102,13 @@ class MessagesRemoteSourceImpl implements MessagesRemoteSource {
         final String chatId = data['chat_id'];
         await LocalChatMessage().saveMessage(newMsg);
         AppLog.info(
-          '📤 Message sent & saved locally | chatId: $chatId | messageId: ${newMsg.messageId}',
+          ' Message sent & saved locally | chatId: $chatId | messageId: ${newMsg.messageId}',
           name: 'MessagesRemoteSourceImpl.sendMessage',
         );
         return DataSuccess<bool>(result.data ?? '', true);
       } else {
         AppLog.error(
-          '🚫 Message send failed from server',
+          ' Message sent failed',
           name: 'MessagesRemoteSourceImpl.sendMessage - else',
           error: result.exception,
         );

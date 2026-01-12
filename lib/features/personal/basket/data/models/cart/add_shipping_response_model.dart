@@ -1,12 +1,10 @@
 import '../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../auth/signin/data/models/address_model.dart';
+import '../../../../order/data/models/fast_delivery_model.dart';
 import '../../../domain/entities/cart/added_shipping_response_entity.dart';
 
 class AddShippingResponseModel extends AddedShippingResponseEntity {
-  AddShippingResponseModel({
-    required super.message,
-    required super.cart,
-  });
+  AddShippingResponseModel({required super.message, required super.cart});
 
   factory AddShippingResponseModel.fromJson(Map<String, dynamic> json) {
     return AddShippingResponseModel(
@@ -24,15 +22,13 @@ class AddShippingResponseModel extends AddedShippingResponseEntity {
 }
 
 class AddShippingCartModel extends AddedShippingCartEntity {
-  AddShippingCartModel({
-    required super.updatedAt,
-    required super.cartItems,
-  });
+  AddShippingCartModel({required super.updatedAt, required super.cartItems});
 
   factory AddShippingCartModel.fromJson(Map<String, dynamic> json) {
     return AddShippingCartModel(
       updatedAt: DateTime.parse(
-          json['updated_at'] ?? DateTime.now().toIso8601String()),
+        json['updated_at'] ?? DateTime.now().toIso8601String(),
+      ),
       cartItems: (json['cart_items'] as List<dynamic>? ?? <dynamic>[])
           .map((e) => AddShippingCartItemModel.fromJson(e))
           .toList(),
@@ -43,8 +39,10 @@ class AddShippingCartModel extends AddedShippingCartEntity {
     return <String, dynamic>{
       'updated_at': updatedAt.toIso8601String(),
       'cart_items': cartItems
-          .map((AddShippingCartItemEntity e) =>
-              (e as AddShippingCartItemModel).toJson())
+          .map(
+            (AddShippingCartItemEntity e) =>
+                (e as AddShippingCartItemModel).toJson(),
+          )
           .toList(),
     };
   }
@@ -88,8 +86,9 @@ class AddShippingCartItemModel extends AddShippingCartItemEntity {
       'size': size,
       'status': status,
       'selected_shipping': selectedShipping
-          .map((SelectedShippingEntity e) =>
-              (e as SelectedShippingModel).toJson())
+          .map(
+            (SelectedShippingEntity e) => (e as SelectedShippingModel).toJson(),
+          )
           .toList(),
     };
   }
@@ -124,20 +123,23 @@ class SelectedShippingModel extends SelectedShippingEntity {
       parcelIndex: json['parcel_index'] ?? 0,
       convertedCurrency: json['converted_currency'] ?? '',
       nativeBufferAmount: (json['native_buffer_amount'] ?? 0.0).toDouble(),
-      toAddress:
-          AddressModel.fromJson(json['to_address'] ?? <String, dynamic>{}),
+      toAddress: AddressModel.fromJson(
+        json['to_address'] ?? <String, dynamic>{},
+      ),
       parcelId: json['parcel_id'] ?? '',
       shipmentId: json['shipment_id'] ?? '',
       provider: json['provider'] ?? '',
-      convertedBufferAmount:
-          (json['converted_buffer_amount'] ?? 0.0).toDouble(),
+      convertedBufferAmount: (json['converted_buffer_amount'] ?? 0.0)
+          .toDouble(),
       fastDelivery: FastDeliveryModel.fromJson(
-          json['fast_delivery'] ?? <String, dynamic>{}),
+        json['fast_delivery'] ?? <String, dynamic>{},
+      ),
       deliveryType: json['delivery_type'] ?? '',
       nativeCurrency: json['native_currency'] ?? '',
       coreAmount: (json['core_amount'] ?? 0.0).toDouble(),
-      fromAddress:
-          AddressModel.fromJson(json['from_address'] ?? <String, dynamic>{}),
+      fromAddress: AddressModel.fromJson(
+        json['from_address'] ?? <String, dynamic>{},
+      ),
       serviceToken: json['service_token'] ?? '',
     );
   }
@@ -194,29 +196,6 @@ class ParcelModel extends ParcelEntity {
       'weight': weight,
       'massUnit': massUnit,
       'height': height,
-    };
-  }
-}
-
-class FastDeliveryModel extends FastDeliveryEntity {
-  FastDeliveryModel({
-    required super.available,
-    required super.requested, super.message,
-  });
-
-  factory FastDeliveryModel.fromJson(Map<String, dynamic> json) {
-    return FastDeliveryModel(
-      available: json['available'] ?? false,
-      message: json['message'],
-      requested: json['requested'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'available': available,
-      'message': message,
-      'requested': requested,
     };
   }
 }

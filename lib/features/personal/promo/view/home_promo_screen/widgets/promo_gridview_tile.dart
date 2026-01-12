@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../domain/entities/promo_entity.dart';
-import '../promo_screen.dart';
+import '../promo_feed_screen.dart';
 
 class PromoHomeGridViewTile extends StatelessWidget {
   const PromoHomeGridViewTile({
     required this.promo,
+    this.promos,
+    this.initialIndex,
     super.key,
   });
 
   final PromoEntity promo;
+  final List<PromoEntity>? promos;
+  final int? initialIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,16 @@ class PromoHomeGridViewTile extends StatelessWidget {
           elevation: 0,
           useSafeArea: true,
           isScrollControlled: true,
-          builder: (_) => PromoScreen(promo: promo),
+          builder: (_) {
+            final List<PromoEntity> feed =
+                (promos != null && promos!.isNotEmpty)
+                ? promos!
+                : <PromoEntity>[promo];
+            return PromoFeedScreen(
+              promos: feed,
+              initialIndex: initialIndex ?? 0,
+            );
+          },
         );
       },
       child: ClipRRect(
@@ -75,7 +88,7 @@ class PromoHomeGridViewTile extends StatelessWidget {
                           blurRadius: 4,
                           color: Colors.black38,
                           offset: Offset(1, 1),
-                        )
+                        ),
                       ],
                     ),
                     maxLines: 1,

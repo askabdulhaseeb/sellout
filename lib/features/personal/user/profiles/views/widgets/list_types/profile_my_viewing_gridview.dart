@@ -1,72 +1,58 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
-import '../../../../../../../core/widgets/loaders/post_grid_loader.dart';
-import '../../../../../post/domain/entities/post/post_entity.dart';
+
+import '../../../../../../../services/get_it.dart';
+import '../../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../dashboard/views/providers/personal_bottom_nav_provider.dart';
+import '../../../../../listing/start_listing/views/screens/start_listing_screen.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../enums/profile_page_tab_type.dart';
-import '../../providers/profile_provider.dart';
+import '../../providers/profile_viewing_posts_provider.dart';
 import '../profile_filter_buttons.dart';
-import '../subwidgets/post_grid_view_tile.dart';
+import 'profile_posts_grid_view.dart';
 
-class ProfileMyViewingGridview extends StatefulWidget {
+class ProfileMyViewingGridview extends StatelessWidget {
   const ProfileMyViewingGridview({required this.user, super.key});
   final UserEntity? user;
 
   @override
-  State<ProfileMyViewingGridview> createState() =>
-      _ProfileMyViewingGridviewState();
-}
-
-class _ProfileMyViewingGridviewState extends State<ProfileMyViewingGridview> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProfileProvider>(context, listen: false).loadViewingPosts();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 8,
-      children: <Widget>[
-        ProfileFilterSection(
-          user: widget.user,
-          pageType: ProfilePageTabType.viewing,
-        ),
-        Consumer<ProfileProvider>(
-          builder: (BuildContext context, ProfileProvider pro, _) {
-            final List<PostEntity>? posts = pro.storePosts;
-            if (pro.isLoading) {
-              return const PostGridLoader();
-            }
-            if (posts == null || posts.isEmpty) {
-              return Center(
-                  child: EmptyPageWidget(
-                      icon: CupertinoIcons.photo,
-                      childBelow: Text('no_posts_found'.tr())));
-            }
-            return GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: posts.length,
-              shrinkWrap: true,
-              primary: false,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 6.0,
-                mainAxisSpacing: 6.0,
-                childAspectRatio: 0.66,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return PostGridViewTile(post: posts[index]);
-              },
-            );
-          },
-        ),
-      ],
+    final bool isOwnProfile = user?.uid == LocalAuth.uid;
+    return ChangeNotifierProvider<ProfileViewingPostsProvider>(
+      create: (_) =>
+          ProfileViewingPostsProvider(locator(), userUid: user?.uid)
+            ..loadPosts(),
+      child: Column(
+        spacing: 8,
+        children: <Widget>[
+          ProfileFilterSection(
+            user: user,
+            pageType: ProfilePageTabType.viewing,
+          ),
+          ProfilePostsGridView<ProfileViewingPostsProvider>(
+            childAspectRatio: 0.66,
+            showStartSellingButton: isOwnProfile,
+            onStartSelling: isOwnProfile
+                ? () {
+                    final PersonalBottomNavProvider? nav =
+                        Provider.of<PersonalBottomNavProvider?>(
+                          context,
+                          listen: false,
+                        );
+                    if (nav != null) {
+                      nav.setCurrentTabIndex(3);
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute<StartListingScreen>(
+                        builder: (_) => const StartListingScreen(),
+                      ),
+                    );
+                  }
+                : null,
+          ),
+        ],
+      ),
     );
   }
 }

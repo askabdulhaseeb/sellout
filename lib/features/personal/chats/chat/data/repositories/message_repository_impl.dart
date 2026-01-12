@@ -1,8 +1,13 @@
 import '../../../../../../core/sources/data_state.dart';
+import '../../../../../postage/data/models/postage_detail_repsonse_model.dart';
 import '../../../../post/data/sources/remote/offer_remote_api.dart';
+import '../../../../post/domain/entities/offer/offer_payment_response.dart';
+import '../../../../post/domain/params/buy_now_add_shipping_param.dart';
+import '../../../../post/domain/params/buy_now_shipping_rates_params.dart';
 import '../../../../post/domain/params/offer_payment_params.dart';
 import '../../../../post/domain/params/share_in_chat_params.dart';
 import '../../../../post/domain/params/update_offer_params.dart';
+import '../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../domain/entities/getted_message_entity.dart';
 import '../../domain/params/leave_group_params.dart';
 import '../../domain/params/post_inquiry_params.dart';
@@ -45,7 +50,8 @@ class MessageRepositoryImpl implements MessageRepository {
 
   @override
   Future<DataState<bool>> sendInviteToGroup(
-      SendGroupInviteParams params) async {
+    SendGroupInviteParams params,
+  ) async {
     return await remoteSource.sendInviteToGroup(params);
   }
 
@@ -60,8 +66,24 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<DataState<String>> offerPayment(OfferPaymentParams param) async {
-    return await offerRemoteApi.offerPayment(param);
+  Future<DataState<OfferPaymentResponse>> offerPayment(
+    OfferPaymentParams param,
+  ) async {
+    return await offerRemoteApi.buyNowPayment(param);
+  }
+
+  @override
+  Future<DataState<PostageDetailResponseModel>> getBuyNowShippingRates(
+    BuyNowShippingRatesParams param,
+  ) async {
+    return await offerRemoteApi.getBuyNowShippingRates(param);
+  }
+
+  @override
+  Future<DataState<BuyNowAddShippingResponseModel>> addBuyNowShipping(
+    BuyNowAddShippingParam param,
+  ) async {
+    return await offerRemoteApi.addBuyNowShipping(param);
   }
 
   @override

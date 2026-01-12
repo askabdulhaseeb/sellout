@@ -1,4 +1,5 @@
 import 'package:hive_ce/hive.dart';
+import '../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../post/domain/entities/offer/offer_detail_entity.dart';
@@ -7,7 +8,6 @@ import '../../../../quote/domain/entites/quote_detail_entity.dart';
 import 'message_post_detail_entity.dart';
 part 'message_entity.g.dart';
 
-@HiveType(typeId: 13)
 @HiveType(typeId: 13)
 class MessageEntity {
   MessageEntity({
@@ -23,9 +23,11 @@ class MessageEntity {
     this.visitingDetail,
     this.type,
     this.source,
+    this.fileStatus,
     this.offerDetail,
     this.quoteDetail,
     this.postDetail,
+    this.status,
   });
 
   @HiveField(0)
@@ -52,6 +54,8 @@ class MessageEntity {
   final String chatId;
   @HiveField(11)
   final String? source;
+  @HiveField(15)
+  final String? fileStatus;
   @HiveField(12)
   final OfferDetailEntity? offerDetail;
   @HiveField(13)
@@ -60,6 +64,10 @@ class MessageEntity {
   /// Post detail for inquiry messages
   @HiveField(14)
   final MessagePostDetailEntity? postDetail;
+
+  /// Message delivery status (sent, delivered, read, failed)
+  @HiveField(16)
+  final MessageStatus? status;
 
   String? get postImage => fileUrl.first.url;
 
@@ -76,9 +84,11 @@ class MessageEntity {
     VisitingEntity? visitingDetail,
     MessageType? type,
     String? source,
+    String? fileStatus,
     OfferDetailEntity? offerDetail,
     QuoteDetailEntity? quoteDetail,
     MessagePostDetailEntity? postDetail,
+    MessageStatus? status,
   }) {
     return MessageEntity(
       persons: persons ?? this.persons,
@@ -93,9 +103,11 @@ class MessageEntity {
       visitingDetail: visitingDetail ?? this.visitingDetail,
       type: type ?? this.type,
       source: source ?? this.source,
+      fileStatus: fileStatus ?? this.fileStatus,
       offerDetail: offerDetail ?? this.offerDetail,
       quoteDetail: quoteDetail ?? this.quoteDetail,
       postDetail: postDetail ?? this.postDetail,
+      status: status ?? this.status,
     );
   }
 }

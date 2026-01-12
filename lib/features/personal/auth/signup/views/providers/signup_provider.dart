@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../../../core/functions/permission_fun.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
@@ -263,28 +264,14 @@ class SignupProvider extends ChangeNotifier {
 
   Future<bool> enableLocation(BuildContext context) async {
     try {
-      // Request permission (this will show the system dialog)
-      final PermissionStatus status = await Permission.locationWhenInUse
-          .request();
-
-      if (status == PermissionStatus.granted) {
-        // Permission granted
-        return true;
-      } else if (status == PermissionStatus.permanentlyDenied) {
-        // Show message + open settings
+      final bool granted = await PermissionFun.hasPermission(
+        Permission.locationWhenInUse,
+      );
+      if (!granted) {
         // ignore: use_build_context_synchronously
-        AppSnackBar.showSnackBar(
-          context,
-          'Permission permanently denied. Please enable from settings.',
-        );
-        await openAppSettings();
-      } else {
-        // Permission denied or other status
-        // ignore: use_build_context_synchronously
-        AppSnackBar.showSnackBar(context, 'Location permission denied.');
+        AppSnackBar.showSnackBar(context, 'permission_required'.tr());
       }
-
-      return false;
+      return granted;
     } catch (e) {
       // ignore: use_build_context_synchronously
       AppSnackBar.showSnackBar(context, 'Error: ${e.toString()}');
@@ -299,6 +286,13 @@ class SignupProvider extends ChangeNotifier {
     final ImagePicker picker = ImagePicker();
 
     try {
+      final bool granted = await PermissionFun.hasPermission(Permission.camera);
+      if (!granted) {
+        // ignore: use_build_context_synchronously
+        AppSnackBar.showSnackBar(context, 'permission_required'.tr());
+        return;
+      }
+
       final XFile? pickedFile = await picker.pickImage(
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.front,
@@ -448,7 +442,7 @@ class SignupProvider extends ChangeNotifier {
   Future<bool> dateOfBirth(BuildContext context) async {
     final UpdateUserParams params = UpdateUserParams(
       dob: dob,
-      gender: gender?.json ?? Gender.other.json,
+      gender: gender?.json ?? Gender.male.json,
     );
     final DataState<String> result = await _updateProfileDetailUsecase(params);
     if (result is DataSuccess) {

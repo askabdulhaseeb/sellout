@@ -30,11 +30,7 @@ class BuyAgainScreen extends StatelessWidget {
 }
 
 class BuyAgainSection extends StatefulWidget {
-  const BuyAgainSection({
-    super.key,
-    this.shrinkWrap = true,
-    this.physics,
-  });
+  const BuyAgainSection({super.key, this.shrinkWrap = true, this.physics});
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
@@ -95,7 +91,9 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
         // FutureBuilder happy; the builder will still receive the completed
         // future and render an appropriate UI.
       } finally {
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         postsLoading = false;
         if (mounted) setState(() {});
@@ -105,96 +103,99 @@ class _BuyAgainSectionState extends State<BuyAgainSection> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollPhysics? effectivePhysics = widget.physics ??
+    final ScrollPhysics? effectivePhysics =
+        widget.physics ??
         (widget.shrinkWrap ? const NeverScrollableScrollPhysics() : null);
 
     return FutureBuilder<DataState<List<OrderEntity>>>(
       future: futureOrders,
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            shrinkWrap: widget.shrinkWrap,
-            physics: effectivePhysics,
-            itemCount: 10,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 6.0,
-              mainAxisSpacing: 6.0,
-              childAspectRatio: 0.66,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return const _SkeletonGridViewTile();
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text('something_wrong'.tr()));
-        } else if (!snapshot.hasData) {
-          return Center(child: Text('no_data_found'.tr()));
-        }
+      builder:
+          (
+            BuildContext context,
+            AsyncSnapshot<DataState<List<OrderEntity>>> snapshot,
+          ) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                shrinkWrap: widget.shrinkWrap,
+                physics: effectivePhysics,
+                itemCount: 6,
+                itemBuilder: (BuildContext context, int index) {
+                  return const _SkeletonListTile();
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('something_wrong'.tr()));
+            } else if (!snapshot.hasData) {
+              return Center(child: Text('no_data_found'.tr()));
+            }
 
-        if (deliveredOrders.isEmpty) {
-          return const Center(
-              child: EmptyPageWidget(icon: Icons.shopping_cart_outlined));
-        }
+            if (deliveredOrders.isEmpty) {
+              return const Center(
+                child: EmptyPageWidget(icon: Icons.shopping_cart_outlined),
+              );
+            }
 
-        final List<PostEntity> posts = deliveredOrders
-            .map((OrderEntity order) => postCache[order.postId])
-            .whereType<PostEntity>()
-            .toList();
+            final List<PostEntity> posts = deliveredOrders
+                .map((OrderEntity order) => postCache[order.postId])
+                .whereType<PostEntity>()
+                .toList();
 
-        if (posts.isEmpty && postsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (posts.isEmpty) {
-          return Center(child: Text('no_data_found'.tr()));
-        }
+            if (posts.isEmpty && postsLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (posts.isEmpty) {
+              return Center(child: Text('no_data_found'.tr()));
+            }
 
-        return GridView.builder(
-          padding: const EdgeInsets.all(16),
-          shrinkWrap: widget.shrinkWrap,
-          physics: effectivePhysics,
-          itemCount: posts.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 6.0,
-            mainAxisSpacing: 6.0,
-            childAspectRatio: 0.66,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return const Loader();
+            return GridView.builder(
+              padding: const EdgeInsets.all(16),
+              shrinkWrap: widget.shrinkWrap,
+              physics: effectivePhysics,
+              itemCount: posts.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 6.0,
+                mainAxisSpacing: 6.0,
+                childAspectRatio: 0.66,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return const Loader();
+              },
+            );
           },
-        );
-      },
     );
   }
 }
 
-class _SkeletonGridViewTile extends StatelessWidget {
-  const _SkeletonGridViewTile();
+class _SkeletonListTile extends StatelessWidget {
+  const _SkeletonListTile();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        // Image skeleton
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              color: Colors.grey[300],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(width: 96, height: 96, color: Colors.grey[300]),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(height: 16, color: Colors.grey[300]),
+                const SizedBox(height: 8),
+                Container(height: 14, width: 150, color: Colors.grey[300]),
+                const SizedBox(height: 8),
+                Container(height: 14, width: 100, color: Colors.grey[300]),
+              ],
             ),
           ),
-        ),
-        const SizedBox(height: 4),
-        // Text and button skeleton
-        Container(
-          height: 60,
-          color: Colors.grey[300],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
