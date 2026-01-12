@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'stripe_connect_account_entity.dart';
+part of '../../../stripe/domain/entities/stripe_connect_account_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

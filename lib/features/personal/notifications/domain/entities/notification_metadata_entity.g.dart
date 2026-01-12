@@ -18,24 +18,39 @@ class NotificationMetadataEntityAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return NotificationMetadataEntity(
-      orderId: fields[0] as String,
-      trackId: fields[1] as String,
-      postId: fields[2] as String,
-      paymentDetail: (fields[3] as Map).cast<String, dynamic>(),
+      postId: fields[0] as String?,
+      orderId: fields[1] as String?,
+      chatId: fields[2] as String?,
+      trackId: fields[3] as String?,
+      senderId: fields[4] as String?,
+      messageId: fields[5] as String?,
+      status: fields[6] as StatusType?,
+      createdAt: fields[7] as DateTime?,
+      paymentDetail: fields[8] as OrderPaymentDetailEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, NotificationMetadataEntity obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(9)
       ..writeByte(0)
-      ..write(obj.orderId)
-      ..writeByte(1)
-      ..write(obj.trackId)
-      ..writeByte(2)
       ..write(obj.postId)
+      ..writeByte(1)
+      ..write(obj.orderId)
+      ..writeByte(2)
+      ..write(obj.chatId)
       ..writeByte(3)
+      ..write(obj.trackId)
+      ..writeByte(4)
+      ..write(obj.senderId)
+      ..writeByte(5)
+      ..write(obj.messageId)
+      ..writeByte(6)
+      ..write(obj.status)
+      ..writeByte(7)
+      ..write(obj.createdAt)
+      ..writeByte(8)
       ..write(obj.paymentDetail);
   }
 

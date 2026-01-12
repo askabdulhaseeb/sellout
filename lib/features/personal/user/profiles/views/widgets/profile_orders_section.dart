@@ -24,8 +24,10 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ProfileProvider profileProvider =
-          Provider.of<ProfileProvider>(context, listen: false);
+      final ProfileProvider profileProvider = Provider.of<ProfileProvider>(
+        context,
+        listen: false,
+      );
       profileProvider.getOrdersByStatus(widget.user?.uid ?? '');
     });
   }
@@ -49,24 +51,23 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                   StatusType.processing.color,
                   StatusType.shipped.color,
                   StatusType.delivered.color,
-                  StatusType.canceled.color
+                  StatusType.canceled.color,
                 ],
-                unseletedBorderColor: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.2),
+                unseletedBorderColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.2),
                 labelText: '',
                 labels: const <StatusType>[
                   StatusType.pending,
                   StatusType.shipped,
                   StatusType.delivered,
-                  StatusType.cancelled
+                  StatusType.canceled,
                 ],
                 labelStrs: <String>[
                   'new_order'.tr(),
                   'dispatched'.tr(),
                   'delivered'.tr(),
-                  'canceled'.tr(),
+                  'return'.tr(),
                 ],
                 initialValue: pro.status,
                 onToggle: (StatusType val) {
@@ -87,10 +88,11 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                 )
               else if (pro.orders.isEmpty)
                 Center(
-                    child: EmptyPageWidget(
-                  icon: CupertinoIcons.cube_box,
-                  childBelow: Text('no_orders_found'.tr()),
-                ))
+                  child: EmptyPageWidget(
+                    icon: CupertinoIcons.cube_box,
+                    childBelow: Text('no_orders_found'.tr()),
+                  ),
+                )
               else
                 ListView.builder(
                   padding: EdgeInsets.zero,
@@ -99,9 +101,7 @@ class _ProfileOrdersSectionState extends State<ProfileOrdersSection> {
                   itemCount: pro.orders.length,
                   itemBuilder: (BuildContext context, int index) {
                     final OrderEntity order = pro.orders[index];
-                    return SellerOrderTile(
-                      order: order,
-                    );
+                    return SellerOrderTile(order: order);
                   },
                 ),
             ],

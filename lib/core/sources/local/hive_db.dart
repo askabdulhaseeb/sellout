@@ -2,6 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../features/personal/order/domain/entities/fast_delivery_entity.dart';
+import '../../../features/personal/order/domain/entities/postage_entity.dart';
+import '../../../features/personal/order/domain/entities/shipping_detail_entity.dart';
+import '../../../features/personal/payment/data/sources/local/local_wallet.dart';
+import '../../../features/personal/payment/domain/entities/amount_in_connected_account_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_funds_in_hold_entity.dart';
+import '../../../features/personal/payment/domain/entities/wallet_transaction_entity.dart';
 import '../../utilities/app_string.dart';
 import '../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../features/business/core/data/sources/local_business.dart';
@@ -15,7 +23,7 @@ import '../../../features/business/core/domain/entity/service/service_entity.dar
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_detail_entity.dart';
 import '../../../features/personal/auth/signin/domain/entities/login_info_entity.dart';
-import '../../../features/personal/auth/signin/domain/entities/stripe_connect_account_entity.dart';
+import '../../../features/personal/auth/stripe/domain/entities/stripe_connect_account_entity.dart';
 import '../../../features/personal/bookings/data/sources/local_booking.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_payment_detail_entity.dart';
@@ -74,7 +82,7 @@ import '../../../features/personal/review/domain/entities/review_entity.dart';
 import '../../../features/personal/services/data/sources/local/local_service_categories.dart';
 import '../../../features/personal/services/domain/entity/service_category_entity.dart';
 import '../../../features/personal/services/domain/entity/service_type_entity.dart';
-import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_entity.dart';
+import '../../../features/personal/setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../features/personal/setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../features/personal/order/data/source/local/local_orders.dart';
@@ -93,12 +101,12 @@ import '../../enums/listing/core/delivery_type.dart';
 import '../../enums/listing/core/item_condition_type.dart';
 import '../../enums/listing/core/listing_type.dart';
 import '../../enums/listing/core/privacy_type.dart';
+import '../../enums/message/message_status.dart';
 import '../../enums/message/message_type.dart';
 import '../../enums/routine/day_type.dart';
 import '../../widgets/phone_number/data/sources/local_country.dart';
 import '../../widgets/phone_number/domain/entities/country_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'encryption_key_manager.dart';
 import 'local_request_history.dart';
 
@@ -204,6 +212,15 @@ class HiveDB {
     Hive.registerAdapter(CartItemStatusTypeAdapter()); //86
     Hive.registerAdapter(MessagePostDetailEntityAdapter()); //87
     Hive.registerAdapter(StripeConnectAccountEntityAdapter()); //88
+    Hive.registerAdapter(ShippingDetailEntityAdapter()); //89
+    Hive.registerAdapter(PostageEntityAdapter()); //90
+    Hive.registerAdapter(FastDeliveryEntityAdapter()); //91
+    Hive.registerAdapter(WalletEntityAdapter()); //92
+    Hive.registerAdapter(WalletTransactionEntityAdapter()); //93
+    Hive.registerAdapter(WalletFundsInHoldEntityAdapter()); //94
+    Hive.registerAdapter(AmountInConnectedAccountEntityAdapter()); //95
+    Hive.registerAdapter(MessageStatusAdapter()); //96
+    Hive.registerAdapter(OrderContextEntityAdapter()); //97
 
     // Hive box Open
     await refresh();
@@ -230,6 +247,9 @@ class HiveDB {
     await LocalColors().refresh();
     await LocalOrders().refresh();
     await LocalNotifications().refresh();
+    await LocalWallet().refresh();
+    // Initialize the unread notification count after box is ready
+    LocalNotifications.initializeUnreadCount();
     await LocalServiceCategory().refresh();
   }
 
@@ -264,6 +284,7 @@ class HiveDB {
     await safeClear(() => LocalColors().clear(), 'LocalColors');
     await safeClear(() => LocalOrders().clear(), 'LocalOrders');
     await safeClear(() => LocalNotifications().clear(), 'LocalNotifications');
+    await safeClear(() => LocalWallet().clear(), 'LocalWallet');
     // await LocalServiceCategory().clear();
     // await LocalCategoriesSource().clear();
     // await LocalCountry().clear();

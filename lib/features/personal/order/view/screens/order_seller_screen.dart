@@ -2,9 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
-import '../../../../postage/domain/params/add_lable_params.dart';
-import '../../../../postage/domain/usecase/buy_label_usecsae.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/helper_functions/country_helper.dart';
@@ -16,9 +13,9 @@ import '../../../post/domain/usecase/get_specific_post_usecase.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../provider/order_provider.dart';
 import 'order_postage_bottom_sheet.dart';
+import 'invoice_screen.dart';
 
 class OrderSellerScreen extends StatelessWidget {
   const OrderSellerScreen({super.key});
@@ -26,39 +23,30 @@ class OrderSellerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String orderId = args['order-id'] ?? '';
+    final Object? args = ModalRoute.of(context)?.settings.arguments;
+    final Map<String, dynamic> argMap = (args is Map<String, dynamic>)
+        ? args
+        : <String, dynamic>{};
+    final String orderId = (argMap['order-id'] ?? '') as String;
 
     final OrderProvider orderPro = Provider.of<OrderProvider>(
       context,
       listen: false,
     );
-    if (orderPro.order?.orderId != orderId) {
+
+    if (orderPro.order?.orderId != orderId && orderId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         orderPro.loadOrder(orderId);
       });
     }
 
-    return Selector<OrderProvider, OrderEntity?>(
-      selector: (_, OrderProvider provider) => provider.order,
-      builder: (BuildContext context, OrderEntity? order, _) {
-        if (order == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final bool isBusiness = order.sellerId.startsWith('BU');
+    return Consumer<OrderProvider>(
+      builder: (BuildContext context, OrderProvider provider, _) {
+        final OrderEntity? order = provider.order;
+        final bool isLoading = provider.isLoadingOrder;
         final GetSpecificPostUsecase getPostUsecase = GetSpecificPostUsecase(
           locator(),
         );
-        final GetUserByUidUsecase getUserUsecase = GetUserByUidUsecase(
-          locator(),
-        );
-        final GetBusinessByIdUsecase getBusinessUsecase =
-            GetBusinessByIdUsecase(locator());
-
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
@@ -82,71 +70,90 @@ class OrderSellerScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          body: FutureBuilder<DataState<PostEntity>>(
-            future: getPostUsecase(GetSpecificPostParam(postId: order.postId)),
-            builder:
-                (
-                  BuildContext context,
-                  AsyncSnapshot<DataState<PostEntity>> postSnap,
-                ) {
-                  if (postSnap.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final PostEntity? post = postSnap.data?.entity;
-                  if (post == null) {
-                    return Center(child: Text('something_wrong'.tr()));
-                  }
-
-                  return FutureBuilder<DataState<dynamic>>(
-                    future: isBusiness
-                        ? getBusinessUsecase(order.sellerId)
-                        : getUserUsecase(order.sellerId),
-                    builder:
-                        (
-                          BuildContext context,
-                          AsyncSnapshot<DataState<dynamic>> userSnap,
-                        ) {
-                          if (userSnap.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return _buildOrderDetailBody(context, post);
-                        },
-                  );
-                },
-          ),
+          body: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : order == null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Text(
+                      'No order found.',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : _OrderDetailBody(order: order, getPostUsecase: getPostUsecase),
         );
       },
     );
   }
 }
 
-Widget _buildOrderDetailBody(BuildContext context, PostEntity post) {
-  final OrderEntity order = context.watch<OrderProvider>().order!;
-  return Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      backgroundBlendMode: BlendMode.color,
-    ),
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          OrderScreenPostInfo(order: order, post: post),
-          const Divider(),
-          OrderInfoWidget(order: order),
-          const Divider(),
-          OrderDispatchedToWidget(order: order),
-          const SizedBox(height: 16),
-          const OrderActionButtonsList(),
-        ],
+class _OrderDetailBody extends StatelessWidget {
+  const _OrderDetailBody({required this.order, required this.getPostUsecase});
+
+  final OrderEntity order;
+  final GetSpecificPostUsecase getPostUsecase;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        backgroundBlendMode: BlendMode.color,
       ),
-    ),
-  );
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _PostInfoSection(order: order, getPostUsecase: getPostUsecase),
+            const Divider(),
+            OrderInfoWidget(order: order),
+            const Divider(),
+            OrderDispatchedToWidget(order: order),
+            const SizedBox(height: 16),
+            OrderActionButtonsList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PostInfoSection extends StatelessWidget {
+  const _PostInfoSection({required this.order, required this.getPostUsecase});
+
+  final OrderEntity order;
+  final GetSpecificPostUsecase getPostUsecase;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<DataState<PostEntity>>(
+      future: getPostUsecase(GetSpecificPostParam(postId: order.postId)),
+      builder:
+          (
+            BuildContext context,
+            AsyncSnapshot<DataState<PostEntity>> postSnap,
+          ) {
+            if (postSnap.connectionState == ConnectionState.waiting) {
+              // No loader, just empty
+              return const SizedBox.shrink();
+            }
+            final PostEntity? post = postSnap.data?.entity;
+            if (post == null) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('something_wrong'.tr()),
+                ),
+              );
+            }
+            return OrderScreenPostInfo(order: order, post: post);
+          },
+    );
+  }
 }
 
 class OrderDispatchedToWidget extends StatelessWidget {
@@ -174,7 +181,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
               'dispatched_to'.tr(),
               style: textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface.withOpacity(0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -188,7 +195,7 @@ class OrderDispatchedToWidget extends StatelessWidget {
             color: colorScheme.onSurface,
           ),
           addressTextStyle: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withOpacity(0.7),
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -204,7 +211,6 @@ class OrderInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
@@ -227,7 +233,7 @@ class OrderInfoWidget extends StatelessWidget {
                 ).textTheme.labelSmall?.copyWith(fontSize: 10),
               ),
             ),
-            // const ViewInvoiceButton()
+            const ViewInvoiceButton(),
           ],
         ),
       ],
@@ -243,14 +249,15 @@ class ViewInvoiceButton extends StatelessWidget {
     return Consumer<OrderProvider>(
       builder: (BuildContext context, OrderProvider pro, Widget? child) {
         final OrderEntity order = pro.order!;
+
+        // Only show invoice button if order is delivered
+        if (order.orderStatus != StatusType.delivered) {
+          return const SizedBox.shrink();
+        }
+
         return InkWell(
           onTap: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute<InvoiceScreen>(
-            //       builder: (BuildContext context) =>
-            //           InvoiceScreen(order: order),
-            //     ));
+            Navigator.push(context, InvoiceScreen.route(order));
           },
           child: Text(
             'view_invoice'.tr(),
@@ -282,51 +289,80 @@ class OrderActionButtonsList extends StatelessWidget {
                 isLoading: orderPro.isLoading,
                 keyName: 'start_order',
                 color: order.orderStatus.color,
-                onTap: () => orderPro.updateSellerOrder(
+                onTap: () async => await orderPro.updateSellerOrder(
                   order.orderId,
                   StatusType.processing,
                 ),
               ),
-            if (order.orderStatus == StatusType.processing &&
-                order.deliveryPaidBy == 'buyer')
+            // non tappable
+            if (order.orderStatus == StatusType.readyToShip)
               OrderActionButton(
-                isLoading: false,
-                keyName: 'buy_label',
+                isLoading: orderPro.isLoading,
+                keyName: 'ready_to_ship',
                 color: order.orderStatus.color,
-                onTap: () {
-                  BuyLabelUsecase(
-                    locator(),
-                  ).call(BuyLabelParams(orderId: order.orderId));
-                },
+                onTap: () async => false,
               ),
-            if (order.orderStatus == StatusType.processing &&
-                order.deliveryPaidBy == 'seller')
+            // Download label button when ready to ship
+            if (order.orderStatus == StatusType.readyToShip)
               OrderActionButton(
-                isLoading: false,
-                keyName: 'choose_postage',
-                color: order.orderStatus.color,
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        OrderPostageBottomSheet(orderId: order.orderId),
+                isLoading: orderPro.isDownloadingLabel,
+                keyName: 'download_label',
+                color: Theme.of(context).colorScheme.primary,
+                onTap: () async {
+                  return await orderPro.downloadLabel(
+                    order.shippingDetails?.shippingLabelUrl,
                   );
                 },
               ),
             if (order.orderStatus == StatusType.delivered)
               OrderActionButton(
-                isLoading: false,
-                keyName: 'posted',
+                isLoading: orderPro.isLoading,
+                keyName: 'delivered',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
+              ),
+            if (order.orderStatus == StatusType.shipped)
+              OrderActionButton(
+                isLoading: orderPro.isLoading,
+                keyName: 'shipped',
+                color: order.orderStatus.color,
+                onTap: () async => false,
               ),
             if (order.orderStatus == StatusType.cancelled)
               OrderActionButton(
                 isLoading: false,
                 keyName: 'cancelled',
                 color: order.orderStatus.color,
-                onTap: () {},
+                onTap: () async => false,
               ),
+            // tappable
+            if (order.orderStatus == StatusType.processing &&
+                (order.shippingDetails?.postage.isNotEmpty ?? false))
+              OrderActionButton(
+                isLoading: orderPro.isBuyingLabel,
+                keyName: 'buy_label',
+                color: order.orderStatus.color,
+                onTap: () async {
+                  return await orderPro.buyLabel(order.orderId);
+                },
+              ),
+            if (order.orderStatus == StatusType.processing &&
+                (order.shippingDetails?.postage.isEmpty ?? true))
+              OrderActionButton(
+                isLoading: false,
+                keyName: 'choose_postage',
+                color: order.orderStatus.color,
+                onTap: () async {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        OrderPostageBottomSheet(orderId: order.orderId),
+                  );
+
+                  return false;
+                },
+              ),
+
             if (order.orderStatus == StatusType.pending)
               OrderActionButton(
                 isLoading: orderPro.isLoading,
@@ -334,7 +370,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () => orderPro.updateSellerOrder(
+                onTap: () async => await orderPro.updateSellerOrder(
                   order.orderId,
                   StatusType.cancelled,
                 ),
@@ -345,13 +381,16 @@ class OrderActionButtonsList extends StatelessWidget {
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.4),
-              onTap: () {
+              onTap: () async {
                 Provider.of<CreatePrivateChatProvider>(
                   context,
                   listen: false,
                 ).startPrivateChat(context, order.buyerId);
+
+                return false;
               },
             ),
+
             InDevMode(
               child: OrderActionButton(
                 isLoading: false,
@@ -359,7 +398,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -369,7 +408,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -379,7 +418,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
             InDevMode(
@@ -389,7 +428,7 @@ class OrderActionButtonsList extends StatelessWidget {
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.4),
-                onTap: () {},
+                onTap: () async => false,
               ),
             ),
           ],
@@ -399,7 +438,7 @@ class OrderActionButtonsList extends StatelessWidget {
   }
 }
 
-class OrderActionButton extends StatelessWidget {
+class OrderActionButton extends StatefulWidget {
   const OrderActionButton({
     required this.keyName,
     required this.color,
@@ -410,20 +449,62 @@ class OrderActionButton extends StatelessWidget {
 
   final String keyName;
   final Color color;
-  final VoidCallback onTap;
+  final Future<bool> Function() onTap;
   final bool isLoading;
 
   @override
+  State<OrderActionButton> createState() => _OrderActionButtonState();
+}
+
+class _OrderActionButtonState extends State<OrderActionButton> {
+  bool _isSuccess = false;
+
+  Future<void> _handleTap() async {
+    if (widget.isLoading || _isSuccess) return;
+
+    final bool ok = await widget.onTap();
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _isSuccess = true);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return CustomElevatedButton(
       padding: const EdgeInsets.all(4),
-      isLoading: isLoading,
-      onTap: onTap,
-      textStyle: TextTheme.of(context).bodyMedium?.copyWith(color: color),
+      isLoading: widget.isLoading,
+      isSuccess: _isSuccess,
+      loadingTitle: 'loading'.tr(),
+      successWidget: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(Icons.check, color: colorScheme.onSecondary, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            widget.keyName == 'download_label'
+                ? 'downloaded'.tr()
+                : widget.keyName.tr(),
+            style: TextTheme.of(context).bodyMedium?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: colorScheme.onSecondary,
+            ),
+          ),
+        ],
+      ),
+      onSuccessComplete: () {
+        if (mounted) setState(() => _isSuccess = false);
+      },
+      onTap: _handleTap,
+      textStyle: TextTheme.of(
+        context,
+      ).bodyMedium?.copyWith(color: widget.color),
       bgColor: Colors.transparent,
-      textColor: color,
-      border: Border.all(color: color),
-      title: keyName.tr(),
+      textColor: widget.color,
+      border: Border.all(color: widget.color),
+      title: widget.keyName.tr(),
     );
   }
 }
@@ -522,7 +603,6 @@ class _OrderRecieverNameAddressWidgetState
     extends State<OrderRecieverNameAddressWidget> {
   final GlobalKey _rowKey = GlobalKey();
   OverlayEntry? _overlayEntry;
-
 
   void _toggleOverlay() {
     if (_overlayEntry != null) {

@@ -85,6 +85,7 @@ class SignInScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(0),
                           title: 'dont_have_account'.tr(),
                           isLoading: false,
+                          isDisable: authPro.isLoading,
                           bgColor: Colors.transparent,
                           border: Border.all(color: Colors.transparent),
                           onTap: () async {
@@ -100,6 +101,7 @@ class SignInScreen extends StatelessWidget {
                         CustomElevatedButton(
                           title: 'login'.tr(),
                           isLoading: authPro.isLoading,
+                          loadingTitle: 'signing_in'.tr(),
                           onTap: () async => await authPro.signIn(context),
                         ),
                       ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../address/shipping_address/view/screens/selling_address_screen.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../auth/welcome_screen/view/screens/welcome_screen.dart';
@@ -24,17 +23,13 @@ class DashboardScreen extends StatelessWidget {
         final CurrentUserEntity? uid = LocalAuth.currentUser;
         final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
 
-
-
         final List<Widget> screens = <Widget>[
           const HomeScreen(),
           const MarketPlaceScreen(),
           const ServicesScreen(),
           (uid == null && !otpVerified)
               ? const WelcomeScreen()
-              : (sellingAddress != null
-                    ?const StartListingScreen(): const SellingAddressScreen()
-                     ),
+              : const StartListingScreen(),
           (uid == null && !otpVerified)
               ? const WelcomeScreen()
               : const ChatDashboardScreen(),

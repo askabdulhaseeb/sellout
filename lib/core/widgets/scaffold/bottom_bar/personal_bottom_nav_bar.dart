@@ -17,20 +17,22 @@ class PersonalBottomNavBar extends StatefulWidget {
 class _PersonalBottomNavBarState extends State<PersonalBottomNavBar> {
   UserEntity? user;
 
-  @override
-  void initState() {
-    super.initState();
-    final String? uid = LocalAuth.uid;
-    if (uid != null) {
-      LocalUser().user(uid).then((UserEntity? value) {
-        if (!mounted) {
-          setState(() {
-            user = value;
-          });
-        }
+@override
+void initState() {
+  super.initState();
+  final String? uid = LocalAuth.uid;
+
+  if (uid != null) {
+    LocalUser().user(uid).then((UserEntity? value) {
+      if (!mounted) return;   
+
+      setState(() {
+        user = value; 
       });
-    }
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

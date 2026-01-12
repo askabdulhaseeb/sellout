@@ -14,16 +14,18 @@ class SendMessagePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double w = MediaQuery.of(context).size.width;
-    final SendMessageProvider msgPro =
-        Provider.of<SendMessageProvider>(context);
+    final SendMessageProvider msgPro = Provider.of<SendMessageProvider>(
+      context,
+    );
 
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           msgPro.stopRecording(),
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration:
-            BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
         child: ValueListenableBuilder<TextEditingValue>(
           valueListenable: msgPro.message,
           builder: (BuildContext context, TextEditingValue messageValue, _) {
@@ -34,7 +36,8 @@ class SendMessagePanel extends StatelessWidget {
               children: <Widget>[
                 if (haveAttachments)
                   SendMessagePanelAttachmentsList(
-                      attachments: msgPro.attachments),
+                    attachments: msgPro.attachments,
+                  ),
                 ValueListenableBuilder<bool>(
                   valueListenable: msgPro.isRecordingAudio,
                   builder: (BuildContext context, bool isRecording, _) {
@@ -49,7 +52,7 @@ class SendMessagePanel extends StatelessWidget {
                                 if (!hasText)
                                   const SendMessageAttachmentMenuButton(),
                                 const EmojiPickerIconButton(),
-                                const Expanded(child: SendMessageFIeld()),
+                                const Expanded(child: SendMessageField()),
                               ],
                             ),
                           ),

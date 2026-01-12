@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../promo/domain/entities/promo_entity.dart';
-import '../../../../../../promo/view/home_promo_screen/promo_screen.dart';
+import '../../../../../../promo/view/home_promo_screen/promo_feed_screen.dart';
 
 class PromoItemCard extends StatelessWidget {
   const PromoItemCard({
     required this.title,
     required this.promo,
+    this.promos,
+    this.initialIndex,
     super.key,
   });
 
   final String title;
   final PromoEntity promo;
+  final List<PromoEntity>? promos;
+  final int? initialIndex;
 
   @override
   Widget build(BuildContext context) {
     final bool isImage = promo.promoType.toLowerCase() == 'image';
-    final String displayUrl =
-        isImage ? promo.fileUrl : (promo.thumbnailUrl ?? '');
+    final String displayUrl = isImage
+        ? promo.fileUrl
+        : (promo.thumbnailUrl ?? '');
 
     return GestureDetector(
       onTap: () {
+        final List<PromoEntity>? list = promos;
+        final int start = initialIndex ?? 0;
         showModalBottomSheet(
           context: context,
           isDismissible: false,
@@ -28,7 +35,10 @@ class PromoItemCard extends StatelessWidget {
           useSafeArea: true,
           isScrollControlled: true,
           builder: (_) {
-            return PromoScreen(promo: promo);
+            final List<PromoEntity> feed = (list != null && list.isNotEmpty)
+                ? list
+                : <PromoEntity>[promo];
+            return PromoFeedScreen(promos: feed, initialIndex: start);
           },
         );
       },

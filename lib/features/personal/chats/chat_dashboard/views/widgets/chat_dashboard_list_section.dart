@@ -6,8 +6,8 @@ import '../providers/chat_dashboard_provider.dart';
 import 'chat_lists/group_chat_list_widget.dart';
 import 'chat_lists/order_chat_list_widget.dart';
 
-class ChatDashboardListSeaction extends StatelessWidget {
-  const ChatDashboardListSeaction({super.key});
+class ChatDashboardListSection extends StatelessWidget {
+  const ChatDashboardListSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +19,10 @@ class ChatDashboardListSeaction extends StatelessWidget {
           case ChatPageType.services:
             return Expanded(
               child: ComingSoonOverlay(
-                  title: 'coming_soon'.tr(),
-                  subtitle: 'services_coming_soon_subtitle'.tr(),
-                  icon: CupertinoIcons.hourglass),
+                title: 'coming_soon'.tr(),
+                subtitle: 'services_coming_soon_subtitle'.tr(),
+                icon: CupertinoIcons.hourglass,
+              ),
             );
           // ServicesChatListWidget();
           case ChatPageType.groups:

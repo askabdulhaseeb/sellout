@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
-import '../../pinned_message.dart/widgets/offer_buttons/offer_message_tile_buttons.dart';
+import '../../pinned_message/widgets/offer_buttons/offer_message_tile_buttons.dart';
+import '../common/currency_display.dart';
+import '../common/message_container.dart';
 
 class OfferMessageTile extends StatelessWidget {
   const OfferMessageTile({
@@ -17,20 +18,9 @@ class OfferMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(message.offerDetail?.offerId);
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border.all(
-          color: showButtons
-              ? Colors.transparent
-              : ColorScheme.of(context).outlineVariant,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      margin: EdgeInsets.all(showButtons ? 0 : 16),
+    return MessageContainer(
+      showBorder: !showButtons,
+      animate: true,
       padding: const EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
@@ -55,12 +45,12 @@ class OfferMessageTileDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final offerDetail = message.offerDetail;
+
     return Row(
       children: <Widget>[
-        // Animate image size if you expect changes
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+        // Product image
+        SizedBox(
           height: 60,
           width: 60,
           child: ClipRRect(
@@ -70,82 +60,67 @@ class OfferMessageTileDetail extends StatelessWidget {
         ),
         const SizedBox(width: 8),
 
+        // Title, price, and counter badge
         Expanded(
-          child: SizedBox(
-            width: 200,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // Title transition if it changes
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    message.offerDetail?.postTitle ?? 'na'.tr(),
-                    key: ValueKey(message.offerDetail?.postTitle),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                offerDetail?.postTitle ?? 'na'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 4),
+              CurrencyDisplay(
+                currency: offerDetail?.currency,
+                price: offerDetail?.price,
+                suffix: ' X ${offerDetail?.quantity ?? 1}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: ColorScheme.of(context).outline,
+                  fontSize: 12,
                 ),
-                const SizedBox(height: 4),
-                // Price detail transition
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)}.${message.offerDetail?.price} X ${message.offerDetail?.quantity}',
-                    key: ValueKey(
-                        '${message.offerDetail?.price}-${message.offerDetail?.quantity}'),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: ColorScheme.of(context).outline,
-                      fontSize: 12,
+              ),
+              // Counter badge
+              if (offerDetail?.counterBy != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 2,
+                    horizontal: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorScheme.of(context)
+                        .outlineVariant
+                        .withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: ColorScheme.of(context).outlineVariant,
                     ),
                   ),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.center,
+                    spacing: 4,
+                    children: <Widget>[
+                      Icon(
+                        Icons.circle,
+                        size: 10,
+                        color: offerDetail?.counterBy?.color,
+                      ),
+                      Text(
+                        offerDetail?.counterBy?.code.tr() ?? 'na'.tr(),
+                        style: TextTheme.of(context).labelSmall,
+                      ),
+                    ],
+                  ),
                 ),
-                // Counter badge animated with fade
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: (message.offerDetail?.counterBy != null)
-                      ? Container(
-                          key: const ValueKey('counter'),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 4),
-                          decoration: BoxDecoration(
-                            color: ColorScheme.of(context)
-                                .outlineVariant
-                                .withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                                color: ColorScheme.of(context).outlineVariant),
-                          ),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            alignment: WrapAlignment.center,
-                            spacing: 4,
-                            children: <Widget>[
-                              Icon(
-                                Icons.circle,
-                                size: 10,
-                                color: message.offerDetail?.counterBy?.color,
-                              ),
-                              Text(
-                                message.offerDetail?.counterBy?.code.tr() ??
-                                    'na'.tr(),
-                                style: TextTheme.of(context).labelSmall,
-                              ),
-                            ],
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            ),
+            ],
           ),
         ),
         const SizedBox(width: 8),
 
-        // Offer price/status block animated
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+        // Offer price/status block
+        Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             border: Border.all(color: ColorScheme.of(context).outlineVariant),
@@ -155,39 +130,22 @@ class OfferMessageTileDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: Text(
-                      '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.offerPrice ?? ''}',
-                      key: ValueKey(message.offerDetail?.offerPrice),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),
-                      maxLines: 2,
+              CurrencyDisplayWithOriginal(
+                currency: offerDetail?.currency,
+                offerPrice: offerDetail?.offerPrice,
+                originalPrice: offerDetail?.price,
+                offerStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: Text(
-                      '${CountryHelper.currencySymbolHelper(message.offerDetail?.currency)} ${message.offerDetail?.price}',
-                      key: ValueKey(message.offerDetail?.price),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            decoration: TextDecoration.lineThrough,
-                          ),
-                    ),
-                  ),
-                ],
+                originalStyle: Theme.of(context).textTheme.labelSmall,
               ),
               const SizedBox(height: 4),
+              // Status with animation for changes
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: Text(
-                  message.offerDetail?.offerStatus?.code.tr() ?? 'na'.tr(),
-                  key: ValueKey(message.offerDetail?.offerStatus?.code),
+                  offerDetail?.offerStatus?.code.tr() ?? 'na'.tr(),
+                  key: ValueKey(offerDetail?.offerStatus?.code),
                   style: TextTheme.of(context).labelSmall,
                 ),
               ),

@@ -21,7 +21,9 @@ enum PostTileClothFootType { add, buy, offer }
 
 class PostTileClothFootDialog extends StatefulWidget {
   const PostTileClothFootDialog({
-    required this.post, required this.actionType, super.key,
+    required this.post,
+    required this.actionType,
+    super.key,
   });
   final PostEntity post;
 
@@ -38,6 +40,18 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
   ColorEntity? selectedColor;
   bool isLoading = false;
 
+  Widget _colorTile(String code) {
+    return Container(
+      width: double.infinity,
+      height: 32,
+      decoration: BoxDecoration(
+        color: code.toColor(),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+    );
+  }
+
   String get _buttonTitle {
     switch (widget.actionType) {
       case PostTileClothFootType.buy:
@@ -51,14 +65,19 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
 
   Future<void> _handleAction(BuildContext context) async {
     if (isLoading) return;
+    if (!mounted) return;
     setState(() => isLoading = true);
 
     try {
       if (widget.actionType == PostTileClothFootType.offer) {
         if (selectedSize == null) {
-          AppSnackBar.showSnackBar(context, 'size_is_required'.tr());
+          if (mounted) {
+            AppSnackBar.showSnackBar(context, 'size_is_required'.tr());
+          }
         } else if (selectedColor == null) {
-          AppSnackBar.showSnackBar(context, 'color_is_required'.tr());
+          if (mounted) {
+            AppSnackBar.showSnackBar(context, 'color_is_required'.tr());
+          }
         } else {
           await showModalBottomSheet(
             isScrollControlled: true,
@@ -81,14 +100,18 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
           ),
         );
 
+        if (!context.mounted) return;
         if (result is DataSuccess) {
-          if (!mounted) return;
-
           if (widget.actionType == PostTileClothFootType.buy) {
-            await Navigator.of(context).pushNamed(PersonalShoppingBasketScreen.routeName);
+            await Navigator.of(
+              context,
+            ).pushNamed(PersonalShoppingBasketScreen.routeName);
+            if (!mounted) return;
           } else {
-            Navigator.of(context).pop();
-            AppSnackBar.success(context, 'successfull_add_to_basket'.tr());
+            if (context.mounted) {
+              Navigator.of(context).pop();
+              AppSnackBar.success(context, 'successfull_add_to_basket'.tr());
+            }
           }
         } else {
           AppLog.error(
@@ -104,9 +127,12 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
         }
       }
     } catch (e, stack) {
-      AppLog.error(e.toString(),
-          name: 'PostTileClothFootDialog', stackTrace: stack);
-      if (mounted) AppSnackBar.error(context, 'something_wrong'.tr());
+      AppLog.error(
+        e.toString(),
+        name: 'PostTileClothFootDialog',
+        stackTrace: stack,
+      );
+      if (context.mounted) AppSnackBar.error(context, 'something_wrong'.tr());
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -130,7 +156,9 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                 Text(
                   'select_size_color'.tr(),
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -146,13 +174,22 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                   child: CustomDropdown<SizeColorEntity>(
                     title: 'size'.tr(),
                     hint: 'size'.tr(),
-                    items: widget.post.clothFootInfo?.sizeColors
-                            .map((SizeColorEntity e) => DropdownMenuItem(
-                                value: e, child: Text(e.value)))
+                    items:
+                        widget.post.clothFootInfo?.sizeColors
+                            .map(
+                              (SizeColorEntity e) =>
+                                  DropdownMenuItem<SizeColorEntity>(
+                                    value: e,
+                                    child: Text(e.value),
+                                  ),
+                            )
                             .toList() ??
                         <DropdownMenuItem<SizeColorEntity>>[],
                     selectedItem: selectedSize,
-                    onChanged: (SizeColorEntity? value) => setState(() => selectedSize = value),
+                    onChanged: (SizeColorEntity? value) => setState(() {
+                      selectedSize = value;
+                      selectedColor = null;
+                    }),
                     validator: (_) => null,
                   ),
                 ),
@@ -161,18 +198,20 @@ class _PostTileClothFootDialogState extends State<PostTileClothFootDialog> {
                   child: CustomDropdown<ColorEntity>(
                     title: 'color'.tr(),
                     hint: 'color'.tr(),
+                    selectedItemBuilder: (ColorEntity? value) =>
+                        value == null ? null : _colorTile(value.code),
                     items: (selectedSize?.colors ?? <ColorEntity>[])
                         .where((ColorEntity e) => e.quantity > 0)
-                        .map((ColorEntity e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(
-                                e.code,
-                                style: TextStyle(color: e.code.toColor()),
-                              ),
-                            ))
+                        .map(
+                          (ColorEntity e) => DropdownMenuItem<ColorEntity>(
+                            value: e,
+                            child: _colorTile(e.code),
+                          ),
+                        )
                         .toList(),
                     selectedItem: selectedColor,
-                    onChanged: (ColorEntity? value) => setState(() => selectedColor = value),
+                    onChanged: (ColorEntity? value) =>
+                        setState(() => selectedColor = value),
                     validator: (_) => null,
                   ),
                 ),

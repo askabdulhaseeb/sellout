@@ -1,3 +1,4 @@
+import '../../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
@@ -21,9 +22,11 @@ class MessageModel extends MessageEntity {
     super.visitingDetail,
     super.type,
     super.source,
+    super.fileStatus,
     super.offerDetail,
     super.quoteDetail,
     super.postDetail,
+    super.status,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> json) {
@@ -40,7 +43,8 @@ class MessageModel extends MessageEntity {
     }
     return MessageModel(
       persons: List<String>.from(
-          (json['persons'] ?? <dynamic>[]).map((dynamic x) => x)),
+        (json['persons'] ?? <dynamic>[]).map((dynamic x) => x),
+      ),
       fileUrl: fileUrlList,
       updatedAt:
           (json['updated_at']?.toString() ?? '').toDateTime() ?? DateTime.now(),
@@ -65,6 +69,8 @@ class MessageModel extends MessageEntity {
       postDetail: json['post_detail'] == null
           ? null
           : MessagePostDetailEntity.fromJson(json['post_detail']),
+      fileStatus: json['file_status']?.toString(),
+      status: MessageStatus.fromJson(json['status']?.toString()),
     );
   }
 }

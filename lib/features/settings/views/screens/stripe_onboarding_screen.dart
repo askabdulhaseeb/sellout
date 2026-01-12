@@ -31,7 +31,7 @@ class _StripeOnboardingScreenState extends State<StripeOnboardingScreen> {
         ),
       );
       if (mounted) {
-        Navigator.of(context).pop(); // Optionally close after success
+        Navigator.of(context).pop(); 
       }
     } catch (e) {
       if (mounted) {

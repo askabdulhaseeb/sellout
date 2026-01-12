@@ -9,12 +9,15 @@ import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../domain/entities/promo_entity.dart';
 import '../../../domain/usecase/get_promo_of_followers_usecase.dart';
+import '../../../domain/usecase/get_promo_by_id_usecase.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
 import '../../../../../attachment/domain/entities/picked_attachment_option.dart';
 import '../../../../../attachment/views/screens/pickable_attachment_screen.dart';
 import '../../../domain/params/create_promo_params.dart';
 import '../../../domain/usecase/create_promo_usecase.dart';
+import '../../../../auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../services/get_it.dart';
 
 class PromoProvider extends ChangeNotifier {
   PromoProvider(this.getPromoUsecase, this.createPromoUsecase);
@@ -25,6 +28,10 @@ class PromoProvider extends ChangeNotifier {
   PostEntity? get post => _post;
   List<PromoEntity>? _promoList;
   List<PromoEntity>? get promoList => _promoList;
+  List<PromoEntity>? _myPromoList;
+  List<PromoEntity>? get myPromoList => _myPromoList;
+  bool _isLoadingMyPromos = false;
+  bool get isLoadingMyPromos => _isLoadingMyPromos;
   PickedAttachment? _thumbNail;
   PickedAttachment? get thumbNail => _thumbNail;
   int get pageNumber => attachment?.file == null ? 1 : 2;
@@ -40,11 +47,14 @@ class PromoProvider extends ChangeNotifier {
   String referenceType = '';
   String _referenceId = '';
   String get referenceId => _referenceId;
+  String _listId = '';
+  String get listId => _listId;
   bool _isLoading = false;
   bool get isLoadig => _isLoading;
   String? errorMessage;
-  void setRefernceID(String refID, String refType) {
+  void setRefernceID(String refID, String refType,String listId) {
     _referenceId = refID;
+    _listId = listId;
     referenceType = refType;
   }
 
@@ -71,7 +81,9 @@ class PromoProvider extends ChangeNotifier {
       referenceID: _referenceId,
       title: title.text,
       price: price.text,
+      listId: _listId,
       attachments: attachment,
+
     );
   }
 
@@ -201,6 +213,44 @@ class PromoProvider extends ChangeNotifier {
     }
 
     _setLoading(false);
+  }
+
+  Future<void> getMyPromos() async {
+    final String? uid = LocalAuth.uid;
+    if (uid == null) return;
+
+    _isLoadingMyPromos = true;
+    notifyListeners();
+
+    try {
+      final GetPromoByIdUsecase getPromoByIdUsecase =
+          GetPromoByIdUsecase(locator());
+      final DataState<List<PromoEntity>> response =
+          await getPromoByIdUsecase.call(uid);
+      if (response is DataSuccess) {
+        AppLog.info('My promos fetched successfully');
+        _myPromoList = response.entity;
+        // Sort by newest first
+        _myPromoList?.sort(
+          (PromoEntity a, PromoEntity b) => b.createdAt.compareTo(a.createdAt),
+        );
+      } else {
+        AppLog.error(
+            'Failed to fetch my promos: ${response.exception?.message}');
+      }
+    } catch (e) {
+      AppLog.error('Exception in getMyPromos: $e');
+    }
+
+    _isLoadingMyPromos = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchAllPromos() async {
+    await Future.wait(<Future<void>>[
+      getMyPromos(),
+      getPromoOfFollower(),
+    ]);
   }
 
   void reset() {

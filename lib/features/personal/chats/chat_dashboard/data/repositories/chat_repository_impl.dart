@@ -10,7 +10,7 @@ class ChatRepositoryImpl implements ChatRepository {
   final ChatRemoteSource remoteSource;
 
   @override
-  Future<DataState<List<ChatEntity>>> call(List<String>? params) async {
+  Future<DataState<List<ChatEntity>>> getchats(List<String>? params) async {
     return await remoteSource.getChats(params);
   }
 
@@ -21,7 +21,8 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<DataState<ChatEntity>> createInquiryChat(
-      PostInquiryParams params) async {
+    PostInquiryParams params,
+  ) async {
     return await remoteSource.createInquiryChat(params);
   }
 }

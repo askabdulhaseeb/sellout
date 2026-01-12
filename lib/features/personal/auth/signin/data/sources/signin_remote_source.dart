@@ -14,6 +14,7 @@ abstract interface class SigninRemoteSource {
   Future<DataState<String>> refreshToken(RefreshTokenParams params);
   Future<DataState<bool>> verifyTwoFactorAuth(TwoFactorParams params);
   Future<DataState<bool>> resendTwoFactorCode(TwoFactorParams params);
+  Future<DataState<bool>> logout();
 }
 
 class SigninRemoteSourceImpl implements SigninRemoteSource {
@@ -183,6 +184,56 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         stackTrace: stc,
       );
       return DataFailer<bool>(CustomException('Resend code failed: $e'));
+    }
+  }
+
+  @override
+  Future<DataState<bool>> logout() async {
+    try {
+      final DataState<bool> responce = await ApiCall<bool>().call(
+        endpoint: '/user/logout',
+        requestType: ApiRequestType.post,
+      );
+
+      // Always clear local data regardless of API result
+      // This ensures the user is logged out even if server is unreachable
+      // HiveDB.signout() calls LocalAuth().signout() which:
+      // 1. Clears SecureAuthStorage (tokens, userId)
+      // 2. Clears LocalAuth Hive box
+      // 3. Sets uidNotifier.value = null (triggers socket disconnect via listener)
+      // Additionally, HiveDB.signout() clears all other feature Hive boxes
+      await HiveDB.signout();
+
+      if (responce is DataSuccess) {
+        return responce;
+      } else {
+        // Log error but still return success since local cleanup was done
+        AppLog.error(
+          responce.exception?.message ?? 'something_wrong'.tr(),
+          name: 'SignInRemoteSourceImpl.logout - API failed but local cleanup done',
+          error: responce.exception?.reason ?? '',
+        );
+        // Return success anyway since local state is cleared
+        return DataSuccess<bool>('', true);
+      }
+    } catch (e, stc) {
+      // Even if exception occurs, try to clean up local data
+      AppLog.error(
+        e.toString(),
+        name: 'SignInRemoteSourceImpl.logout - catch',
+        stackTrace: stc,
+      );
+      try {
+        await HiveDB.signout();
+        // Return success since local cleanup was done
+        return DataSuccess<bool>('', true);
+      } catch (cleanupError) {
+        AppLog.error(
+          'Failed to cleanup local data: $cleanupError',
+          name: 'SignInRemoteSourceImpl.logout - cleanup catch',
+        );
+        return DataFailer<bool>(CustomException('Logout failed: $e'));
+      }
     }
   }
 }

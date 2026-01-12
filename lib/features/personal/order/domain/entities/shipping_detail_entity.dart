@@ -1,0 +1,27 @@
+import 'package:hive_ce/hive.dart';
+import 'postage_entity.dart';
+import 'fast_delivery_entity.dart';
+import '../../../auth/signin/domain/entities/address_entity.dart';
+
+part 'shipping_detail_entity.g.dart';
+
+@HiveType(typeId: 89)
+class ShippingDetailEntity {
+  const ShippingDetailEntity({
+    required this.postage,
+    this.fastDelivery,
+    this.fromAddress,
+    this.toAddress,
+    this.shippingLabelUrl,
+  });
+  @HiveField(0)
+  final List<PostageEntity> postage;
+  @HiveField(1)
+  final FastDeliveryEntity? fastDelivery;
+  @HiveField(2)
+  final AddressEntity? fromAddress;
+  @HiveField(3)
+  final AddressEntity? toAddress;
+  @HiveField(4)
+  final String? shippingLabelUrl;
+}

@@ -59,7 +59,9 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
         await showDialog(
           context: context,
           builder: (_) => PostTileClothFootDialog(
-              post: widget.post, actionType: PostTileClothFootType.buy),
+            post: widget.post,
+            actionType: PostTileClothFootType.buy,
+          ),
         );
       } else {
         // Prepare add to cart param
@@ -72,14 +74,15 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
         final DataState<bool> result = await usecase(param);
         if (result is DataSuccess) {
           if (mounted) {
-            await Navigator.of(context)
-                .pushNamed(PersonalShoppingBasketScreen.routeName);
+            await Navigator.of(
+              context,
+            ).pushNamed(PersonalShoppingBasketScreen.routeName);
           }
         } else {
           AppLog.error(
             result.exception?.message ?? 'AddToCartError',
             name: 'post_buy_now_button.dart',
-            error: result.exception,
+            error: result.exception?.reason,
           );
           if (mounted) {
             AppSnackBar.showSnackBar(
@@ -113,6 +116,7 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
       onTap: () => _buyNow(context),
       title: widget.buyNowText ?? 'buy_now'.tr(),
       isLoading: isLoading,
+      loadingTitle: 'loading'.tr(),
       textStyle: widget.buyNowTextStyle,
       bgColor: widget.buyNowColor,
       padding: widget.padding,

@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'dart:typed_data';
 import '../../../../core/enums/core/attachment_type.dart';
 import '../../domain/entities/picked_attachment.dart';
 import '../../domain/entities/picked_attachment_option.dart';
@@ -43,6 +43,23 @@ class PickedMediaProvider extends ChangeNotifier {
     await _requestPermissionAndLoad();
   }
 
+  Future<void> refreshPermissionAndReloadIfNeeded() async {
+    // IMPORTANT: Don't call `requestPermissionExtend()` here.
+    // On Android, repeated requests after denial can surface extra system
+    // options (like "Never ask again"). Instead, do a silent reload attempt;
+    // if the user granted permission in Settings, loading will succeed.
+    if (!mounted) return;
+
+    if (_permissionDenied || _mediaList.isEmpty) {
+      final bool loaded = await _loadAlbumsAndInitialMedia();
+      if (!mounted) return;
+      if (loaded) {
+        _permissionDenied = false;
+        if (mounted) notifyListeners();
+      }
+    }
+  }
+
   Future<void> _requestPermissionAndLoad() async {
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
 
@@ -52,53 +69,61 @@ class PickedMediaProvider extends ChangeNotifier {
       _permissionDenied = false;
       notifyListeners();
 
-      try {
-        final List<AssetPathEntity> albums =
-            await PhotoManager.getAssetPathList(
-              type: _option.type.requestType,
-              filterOption: FilterOptionGroup(
-                imageOption: const FilterOption(
-                  sizeConstraint: SizeConstraint(minWidth: 100, minHeight: 100),
-                ),
-                videoOption: FilterOption(
-                  sizeConstraint: const SizeConstraint(
-                    minWidth: 100,
-                    minHeight: 100,
-                  ),
-                  durationConstraint: DurationConstraint(
-                    max: _option.maxVideoDuration,
-                  ),
-                ),
-                orders: const <OrderOption>[
-                  OrderOption(type: OrderOptionType.createDate, asc: false),
-                ],
-              ),
-            );
-
-        if (albums.isNotEmpty) {
-          _currentAlbum = albums.first;
-          await loadMoreMedia(initial: true);
-        } else {
-          _initialLoading = false;
-          _hasMoreMedia = false;
-          if (mounted) notifyListeners();
-        }
-      } catch (e, s) {
-        AppLog.error(
-          'Error loading albums: $e',
-          name: '_requestPermissionAndLoad',
-          error: s,
-        );
-        _initialLoading = false;
-        _hasMoreMedia = false;
-        if (mounted) notifyListeners();
-      }
+      await _loadAlbumsAndInitialMedia();
     } else {
       _permissionDenied = true;
       _initialLoading = false;
       _hasMoreMedia = false;
       if (mounted) notifyListeners();
       AppLog.error('Permission denied');
+    }
+  }
+
+  Future<bool> _loadAlbumsAndInitialMedia() async {
+    try {
+      final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+        type: _option.type.requestType,
+        filterOption: FilterOptionGroup(
+          imageOption: const FilterOption(
+            sizeConstraint: SizeConstraint(minWidth: 100, minHeight: 100),
+          ),
+          videoOption: FilterOption(
+            sizeConstraint: const SizeConstraint(minWidth: 100, minHeight: 100),
+            durationConstraint: DurationConstraint(
+              max: _option.maxVideoDuration,
+            ),
+          ),
+          orders: const <OrderOption>[
+            OrderOption(type: OrderOptionType.createDate, asc: false),
+          ],
+        ),
+      );
+
+      if (albums.isNotEmpty) {
+        _currentAlbum = albums.first;
+        await loadMoreMedia(initial: true);
+      } else {
+        _initialLoading = false;
+        _hasMoreMedia = false;
+        if (mounted) notifyListeners();
+      }
+      return true;
+    } catch (e, s) {
+      AppLog.error(
+        'Error loading albums: $e',
+        name: '_loadAlbumsAndInitialMedia',
+        error: s,
+      );
+
+      // If permission is missing, PhotoManager may throw. Treat that as denied
+      // and avoid further prompts.
+      _permissionDenied = true;
+      _initialLoading = false;
+      _hasMoreMedia = false;
+      _currentAlbum = null;
+      _mediaList.clear();
+      if (mounted) notifyListeners();
+      return false;
     }
   }
 

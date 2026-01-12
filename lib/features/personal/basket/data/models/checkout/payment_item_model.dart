@@ -1,5 +1,5 @@
 import '../../../domain/entities/checkout/payment_item_entity.dart';
-import 'shipping_details_model.dart';
+import 'payment_item_shipping_details_model.dart';
 
 class PaymentItemModel extends PaymentItemEntity {
   const PaymentItemModel({
@@ -28,8 +28,8 @@ class PaymentItemModel extends PaymentItemEntity {
                 json['currency_exchange_rate']?.toString() ?? '1') ??
             1.0,
         deliveryPrice: int.tryParse(json['delivery_price'].toString()) ?? 0,
-        shippingDetails: List<ShippingDetailsModel>.from(
+        shippingDetails: List<PaymentItemShippingDetailsModel>.from(
             (json['shipping_details'] ?? <dynamic>[])
-                .map((dynamic x) => ShippingDetailsModel.fromJson(x))),
+                .map((dynamic x) => PaymentItemShippingDetailsModel.fromJson(x))),
       );
 }

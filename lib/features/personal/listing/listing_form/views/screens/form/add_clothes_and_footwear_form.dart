@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../core/widgets/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/cloth/add_listing_brand_field.dart';
@@ -45,7 +46,7 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
                 const AddListingSizeColorWidget(),
                 const AddListingBrandField(),
                 const AddListingPriceAndQuantityWidget(readOnly: true),
-                const AddListingDiscountSection(),
+                InDevMode(child: const AddListingDiscountSection()),
                 const AddListingConditionOfferSection(),
                 const AddListingDeliverySelectionWidget(),
                 if (formPro.post == null) const AddListingPostButtonWidget(),

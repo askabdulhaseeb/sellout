@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
 part 'status_type.g.dart';
 
@@ -25,6 +26,15 @@ enum StatusType {
   cancelled('cancelled', 'cancelled', Colors.black, _redBG),
   @HiveField(24)
   canceled('canceled', 'canceled', Colors.black, _redBG),
+  @HiveField(25)
+  rejectedBySeller(
+    'cancelled_by_seller',
+    'cancelled_by_seller',
+    Colors.red,
+    _redBG,
+  ),
+  @HiveField(26)
+  returned('returned', 'returned', Colors.black, _redBG),
   //
   @HiveField(31)
   accepted('accepted', 'accepted', Colors.green, _greenBG),
@@ -41,7 +51,17 @@ enum StatusType {
   @HiveField(37)
   processing('processing', 'processing', Colors.red, _greenBG),
   @HiveField(38)
-  paid('paid', 'paid', Colors.red, _greenBG);
+  readyToShip('ready_to_ship', 'ready_to_ship', Colors.red, _greenBG),
+  @HiveField(39)
+  paid('paid', 'paid', Colors.red, _greenBG),
+
+  // Newly added explicit statuses for finance flows
+  @HiveField(40)
+  succeeded('succeeded', 'succeeded', Colors.green, _greenBG),
+  @HiveField(41)
+  released('released', 'released', Colors.green, _greenBG),
+  @HiveField(42)
+  authorized('authorized', 'authorized', Colors.orange, _orangeBG);
 
   const StatusType(this.code, this.json, this.color, this.bgColor);
   final String code;
@@ -50,6 +70,9 @@ enum StatusType {
   final Color bgColor;
 
   static StatusType fromJson(String? map) {
+    if (kDebugMode) {
+      debugPrint('Mapping StatusType from json: $map');
+    }
     if (map == null) return StatusType.pending;
     switch (map) {
       case 'pending':
@@ -58,12 +81,19 @@ enum StatusType {
         return StatusType.accepted;
       case 'reject' || 'rejected':
         return StatusType.rejected;
-      case 'cancel' || 'cancelled' || 'cancelled_by_seller':
+      case 'cancel' ||
+          'cancelled' ||
+          'cancelled_by_seller' ||
+          'cancelled_by_buyer':
         return StatusType.cancelled;
       case 'canceled':
         return StatusType.canceled;
-      case 'complet' || 'completed' || 'delivered':
+      case 'complet' || 'completed':
         return StatusType.completed;
+      case 'succeeded':
+        return StatusType.succeeded;
+      case 'released':
+        return StatusType.released;
       case 'inprogress':
         return StatusType.inprogress;
       case 'deliver' || 'delivered':
@@ -82,6 +112,10 @@ enum StatusType {
         return StatusType.processing;
       case 'paid':
         return StatusType.paid;
+      case 'ready_to_ship':
+        return StatusType.readyToShip;
+      case 'authorized':
+        return StatusType.authorized;
       default:
         return StatusType.pending;
     }

@@ -155,11 +155,13 @@ class PersonalCartTotalSection extends StatelessWidget {
       if (hasPaidOrFast) {
         final DataState<AddShippingResponseModel> result = await cartPro
             .submitShipping();
-        if (result is! DataSuccess<AddShippingResponseModel> &&
-            context.mounted) {
-          AppSnackBar.show(
-            result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
-          );
+        if (result is! DataSuccess<AddShippingResponseModel>) {
+          if (context.mounted) {
+            AppSnackBar.show(
+              result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
+            );
+          }
+          return;
         }
       }
 

@@ -1,4 +1,4 @@
-import '../../../signin/domain/entities/stripe_connect_account_entity.dart';
+import '../../domain/entities/stripe_connect_account_entity.dart';
 
 class StripeConnectAccountModel extends StripeConnectAccountEntity {
   StripeConnectAccountModel({

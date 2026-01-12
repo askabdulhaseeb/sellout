@@ -263,11 +263,12 @@ class FeedProvider extends ChangeNotifier {
     int? offerAmount,
     String size = '',
     String color = '',
+    String currency = '',
   }) async {
     setIsLoading(true);
 
     final UpdateOfferParams params = UpdateOfferParams(
-      currency: LocalAuth.currency,
+      currency: currency,
       counterOffer: counterOffer,
       chatID: chatId,
       offerAmount: offerAmount,

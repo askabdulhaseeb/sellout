@@ -2,7 +2,7 @@ import '../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../business/core/domain/entity/business_employee_entity.dart';
 import '../../../../location/domain/entities/location_entity.dart';
-import '../../../../setting/setting_dashboard/domain/entities/notification_entity.dart';
+import '../../../../setting/setting_dashboard/domain/entities/notification_setting_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/privacy_settings_entity.dart';
 import '../../../../setting/setting_dashboard/domain/entities/time_away_entity.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
@@ -10,7 +10,7 @@ import 'package:hive_ce/hive.dart';
 import 'address_entity.dart';
 import 'login_detail_entity.dart';
 import 'login_info_entity.dart';
-import 'stripe_connect_account_entity.dart';
+import '../../../stripe/domain/entities/stripe_connect_account_entity.dart';
 part 'current_user_entity.g.dart';
 
 @HiveType(typeId: 0)

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/widgets/custom_network_image.dart';
 import '../../../user/profiles/data/models/user_model.dart';
-import '../../../user/profiles/views/screens/user_profile_screen.dart';
+import '../../../user/profiles/views/user_profile/screens/user_profile_screen.dart';
 
 class UserTile extends StatelessWidget {
   const UserTile({required this.user, super.key});
