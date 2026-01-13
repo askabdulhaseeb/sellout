@@ -167,7 +167,7 @@ class _OrderPostageItemCardState extends State<OrderPostageItemCard> {
         final String providerImage = providerRates.first.providerImage75;
 
         final bool hasSelected = providerRates.any(
-          (r) => r.objectId == selectedId,
+          (RateEntity r) => r.objectId == selectedId,
         );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

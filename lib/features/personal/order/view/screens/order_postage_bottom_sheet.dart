@@ -162,7 +162,7 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
                                           objectId: _selectedRate!.objectId,
                                         ),
                                       )
-                                      .then((result) {
+                                      .then((DataState<bool> result) {
                                         if (result is DataSuccess<bool> &&
                                             result.entity == true) {
                                           if (mounted) {
