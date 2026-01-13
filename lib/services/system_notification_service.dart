@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../features/personal/notifications/domain/entities/notification_entity.dart';
+import '../features/personal/order/domain/entities/order_entity.dart';
 import '../routes/app_linking.dart';
 import '../features/personal/notifications/view/screens/notification_screen.dart';
 import '../features/personal/notifications/data/source/local/local_notification.dart';
@@ -118,7 +119,7 @@ class SystemNotificationService {
     }
 
     // Get the order from local storage
-    final orderData = LocalOrders().get(orderId);
+    final OrderEntity? orderData = LocalOrders().get(orderId);
     if (orderData == null) {
       debugPrint('Order not found in local storage: $orderId');
       return;

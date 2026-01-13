@@ -1,9 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../domain/params/create_payout_params.dart';
 import '../../../domain/params/params.dart';
-import '../../../domain/params/transfer_funds_params.dart';
 import '../../models/wallet_model.dart';
 
 abstract interface class WalletRemoteApi {

@@ -3,6 +3,20 @@ part 'postage_entity.g.dart';
 
 @HiveType(typeId: 90)
 class PostageEntity {
+
+  const PostageEntity({
+    this.parcel,
+    this.provider,
+    this.convertedBufferAmount,
+    this.serviceName,
+    this.rateObjectId,
+    this.nativeCurrency,
+    this.convertedCurrency,
+    this.nativeBufferAmount,
+    this.coreAmount,
+    this.shipmentId,
+    this.serviceToken,
+  });
   @HiveField(0)
   final Map<String, dynamic>? parcel;
   @HiveField(1)
@@ -25,18 +39,4 @@ class PostageEntity {
   final String? shipmentId;
   @HiveField(10)
   final String? serviceToken;
-
-  const PostageEntity({
-    this.parcel,
-    this.provider,
-    this.convertedBufferAmount,
-    this.serviceName,
-    this.rateObjectId,
-    this.nativeCurrency,
-    this.convertedCurrency,
-    this.nativeBufferAmount,
-    this.coreAmount,
-    this.shipmentId,
-    this.serviceToken,
-  });
 }
