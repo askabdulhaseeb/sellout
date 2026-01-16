@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../domain/entities/notification_entity.dart';
 
 class NotificationPostMessage extends StatelessWidget {
-  final NotificationEntity notification;
   const NotificationPostMessage({required this.notification, super.key});
+  final NotificationEntity notification;
 
   @override
   Widget build(BuildContext context) {

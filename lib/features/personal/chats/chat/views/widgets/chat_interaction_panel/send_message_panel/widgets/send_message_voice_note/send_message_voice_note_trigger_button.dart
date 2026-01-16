@@ -428,7 +428,7 @@ class _PulsatingMicState extends State<_PulsatingMic>
       duration: const Duration(milliseconds: 600),
     );
 
-    _animation = TweenSequence<double>([
+    _animation = TweenSequence<double>(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
         tween: Tween<double>(begin: 1.0, end: 1.3),
         weight: 50,
