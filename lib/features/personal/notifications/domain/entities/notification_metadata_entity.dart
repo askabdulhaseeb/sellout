@@ -5,21 +5,6 @@ import '../../../order/domain/entities/order_payment_detail_entity.dart';
 part 'notification_metadata_entity.g.dart';
 
 class NotificationPaymentDetail {
-  final double? originalPrice;
-  final int? quantity;
-  final String? paymentIntentId;
-  final String? method;
-  final String? transactionChargeCurrency;
-  final double? transactionChargePerItem;
-  final double? convertedDeliveryPrice;
-  final double? coreDeliveryPrice;
-  final double? convertedPrice;
-  final double? netChargePerItem;
-  final String? buyerCurrency;
-  final String? sellerId;
-  final String? postCurrency;
-  final String? status;
-  final DateTime? timestamp;
 
   NotificationPaymentDetail({
     this.originalPrice,
@@ -62,6 +47,21 @@ class NotificationPaymentDetail {
           : null,
     );
   }
+  final double? originalPrice;
+  final int? quantity;
+  final String? paymentIntentId;
+  final String? method;
+  final String? transactionChargeCurrency;
+  final double? transactionChargePerItem;
+  final double? convertedDeliveryPrice;
+  final double? coreDeliveryPrice;
+  final double? convertedPrice;
+  final double? netChargePerItem;
+  final String? buyerCurrency;
+  final String? sellerId;
+  final String? postCurrency;
+  final String? status;
+  final DateTime? timestamp;
 }
 
 @HiveType(typeId: 66)

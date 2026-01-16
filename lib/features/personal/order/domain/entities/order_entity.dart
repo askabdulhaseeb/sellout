@@ -124,7 +124,7 @@ class OrderEntity {
     ShippingDetailEntity? shippingDetail,
   }) {
     return OrderEntity(
-      shippingDetails: shippingDetail ?? this.shippingDetails,
+      shippingDetails: shippingDetail ?? shippingDetails,
       orderId: orderId ?? this.orderId,
       buyerId: buyerId ?? this.buyerId,
       sellerId: sellerId ?? this.sellerId,

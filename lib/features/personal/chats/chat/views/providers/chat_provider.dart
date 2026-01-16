@@ -8,6 +8,7 @@ import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
+import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
@@ -179,10 +180,10 @@ class ChatProvider extends ChangeNotifier {
     String? displayName;
 
     if (isBusiness) {
-      final business = await LocalBusiness().getBusiness(senderId);
+      final BusinessEntity? business = await LocalBusiness().getBusiness(senderId);
       displayName = business?.displayName;
     } else {
-      final user = await LocalUser().user(senderId);
+      final UserEntity? user = await LocalUser().user(senderId);
       displayName = user?.displayName;
     }
 

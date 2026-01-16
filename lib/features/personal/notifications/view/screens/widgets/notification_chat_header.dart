@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import '../../../domain/entities/notification_entity.dart';
 
 class NotificationChatHeader extends StatelessWidget {
-  final NotificationEntity notification;
-  final String timeText;
-  final bool isUnread;
   const NotificationChatHeader({
     required this.notification,
     required this.timeText,
     required this.isUnread,
     super.key,
   });
+  final NotificationEntity notification;
+  final String timeText;
+  final bool isUnread;
 
   @override
   Widget build(BuildContext context) {

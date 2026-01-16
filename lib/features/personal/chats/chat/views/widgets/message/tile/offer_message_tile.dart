@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../post/domain/entities/offer/offer_detail_entity.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../pinned_message/widgets/offer_buttons/offer_message_tile_buttons.dart';
 import '../common/currency_display.dart';
@@ -45,7 +46,7 @@ class OfferMessageTileDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final offerDetail = message.offerDetail;
+    final OfferDetailEntity? offerDetail = message.offerDetail;
 
     return Row(
       children: <Widget>[

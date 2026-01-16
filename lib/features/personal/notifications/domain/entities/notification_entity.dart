@@ -88,9 +88,7 @@ class OrderContextEntity {
     required this.postId,
     required this.buyerId,
     required this.orderId,
-    this.businessId,
-    required this.trackId,
-    required this.sellerId,
+    required this.trackId, required this.sellerId, this.businessId,
   });
   @HiveField(0)
   final String postId;
