@@ -26,7 +26,7 @@ class MessagesList extends StatefulWidget {
 
 class _MessagesListState extends State<MessagesList> {
   int _previousMessageCount = 0;
-  bool _hasInitiallyScrolled = false;
+  final bool _hasInitiallyScrolled = false;
   bool _isLoadingMore = false;
 
   // Cached data for efficient rebuilds

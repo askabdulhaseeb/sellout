@@ -99,7 +99,7 @@ class NotificationOrderHeader extends StatelessWidget {
     if (currentUser == null || paymentDetail == null) return null;
     // If current user is buyer, show seller; if seller, attempt to show buyer
     final bool isSeller = currentUser.userID == paymentDetail.sellerId;
-    final String? otherUserId = isSeller
+    final String otherUserId = isSeller
         // For seller, prefer senderId from notification metadata as buyer id
         ? notification.senderId ?? notification.userId
         : paymentDetail.sellerId;
