@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
@@ -27,15 +26,8 @@ class SigninProvider extends ChangeNotifier {
   final LoginUsecase loginUsecase;
   final VerifyTwoFactorUseCase verifyTwoFactorUseCase;
   final ResendTwoFactorUseCase resendTwoFactorUseCase;
-  //
-  final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'ahmershurahbeeljan+test@gmail.com' : '',
-  );
-  //'hammadafzaal06@gmail.com'
-  final TextEditingController password = TextEditingController(
-    text: kDebugMode ? 'Shurahbeel_986@' : '',
-  );
-  //'Hammad@786'
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 

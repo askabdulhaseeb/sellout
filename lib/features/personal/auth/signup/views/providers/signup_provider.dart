@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -75,25 +74,12 @@ class SignupProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //
-  final TextEditingController name = TextEditingController(
-    text: kDebugMode ? 'John Snow' : '',
-  );
-  final TextEditingController username = TextEditingController(
-    text: kDebugMode ? 'john_snow' : '',
-  );
-  final TextEditingController email = TextEditingController(
-    text: kDebugMode ? 'jone_snow@gmail.com' : '',
-  );
-  final TextEditingController password = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
-  );
-  final TextEditingController confirmPassword = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
-  );
-  final TextEditingController phone = TextEditingController(
-    text: kDebugMode ? '1234567890' : '',
-  );
+  final TextEditingController name = TextEditingController();
+  final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
+  final TextEditingController phone = TextEditingController();
   final TextEditingController otp = TextEditingController();
   // DateTime? _dob = DateTime(2000, 1, 1);
   // set dob(DateTime? value) {
