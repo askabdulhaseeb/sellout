@@ -76,7 +76,7 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
 
         String? sessionUrl;
 
-        bool _looksLikeUrl(String s) => s.startsWith('http');
+        bool looksLikeUrl(String s) => s.startsWith('http');
 
         try {
           final dynamic decoded = json.decode(raw);
@@ -111,16 +111,16 @@ class SettingRemoteApiImpl implements SettingRemoteApi {
             // Single-item map: take the first value if it's a URL
             if (sessionUrl == null && decoded.length == 1) {
               final dynamic onlyValue = decoded.values.first;
-              if (onlyValue is String && _looksLikeUrl(onlyValue)) {
+              if (onlyValue is String && looksLikeUrl(onlyValue)) {
                 sessionUrl = onlyValue;
               }
             }
-          } else if (decoded is String && _looksLikeUrl(decoded)) {
+          } else if (decoded is String && looksLikeUrl(decoded)) {
             sessionUrl = decoded;
           }
         } catch (_) {
           // Not JSON; treat raw as potential URL
-          if (_looksLikeUrl(raw)) sessionUrl = raw;
+          if (looksLikeUrl(raw)) sessionUrl = raw;
         }
 
         if (sessionUrl == null || sessionUrl.isEmpty) {

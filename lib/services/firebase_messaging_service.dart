@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import '../core/functions/app_log.dart';
 import '../core/sources/api_call.dart';
-import '../core/sources/data_state.dart';
 import '../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../features/personal/chats/chat/views/providers/chat_provider.dart';
 import '../features/personal/chats/chat/views/screens/chat_screen.dart';

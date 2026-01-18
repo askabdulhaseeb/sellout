@@ -130,7 +130,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         RegExp(r'\.(png|jpg|jpeg)$', caseSensitive: false),
         '',
       );
-      final AssetEntity? entity = await PhotoManager.editor.saveImage(
+      final AssetEntity entity = await PhotoManager.editor.saveImage(
         filename: safeTitle,
         pngBytes,
         title: safeTitle,
@@ -193,7 +193,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   }
 
   List<String> _getToAddressLines() {
-    final AddressEntity? toAddress =
+    final AddressEntity toAddress =
         widget.order.shippingDetails?.toAddress ?? widget.order.shippingAddress;
     final String fallbackName =
         _buyerUser?.displayName ?? widget.order.shippingAddress.recipientName;
