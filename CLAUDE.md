@@ -69,37 +69,48 @@ features/
   - User profiles and visits
   - Post management with feeds
   - Notifications and reviews
-  
+
 - **Business Features**: `lib/features/business/`
   - Business pages and profiles
   - Service management
   - Booking system with calendar integration
-  
+
 - **Shared**: `lib/features/attachment/` - File and media handling
 
 ## State Management
 
-Uses **Provider** pattern for state management. Key providers:
+Uses **Provider** pattern with **GetIt** for dependency injection:
 - Feature-specific providers in each feature's `views/providers/` directory
 - Global providers configured in `services/app_providers.dart`
+- All services and repositories registered in `services/get_it.dart` via `setupLocator()`
 
 ## Data Persistence
 
-- **Hive** for local storage (user data, cache)
+- **Hive** for local storage with encryption (50+ type adapters in `lib/core/sources/local/hive_db.dart`)
 - **SharedPreferences** for simple key-value storage
-- Models use Hive annotations for local storage serialization
+- Models use Hive annotations (`@HiveType`, `@HiveField`) for local storage serialization
+- Encrypted storage managed by `EncryptionKeyManager`
 
-## Key Dependencies
+## API Communication
 
-- **Provider** - State management
-- **Hive** - Local database
-- **GetIt** - Dependency injection
-- **HTTP** - API calls
-- **Socket.IO** - Real-time messaging
-- **Flutter Stripe** - Payments
-- **Google Maps** - Location services
-- **Easy Localization** - Internationalization
-- **Syncfusion Calendar** - Booking calendar
+All API calls go through `lib/core/sources/api_call.dart`:
+- Returns `DataSuccess<T>` or `DataFailer<T>` wrapper classes
+- Automatic Bearer token injection from `LocalAuth`
+- JSON validation and sanitization before sending
+- Supports both JSON body and multipart form data uploads
+
+## Real-Time Communication (Socket.IO)
+
+Uses **Handler Registry Pattern** - see `SOCKET_SERVICE.md` for full documentation:
+- `lib/core/sockets/socket_service.dart` - Thin connection manager
+- `lib/core/sockets/handlers/` - Base handler and registry
+- Feature handlers located in their feature folders under `data/sources/socket/`
+
+Key handlers:
+- `PresenceHandler` (core) - Online/offline status, last seen
+- `ChatSocketHandler` - Messages, upload progress
+- `WalletSocketHandler` - Wallet balance, payout status
+- `NotificationSocketHandler` - Push notifications
 
 ## Environment Configuration
 
@@ -116,21 +127,38 @@ Several files use code generation:
 - JSON serialization
 - Run `flutter packages pub run build_runner build` after modifying entities/models
 
-## Testing and Quality
+## Linting Rules
 
-- Linting rules configured in `analysis_options.yaml`
-- Uses `flutter_lints` package
-- Custom rules enforce:
-  - Always specify types
-  - Single quotes preference
-  - Relative imports within lib/
-  - Required parameters first
+Configured in `analysis_options.yaml`:
+- `always_specify_types: true` - Always declare types explicitly
+- `prefer_single_quotes: true` - Use single quotes for strings
+- `prefer_relative_imports: true` - Use relative imports within lib/
+- `always_put_required_named_parameters_first: true`
+- `sort_constructors_first: true`
+
+## Key Patterns
+
+### Adding a New Feature
+1. Create feature folder under `lib/features/personal/` or `lib/features/business/`
+2. Add domain layer: entities, repository interface, use cases
+3. Add data layer: models, repository implementation, API/local sources
+4. Add view layer: screens, widgets, provider
+5. Register dependencies in `lib/services/get_it.dart`
+6. Add provider to `lib/services/app_providers.dart`
+7. Add route in `lib/routes/app_routes.dart`
+
+### Adding a Socket Handler
+1. Create handler class extending `BaseSocketHandler` in feature's `data/sources/socket/`
+2. Implement `supportedEvents` getter and `handleEvent` method
+3. Register in `lib/services/get_it.dart` and add to `SocketHandlerRegistry`
+
+### String Constants
+All string constants, API endpoints, and asset paths are in `lib/core/utilities/app_string.dart`
 
 ## Development Notes
 
-- The app supports both light and dark themes
-- Real-time features implemented via Socket.IO
-- Payment processing via Stripe
-- Comprehensive permission handling for camera, contacts, location
-- Multi-language support with Easy Localization
-- Extensive use of custom widgets in `lib/core/widgets/`
+- The app supports both light and dark themes (system-aware in `lib/core/theme/`)
+- Real-time features via Socket.IO with auto-reconnect
+- Payment processing via Flutter Stripe
+- Auth tokens stored encrypted, auto-refresh via `TokenRefreshScheduler`
+- Custom widgets in `lib/core/widgets/` (40+ reusable components)

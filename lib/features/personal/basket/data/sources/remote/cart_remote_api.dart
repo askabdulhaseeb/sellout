@@ -60,32 +60,18 @@ class CartRemoteAPIImpl implements CartRemoteAPI {
 
   @override
   Future<void> addProductToCart() async {
-    try {
-      //
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartRemoteAPIImpl.addProductToCart - Catch',
-        error: e,
-      );
-    }
-    // TODO: implement addProductToCart
-    throw UnimplementedError();
+    AppLog.info(
+      'addProductToCart is not yet implemented',
+      name: 'CartRemoteAPIImpl.addProductToCart',
+    );
   }
 
   @override
   Future<void> clearCart() async {
-    try {
-      //
-    } catch (e) {
-      AppLog.error(
-        e.toString(),
-        name: 'CartRemoteAPIImpl.clearCart - Catch',
-        error: e,
-      );
-    }
-    // TODO: implement clearCart
-    throw UnimplementedError();
+    AppLog.info(
+      'clearCart is not yet implemented',
+      name: 'CartRemoteAPIImpl.clearCart',
+    );
   }
 
   @override

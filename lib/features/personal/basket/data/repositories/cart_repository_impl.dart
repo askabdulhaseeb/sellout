@@ -16,14 +16,13 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<void> addProductToCart() {
-    throw UnimplementedError();
+  Future<void> addProductToCart() async {
+    await _remoteAPI.addProductToCart();
   }
 
   @override
-  Future<void> clearCart() {
-    // TODO: implement clearCart
-    throw UnimplementedError();
+  Future<void> clearCart() async {
+    await _remoteAPI.clearCart();
   }
 
   @override

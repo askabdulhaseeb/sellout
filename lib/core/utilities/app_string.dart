@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppStrings {
@@ -373,6 +372,5 @@ class AppStrings {
   //app LOGO
   static String get selloutLogo => 'assets/images/sellout_logo.png';
 
-  String get baseURL =>
-      kDebugMode ? 'http://192.168.0.181:3200' : dotenv.env['baseURL'] ?? '';
+  String get baseURL => dotenv.env['baseURL'] ?? '';
 }
