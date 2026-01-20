@@ -103,7 +103,7 @@ class NotificationOrderHeader extends StatelessWidget {
         // For seller, prefer senderId from notification metadata as buyer id
         ? notification.senderId ?? notification.userId
         : paymentDetail.sellerId;
-    if (otherUserId == null || otherUserId.isEmpty) return null;
+    if (otherUserId.isEmpty) return null;
     return await LocalUser().user(otherUserId);
   }
 }
