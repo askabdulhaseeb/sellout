@@ -28,12 +28,14 @@ class MarketFilterContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: ColorScheme.of(context).outline),
         image: DecorationImage(
+          opacity: 0.4,
+
           image: AssetImage(marketPro.marketplaceCategory?.imagePath ?? ''),
           fit: BoxFit.cover,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, 
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           const MarketFilterTitleSection(),
           if (marketPro.marketplaceCategory == ListingType.items)
