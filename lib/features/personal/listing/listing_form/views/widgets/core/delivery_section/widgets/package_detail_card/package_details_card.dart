@@ -1,15 +1,11 @@
-// no need for specialty options
-// we only need three expansion tiles with small medium and large
-// fourth expansion tile will be textformfield to give custom size and at the top we will show selected package size
-// after all that at the bottom a weight field which will also have a toggle button for kg and lb
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
+import '../../../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../../../core/widgets/expandable_tile.dart';
 import '../../../../../providers/add_listing_form_provider.dart';
-import 'components/custom_size_tile.dart';
 import 'components/weight_section.dart';
 import 'logic/weight_unit_sync.dart';
 
@@ -91,11 +87,11 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
 
   IconData _getCategoryIcon(String categoryId) {
     switch (categoryId) {
-      case 'small':
+      case 'letters':
         return Icons.mail;
-      case 'medium':
+      case 'parcels':
         return Icons.inventory_2;
-      case 'large':
+      case 'boxes':
         return Icons.local_shipping;
       default:
         return Icons.category;
@@ -107,127 +103,103 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     final AddListingFormProvider formPro = _formPro;
     final ColorScheme scheme = Theme.of(context).colorScheme;
 
-    // Display categories by size buckets
+    // Display categories by package type
     final List<Map<String, String>> packCategories = <Map<String, String>>[
-      <String, String>{'id': 'small', 'label': tr('small')},
-      <String, String>{'id': 'medium', 'label': tr('medium')},
-      <String, String>{'id': 'large', 'label': tr('large')},
+      <String, String>{
+        'id': 'letters',
+        'label': tr('letters'),
+        'subtitle': tr('letters_subtitle'),
+      },
+      <String, String>{
+        'id': 'parcels',
+        'label': tr('parcels'),
+        'subtitle': tr('parcels_subtitle'),
+      },
+      <String, String>{
+        'id': 'boxes',
+        'label': tr('boxes'),
+        'subtitle': tr('boxes_subtitle'),
+      },
     ];
 
     final List<Map<String, dynamic>> packPresets = <Map<String, dynamic>>[
       <String, dynamic>{
         'cat': 'letters',
         'id': 'letter-sm',
-        'label': tr('small_letter'),
+        'label': tr('up_to_1kg_small_letter'),
         'dims': <num>[24, 16.5, 0.5],
-        'note': tr('documents'),
+        'note': tr('letter_sm_examples'),
       },
       <String, dynamic>{
         'cat': 'letters',
         'id': 'letter-lg',
-        'label': tr('large_letter'),
+        'label': tr('up_to_2kg_large_letter'),
         'dims': <num>[35, 25, 2.5],
-        'note': tr('magazines'),
+        'note': tr('letter_lg_examples'),
       },
       <String, dynamic>{
         'cat': 'parcels',
         'id': 'parcel-sm',
-        'label': tr('small_parcel'),
+        'label': tr('up_to_5kg_small_parcel'),
         'dims': <num>[45, 35, 16],
-        'note': tr('clothing'),
+        'note': tr('parcel_sm_examples'),
       },
       <String, dynamic>{
         'cat': 'parcels',
         'id': 'parcel-md',
-        'label': tr('medium_parcel'),
+        'label': tr('up_to_10kg_medium_parcel'),
         'dims': <num>[61, 46, 46],
-        'note': tr('bulk_items'),
+        'note': tr('parcel_md_examples'),
       },
       <String, dynamic>{
         'cat': 'parcels',
         'id': 'parcel-lg',
-        'label': tr('large_parcel'),
+        'label': tr('up_to_20kg_large_parcel'),
         'dims': <num>[100, 50, 50],
-        'note': tr('bulky_items'),
+        'note': tr('parcel_lg_examples'),
       },
       <String, dynamic>{
         'cat': 'boxes',
         'id': 'box-sm',
-        'label': tr('small_box'),
+        'label': tr('small_box_22x16x10'),
         'dims': <num>[22, 16, 10],
-        'note': tr('accessories'),
+        'note': tr('box_sm_examples'),
       },
       <String, dynamic>{
         'cat': 'boxes',
         'id': 'box-md',
-        'label': tr('medium_box'),
+        'label': tr('medium_box_35x25x15'),
         'dims': <num>[35, 25, 15],
-        'note': tr('shoebox_size'),
+        'note': tr('box_md_examples'),
       },
       <String, dynamic>{
         'cat': 'boxes',
         'id': 'box-lg',
-        'label': tr('large_box'),
+        'label': tr('large_box_45x33x23'),
         'dims': <num>[45, 33, 23],
-        'note': tr('kitchenware'),
+        'note': tr('box_lg_examples'),
       },
       <String, dynamic>{
         'cat': 'boxes',
         'id': 'box-xl',
-        'label': tr('extra_large_box'),
+        'label': tr('extra_large_box_60x40x40'),
         'dims': <num>[60, 40, 40],
-        'note': tr('bulk_appliances'),
+        'note': tr('box_xl_examples'),
       },
     ];
-    // Prefer grouping by preset id/label tokens, fall back to volume
-    String groupForPreset(Map<String, dynamic> p) {
-      final String idLower = (p['id'] as String?)?.toLowerCase() ?? '';
-      final String labelLower = (p['label'] as String?)?.toLowerCase() ?? '';
-      // XL/Extra Large -> large
-      if (idLower.contains('xl') || labelLower.contains('extra')) {
-        return 'large';
-      }
-      // Large
-      if (idLower.contains('lg') || labelLower.contains('large')) {
-        return 'large';
-      }
-      // Medium
-      if (idLower.contains('md') || labelLower.contains('medium')) {
-        return 'medium';
-      }
-      // Small
-      if (idLower.contains('sm') || labelLower.contains('small')) {
-        return 'small';
-      }
-      // Fallback to volume thresholds
-      return groupBySize(p['dims'] as List<dynamic>);
-    }
 
-    // Precompute grouped presets
+    // Group presets by their category
     final Map<String, List<Map<String, dynamic>>> sizeGrouped =
         <String, List<Map<String, dynamic>>>{
-          'small': <Map<String, dynamic>>[],
-          'medium': <Map<String, dynamic>>[],
-          'large': <Map<String, dynamic>>[],
+          'letters': <Map<String, dynamic>>[],
+          'parcels': <Map<String, dynamic>>[],
+          'boxes': <Map<String, dynamic>>[],
         };
     for (final Map<String, dynamic> p in packPresets) {
-      final String g = groupForPreset(p);
-      sizeGrouped[g]!.add(p);
-    }
-    for (final String k in sizeGrouped.keys) {
-      sizeGrouped[k]!.sort((Map<String, dynamic> a, Map<String, dynamic> b) {
-        final List<dynamic> da = a['dims'];
-        final List<dynamic> db = b['dims'];
-        final double va =
-            (da[0] as num).toDouble() *
-            (da[1] as num).toDouble() *
-            (da[2] as num).toDouble();
-        final double vb =
-            (db[0] as num).toDouble() *
-            (db[1] as num).toDouble() *
-            (db[2] as num).toDouble();
-        return va.compareTo(vb);
-      });
+      final String cat = p['cat'] as String;
+      if (sizeGrouped.containsKey(cat)) {
+        sizeGrouped[cat]!.add(p);
+      }
     }
 
     return Column(
@@ -261,18 +233,16 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                         sizeGrouped[category['id']] ?? <Map<String, dynamic>>[];
                     return CustomExpandableTile(
                       title: category['label']!,
-                      subtitle:
-                          '${categoryPresets.length} ${tr('options_available')}',
+                      subtitle: category['subtitle']!,
                       icon: _getCategoryIcon(category['id']!),
                       options: categoryPresets.map((
                         Map<String, dynamic> preset,
                       ) {
-                        final List<dynamic> dims = preset['dims'];
                         return <String, dynamic>{
                           'id': preset['id'],
-                          'label':
-                              '${preset['label']} (${dims.join('×')} ${tr('cm')})',
-                          'dims': dims,
+                          'label': preset['label'],
+                          'note': preset['note'],
+                          'dims': preset['dims'],
                         };
                       }).toList(),
                       onOptionSelected: (Map<String, dynamic> option) {
@@ -284,20 +254,105 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                       },
                     );
                   }),
-                  // Fourth tile: Custom size (inputs)
-                  CustomSizeTile(formPro: formPro),
+                  CustomExpandableTile(
+                    title: tr('custom_size'),
+                    subtitle: tr('enter_custom_size'),
+                    icon: Icons.edit_note,
+                    options: const <Map<String, dynamic>>[],
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        WeightSection(
+                          controller: _weightSync.displayController,
+                          isKg: _isKg,
+                          onToggleUnit: (bool toKg) =>
+                              _toggleUnit(formPro, toKg),
+                        ),
+                        const SizedBox(height: AppSpacing.vSm),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Flexible(
+                              flex: 1,
+                              child: _InlineSizeField(
+                                labelKey: 'length',
+                                controller: formPro.packageLength,
+                                formPro: formPro,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.hXs),
+                            Flexible(
+                              flex: 1,
+                              child: _InlineSizeField(
+                                labelKey: 'width',
+                                controller: formPro.packageWidth,
+                                formPro: formPro,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.hXs),
+                            Flexible(
+                              flex: 1,
+                              child: _InlineSizeField(
+                                labelKey: 'height',
+                                controller: formPro.packageHeight,
+                                formPro: formPro,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-              const Divider(height: AppSpacing.md),
-              WeightSection(
-                controller: _weightSync.displayController,
-                isKg: _isKg,
-                onToggleUnit: (bool toKg) => _toggleUnit(formPro, toKg),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _InlineSizeField extends StatelessWidget {
+  const _InlineSizeField({
+    required this.labelKey,
+    required this.controller,
+    required this.formPro,
+  });
+
+  final String labelKey;
+  final TextEditingController controller;
+  final AddListingFormProvider formPro;
+
+  @override
+  Widget build(BuildContext context) {
+    String? validator(String? value) {
+      if (formPro.deliveryType != DeliveryType.paid &&
+          formPro.deliveryType != DeliveryType.freeDelivery) {
+        return null;
+      }
+      final String input = (value ?? '').trim();
+      if (input.isEmpty) return AppValidator.isEmpty(input);
+      final double? v = double.tryParse(input.replaceAll(',', '.'));
+      if (v == null || v <= 0) return 'invalid_value'.tr();
+      return null;
+    }
+
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: tr(labelKey),
+        suffixText: tr('cm'),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.vSm,
+        ),
+      ),
     );
   }
 }
