@@ -141,35 +141,6 @@ class _PostageHeader extends StatelessWidget {
   }
 }
 
-// ======= Shipping Options Grouped by Provider =======
-// (Refactored into ShippingRatesGroupWidget in shipping_rates_section/)
-
-class _FreeText extends StatelessWidget {
-  const _FreeText();
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Row(
-        children: <Widget>[
-          Icon(
-            Icons.check_circle_outline,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              'free'.tr(),
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _ErrorMessage extends StatefulWidget {
   const _ErrorMessage({required this.cartItemId});

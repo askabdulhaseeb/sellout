@@ -7,10 +7,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../../core/widgets/expandable_tile.dart';
 import '../../../../../providers/add_listing_form_provider.dart';
-import 'components/selected_banner.dart';
-import 'components/info_notice.dart';
-import 'components/size_category_tile.dart';
 import 'components/custom_size_tile.dart';
 import 'components/weight_section.dart';
 import 'logic/weight_unit_sync.dart';
@@ -55,6 +53,53 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     if (_isKg == toKg) return;
     _weightSync.toggleUnit(toKg);
     setState(() => _isKg = _weightSync.isKg);
+  }
+
+  String groupBySize(List<dynamic> dims) {
+    final double volume =
+        (dims[0] as num).toDouble() *
+        (dims[1] as num).toDouble() *
+        (dims[2] as num).toDouble();
+    if (volume <= 2000) {
+      return 'small';
+    } else if (volume <= 50000) {
+      return 'medium';
+    } else {
+      return 'large';
+    }
+  }
+
+  String? selectedDimsText() {
+    final AddListingFormProvider formPro = _formPro;
+    if (formPro.packageLength.text.isEmpty ||
+        formPro.packageWidth.text.isEmpty ||
+        formPro.packageHeight.text.isEmpty) {
+      return null;
+    }
+    return '${formPro.packageLength.text} × ${formPro.packageWidth.text} × ${formPro.packageHeight.text} cm';
+  }
+
+  String? matchedPresetLabel() {
+    final AddListingFormProvider formPro = _formPro;
+    if (formPro.packageLength.text.isEmpty ||
+        formPro.packageWidth.text.isEmpty ||
+        formPro.packageHeight.text.isEmpty) {
+      return null;
+    }
+    return null;
+  }
+
+  IconData _getCategoryIcon(String categoryId) {
+    switch (categoryId) {
+      case 'small':
+        return Icons.mail;
+      case 'medium':
+        return Icons.inventory_2;
+      case 'large':
+        return Icons.local_shipping;
+      default:
+        return Icons.category;
+    }
   }
 
   @override
@@ -134,45 +179,6 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
         'note': tr('bulk_appliances'),
       },
     ];
-
-    // Helper: selected dims text and matching preset label
-    String? selectedDimsText() {
-      final String l = formPro.packageLength.text.trim();
-      final String w = formPro.packageWidth.text.trim();
-      final String h = formPro.packageHeight.text.trim();
-      if (l.isEmpty || w.isEmpty || h.isEmpty) return null;
-      return '$l × $w × $h ${tr('cm')}';
-    }
-
-    String? matchedPresetLabel() {
-      final String l = formPro.packageLength.text.trim();
-      final String w = formPro.packageWidth.text.trim();
-      final String h = formPro.packageHeight.text.trim();
-      if (l.isEmpty || w.isEmpty || h.isEmpty) return null;
-      for (final Map<String, dynamic> p in packPresets) {
-        final List<dynamic> d = p['dims'];
-        if (d[0].toString() == l &&
-            d[1].toString() == w &&
-            d[2].toString() == h) {
-          return p['label'] as String?;
-        }
-      }
-      return null;
-    }
-
-    // Size grouping based on volume (cm^3)
-    String groupBySize(List<dynamic> dims) {
-      final double v =
-          (dims[0] as num).toDouble() *
-          (dims[1] as num).toDouble() *
-          (dims[2] as num).toDouble();
-      const double smallMax = 20000; // up to 20k cm^3
-      const double mediumMax = 100000; // up to 100k cm^3
-      if (v <= smallMax) return 'small';
-      if (v <= mediumMax) return 'medium';
-      return 'large';
-    }
-
     // Prefer grouping by preset id/label tokens, fall back to volume
     String groupForPreset(Map<String, dynamic> p) {
       final String idLower = (p['id'] as String?)?.toLowerCase() ?? '';
@@ -228,12 +234,19 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          tr('package_details'),
+          tr('parcel_size'),
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
+        Text(
+          'size_selection_notice'.tr(),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant.withAlpha(180),
+          ),
+        ),
+        const Divider(height: AppSpacing.md),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             border: Border.all(color: scheme.outline),
           ),
           padding: const EdgeInsets.all(AppSpacing.sm),
@@ -241,30 +254,33 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             spacing: AppSpacing.vSm,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Builder(
-                builder: (BuildContext context) {
-                  final String? dims = selectedDimsText();
-                  final String? preset = matchedPresetLabel();
-                  return SelectedBanner(dimsText: dims, presetLabel: preset);
-                },
-              ),
-              const InfoNotice(),
               Column(
                 children: <Widget>[
                   ...packCategories.map((Map<String, String> category) {
                     final List<Map<String, dynamic>> categoryPresets =
                         sizeGrouped[category['id']] ?? <Map<String, dynamic>>[];
-                    return SizeCategoryTile(
-                      label: category['label']!,
-                      presets: categoryPresets,
-                      isSelectedDims: (List<dynamic> d) =>
-                          formPro.packageLength.text == d[0].toString() &&
-                          formPro.packageWidth.text == d[1].toString() &&
-                          formPro.packageHeight.text == d[2].toString(),
-                      onSelectDims: (List<dynamic> d) {
-                        formPro.packageLength.text = d[0].toString();
-                        formPro.packageWidth.text = d[1].toString();
-                        formPro.packageHeight.text = d[2].toString();
+                    return CustomExpandableTile(
+                      title: category['label']!,
+                      subtitle:
+                          '${categoryPresets.length} ${tr('options_available')}',
+                      icon: _getCategoryIcon(category['id']!),
+                      options: categoryPresets.map((
+                        Map<String, dynamic> preset,
+                      ) {
+                        final List<dynamic> dims = preset['dims'];
+                        return <String, dynamic>{
+                          'id': preset['id'],
+                          'label':
+                              '${preset['label']} (${dims.join('×')} ${tr('cm')})',
+                          'dims': dims,
+                        };
+                      }).toList(),
+                      onOptionSelected: (Map<String, dynamic> option) {
+                        final List<dynamic> dims =
+                            option['dims'] as List<dynamic>;
+                        formPro.packageLength.text = dims[0].toString();
+                        formPro.packageWidth.text = dims[1].toString();
+                        formPro.packageHeight.text = dims[2].toString();
                       },
                     );
                   }),
@@ -272,6 +288,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                   CustomSizeTile(formPro: formPro),
                 ],
               ),
+              const Divider(height: AppSpacing.md),
               WeightSection(
                 controller: _weightSync.displayController,
                 isKg: _isKg,
