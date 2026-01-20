@@ -100,20 +100,20 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
         'options': <Map<String, dynamic>>[
           <String, dynamic>{
             'id': 'small-1kg',
-            'label': 'Up to 1 kg',
-            'note': 'Examples: t-shirt, books, tablet',
+            'label': tr('up_to_1kg'),
+            'note': tr('small_1kg_examples'),
             'dims': <num>[35, 25, 2.5],
           },
           <String, dynamic>{
             'id': 'small-2kg',
-            'label': 'Up to 2 kg',
-            'note': 'Examples: footwear, small kitchen appliance, hoodie',
+            'label': tr('up_to_2kg'),
+            'note': tr('small_2kg_examples'),
             'dims': <num>[35, 25, 2.5],
           },
           <String, dynamic>{
             'id': 'small-5kg',
-            'label': 'Up to 5 kg',
-            'note': 'Examples: blender, throw blanket, LEGO set',
+            'label': tr('up_to_5kg'),
+            'note': tr('small_5kg_examples'),
             'dims': <num>[35, 25, 2.5],
           },
         ],
@@ -126,27 +126,20 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
         'options': <Map<String, dynamic>>[
           <String, dynamic>{
             'id': 'medium-1kg',
-            'label': 'Up to 1 kg',
-            'note': 'Examples: pillow, small blanket, lightweight toys',
+            'label': tr('up_to_1kg'),
+            'note': tr('medium_1kg_examples'),
             'dims': <num>[45, 35, 16],
           },
           <String, dynamic>{
             'id': 'medium-2kg',
-            'label': 'Up to 2 kg',
-            'note':
-                'Examples: board games, small storage boxes, hardcover books',
+            'label': tr('up_to_2kg'),
+            'note': tr('medium_2kg_examples'),
             'dims': <num>[45, 35, 16],
           },
           <String, dynamic>{
             'id': 'medium-5kg',
-            'label': 'Up to 5 kg',
-            'note': 'Examples: bedding set, baby products, kitchenware bundle',
-            'dims': <num>[45, 35, 16],
-          },
-          <String, dynamic>{
-            'id': 'medium-10kg',
-            'label': 'Up to 10 kg',
-            'note': 'Examples: microwave, vacuum cleaner, desktop tower',
+            'label': tr('up_to_5kg'),
+            'note': tr('medium_5kg_examples'),
             'dims': <num>[45, 35, 16],
           },
         ],
@@ -159,14 +152,26 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
         'options': <Map<String, dynamic>>[
           <String, dynamic>{
             'id': 'large-1kg',
-            'label': 'Up to 1 kg small letter',
-            'note': 'Examples: jewellery, cosmetics, magazines',
+            'label': tr('up_to_1kg'),
+            'note': tr('large_1kg_examples'),
             'dims': <num>[61, 46, 46],
           },
           <String, dynamic>{
             'id': 'large-2kg',
-            'label': 'Up to 2 kg large letter',
-            'note': 'Examples: smartphone, skincare set, small gift box',
+            'label': tr('up_to_2kg'),
+            'note': tr('large_2kg_examples'),
+            'dims': <num>[61, 46, 46],
+          },
+          <String, dynamic>{
+            'id': 'large-5kg',
+            'label': tr('up_to_5kg'),
+            'note': tr('large_5kg_examples'),
+            'dims': <num>[61, 46, 46],
+          },
+          <String, dynamic>{
+            'id': 'large-10kg',
+            'label': tr('up_to_10kg'),
+            'note': tr('large_10kg_examples'),
             'dims': <num>[61, 46, 46],
           },
         ],
