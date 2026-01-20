@@ -85,122 +85,93 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     return null;
   }
 
-  IconData _getCategoryIcon(String categoryId) {
-    switch (categoryId) {
-      case 'letters':
-        return Icons.mail;
-      case 'parcels':
-        return Icons.inventory_2;
-      case 'boxes':
-        return Icons.local_shipping;
-      default:
-        return Icons.category;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final AddListingFormProvider formPro = _formPro;
     final ColorScheme scheme = Theme.of(context).colorScheme;
 
-    // Display categories by package type
-    final List<Map<String, String>> packCategories = <Map<String, String>>[
-      <String, String>{
-        'id': 'letters',
-        'label': tr('letters'),
-        'subtitle': tr('letters_subtitle'),
-      },
-      <String, String>{
-        'id': 'parcels',
-        'label': tr('parcels'),
-        'subtitle': tr('parcels_subtitle'),
-      },
-      <String, String>{
-        'id': 'boxes',
-        'label': tr('boxes'),
-        'subtitle': tr('boxes_subtitle'),
-      },
-    ];
-
+    // Define package presets with their options
     final List<Map<String, dynamic>> packPresets = <Map<String, dynamic>>[
       <String, dynamic>{
-        'cat': 'letters',
-        'id': 'letter-sm',
-        'label': tr('up_to_1kg_small_letter'),
-        'dims': <num>[24, 16.5, 0.5],
-        'note': tr('letter_sm_examples'),
+        'id': 'small-parcel',
+        'title': tr('small_parcel'),
+        'subtitle': 'Up to 35 × 25 × 2.5 cm',
+        'icon': Icons.mail,
+        'options': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'small-1kg',
+            'label': 'Up to 1 kg',
+            'note': 'Examples: t-shirt, books, tablet',
+            'dims': <num>[35, 25, 2.5],
+          },
+          <String, dynamic>{
+            'id': 'small-2kg',
+            'label': 'Up to 2 kg',
+            'note': 'Examples: footwear, small kitchen appliance, hoodie',
+            'dims': <num>[35, 25, 2.5],
+          },
+          <String, dynamic>{
+            'id': 'small-5kg',
+            'label': 'Up to 5 kg',
+            'note': 'Examples: blender, throw blanket, LEGO set',
+            'dims': <num>[35, 25, 2.5],
+          },
+        ],
       },
       <String, dynamic>{
-        'cat': 'letters',
-        'id': 'letter-lg',
-        'label': tr('up_to_2kg_large_letter'),
-        'dims': <num>[35, 25, 2.5],
-        'note': tr('letter_lg_examples'),
+        'id': 'medium-parcel',
+        'title': tr('medium_parcel'),
+        'subtitle': 'Up to 45 × 35 × 16 cm',
+        'icon': Icons.inventory_2,
+        'options': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'medium-1kg',
+            'label': 'Up to 1 kg',
+            'note': 'Examples: pillow, small blanket, lightweight toys',
+            'dims': <num>[45, 35, 16],
+          },
+          <String, dynamic>{
+            'id': 'medium-2kg',
+            'label': 'Up to 2 kg',
+            'note':
+                'Examples: board games, small storage boxes, hardcover books',
+            'dims': <num>[45, 35, 16],
+          },
+          <String, dynamic>{
+            'id': 'medium-5kg',
+            'label': 'Up to 5 kg',
+            'note': 'Examples: bedding set, baby products, kitchenware bundle',
+            'dims': <num>[45, 35, 16],
+          },
+          <String, dynamic>{
+            'id': 'medium-10kg',
+            'label': 'Up to 10 kg',
+            'note': 'Examples: microwave, vacuum cleaner, desktop tower',
+            'dims': <num>[45, 35, 16],
+          },
+        ],
       },
       <String, dynamic>{
-        'cat': 'parcels',
-        'id': 'parcel-sm',
-        'label': tr('up_to_5kg_small_parcel'),
-        'dims': <num>[45, 35, 16],
-        'note': tr('parcel_sm_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'parcels',
-        'id': 'parcel-md',
-        'label': tr('up_to_10kg_medium_parcel'),
-        'dims': <num>[61, 46, 46],
-        'note': tr('parcel_md_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'parcels',
-        'id': 'parcel-lg',
-        'label': tr('up_to_20kg_large_parcel'),
-        'dims': <num>[100, 50, 50],
-        'note': tr('parcel_lg_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'boxes',
-        'id': 'box-sm',
-        'label': tr('small_box_22x16x10'),
-        'dims': <num>[22, 16, 10],
-        'note': tr('box_sm_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'boxes',
-        'id': 'box-md',
-        'label': tr('medium_box_35x25x15'),
-        'dims': <num>[35, 25, 15],
-        'note': tr('box_md_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'boxes',
-        'id': 'box-lg',
-        'label': tr('large_box_45x33x23'),
-        'dims': <num>[45, 33, 23],
-        'note': tr('box_lg_examples'),
-      },
-      <String, dynamic>{
-        'cat': 'boxes',
-        'id': 'box-xl',
-        'label': tr('extra_large_box_60x40x40'),
-        'dims': <num>[60, 40, 40],
-        'note': tr('box_xl_examples'),
+        'id': 'large-parcel',
+        'title': tr('large_parcel'),
+        'subtitle': 'Up to 61 × 46 × 46 cm',
+        'icon': Icons.local_shipping,
+        'options': <Map<String, dynamic>>[
+          <String, dynamic>{
+            'id': 'large-1kg',
+            'label': 'Up to 1 kg small letter',
+            'note': 'Examples: jewellery, cosmetics, magazines',
+            'dims': <num>[61, 46, 46],
+          },
+          <String, dynamic>{
+            'id': 'large-2kg',
+            'label': 'Up to 2 kg large letter',
+            'note': 'Examples: smartphone, skincare set, small gift box',
+            'dims': <num>[61, 46, 46],
+          },
+        ],
       },
     ];
-
-    // Group presets by their category
-    final Map<String, List<Map<String, dynamic>>> sizeGrouped =
-        <String, List<Map<String, dynamic>>>{
-          'letters': <Map<String, dynamic>>[],
-          'parcels': <Map<String, dynamic>>[],
-          'boxes': <Map<String, dynamic>>[],
-        };
-    for (final Map<String, dynamic> p in packPresets) {
-      final String cat = p['cat'] as String;
-      if (sizeGrouped.containsKey(cat)) {
-        sizeGrouped[cat]!.add(p);
-      }
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,23 +199,12 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  ...packCategories.map((Map<String, String> category) {
-                    final List<Map<String, dynamic>> categoryPresets =
-                        sizeGrouped[category['id']] ?? <Map<String, dynamic>>[];
+                  ...packPresets.map((Map<String, dynamic> preset) {
                     return CustomExpandableTile(
-                      title: category['label']!,
-                      subtitle: category['subtitle']!,
-                      icon: _getCategoryIcon(category['id']!),
-                      options: categoryPresets.map((
-                        Map<String, dynamic> preset,
-                      ) {
-                        return <String, dynamic>{
-                          'id': preset['id'],
-                          'label': preset['label'],
-                          'note': preset['note'],
-                          'dims': preset['dims'],
-                        };
-                      }).toList(),
+                      title: preset['title'] as String,
+                      subtitle: preset['subtitle'] as String,
+                      icon: preset['icon'] as IconData,
+                      options: preset['options'] as List<Map<String, dynamic>>,
                       onOptionSelected: (Map<String, dynamic> option) {
                         final List<dynamic> dims =
                             option['dims'] as List<dynamic>;
@@ -255,8 +215,8 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                     );
                   }),
                   CustomExpandableTile(
-                    title: tr('custom_size'),
-                    subtitle: tr('enter_custom_size'),
+                    title: tr('custom_parcel'),
+                    subtitle: '',
                     icon: Icons.edit_note,
                     options: const <Map<String, dynamic>>[],
                     content: Column(
