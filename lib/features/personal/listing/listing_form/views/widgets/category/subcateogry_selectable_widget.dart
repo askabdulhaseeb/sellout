@@ -174,6 +174,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: ColorScheme.of(context).outline),
             ),

@@ -6,43 +6,50 @@ import '../../../../../../../../../core/widgets/custom_toggle_switch.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterClothFootToggleWidget extends StatelessWidget {
-  const MarketFilterClothFootToggleWidget({
-    super.key,
-  });
+  const MarketFilterClothFootToggleWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> subCategories =
-        ListingType.clothAndFoot.cids.getRange(0, 2).toList();
+    final List<String> subCategories = ListingType.clothAndFoot.cids
+        .getRange(0, 2)
+        .toList();
     return Consumer<MarketPlaceProvider>(
-      builder: (BuildContext context, MarketPlaceProvider marketPro,
-              Widget? child) =>
-          Row(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: ColorScheme.of(context).outline),
-                  borderRadius: BorderRadius.circular(8)),
-              child: Center(
-                child: CustomToggleSwitch<String>(
-                    verticalMargin: 2,
-                    horizontalMargin: 2,
-                    containerHeight: 40,
-                    verticalPadding: 8,
-                    unseletedBorderColor: Colors.transparent,
-                    isShaded: false,
-                    labels: subCategories,
-                    labelStrs: subCategories.map((String e) => e.tr()).toList(),
-                    labelText: '',
-                    initialValue: marketPro.cLothFootCategory,
-                    onToggle: (String p0) =>
-                        marketPro.setClothFootCategory(p0)),
+      builder:
+          (
+            BuildContext context,
+            MarketPlaceProvider marketPro,
+            Widget? child,
+          ) => Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    border: Border.all(color: ColorScheme.of(context).outline),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: CustomToggleSwitch<String>(
+                      verticalMargin: 2,
+                      horizontalMargin: 2,
+                      containerHeight: 40,
+                      verticalPadding: 8,
+                      unseletedBorderColor: Colors.transparent,
+                      isShaded: false,
+                      labels: subCategories,
+                      labelStrs: subCategories
+                          .map((String e) => e.tr())
+                          .toList(),
+                      labelText: '',
+                      initialValue: marketPro.cLothFootCategory,
+                      onToggle: (String p0) =>
+                          marketPro.setClothFootCategory(p0),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class LocationHeader extends StatelessWidget {
-  const LocationHeader(
-      {required this.onReset, required this.onApply, super.key});
+  const LocationHeader({
+    required this.onReset,
+    required this.onApply,
+    super.key,
+  });
   final VoidCallback onReset;
   final VoidCallback onApply;
 
@@ -18,9 +21,9 @@ class LocationHeader extends StatelessWidget {
           },
           child: Text(
             'cancel'.tr(),
-            style: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w500),
+            style: TextTheme.of(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
         ),
         Text(
@@ -29,15 +32,16 @@ class LocationHeader extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            onApply();
+            // onApply();
           },
           child: Text(
-            'apply'.tr(),
-            style: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w500),
+            // 'apply'.tr(),
+            '',
+            style: TextTheme.of(
+              context,
+            ).bodyMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
-        )
+        ),
       ],
     );
   }
