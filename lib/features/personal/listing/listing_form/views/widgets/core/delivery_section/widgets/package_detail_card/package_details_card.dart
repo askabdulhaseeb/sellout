@@ -21,6 +21,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
   late final VoidCallback _onDimsChanged;
   late final AddListingFormProvider _formPro;
   late final WeightUnitSync _weightSync;
+  String? _expandedTileId;
 
   @override
   void initState() {
@@ -204,12 +205,23 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  ...packPresets.map((Map<String, dynamic> preset) {
+                  ...packPresets.asMap().entries.map((
+                    MapEntry<int, Map<String, dynamic>> entry,
+                  ) {
+                    final int index = entry.key;
+                    final Map<String, dynamic> preset = entry.value;
+                    final String tileId = 'preset-$index';
                     return CustomExpandableTile(
                       title: preset['title'] as String,
                       subtitle: preset['subtitle'] as String,
                       icon: preset['icon'] as IconData,
                       options: preset['options'] as List<Map<String, dynamic>>,
+                      isExpanded: _expandedTileId == tileId,
+                      onExpansionChanged: (bool expanded) {
+                        setState(() {
+                          _expandedTileId = expanded ? tileId : null;
+                        });
+                      },
                       onOptionSelected: (Map<String, dynamic> option) {
                         final List<dynamic> dims =
                             option['dims'] as List<dynamic>;
@@ -224,6 +236,12 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                     subtitle: '',
                     icon: Icons.edit_note,
                     options: const <Map<String, dynamic>>[],
+                    isExpanded: _expandedTileId == 'custom',
+                    onExpansionChanged: (bool expanded) {
+                      setState(() {
+                        _expandedTileId = expanded ? 'custom' : null;
+                      });
+                    },
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
