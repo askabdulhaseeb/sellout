@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 
 enum DeliveryPayer {
-  buyerPays(code: 'customer_pays', jsonKey: 'buyerPays'),
+  buyerPays(code: 'buyer_pays', jsonKey: 'buyerPays'),
   sellerPays(code: 'seller_pays', jsonKey: 'sellerPays');
 
   const DeliveryPayer({required this.code, required this.jsonKey});
