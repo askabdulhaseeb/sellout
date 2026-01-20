@@ -6,7 +6,8 @@ class CustomExpandableTile extends StatefulWidget {
     required this.title,
     required this.subtitle,
     required this.icon,
-    required this.options,
+    this.options = const <Map<String, dynamic>>[],
+    this.content,
     this.onOptionSelected,
     this.initiallyExpanded = false,
     super.key,
@@ -16,6 +17,7 @@ class CustomExpandableTile extends StatefulWidget {
   final String subtitle;
   final IconData icon;
   final List<Map<String, dynamic>> options;
+  final Widget? content;
   final void Function(Map<String, dynamic>)? onOptionSelected;
   final bool initiallyExpanded;
 
@@ -118,25 +120,100 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                 ),
                 if (_isExpanded) ...<Widget>[
                   const SizedBox(height: AppSpacing.md),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: widget.options.map((Map<String, dynamic> option) {
-                      final String? optionId = option['id'] as String?;
-                      final bool isSelected = _selectedOptionId == optionId;
-                      return FilterChip(
-                        label: Text(option['label'] as String? ?? ''),
-                        selected: isSelected,
-                        onSelected: (_) => _selectOption(option),
-                        backgroundColor: Colors.transparent,
-                        selectedColor: scheme.primary.withValues(alpha: 0.12),
-                        side: BorderSide(
-                          color: isSelected ? scheme.primary : scheme.outline,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                  if (widget.content != null)
+                    widget.content!
+                  else if (widget.options.isNotEmpty)
+                    Column(
+                      children: widget.options.map((Map<String, dynamic> opt) {
+                        final String? optionId = opt['id'] as String?;
+                        final bool isSelected = _selectedOptionId == optionId;
+                        final String label = opt['label'] as String? ?? '';
+                        final String? note = opt['note'] as String?;
+                        final Color selectedColor = scheme.error;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: AppSpacing.vSm),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? selectedColor.withValues(alpha: 0.06)
+                                : scheme.surface,
+                            border: Border.all(
+                              color: isSelected
+                                  ? selectedColor
+                                  : scheme.outline,
+                              width: isSelected ? 2 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusSm,
+                            ),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.radiusSm,
+                              ),
+                              onTap: () => _selectOption(opt),
+                              child: Padding(
+                                padding: const EdgeInsets.all(AppSpacing.sm),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: AppSpacing.vSm,
+                                        right: AppSpacing.sm,
+                                      ),
+                                      child: Icon(
+                                        isSelected
+                                            ? Icons.radio_button_checked
+                                            : Icons.radio_button_off,
+                                        size: 20,
+                                        color: isSelected
+                                            ? selectedColor
+                                            : scheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            label,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                          ),
+                                          if (note != null && note.isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: AppSpacing.vXs,
+                                              ),
+                                              child: Text(
+                                                note,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall
+                                                    ?.copyWith(
+                                                      color: scheme
+                                                          .onSurfaceVariant,
+                                                    ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                 ],
               ],
             ),
