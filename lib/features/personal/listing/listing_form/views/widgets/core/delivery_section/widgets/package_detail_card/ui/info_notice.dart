@@ -1,7 +1,7 @@
+// Moved from components/info_notice.dart
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-// Moved to ui/info_notice.dart
 class InfoNotice extends StatelessWidget {
   const InfoNotice({super.key});
 

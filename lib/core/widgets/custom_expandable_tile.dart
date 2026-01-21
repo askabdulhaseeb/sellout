@@ -12,6 +12,8 @@ class CustomExpandableTile extends StatefulWidget {
     this.initiallyExpanded = false,
     this.isExpanded,
     this.onExpansionChanged,
+    this.selectedOptionId,
+    this.onSelectOptionId,
     super.key,
   });
 
@@ -24,6 +26,9 @@ class CustomExpandableTile extends StatefulWidget {
   final bool initiallyExpanded;
   final bool? isExpanded;
   final void Function(bool)? onExpansionChanged;
+  // New: global selection
+  final String? selectedOptionId;
+  final void Function(String optionId)? onSelectOptionId;
 
   @override
   State<CustomExpandableTile> createState() => _CustomExpandableTileState();
@@ -33,14 +38,11 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
     with SingleTickerProviderStateMixin {
   late bool _isExpanded;
   late AnimationController _animationController;
-  late String? _selectedOptionId;
 
   @override
   void initState() {
     super.initState();
     _isExpanded = widget.isExpanded ?? widget.initiallyExpanded;
-    _selectedOptionId = null;
-
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
@@ -56,28 +58,30 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
 
   void _toggle() {
     final bool newValue = !_isExpanded;
-    // Update locally for immediate visual feedback
     setState(() => _isExpanded = newValue);
     if (_isExpanded) {
       _animationController.forward();
     } else {
       _animationController.reverse();
     }
-    // Notify parent to coordinate one-at-a-time expansion
     if (widget.onExpansionChanged != null) {
       widget.onExpansionChanged!(newValue);
     }
   }
 
   void _selectOption(Map<String, dynamic> option) {
-    setState(() => _selectedOptionId = option['id'] as String?);
+    final String? optionId = option['id'] as String?;
+    if (optionId != null && widget.onSelectOptionId != null) {
+      widget.onSelectOptionId!(optionId);
+    }
     widget.onOptionSelected?.call(option);
   }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    final bool hasSelection = _selectedOptionId != null;
+
+    final bool hasSelection = widget.selectedOptionId != null;
     final Color selectedColor = scheme.primary;
 
     return Container(
@@ -161,7 +165,7 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                             ) {
                               final String? optionId = opt['id'] as String?;
                               final bool isSelected =
-                                  _selectedOptionId == optionId;
+                                  widget.selectedOptionId == optionId;
                               final String label =
                                   opt['label'] as String? ?? '';
                               final String? note = opt['note'] as String?;

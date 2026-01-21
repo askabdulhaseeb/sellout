@@ -130,12 +130,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         RegExp(r'\.(png|jpg|jpeg)$', caseSensitive: false),
         '',
       );
-      final AssetEntity entity = await PhotoManager.editor.saveImage(
+      await PhotoManager.editor.saveImage(
         filename: safeTitle,
         pngBytes,
         title: safeTitle,
       );
-      return entity != null;
+      return true;
     } catch (e, st) {
       AppLog.error(
         'Failed to save invoice to gallery',
