@@ -121,7 +121,7 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                   : BorderRadius.zero,
             ),
           ),
-          Expanded(
+          Flexible(
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -132,6 +132,7 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                     vertical: AppSpacing.md,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,144 +173,183 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                       if (_isExpanded) ...<Widget>[
                         const SizedBox(height: AppSpacing.md),
                         if (widget.content != null)
-                          widget.content!
-                        else if (widget.options.isNotEmpty)
-                          Column(
-                            children: widget.options.map((
-                              Map<String, dynamic> opt,
-                            ) {
-                              final String? optionId = opt['id'] as String?;
-                              final bool isSelected =
-                                  selectedOptionId == optionId;
-                              final String label =
-                                  opt['label'] as String? ?? '';
-                              final String? note = opt['note'] as String?;
-                              final Color optionSelectedColor = scheme.primary;
-                              return Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: AppSpacing.vSm,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? optionSelectedColor.withValues(
-                                          alpha: 0.10,
-                                        )
-                                      : scheme.surface,
-                                  borderRadius: BorderRadius.circular(
-                                    AppSpacing.radiusSm,
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: <Widget>[
-                                    // Left wall for selected option
-                                    AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 200,
-                                      ),
-                                      width: isSelected ? 8 : 0,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? optionSelectedColor
-                                            : Colors.transparent,
-                                        borderRadius: isSelected
-                                            ? const BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                  AppSpacing.radiusSm,
-                                                ),
-                                                bottomLeft: Radius.circular(
-                                                  AppSpacing.radiusSm,
-                                                ),
-                                              )
-                                            : BorderRadius.zero,
-                                      ),
+                          // Wrap content in a scrollable with max height constraint
+                          LayoutBuilder(
+                            builder:
+                                (
+                                  BuildContext context,
+                                  BoxConstraints constraints,
+                                ) {
+                                  return ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: 300, // adjust as needed
                                     ),
-                                    Flexible(
-                                      fit: FlexFit.tight,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
+                                    child: SingleChildScrollView(
+                                      child: widget.content!,
+                                    ),
+                                  );
+                                },
+                          )
+                        else if (widget.options.isNotEmpty)
+                          LayoutBuilder(
+                            builder: (BuildContext context, BoxConstraints constraints) {
+                              return ConstrainedBox(
+                                constraints: BoxConstraints(maxHeight: 300),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: widget.options.map((
+                                      Map<String, dynamic> opt,
+                                    ) {
+                                      final String? optionId =
+                                          opt['id'] as String?;
+                                      final bool isSelected =
+                                          selectedOptionId == optionId;
+                                      final String label =
+                                          opt['label'] as String? ?? '';
+                                      final String? note =
+                                          opt['note'] as String?;
+                                      final Color optionSelectedColor =
+                                          scheme.primary;
+                                      return Container(
+                                        margin: const EdgeInsets.only(
+                                          bottom: AppSpacing.vSm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? optionSelectedColor.withValues(
+                                                  alpha: 0.10,
+                                                )
+                                              : scheme.surface,
                                           borderRadius: BorderRadius.circular(
                                             AppSpacing.radiusSm,
                                           ),
-                                          onTap: () => _selectOption(opt),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(
-                                              AppSpacing.sm,
-                                            ),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        top: AppSpacing.vSm,
-                                                        right: AppSpacing.sm,
-                                                      ),
-                                                  child: Icon(
-                                                    isSelected
-                                                        ? Icons
-                                                              .radio_button_checked
-                                                        : Icons
-                                                              .radio_button_off,
-                                                    size: 20,
-                                                    color: isSelected
-                                                        ? optionSelectedColor
-                                                        : scheme
-                                                              .onSurfaceVariant,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        label,
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: <Widget>[
+                                            // Left wall for selected option
+                                            AnimatedContainer(
+                                              duration: const Duration(
+                                                milliseconds: 200,
+                                              ),
+                                              width: isSelected ? 8 : 0,
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? optionSelectedColor
+                                                    : Colors.transparent,
+                                                borderRadius: isSelected
+                                                    ? const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(
+                                                              AppSpacing
+                                                                  .radiusSm,
                                                             ),
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                              AppSpacing
+                                                                  .radiusSm,
+                                                            ),
+                                                      )
+                                                    : BorderRadius.zero,
+                                              ),
+                                            ),
+                                            // Remove Flexible/Expanded here
+                                            Flexible(
+                                              child: Material(
+                                                color: Colors.transparent,
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        AppSpacing.radiusSm,
                                                       ),
-                                                      if (note != null &&
-                                                          note.isNotEmpty)
+                                                  onTap: () =>
+                                                      _selectOption(opt),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          AppSpacing.sm,
+                                                        ),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets.only(
                                                                 top: AppSpacing
-                                                                    .vXs,
+                                                                    .vSm,
+                                                                right:
+                                                                    AppSpacing
+                                                                        .sm,
                                                               ),
-                                                          child: Text(
-                                                            note,
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .bodySmall
-                                                                ?.copyWith(
-                                                                  color: scheme
+                                                          child: Icon(
+                                                            isSelected
+                                                                ? Icons
+                                                                      .radio_button_checked
+                                                                : Icons
+                                                                      .radio_button_off,
+                                                            size: 20,
+                                                            color: isSelected
+                                                                ? optionSelectedColor
+                                                                : scheme
                                                                       .onSurfaceVariant,
-                                                                ),
                                                           ),
                                                         ),
-                                                    ],
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              label,
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                            ),
+                                                            if (note != null &&
+                                                                note.isNotEmpty)
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(
+                                                                  top:
+                                                                      AppSpacing
+                                                                          .vXs,
+                                                                ),
+                                                                child: Text(
+                                                                  note,
+                                                                  style: Theme.of(context)
+                                                                      .textTheme
+                                                                      .bodySmall
+                                                                      ?.copyWith(
+                                                                        color: scheme
+                                                                            .onSurfaceVariant,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ),
-                                    ),
-                                  ],
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
                               );
-                            }).toList(),
+                            },
                           ),
                       ],
                     ],
