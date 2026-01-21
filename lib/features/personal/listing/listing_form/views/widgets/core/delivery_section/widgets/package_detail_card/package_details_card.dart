@@ -2,12 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../../../../core/widgets/expandable_tile.dart';
+import '../../../../../../../../../../core/widgets/custom_expandable_tile.dart';
 import '../../../../../providers/add_listing_form_provider.dart';
-import 'components/weight_section.dart';
+import 'ui/weight_section.dart';
 import 'logic/weight_unit_sync.dart';
+import 'data/package_presets.dart';
+import 'ui/inline_size_field.dart';
 
 class PackageDetailsCard extends StatefulWidget {
   const PackageDetailsCard({super.key});
@@ -52,19 +52,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     setState(() => _isKg = _weightSync.isKg);
   }
 
-  String groupBySize(List<dynamic> dims) {
-    final double volume =
-        (dims[0] as num).toDouble() *
-        (dims[1] as num).toDouble() *
-        (dims[2] as num).toDouble();
-    if (volume <= 2000) {
-      return 'small';
-    } else if (volume <= 50000) {
-      return 'medium';
-    } else {
-      return 'large';
-    }
-  }
+  // groupBySize now imported from logic/group_by_size.dart
 
   String? selectedDimsText() {
     final AddListingFormProvider formPro = _formPro;
@@ -91,94 +79,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     final AddListingFormProvider formPro = _formPro;
     final ColorScheme scheme = Theme.of(context).colorScheme;
 
-    // Define package presets with their options
-    final List<Map<String, dynamic>> packPresets = <Map<String, dynamic>>[
-      <String, dynamic>{
-        'id': 'small-parcel',
-        'title': tr('small_parcel'),
-        'subtitle': 'Up to 35 × 25 × 2.5 cm',
-        'icon': Icons.mail,
-        'options': <Map<String, dynamic>>[
-          <String, dynamic>{
-            'id': 'small-1kg',
-            'label': tr('up_to_1kg'),
-            'note': tr('small_1kg_examples'),
-            'dims': <num>[35, 25, 2.5],
-          },
-          <String, dynamic>{
-            'id': 'small-2kg',
-            'label': tr('up_to_2kg'),
-            'note': tr('small_2kg_examples'),
-            'dims': <num>[35, 25, 2.5],
-          },
-          <String, dynamic>{
-            'id': 'small-5kg',
-            'label': tr('up_to_5kg'),
-            'note': tr('small_5kg_examples'),
-            'dims': <num>[35, 25, 2.5],
-          },
-        ],
-      },
-      <String, dynamic>{
-        'id': 'medium-parcel',
-        'title': tr('medium_parcel'),
-        'subtitle': 'Up to 45 × 35 × 16 cm',
-        'icon': Icons.inventory_2,
-        'options': <Map<String, dynamic>>[
-          <String, dynamic>{
-            'id': 'medium-1kg',
-            'label': tr('up_to_1kg'),
-            'note': tr('medium_1kg_examples'),
-            'dims': <num>[45, 35, 16],
-          },
-          <String, dynamic>{
-            'id': 'medium-2kg',
-            'label': tr('up_to_2kg'),
-            'note': tr('medium_2kg_examples'),
-            'dims': <num>[45, 35, 16],
-          },
-          <String, dynamic>{
-            'id': 'medium-5kg',
-            'label': tr('up_to_5kg'),
-            'note': tr('medium_5kg_examples'),
-            'dims': <num>[45, 35, 16],
-          },
-        ],
-      },
-      <String, dynamic>{
-        'id': 'large-parcel',
-        'title': tr('large_parcel'),
-        'subtitle': 'Up to 61 × 46 × 46 cm',
-        'icon': Icons.local_shipping,
-        'options': <Map<String, dynamic>>[
-          <String, dynamic>{
-            'id': 'large-1kg',
-            'label': tr('up_to_1kg'),
-            'note': tr('large_1kg_examples'),
-            'dims': <num>[61, 46, 46],
-          },
-          <String, dynamic>{
-            'id': 'large-2kg',
-            'label': tr('up_to_2kg'),
-            'note': tr('large_2kg_examples'),
-            'dims': <num>[61, 46, 46],
-          },
-          <String, dynamic>{
-            'id': 'large-5kg',
-            'label': tr('up_to_5kg'),
-            'note': tr('large_5kg_examples'),
-            'dims': <num>[61, 46, 46],
-          },
-          <String, dynamic>{
-            'id': 'large-10kg',
-            'label': tr('up_to_10kg'),
-            'note': tr('large_10kg_examples'),
-            'dims': <num>[61, 46, 46],
-          },
-        ],
-      },
-    ];
-
+    // Use packagePresets from data/package_presets.dart and localize keys inline
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -205,17 +106,24 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  ...packPresets.asMap().entries.map((
+                  ...packagePresets.asMap().entries.map((
                     MapEntry<int, Map<String, dynamic>> entry,
                   ) {
                     final int index = entry.key;
                     final Map<String, dynamic> preset = entry.value;
                     final String tileId = 'preset-$index';
                     return CustomExpandableTile(
-                      title: preset['title'] as String,
+                      title: tr(preset['titleKey'] as String),
                       subtitle: preset['subtitle'] as String,
-                      icon: preset['icon'] as IconData,
-                      options: preset['options'] as List<Map<String, dynamic>>,
+                      icon: _iconFromString(preset['icon'] as String),
+                      options: (preset['options'] as List<dynamic>).map((opt) {
+                        final option = Map<String, dynamic>.from(opt as Map);
+                        return {
+                          ...option,
+                          'label': tr(option['labelKey'] as String),
+                          'note': tr(option['noteKey'] as String),
+                        };
+                      }).toList(),
                       isExpanded: _expandedTileId == tileId,
                       onExpansionChanged: (bool expanded) {
                         setState(() {
@@ -257,7 +165,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                           children: <Widget>[
                             Flexible(
                               flex: 1,
-                              child: _InlineSizeField(
+                              child: InlineSizeField(
                                 labelKey: 'length',
                                 controller: formPro.packageLength,
                                 formPro: formPro,
@@ -266,7 +174,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                             const SizedBox(width: AppSpacing.hXs),
                             Flexible(
                               flex: 1,
-                              child: _InlineSizeField(
+                              child: InlineSizeField(
                                 labelKey: 'width',
                                 controller: formPro.packageWidth,
                                 formPro: formPro,
@@ -275,7 +183,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                             const SizedBox(width: AppSpacing.hXs),
                             Flexible(
                               flex: 1,
-                              child: _InlineSizeField(
+                              child: InlineSizeField(
                                 labelKey: 'height',
                                 controller: formPro.packageHeight,
                                 formPro: formPro,
@@ -294,48 +202,17 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
       ],
     );
   }
-}
 
-class _InlineSizeField extends StatelessWidget {
-  const _InlineSizeField({
-    required this.labelKey,
-    required this.controller,
-    required this.formPro,
-  });
-
-  final String labelKey;
-  final TextEditingController controller;
-  final AddListingFormProvider formPro;
-
-  @override
-  Widget build(BuildContext context) {
-    String? validator(String? value) {
-      if (formPro.deliveryType != DeliveryType.paid &&
-          formPro.deliveryType != DeliveryType.freeDelivery) {
-        return null;
-      }
-      final String input = (value ?? '').trim();
-      if (input.isEmpty) return AppValidator.isEmpty(input);
-      final double? v = double.tryParse(input.replaceAll(',', '.'));
-      if (v == null || v <= 0) return 'invalid_value'.tr();
-      return null;
+  IconData _iconFromString(String iconName) {
+    switch (iconName) {
+      case 'mail':
+        return Icons.mail;
+      case 'inventory_2':
+        return Icons.inventory_2;
+      case 'local_shipping':
+        return Icons.local_shipping;
+      default:
+        return Icons.help_outline;
     }
-
-    return TextFormField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: tr(labelKey),
-        suffixText: tr('cm'),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.vSm,
-        ),
-      ),
-    );
   }
 }

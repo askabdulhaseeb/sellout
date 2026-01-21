@@ -1,9 +1,9 @@
+// Moved from components/size_category_tile.dart
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 
-// Moved to ui/size_category_tile.dart
 class SizeCategoryTile extends StatelessWidget {
   const SizeCategoryTile({
     required this.label,
@@ -46,7 +46,7 @@ class SizeCategoryTile extends StatelessWidget {
                 margin: EdgeInsets.zero,
                 isLoading: false,
                 bgColor: selected
-                    ? scheme.primary.withValues(alpha: 0.12)
+                    ? scheme.primary.withAlpha(30)
                     : Colors.transparent,
                 border: Border.all(color: scheme.outline),
                 title: '${preset["label"]} (${dims.join("×")} ${tr("cm")})',
