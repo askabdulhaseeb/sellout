@@ -32,8 +32,10 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
   void initState() {
     super.initState();
 
-    final SendMessageProvider provider =
-        Provider.of<SendMessageProvider>(context, listen: false);
+    final SendMessageProvider provider = Provider.of<SendMessageProvider>(
+      context,
+      listen: false,
+    );
     // First fetch
     WidgetsBinding.instance.addPostFrameCallback((_) {
       provider.resetUserSearch();
@@ -41,8 +43,10 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
     });
 
     _scrollController.addListener(() {
-      final SendMessageProvider provider =
-          Provider.of<SendMessageProvider>(context, listen: false);
+      final SendMessageProvider provider = Provider.of<SendMessageProvider>(
+        context,
+        listen: false,
+      );
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 100 &&
           provider.hasMoreUsers &&
@@ -55,8 +59,10 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () async {
-      final SendMessageProvider provider =
-          Provider.of<SendMessageProvider>(context, listen: false);
+      final SendMessageProvider provider = Provider.of<SendMessageProvider>(
+        context,
+        listen: false,
+      );
       provider.resetUserSearch();
       provider.searchUsers(query);
       if (_selectedUser != null && !provider.users.contains(_selectedUser)) {
@@ -75,13 +81,15 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
 
   @override
   Widget build(BuildContext context) {
-    final SendMessageProvider msgPro =
-        Provider.of<SendMessageProvider>(context);
+    final SendMessageProvider msgPro = Provider.of<SendMessageProvider>(
+      context,
+    );
     final List<UserEntity> users = msgPro.users;
 
     return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -104,8 +112,10 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
             Center(
               child: EmptyPageWidget(
                 icon: Icons.person_off_rounded,
-                childBelow: Text('no_results'.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium),
+                childBelow: Text(
+                  'no_results'.tr(),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ),
           Expanded(
@@ -135,9 +145,9 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Theme.of(context)
-                              .primaryColor
-                              .withValues(alpha: 0.1)
+                          ? Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.1)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
@@ -172,14 +182,13 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
                               const SizedBox(height: 2),
                               Text(
                                 user.username,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
+                                style: Theme.of(context).textTheme.labelMedium
                                     ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withOpacity(0.6)),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
+                                    ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -201,10 +210,9 @@ class _ContactsBottomSheetViewState extends State<ContactsBottomSheetView> {
                 title: 'send'.tr(),
                 onTap: () async {
                   final File file = await createUserVcf(_selectedUser!);
-                  msgPro.addContact(PickedAttachment(
-                    type: AttachmentType.contacts,
-                    file: file,
-                  ));
+                  msgPro.addContact(
+                    PickedAttachment(type: AttachmentType.contacts, file: file),
+                  );
                   msgPro.sendContact(context);
                 },
               ),

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-// Requires 'html' package in pubspec.yaml
 import 'package:html/dom.dart' hide Text;
 import 'package:html/parser.dart' as html_parser;
 
