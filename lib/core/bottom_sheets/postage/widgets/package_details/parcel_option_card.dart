@@ -6,16 +6,11 @@ import 'package_details_widget.dart';
 /// Card widget for a single parcel option
 /// Can be expanded/collapsed to show custom fields if needed
 class ParcelOptionCard extends StatefulWidget {
-  const ParcelOptionCard({
-    required this.parcel,
-    required this.isSelected,
-    required this.onSelected,
-    super.key,
-  });
+  const ParcelOptionCard({required this.parcel, super.key});
 
   final ParcelOption parcel;
-  final bool isSelected;
-  final VoidCallback onSelected;
+
+  // Removed isSelected and onSelected properties
 
   @override
   State<ParcelOptionCard> createState() => _ParcelOptionCardState();
@@ -61,7 +56,13 @@ class _ParcelOptionCardState extends State<ParcelOptionCard>
         }
       });
     } else {
-      widget.onSelected();
+      // Use RadioGroup context to select
+      final RadioGroupRegistry<String>? radioGroup = RadioGroup.maybeOf<String>(
+        context,
+      );
+      if (radioGroup != null) {
+        radioGroup.onChanged.call(widget.parcel.id);
+      }
     }
   }
 
@@ -70,6 +71,10 @@ class _ParcelOptionCardState extends State<ParcelOptionCard>
     return AnimatedBuilder(
       animation: _expandController,
       builder: (BuildContext context, Widget? child) {
+        // Use RadioGroup context to determine selection
+        final RadioGroupRegistry<String>? radioGroup =
+            RadioGroup.maybeOf<String>(context);
+        final bool isSelected = radioGroup?.groupValue == widget.parcel.id;
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -80,10 +85,10 @@ class _ParcelOptionCardState extends State<ParcelOptionCard>
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: widget.isSelected
+                      color: isSelected
                           ? Theme.of(context).primaryColor
                           : Colors.grey.shade300,
-                      width: widget.isSelected ? 2 : 1,
+                      width: isSelected ? 2 : 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -126,11 +131,7 @@ class _ParcelOptionCardState extends State<ParcelOptionCard>
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         )
                       else
-                        Radio<bool>(
-                          value: true,
-                          groupValue: widget.isSelected,
-                          onChanged: (_) => widget.onSelected(),
-                        ),
+                        Radio<String>(value: widget.parcel.id),
                     ],
                   ),
                 ),
