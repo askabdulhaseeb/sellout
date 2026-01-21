@@ -45,7 +45,8 @@ class DeliveryPayerToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        CustomToggleSwitch<DeliveryPayer>(bgColor: ColorScheme.of(context).outlineVariant,
+        CustomToggleSwitch<DeliveryPayer>(
+          bgColor: ColorScheme.of(context).outlineVariant,
           verticalMargin: 4,
           horizontalMargin: 4,
           initialValue: selectedPayer,

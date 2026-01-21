@@ -41,6 +41,7 @@ dependencies:
   flutter_sound: ^9.30.0
   audio_waveforms: ^2.0.0
   just_audio: ^0.10.5
+  expandable: ^5.0.1
 
   syncfusion_flutter_calendar: ^31.2.15
 
