@@ -21,7 +21,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
   late final VoidCallback _onDimsChanged;
   late final AddListingFormProvider _formPro;
   late final WeightUnitSync _weightSync;
-  String? _expandedTileId;
+  String? _selectedOptionId;
 
   @override
   void initState() {
@@ -33,7 +33,6 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     _formPro.packageLength.addListener(_onDimsChanged);
     _formPro.packageWidth.addListener(_onDimsChanged);
     _formPro.packageHeight.addListener(_onDimsChanged);
-    // keep _isKg in sync with helper
     _isKg = _weightSync.isKg;
   }
 
@@ -52,34 +51,101 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     setState(() => _isKg = _weightSync.isKg);
   }
 
-  // groupBySize now imported from logic/group_by_size.dart
-
-  String? selectedDimsText() {
-    final AddListingFormProvider formPro = _formPro;
-    if (formPro.packageLength.text.isEmpty ||
-        formPro.packageWidth.text.isEmpty ||
-        formPro.packageHeight.text.isEmpty) {
-      return null;
-    }
-    return '${formPro.packageLength.text} × ${formPro.packageWidth.text} × ${formPro.packageHeight.text} cm';
-  }
-
-  String? matchedPresetLabel() {
-    final AddListingFormProvider formPro = _formPro;
-    if (formPro.packageLength.text.isEmpty ||
-        formPro.packageWidth.text.isEmpty ||
-        formPro.packageHeight.text.isEmpty) {
-      return null;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final AddListingFormProvider formPro = _formPro;
     final ColorScheme scheme = Theme.of(context).colorScheme;
 
-    // Use packagePresets from data/package_presets.dart and localize keys inline
+    // Build items for CustomExpandableTileGroup
+    final List<ExpandableTileItem> items = <ExpandableTileItem>[
+      ...packagePresets
+          .asMap()
+          .entries
+          .where((MapEntry<int, Map<String, dynamic>> entry) {
+            return entry.value['options'] != null;
+          })
+          .map((MapEntry<int, Map<String, dynamic>> entry) {
+            final Map<String, dynamic> preset = entry.value;
+            final String tileId =
+                preset['id'] as String? ?? 'preset-${entry.key}';
+            final List<dynamic> options =
+                preset['options'] as List<dynamic>? ?? <dynamic>[];
+            final bool tileHasSelectedOption = options.asMap().entries.any((
+              optEntry,
+            ) {
+              final String optionId = '$tileId-${optEntry.key}';
+              return optionId == _selectedOptionId;
+            });
+            return ExpandableTileItem(
+              id: tileId,
+              title: tr(preset['titleKey'] as String? ?? ''),
+              subtitle: preset['subtitle'] as String?,
+              icon: _iconFromString(preset['icon'] as String? ?? ''),
+              initiallyExpanded: entry.key == 0,
+              isSelected: tileHasSelectedOption,
+              body: (BuildContext context) {
+                return _buildPresetOptions(
+                  context,
+                  preset,
+                  formPro,
+                  scheme,
+                  tileId,
+                );
+              },
+            );
+          }),
+      ExpandableTileItem(
+        id: 'custom',
+        title: tr('custom_parcel'),
+        subtitle: null,
+        icon: Icons.edit_note,
+        body: (BuildContext context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              WeightSection(
+                controller: _weightSync.displayController,
+                isKg: _isKg,
+                onToggleUnit: (bool toKg) => _toggleUnit(formPro, toKg),
+              ),
+              const SizedBox(height: AppSpacing.vSm),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Flexible(
+                    flex: 1,
+                    child: InlineSizeField(
+                      labelKey: 'length',
+                      controller: formPro.packageLength,
+                      formPro: formPro,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.hXs),
+                  Flexible(
+                    flex: 1,
+                    child: InlineSizeField(
+                      labelKey: 'width',
+                      controller: formPro.packageWidth,
+                      formPro: formPro,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.hXs),
+                  Flexible(
+                    flex: 1,
+                    child: InlineSizeField(
+                      labelKey: 'height',
+                      controller: formPro.packageHeight,
+                      formPro: formPro,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -100,106 +166,60 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             border: Border.all(color: scheme.outline),
           ),
           padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Column(
-            spacing: AppSpacing.vSm,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  ...packagePresets.asMap().entries.map((
-                    MapEntry<int, Map<String, dynamic>> entry,
-                  ) {
-                    final int index = entry.key;
-                    final Map<String, dynamic> preset = entry.value;
-                    final String tileId = 'preset-$index';
-                    return CustomExpandableTile(
-                      title: tr(preset['titleKey'] as String),
-                      subtitle: preset['subtitle'] as String,
-                      icon: _iconFromString(preset['icon'] as String),
-                      options: (preset['options'] as List<dynamic>).map((opt) {
-                        final option = Map<String, dynamic>.from(opt as Map);
-                        return {
-                          ...option,
-                          'label': tr(option['labelKey'] as String),
-                          'note': tr(option['noteKey'] as String),
-                        };
-                      }).toList(),
-                      isExpanded: _expandedTileId == tileId,
-                      onExpansionChanged: (bool expanded) {
-                        setState(() {
-                          _expandedTileId = expanded ? tileId : null;
-                        });
-                      },
-                      onOptionSelected: (Map<String, dynamic> option) {
-                        final List<dynamic> dims =
-                            option['dims'] as List<dynamic>;
-                        formPro.packageLength.text = dims[0].toString();
-                        formPro.packageWidth.text = dims[1].toString();
-                        formPro.packageHeight.text = dims[2].toString();
-                      },
-                    );
-                  }),
-                  CustomExpandableTile(
-                    title: tr('custom_parcel'),
-                    subtitle: '',
-                    icon: Icons.edit_note,
-                    options: const <Map<String, dynamic>>[],
-                    isExpanded: _expandedTileId == 'custom',
-                    onExpansionChanged: (bool expanded) {
-                      setState(() {
-                        _expandedTileId = expanded ? 'custom' : null;
-                      });
-                    },
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        WeightSection(
-                          controller: _weightSync.displayController,
-                          isKg: _isKg,
-                          onToggleUnit: (bool toKg) =>
-                              _toggleUnit(formPro, toKg),
-                        ),
-                        const SizedBox(height: AppSpacing.vSm),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              flex: 1,
-                              child: InlineSizeField(
-                                labelKey: 'length',
-                                controller: formPro.packageLength,
-                                formPro: formPro,
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.hXs),
-                            Flexible(
-                              flex: 1,
-                              child: InlineSizeField(
-                                labelKey: 'width',
-                                controller: formPro.packageWidth,
-                                formPro: formPro,
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.hXs),
-                            Flexible(
-                              flex: 1,
-                              child: InlineSizeField(
-                                labelKey: 'height',
-                                controller: formPro.packageHeight,
-                                formPro: formPro,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          child: CustomExpandableTileGroup(items: items),
         ),
       ],
+    );
+  }
+
+  Widget _buildPresetOptions(
+    BuildContext context,
+    Map<String, dynamic> preset,
+    AddListingFormProvider formPro,
+    ColorScheme scheme,
+    String tileId,
+  ) {
+    final List<dynamic> options =
+        preset['options'] as List<dynamic>? ?? <dynamic>[];
+
+    return Column(
+      children: options.asMap().entries.map((optEntry) {
+        final int optIndex = optEntry.key;
+        final Map<String, dynamic> option = Map<String, dynamic>.from(
+          optEntry.value as Map,
+        );
+        final String optionId = '$tileId-$optIndex';
+        final bool isSelected = _selectedOptionId == optionId;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: scheme.outlineVariant),
+          ),
+          child: ListTile(
+            onTap: () {
+              setState(() {
+                _selectedOptionId = optionId;
+              });
+              final List<dynamic>? dims = option['dims'] as List<dynamic>?;
+              if (dims != null && dims.length >= 3) {
+                formPro.packageLength.text = dims[0].toString();
+                formPro.packageWidth.text = dims[1].toString();
+                formPro.packageHeight.text = dims[2].toString();
+              }
+            },
+            leading: Icon(
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected ? scheme.primary : scheme.outlineVariant,
+            ),
+            title: Text(tr(option['labelKey'] as String? ?? '')),
+            subtitle: Text(tr(option['noteKey'] as String? ?? '')),
+          ),
+        );
+      }).toList(),
     );
   }
 
