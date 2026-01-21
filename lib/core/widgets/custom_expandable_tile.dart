@@ -69,11 +69,20 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
     }
   }
 
+  String? _localSelectedOptionId;
+
   void _selectOption(Map<String, dynamic> option) {
     final String? optionId = option['id'] as String?;
-    if (optionId != null && widget.onSelectOptionId != null) {
-      widget.onSelectOptionId!(optionId);
+    if (optionId != null) {
+      if (widget.onSelectOptionId != null) {
+        widget.onSelectOptionId!(optionId);
+      } else {
+        setState(() {
+          _localSelectedOptionId = optionId;
+        });
+      }
     }
+    setState(() {});
     widget.onOptionSelected?.call(option);
   }
 
@@ -81,7 +90,9 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
 
-    final bool hasSelection = widget.selectedOptionId != null;
+    final String? selectedOptionId =
+        widget.selectedOptionId ?? _localSelectedOptionId;
+    final bool hasSelection = selectedOptionId != null;
     final Color selectedColor = scheme.primary;
 
     return Container(
@@ -169,7 +180,7 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                             ) {
                               final String? optionId = opt['id'] as String?;
                               final bool isSelected =
-                                  widget.selectedOptionId == optionId;
+                                  selectedOptionId == optionId;
                               final String label =
                                   opt['label'] as String? ?? '';
                               final String? note = opt['note'] as String?;
@@ -189,6 +200,8 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                                   ),
                                 ),
                                 child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: <Widget>[
                                     // Left wall for selected option
                                     AnimatedContainer(
@@ -212,7 +225,8 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                                             : BorderRadius.zero,
                                       ),
                                     ),
-                                    Expanded(
+                                    Flexible(
+                                      fit: FlexFit.tight,
                                       child: Material(
                                         color: Colors.transparent,
                                         child: InkWell(

@@ -49,7 +49,7 @@ class CustomMemoryImage extends StatelessWidget {
             height: size,
             gaplessPlayback: true,
             filterQuality: FilterQuality.high,
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (_, _, _) {
               return _buildInitials(backgroundColor, initialsStyle);
             },
             frameBuilder: (BuildContext context, Widget child, int? frame,
