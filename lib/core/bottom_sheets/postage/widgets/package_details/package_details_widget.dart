@@ -74,33 +74,33 @@ class PackageDetailsWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: standardParcels.length + 1, // +1 for custom parcel
-          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (BuildContext context, int index) {
-            if (index < standardParcels.length) {
-              final ParcelOption parcel = standardParcels[index];
-              return ParcelOptionCard(
-                parcel: parcel,
-                isSelected: selectedParcelId == parcel.id,
-                onSelected: () => onParcelSelected(parcel.id),
-              );
-            } else {
-              // Custom Parcel option
-              return ParcelOptionCard(
-                parcel: const ParcelOption(
-                  id: 'custom',
-                  label: 'custom_parcel',
-                  dimensions: 'custom_dimensions',
-                  icon: Icons.edit,
-                ),
-                isSelected: selectedParcelId == 'custom',
-                onSelected: onCustomParcelSelected,
-              );
-            }
+        RadioGroup<String>(
+          groupValue: selectedParcelId,
+          onChanged: (String? id) {
+            if (id != null) onParcelSelected(id);
           },
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: standardParcels.length + 1, // +1 for custom parcel
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (BuildContext context, int index) {
+              if (index < standardParcels.length) {
+                final ParcelOption parcel = standardParcels[index];
+                return ParcelOptionCard(parcel: parcel);
+              } else {
+                // Custom Parcel option
+                return ParcelOptionCard(
+                  parcel: const ParcelOption(
+                    id: 'custom',
+                    label: 'custom_parcel',
+                    dimensions: 'custom_dimensions',
+                    icon: Icons.edit,
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ],
     );

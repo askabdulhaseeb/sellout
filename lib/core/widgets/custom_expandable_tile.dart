@@ -87,25 +87,29 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
     return Container(
       decoration: BoxDecoration(
         color: hasSelection
-            ? selectedColor.withValues(alpha: 0.05)
+            ? selectedColor.withValues(alpha: 0.08)
             : Colors.transparent,
         border: Border(
           bottom: BorderSide(color: scheme.outline.withAlpha(128)),
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (hasSelection)
-            Container(
-              width: 4,
-              decoration: BoxDecoration(
-                color: selectedColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(AppSpacing.radiusSm),
-                  bottomLeft: Radius.circular(AppSpacing.radiusSm),
-                ),
-              ),
+          // Left wall highlight for selected
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: hasSelection ? 8 : 0,
+            decoration: BoxDecoration(
+              color: hasSelection ? selectedColor : Colors.transparent,
+              borderRadius: hasSelection
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(AppSpacing.radiusSm),
+                      bottomLeft: Radius.circular(AppSpacing.radiusSm),
+                    )
+                  : BorderRadius.zero,
             ),
+          ),
           Expanded(
             child: Material(
               color: Colors.transparent,
@@ -177,36 +181,37 @@ class _CustomExpandableTileState extends State<CustomExpandableTile>
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? optionSelectedColor.withValues(
-                                          alpha: 0.06,
+                                          alpha: 0.10,
                                         )
                                       : scheme.surface,
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? optionSelectedColor
-                                        : scheme.outline,
-                                    width: isSelected ? 2 : 1,
-                                  ),
                                   borderRadius: BorderRadius.circular(
                                     AppSpacing.radiusSm,
                                   ),
                                 ),
                                 child: Row(
                                   children: <Widget>[
-                                    if (isSelected)
-                                      Container(
-                                        width: 4,
-                                        decoration: BoxDecoration(
-                                          color: optionSelectedColor,
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(
-                                              AppSpacing.radiusSm,
-                                            ),
-                                            bottomLeft: Radius.circular(
-                                              AppSpacing.radiusSm,
-                                            ),
-                                          ),
-                                        ),
+                                    // Left wall for selected option
+                                    AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 200,
                                       ),
+                                      width: isSelected ? 8 : 0,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? optionSelectedColor
+                                            : Colors.transparent,
+                                        borderRadius: isSelected
+                                            ? const BorderRadius.only(
+                                                topLeft: Radius.circular(
+                                                  AppSpacing.radiusSm,
+                                                ),
+                                                bottomLeft: Radius.circular(
+                                                  AppSpacing.radiusSm,
+                                                ),
+                                              )
+                                            : BorderRadius.zero,
+                                      ),
+                                    ),
                                     Expanded(
                                       child: Material(
                                         color: Colors.transparent,

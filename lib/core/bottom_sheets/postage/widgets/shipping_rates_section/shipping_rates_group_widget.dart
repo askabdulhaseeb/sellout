@@ -141,7 +141,7 @@ class _ShippingRatesGroupWidgetState extends State<ShippingRatesGroupWidget> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: providers.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (BuildContext context, int index) {
         final String provider = providers[index];
         final List<RateEntity> providerRates = _groupedRates[provider]!;
