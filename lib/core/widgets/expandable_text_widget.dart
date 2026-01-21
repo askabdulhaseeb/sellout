@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+// Requires 'html' package in pubspec.yaml
 import 'package:html/dom.dart' hide Text;
 import 'package:html/parser.dart' as html_parser;
 
@@ -39,8 +39,8 @@ class _ExpandableTextState extends State<ExpandableText> {
       text: TextSpan(
         text: displayedText,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
-            ),
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
+        ),
         children: <TextSpan>[
           if (isLong)
             TextSpan(
@@ -66,15 +66,12 @@ class _ExpandableTextState extends State<ExpandableText> {
     final String plainText = document.body?.text ?? widget.text;
 
     if (!isLong) {
-      // If text is short, show full HTML
-      return Html(
-        data: widget.text,
-        style: <String, Style>{
-          'body': Style(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
-            fontSize: FontSize.medium,
-          ),
-        },
+      // If text is short, show plain text (no HTML rendering)
+      return Text(
+        plainText,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
+        ),
       );
     }
 
@@ -88,8 +85,8 @@ class _ExpandableTextState extends State<ExpandableText> {
         text: TextSpan(
           text: '$displayedText... ',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
-              ),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
+          ),
           children: <InlineSpan>[
             TextSpan(
               text: 'show_more'.tr(),
@@ -108,18 +105,15 @@ class _ExpandableTextState extends State<ExpandableText> {
         ),
       );
     } else {
-      // Expanded mode: full HTML
+      // Expanded mode: show full plain text (no HTML rendering)
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Html(
-            data: widget.text,
-            style: <String, Style>{
-              'body': Style(
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
-                fontSize: FontSize.medium,
-              ),
-            },
+          Text(
+            plainText,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(900),
+            ),
           ),
           GestureDetector(
             onTap: () {

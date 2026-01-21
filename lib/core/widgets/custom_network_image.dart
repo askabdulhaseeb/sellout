@@ -24,8 +24,8 @@ class CustomNetworkImage extends StatelessWidget {
     final String placeholderText = placeholder.isEmpty
         ? ''
         : placeholder.length > 1
-            ? placeholder.substring(0, 2)
-            : placeholder;
+        ? placeholder.substring(0, 2)
+        : placeholder;
 
     if (imageURL == null || imageURL!.isEmpty) {
       return Container(
@@ -45,12 +45,12 @@ class CustomNetworkImage extends StatelessWidget {
       fit: fit,
       height: size,
       width: size,
-      placeholder: (_, __) => Container(
+      placeholder: (_, _) => Container(
         height: size,
         width: size,
         color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
       ),
-      errorWidget: (_, __, ___) => Container(
+      errorWidget: (_, _, _) => Container(
         height: size,
         width: size,
         alignment: Alignment.center,

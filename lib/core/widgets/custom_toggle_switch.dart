@@ -100,7 +100,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
       ),
       child: Row(
         spacing: AppSpacing.hSm,
-        children: List.generate(labels.length, (int index) {
+        children: List<Widget>.generate(labels.length, (int index) {
           final T labelValue = labels[index];
           final bool isSelected = labelValue == initialValue;
           final Color selectedColor = _getSelectedColor(index, context);
