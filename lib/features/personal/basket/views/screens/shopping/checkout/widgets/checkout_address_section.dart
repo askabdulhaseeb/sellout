@@ -51,8 +51,7 @@ class SimpleCheckoutAddressSectionState
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
-      builder: (_, CartProvider cartPro, __) {
-        // Set default address if not set and available in LocalAuth
+      builder: (_, CartProvider cartPro, _) {
         if (cartPro.address == null &&
             LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address.isNotEmpty) {
