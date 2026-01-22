@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'widgets/checkout_address_section.dart';
-import 'widgets/checkout_postage_section.dart';
 import 'widgets/cart_items_list.dart';
 
 class CheckoutPage extends StatefulWidget {
