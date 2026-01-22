@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_spacings.dart';
+
 class ShadowContainer extends StatelessWidget {
   const ShadowContainer({
     required this.child,
@@ -44,7 +46,7 @@ class ShadowContainer extends StatelessWidget {
                     : Colors.transparent,
               ),
               color: color ?? Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: borderRadius ?? BorderRadius.circular(8),
+              borderRadius: borderRadius ?? BorderRadius.circular(AppSpacing.radiusSm),
               boxShadow: showShadow
                   ? boxShadow ??
                         <BoxShadow>[
