@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../../../post/domain/entities/post/post_entity.dart';
@@ -8,9 +9,8 @@ import '../../../../../../../data/sources/local/local_cart.dart';
 import 'cart_delivery_pickup_toggle.dart';
 
 class CartItemTile extends StatefulWidget {
-  final CartItemEntity item;
-
   const CartItemTile({required this.item, super.key});
+  final CartItemEntity item;
 
   @override
   State<CartItemTile> createState() => _CartItemTileState();
@@ -86,7 +86,11 @@ class _CartItemTileState extends State<CartItemTile> {
             ),
           ),
           const SizedBox(width: AppSpacing.md),
-          const CartDeliveryPickupToggle(),
+          CartDeliveryPickupToggle(
+            showText: false,
+            value: PostageType.postageOnly,
+            onChanged: (PostageType value) {},
+          ),
         ],
       ),
     );
@@ -148,7 +152,12 @@ class _CartItemTileState extends State<CartItemTile> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const CartDeliveryPickupToggle(),
+                CartDeliveryPickupToggle(
+                  value: PostageType.postageOnly,
+                  onChanged: (PostageType value) {
+                    // TODO: Handle postage type change
+                  },
+                ),
               ],
             ),
           ),
