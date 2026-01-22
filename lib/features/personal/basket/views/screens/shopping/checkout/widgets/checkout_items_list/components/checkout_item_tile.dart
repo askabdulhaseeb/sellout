@@ -2,58 +2,47 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../data/sources/local/local_cart.dart';
 import '../../../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../../../../../user/profiles/data/sources/local/local_user.dart';
-import '../../../../../../../data/sources/local/local_cart.dart';
-import 'cart_delivery_pickup_toggle.dart';
+import 'checkout_delivery_pickup_toggle.dart';
 
-class CartItemTile extends StatefulWidget {
-  const CartItemTile({required this.item, super.key});
+class CheckoutItemTile extends StatefulWidget {
+  const CheckoutItemTile({required this.item, super.key});
   final CartItemEntity item;
 
   @override
-  State<CartItemTile> createState() => _CartItemTileState();
+  State<CheckoutItemTile> createState() => _CheckoutItemTileState();
 }
 
-class _CartItemTileState extends State<CartItemTile> {
-  late Future<(PostEntity?, UserEntity?)> _loadFuture;
+class _CheckoutItemTileState extends State<CheckoutItemTile> {
+  late Future<PostEntity?> _postFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadFuture = _loadPostAndSeller(widget.item.postID);
-  }
-
-  Future<(PostEntity?, UserEntity?)> _loadPostAndSeller(String postId) async {
-    final PostEntity? post = await LocalPost().getPost(postId);
-    final UserEntity? seller = await LocalUser().user(post?.createdBy ?? '');
-    return (post, seller);
+    _postFuture = LocalPost().getPost(widget.item.postID);
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    return FutureBuilder<(PostEntity?, UserEntity?)>(
-      future: _loadFuture,
-      builder:
-          (
-            BuildContext context,
-            AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot,
-          ) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildSkeleton();
-            }
-            final PostEntity? post = snapshot.data?.$1;
-            return _buildCartTile(post, textTheme);
-          },
+    return FutureBuilder<PostEntity?>(
+      future: _postFuture,
+      builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildSkeleton(colorScheme);
+        }
+
+        final PostEntity? post = snapshot.data;
+        return _buildCartTile(post, textTheme, colorScheme);
+      },
     );
   }
 
-  Widget _buildSkeleton() {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
+  Widget _buildSkeleton(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
@@ -86,7 +75,7 @@ class _CartItemTileState extends State<CartItemTile> {
             ),
           ),
           const SizedBox(width: AppSpacing.md),
-          CartDeliveryPickupToggle(
+          CheckoutDeliveryPickupToggle(
             showText: false,
             value: PostageType.postageOnly,
             onChanged: (PostageType value) {},
@@ -96,10 +85,11 @@ class _CartItemTileState extends State<CartItemTile> {
     );
   }
 
-  Widget _buildCartTile(PostEntity? post, TextTheme textTheme) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
+  Widget _buildCartTile(
+    dynamic post,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -152,7 +142,7 @@ class _CartItemTileState extends State<CartItemTile> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                CartDeliveryPickupToggle(
+                CheckoutDeliveryPickupToggle(
                   value: PostageType.postageOnly,
                   onChanged: (PostageType value) {
                     // TODO: Handle postage type change

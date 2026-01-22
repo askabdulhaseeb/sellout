@@ -1,10 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../../../../../../core/enums/listing/core/postage_type.dart';
 
-class CartDeliveryPickupToggle extends StatelessWidget {
-  const CartDeliveryPickupToggle({
+class CheckoutDeliveryPickupToggle extends StatelessWidget {
+  const CheckoutDeliveryPickupToggle({
     required this.value,
     required this.onChanged,
     this.isLoading = false,
@@ -39,7 +38,7 @@ class CartDeliveryPickupToggle extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: ColorScheme.of(context).outline,
         border: Border.all(color: ColorScheme.of(context).outline, width: 1.2),
         borderRadius: BorderRadius.circular(8),
       ),
@@ -55,7 +54,9 @@ class CartDeliveryPickupToggle extends StatelessWidget {
                 vertical: buttonPaddingV,
               ),
               decoration: BoxDecoration(
-                color: isDeliveryLoading ? Colors.white : Colors.transparent,
+                color: isDeliveryLoading
+                    ? ColorScheme.of(context).surface
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(borderRadius),
                 boxShadow: isDeliveryLoading
                     ? <BoxShadow>[
