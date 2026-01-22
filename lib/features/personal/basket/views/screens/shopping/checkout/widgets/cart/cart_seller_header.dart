@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../user/profiles/domain/entities/user_entity.dart';
-import '../delivery_pickup_toggle.dart';
 import 'components/cart_delivery_pickup_toggle.dart';
 
 class CartSellerHeader extends StatelessWidget {
