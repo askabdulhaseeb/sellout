@@ -141,7 +141,6 @@ class _PostageHeader extends StatelessWidget {
   }
 }
 
-
 class _ErrorMessage extends StatefulWidget {
   const _ErrorMessage({required this.cartItemId});
   final String cartItemId;

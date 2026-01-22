@@ -137,7 +137,7 @@ class PersonalCartTotalSection extends StatelessWidget {
     CartEntity cart,
   ) async {
     if (cartPro.cartType == CartType.shoppingBasket) {
-      if (cartPro.cartItems.isNotEmpty) await cartPro.getRates();
+      // if (cartPro.cartItems.isNotEmpty) await cartPro.getRates();
       cartPro.setCartType(CartType.checkoutOrder);
       return;
     }

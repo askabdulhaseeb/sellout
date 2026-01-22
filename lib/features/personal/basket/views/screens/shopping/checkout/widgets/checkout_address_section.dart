@@ -31,7 +31,6 @@ class SimpleCheckoutAddressSectionState
     if (newAddress != null) {
       setState(() => _isLoading = true);
       cartPro.setAddress(newAddress);
-      await cartPro.getRates();
       setState(() => _isLoading = false);
 
       if (mounted && cartPro.postageResponseEntity != null) {
