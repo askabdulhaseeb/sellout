@@ -8,8 +8,8 @@ import '../../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../../../data/sources/local/local_cart.dart';
 import '../../../../../providers/cart_provider.dart';
+import 'cart_seller_header.dart';
 import 'models/seller_group.dart';
-import 'components/cart_seller_header.dart';
 import 'components/cart_item_tile.dart';
 
 class CartItemsList extends StatefulWidget {
@@ -132,46 +132,26 @@ class _CartItemsListState extends State<CartItemsList> {
                               seller: seller,
                               itemCount: group.items.length,
                             ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: AppSpacing.sm,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(
-                                AppSpacing.md,
-                              ),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.05),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
+                          Column(
+                            children: <Widget>[
+                              for (
+                                int i = 0;
+                                i < group.items.length;
+                                i++
+                              ) ...<Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(AppSpacing.md),
+                                  child: CartItemTile(item: group.items[i]),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                for (
-                                  int i = 0;
-                                  i < group.items.length;
-                                  i++
-                                ) ...<Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(
-                                      AppSpacing.md,
-                                    ),
-                                    child: CartItemTile(item: group.items[i]),
+                                if (i < group.items.length - 1)
+                                  Divider(
+                                    height: 1,
+                                    color: Colors.grey[200],
+                                    indent: AppSpacing.md,
+                                    endIndent: AppSpacing.md,
                                   ),
-                                  if (i < group.items.length - 1)
-                                    Divider(
-                                      height: 1,
-                                      color: Colors.grey[200],
-                                      indent: AppSpacing.md,
-                                      endIndent: AppSpacing.md,
-                                    ),
-                                ],
                               ],
-                            ),
+                            ],
                           ),
                           const SizedBox(height: AppSpacing.lg),
                         ],

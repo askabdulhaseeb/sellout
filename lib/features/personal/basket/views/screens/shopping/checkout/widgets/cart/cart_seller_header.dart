@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../user/profiles/domain/entities/user_entity.dart';
 import 'components/cart_delivery_pickup_toggle.dart';
@@ -64,7 +65,12 @@ class CartSellerHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        const CartDeliveryPickupToggle(),
+        CartDeliveryPickupToggle(
+          onChanged: (PostageType value) {},
+          value: PostageType.postageOnly,
+          isLoading: false,
+          showText: true,
+        ),
       ],
     );
   }
