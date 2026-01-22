@@ -34,52 +34,12 @@ class WeightSection extends StatelessWidget {
             child: CustomTextFormField(
               controller: controller,
               keyboardType: TextInputType.number,
-              labelText: isKg ? tr('weight_kg') : tr('weight_lb'),
+              labelText: tr('weight_kg'),
               validator: weightValidator,
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _UnitChip(
-                label: 'kg',
-                selected: isKg,
-                onTap: () => onToggleUnit(true),
-              ),
-              const SizedBox(width: 6),
-              _UnitChip(
-                label: 'lb',
-                selected: !isKg,
-                onTap: () => onToggleUnit(false),
-              ),
-            ],
-          ),
-        ),
       ],
-    );
-  }
-}
-
-class _UnitChip extends StatelessWidget {
-  const _UnitChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: selected,
-      onSelected: (_) => onTap(),
     );
   }
 }

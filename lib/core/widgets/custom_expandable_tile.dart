@@ -47,7 +47,6 @@ class _CustomExpandableTileGroupState extends State<CustomExpandableTileGroup> {
   @override
   void didUpdateWidget(CustomExpandableTileGroup oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Trigger rebuild when items change
     if (oldWidget.items != widget.items) {
       // Items list has changed, state will be rebuilt
     }
@@ -59,19 +58,42 @@ class _CustomExpandableTileGroupState extends State<CustomExpandableTileGroup> {
     return Column(
       children: <Widget>[
         for (int idx = 0; idx < widget.items.length; idx++) ...<Widget>[
-          _ExpandableTile(
-            key: ValueKey<String>(widget.items[idx].id),
-            item: widget.items[idx],
-            isExpanded: _expandedIndex == idx,
-            onToggle: () {
-              setState(() {
-                _expandedIndex = _expandedIndex == idx ? null : idx;
-              });
-            },
-            scheme: colorScheme,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: widget.items[idx].isSelected
+                      ? colorScheme.primary
+                      : Colors.transparent,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    _ExpandableTile(
+                      key: ValueKey<String>(widget.items[idx].id),
+                      item: widget.items[idx],
+                      isExpanded: _expandedIndex == idx,
+                      onToggle: () {
+                        setState(() {
+                          _expandedIndex = _expandedIndex == idx ? null : idx;
+                        });
+                      },
+                      scheme: colorScheme,
+                    ),
+                    if (idx < widget.items.length - 1)
+                      Divider(
+                        color: colorScheme.outlineVariant,
+                        height: 1,
+                        thickness: 1,
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          if (idx < widget.items.length - 1)
-            Divider(color: colorScheme.outlineVariant, height: 1),
         ],
       ],
     );
@@ -96,120 +118,83 @@ class _ExpandableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasBody = item.body != null;
 
-    return IntrinsicHeight(
-      child: Row(
+    Widget buildTileRow() {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: item.isSelected ? 4 : 0,
-            color: item.isSelected ? scheme.primary : Colors.transparent,
+          const SizedBox(width: 12),
+          Icon(
+            item.icon,
+            color: isExpanded ? scheme.primary : scheme.onSurfaceVariant,
           ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (hasBody)
-                  InkWell(
-                    onTap: onToggle,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            item.icon,
-                            color: isExpanded
-                                ? scheme.primary
-                                : scheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  item.title,
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: isExpanded
-                                            ? scheme.primary
-                                            : scheme.onSurface,
-                                      ),
-                                ),
-                                if (item.subtitle != null)
-                                  Text(
-                                    item.subtitle!,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: scheme.onSurfaceVariant,
-                                        ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: isExpanded
-                                ? scheme.primary
-                                : scheme.onSurfaceVariant,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(item.icon, color: scheme.onSurfaceVariant),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                item.title,
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: scheme.onSurface,
-                                    ),
-                              ),
-                              if (item.subtitle != null)
-                                Text(
-                                  item.subtitle!,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isExpanded ? scheme.primary : scheme.onSurface,
                   ),
-                if (isExpanded && hasBody)
+                ),
+                if (item.subtitle != null)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    child: item.body!(context),
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      item.subtitle!,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
               ],
             ),
           ),
+          if (hasBody)
+            Icon(
+              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: isExpanded ? scheme.primary : scheme.onSurfaceVariant,
+            ),
+          const SizedBox(width: 16),
         ],
-      ),
+      );
+    }
+
+    Widget tileContent = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: buildTileRow(),
     );
+
+    if (isExpanded && hasBody) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: hasBody ? onToggle : null,
+              borderRadius: BorderRadius.zero,
+              child: tileContent,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(48, 0, 16, 12),
+            child: item.body!(context),
+          ),
+        ],
+      );
+    } else {
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: hasBody ? onToggle : null,
+          borderRadius: BorderRadius.zero,
+          child: tileContent,
+        ),
+      );
+    }
   }
 }

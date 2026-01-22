@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../core/widgets/custom_expandable_tile.dart';
+import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
 import '../../../../../providers/add_listing_form_provider.dart';
-import 'ui/weight_section.dart';
-import 'logic/weight_unit_sync.dart';
 import 'data/package_presets.dart';
-import 'ui/inline_size_field.dart';
 
 class PackageDetailsCard extends StatefulWidget {
   const PackageDetailsCard({super.key});
@@ -17,10 +15,8 @@ class PackageDetailsCard extends StatefulWidget {
 }
 
 class _PackageDetailsCardState extends State<PackageDetailsCard> {
-  bool _isKg = true;
   late final VoidCallback _onDimsChanged;
   late final AddListingFormProvider _formPro;
-  late final WeightUnitSync _weightSync;
   String? _selectedOptionId;
 
   @override
@@ -28,12 +24,9 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     super.initState();
     _formPro = Provider.of<AddListingFormProvider>(context, listen: false);
     _onDimsChanged = () => setState(() {});
-    _weightSync = WeightUnitSync(storageController: _formPro.packageWeight);
-    _weightSync.init();
     _formPro.packageLength.addListener(_onDimsChanged);
     _formPro.packageWidth.addListener(_onDimsChanged);
     _formPro.packageHeight.addListener(_onDimsChanged);
-    _isKg = _weightSync.isKg;
   }
 
   @override
@@ -41,14 +34,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     _formPro.packageLength.removeListener(_onDimsChanged);
     _formPro.packageWidth.removeListener(_onDimsChanged);
     _formPro.packageHeight.removeListener(_onDimsChanged);
-    _weightSync.dispose();
     super.dispose();
-  }
-
-  void _toggleUnit(AddListingFormProvider formPro, bool toKg) {
-    if (_isKg == toKg) return;
-    _weightSync.toggleUnit(toKg);
-    setState(() => _isKg = _weightSync.isKg);
   }
 
   @override
@@ -71,7 +57,7 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             final List<dynamic> options =
                 preset['options'] as List<dynamic>? ?? <dynamic>[];
             final bool tileHasSelectedOption = options.asMap().entries.any((
-              optEntry,
+              MapEntry<int, dynamic> optEntry,
             ) {
               final String optionId = '$tileId-${optEntry.key}';
               return optionId == _selectedOptionId;
@@ -103,10 +89,17 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              WeightSection(
-                controller: _weightSync.displayController,
-                isKg: _isKg,
-                onToggleUnit: (bool toKg) => _toggleUnit(formPro, toKg),
+              CustomTextFormField(
+                controller: formPro.packageWeight,
+                keyboardType: TextInputType.number,
+                labelText: tr('weight_kg'),
+                validator: (String? value) {
+                  final String input = (value ?? '').trim();
+                  if (input.isEmpty) return 'required'.tr();
+                  final double? v = double.tryParse(input.replaceAll(',', '.'));
+                  if (v == null || v <= 0) return 'invalid_value'.tr();
+                  return null;
+                },
               ),
               const SizedBox(height: AppSpacing.vSm),
               Row(
@@ -114,28 +107,55 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
                 children: <Widget>[
                   Flexible(
                     flex: 1,
-                    child: InlineSizeField(
-                      labelKey: 'length',
+                    child: CustomTextFormField(
                       controller: formPro.packageLength,
-                      formPro: formPro,
+                      keyboardType: TextInputType.number,
+                      labelText: '${'length'.tr()} (cm)',
+                      validator: (String? value) {
+                        final String input = (value ?? '').trim();
+                        if (input.isEmpty) return 'required'.tr();
+                        final double? v = double.tryParse(
+                          input.replaceAll(',', '.'),
+                        );
+                        if (v == null || v <= 0) return 'invalid_value'.tr();
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: AppSpacing.hXs),
                   Flexible(
                     flex: 1,
-                    child: InlineSizeField(
-                      labelKey: 'width',
+                    child: CustomTextFormField(
                       controller: formPro.packageWidth,
-                      formPro: formPro,
+                      keyboardType: TextInputType.number,
+                      labelText: '${'width'.tr()} (cm)',
+                      validator: (String? value) {
+                        final String input = (value ?? '').trim();
+                        if (input.isEmpty) return 'required'.tr();
+                        final double? v = double.tryParse(
+                          input.replaceAll(',', '.'),
+                        );
+                        if (v == null || v <= 0) return 'invalid_value'.tr();
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: AppSpacing.hXs),
                   Flexible(
                     flex: 1,
-                    child: InlineSizeField(
-                      labelKey: 'height',
+                    child: CustomTextFormField(
                       controller: formPro.packageHeight,
-                      formPro: formPro,
+                      keyboardType: TextInputType.number,
+                      labelText: '${'height'.tr()} (cm)',
+                      validator: (String? value) {
+                        final String input = (value ?? '').trim();
+                        if (input.isEmpty) return 'required'.tr();
+                        final double? v = double.tryParse(
+                          input.replaceAll(',', '.'),
+                        );
+                        if (v == null || v <= 0) return 'invalid_value'.tr();
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -165,9 +185,9 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
             border: Border.all(color: scheme.outline),
           ),
-          padding: const EdgeInsets.all(AppSpacing.sm),
           child: CustomExpandableTileGroup(items: items),
         ),
+        // Print button removed
       ],
     );
   }
@@ -182,8 +202,31 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
     final List<dynamic> options =
         preset['options'] as List<dynamic>? ?? <dynamic>[];
 
+    void updateFields(Map<String, dynamic> option) {
+      final List<dynamic>? dims = option['dims'] as List<dynamic>?;
+      if (dims?.length == 3) {
+        formPro.packageLength.text = '${dims![0]}';
+        formPro.packageWidth.text = '${dims[1]}';
+        formPro.packageHeight.text = '${dims[2]}';
+      }
+      final dynamic w = option['weight'];
+      double? weight;
+      if (w != null) {
+        if (w is num) {
+          weight = w.toDouble();
+        } else if (w is String) {
+          weight = double.tryParse(w);
+        }
+      }
+      if (weight != null && weight > 0) {
+        formPro.packageWeight.text = weight.toString();
+      } else {
+        formPro.packageWeight.text = ''; // Default to 2 if missing/invalid
+      }
+    }
+
     return Column(
-      children: options.asMap().entries.map((optEntry) {
+      children: options.asMap().entries.map((MapEntry<int, dynamic> optEntry) {
         final int optIndex = optEntry.key;
         final Map<String, dynamic> option = Map<String, dynamic>.from(
           optEntry.value as Map,
@@ -201,13 +244,8 @@ class _PackageDetailsCardState extends State<PackageDetailsCard> {
             onTap: () {
               setState(() {
                 _selectedOptionId = optionId;
+                updateFields(option);
               });
-              final List<dynamic>? dims = option['dims'] as List<dynamic>?;
-              if (dims != null && dims.length >= 3) {
-                formPro.packageLength.text = dims[0].toString();
-                formPro.packageWidth.text = dims[1].toString();
-                formPro.packageHeight.text = dims[2].toString();
-              }
             },
             leading: Icon(
               isSelected
