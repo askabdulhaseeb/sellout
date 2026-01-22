@@ -125,6 +125,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
       locator(),
       locator(),
       locator(),
+      locator(),
     ),
   ),
   ChangeNotifierProvider<ReviewProvider>.value(

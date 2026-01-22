@@ -6,8 +6,11 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
+import '../../../../postage/domain/entities/service_point_entity.dart';
+import '../../../../postage/domain/params/get_service_points_param.dart';
 import '../../../../postage/domain/usecase/add_shipping_usecase.dart';
 import '../../../../postage/domain/usecase/get_postage_detail_usecase.dart';
+import '../../../../postage/domain/usecase/get_service_points_usecase.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
@@ -39,6 +42,7 @@ class CartProvider extends ChangeNotifier {
     this._payIntentUsecase,
     this._getPostageDetailUsecase,
     this._addShippingUsecase,
+    this._getServicePointsUsecase,
   );
   // Track if postage rates are loading
   bool _loadingPostage = false;
@@ -54,6 +58,16 @@ class CartProvider extends ChangeNotifier {
   List<SellerGroup>? get groupedSellerItems => _groupedSellerItems;
   bool get isLoadingGroupedItems => _isLoadingGroupedItems;
 
+  // MARK: 📍 Service Points State
+  final Map<String, bool> _loadingServicePoints = <String, bool>{};
+  final Map<String, List<ServicePointEntity>> _servicePointsCache =
+      <String, List<ServicePointEntity>>{};
+
+  bool isLoadingServicePoints(String cartItemId) =>
+      _loadingServicePoints[cartItemId] ?? false;
+  List<ServicePointEntity>? getServicePoints(String cartItemId) =>
+      _servicePointsCache[cartItemId];
+
   // MARK: 🧱  Dependencies
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
@@ -62,6 +76,7 @@ class CartProvider extends ChangeNotifier {
   final PayIntentUsecase _payIntentUsecase;
   final GetPostageDetailUsecase _getPostageDetailUsecase;
   final AddShippingUsecase _addShippingUsecase;
+  final GetServicePointsUsecase _getServicePointsUsecase;
 
   // MARK: ⚙️ State Variables
   ShoppingBasketPageType _shoppingBasketType = ShoppingBasketPageType.basket;
@@ -175,7 +190,6 @@ class CartProvider extends ChangeNotifier {
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
     _selectedShippingItems.clear();
-    getRates();
   }
 
   void addFastDeliveryProduct(String id) {
@@ -572,7 +586,70 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // MARK: 🛒 Checkout Item Grouping
+  // MARK: � Service Points Management
+
+  /// Fetches service points for a specific cart item
+  Future<void> fetchServicePoints({
+    required String cartItemId,
+    required String carrier,
+    int radius = 1000,
+  }) async {
+    _loadingServicePoints[cartItemId] = true;
+    notifyListeners();
+
+    try {
+      final GetServicePointsParam param = GetServicePointsParam(
+        cartItemIds: <String>[cartItemId],
+        postalCode: address?.postalCode ?? '',
+        carrier: carrier,
+        radius: radius,
+      );
+
+      final DataState<ServicePointsResponseEntity> result =
+          await _getServicePointsUsecase(param);
+
+      if (result is DataSuccess<ServicePointsResponseEntity>) {
+        _servicePointsCache[cartItemId] =
+            result.entity?.points ?? <ServicePointEntity>[];
+        AppLog.info(
+          'Fetched ${result.entity?.points.length ?? 0} service points',
+          name: 'CartProvider.fetchServicePoints',
+        );
+      } else {
+        AppLog.error(
+          'Failed to fetch service points',
+          name: 'CartProvider.fetchServicePoints',
+          error: result.exception?.message,
+        );
+        AppSnackBar.show('Failed to load pickup points');
+      }
+    } catch (e, st) {
+      AppLog.error(
+        'Error fetching service points',
+        name: 'CartProvider.fetchServicePoints',
+        error: e,
+        stackTrace: st,
+      );
+      AppSnackBar.show('something_wrong'.tr());
+    } finally {
+      _loadingServicePoints[cartItemId] = false;
+      notifyListeners();
+    }
+  }
+
+  /// Clears service points cache for a specific item or all items
+  void clearServicePoints([String? cartItemId]) {
+    if (cartItemId != null) {
+      _servicePointsCache.remove(cartItemId);
+      _loadingServicePoints.remove(cartItemId);
+    } else {
+      _servicePointsCache.clear();
+      _loadingServicePoints.clear();
+    }
+    notifyListeners();
+  }
+
+  // MARK: �🛒 Checkout Item Grouping
 
   /// Loads and groups all cart items by seller.
   /// Caches the result to avoid redundant operations.
