@@ -55,7 +55,7 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
         if (groups.isEmpty) {
           return Center(
             child: Text(
-              'Your cart is empty',
+              'your_cart_is_empty'.tr(),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           );
