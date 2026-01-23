@@ -58,7 +58,7 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
     if (forced == null || !mounted) return;
 
     final CartProvider cartProvider = context.read<CartProvider>();
-    final bool isPickup = forced == PostageType.pickupOnly;
+    final bool isPickup = forced == PostageType.pickup;
     final bool isAlreadyPickup = cartProvider.deliveryItems.any(
       (ItemDeliveryPreference pref) =>
           pref.cartItemId == widget.item.cartItemID &&
@@ -89,7 +89,7 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
 
     final CartProvider cartProvider = context.read<CartProvider>();
 
-    if (value == PostageType.pickupOnly) {
+    if (value == PostageType.pickup) {
       setState(() {
         _isLoadingServicePoints = true;
       });
@@ -110,16 +110,16 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
         cartProvider.addOrUpdateDeliveryItem(
           ItemDeliveryPreference(
             cartItemId: widget.item.cartItemID,
-            deliveryMode: 'pickup',
+            deliveryMode: value.json,
             servicePoint: selectedPoint,
           ),
         );
       } else {
-        // If user cancelled, revert to delivery
+        // If user cancelled, revert to home delivery
         cartProvider.addOrUpdateDeliveryItem(
           ItemDeliveryPreference(
             cartItemId: widget.item.cartItemID,
-            deliveryMode: 'delivery',
+            deliveryMode: PostageType.home.json,
             servicePoint: null,
           ),
         );
@@ -178,8 +178,8 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
 
         final PostageType selectedPostageType =
             deliveryPref?.deliveryMode == 'pickup'
-            ? PostageType.pickupOnly
-            : PostageType.postageOnly;
+            ? PostageType.pickup
+            : PostageType.home;
 
         return FutureBuilder<PostEntity?>(
           future: _postFuture,
@@ -206,9 +206,9 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
                   onPostageTypeChange: _handlePostageTypeChange,
                 ),
 
-                if (selectedPostageType == PostageType.pickupOnly)
+                if (selectedPostageType == PostageType.pickup)
                   const SizedBox(height: AppSpacing.sm),
-                if (selectedPostageType == PostageType.pickupOnly)
+                if (selectedPostageType == PostageType.pickup)
                   _PickupLocationPrompt(
                     servicePointName: deliveryPref?.servicePoint?.name,
                     titleSelect: 'select_pickup_location'.tr(),

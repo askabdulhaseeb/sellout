@@ -2,15 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../../core/dialogs/service_point_selection/service_point_selection_dialog.dart';
 import '../../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
-import '../../../../../../../../../features/postage/data/models/service_points_response_model.dart';
-import '../../../../../../../../postage/domain/entities/service_point_entity.dart';
+import '../../../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../../../../domain/param/get_postage_detail_params.dart';
 import '../../../../../providers/cart_provider.dart';
 import 'checkout_item_seller_header.dart';
 import 'components/checkout_item_tile.dart';
+import 'components/service_points_dialog.dart';
 import 'models/seller_group.dart';
 
 class CheckoutItemsList extends StatefulWidget {
@@ -46,7 +45,7 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
 
     if (group == null) return;
 
-    if (value == PostageType.pickupOnly) {
+    if (value == PostageType.pickup) {
       // Show service points dialog for group
       final String postalCode = cartProvider.address?.postalCode ?? '';
       if (postalCode.isEmpty) {
@@ -63,16 +62,14 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
 
       // Get cartItemIds for all items in this group
       final List<String> cartItemIds = group.items
-          .map((item) => item.cartItemID)
+          .map((CartItemEntity item) => item.cartItemID)
           .toList();
 
       if (!mounted) return;
-      final ServicePointEntity?
-      selectedPoint = await ServicePointSelectionDialog.show(
+      final dynamic selectedPoint = await ServicePointsDialog.show(
         context: context,
-        servicePoints: <ServicePointModel>[],
-        productName:
-            '${group.items.length} ${group.items.length == 1 ? 'item' : 'items'}',
+        cartItemIds: cartItemIds,
+        postalCode: postalCode,
       );
 
       if (!mounted) return;
@@ -92,10 +89,15 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
         setState(() {
           _groupPostageType[groupIndex] = value;
         });
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('no_pickup_location_selected'.tr())),
+        );
       }
     } else {
       // Clear pickup locations for all items when switching back to delivery
-      for (final item in group.items) {
+      for (final CartItemEntity item in group.items) {
         cartProvider.removeDeliveryItem(item.cartItemID);
       }
 
@@ -135,8 +137,7 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
               itemBuilder: (BuildContext context, int groupIndex) {
                 final SellerGroup group = groups[groupIndex];
                 final PostageType groupPostageType =
-                    _groupPostageType[groupIndex] ?? PostageType.postageOnly;
-
+                    _groupPostageType[groupIndex] ?? PostageType.home;
                 return ShadowContainer(
                   padding: EdgeInsets.all(0),
                   child: Column(

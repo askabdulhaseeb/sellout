@@ -21,7 +21,7 @@ class ServicePointsDialog {
   static Future<ServicePointEntity?> show({
     required BuildContext context,
     required List<String> cartItemIds,
-    required String postalCode ,
+    required String postalCode,
   }) async {
     final ServicePointModel? selection = await showDialog<ServicePointModel?>(
       context: context,
@@ -78,14 +78,34 @@ class _ServicePointsDialogHostState extends State<_ServicePointsDialogHost> {
       radius: radiusMeters,
     );
 
-    final DataState<ServicePointsResponseEntity> result = await 
-        GetServicePointsUsecase(locator()).call(param);
+    final DataState<ServicePointsResponseEntity> result =
+        await GetServicePointsUsecase(locator()).call(param);
+
+    AppLog.info(
+      'API Response: $result',
+      name: 'ServicePointsDialog._fetchServicePoints',
+    );
 
     if (result is DataSuccess<ServicePointsResponseEntity>) {
+      AppLog.info(
+        'Success - Entity: ${result.entity}',
+        name: 'ServicePointsDialog._fetchServicePoints',
+      );
+
       // Get service points from the first cart item
       final String firstCartItemId = widget.cartItemIds.first;
+      AppLog.info(
+        'Looking for cart item: $firstCartItemId in results: ${result.entity?.results.keys}',
+        name: 'ServicePointsDialog._fetchServicePoints',
+      );
+
       final CartItemServicePointsEntity? data =
           result.entity?.results[firstCartItemId];
+
+      AppLog.info(
+        'CartItemServicePointsEntity: $data, ServicePoints count: ${data?.servicePoints.length}',
+        name: 'ServicePointsDialog._fetchServicePoints',
+      );
 
       if (data != null) {
         setState(() {
@@ -94,8 +114,35 @@ class _ServicePointsDialogHostState extends State<_ServicePointsDialogHost> {
               .toList();
           _isLoading = false;
         });
+
+        AppLog.info(
+          'Loaded ${_servicePoints.length} service points:',
+          name: 'ServicePointsDialog._fetchServicePoints',
+        );
+
+        // Log each service point for debugging
+        for (final ServicePointModel point in _servicePoints) {
+          AppLog.info(
+            'ServicePoint - ID: ${point.id}, Name: ${point.name}, Carrier: ${point.carrier}, Type: ${point.type}, Distance: ${point.distance}km, Active: ${point.isActive}',
+            name: 'ServicePointsDialog._fetchServicePoints',
+          );
+        }
         return;
+      } else {
+        AppLog.error(
+          'No service points found for cart item: $firstCartItemId',
+          name: 'ServicePointsDialog._fetchServicePoints',
+        );
+        AppLog.error(
+          'Available cart items in results: ${result.entity?.results.keys}',
+          name: 'ServicePointsDialog._fetchServicePoints',
+        );
       }
+    } else if (result is DataFailer) {
+      AppLog.error(
+        'API Error: ${result.exception}',
+        name: 'ServicePointsDialog._fetchServicePoints',
+      );
     }
 
     setState(() => _isLoading = false);
