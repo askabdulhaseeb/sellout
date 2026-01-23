@@ -6,6 +6,7 @@ import '../../widgets/app_snackbar.dart';
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
 import '../../../features/personal/basket/domain/enums/cart_type.dart';
 import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
+import '../../widgets/custom_elevated_button.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_item_card.dart';
 import '../../../features/postage/presentation/controllers/postage_controller.dart';
@@ -101,20 +102,10 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting
-                      ? null
-                      : () => _submitPostage(cartPro),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Submit'),
-                ),
+              child: CustomElevatedButton(
+                onTap: () => _isSubmitting ? null : _submitPostage(cartPro),
+                title: 'Submit'.tr(),
+                isLoading: _isSubmitting,
               ),
             ),
           ],

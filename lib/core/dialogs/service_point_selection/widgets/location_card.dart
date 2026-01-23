@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../features/postage/data/models/service_points_response_model.dart';
 import '../../../constants/app_spacings.dart';
+import '../../../enums/shipping_provider_enum.dart';
 
 class LocationCard extends StatelessWidget {
   const LocationCard({
@@ -138,9 +139,9 @@ class LocationCard extends StatelessWidget {
 
   /// Build carrier badge with text and optional icon
   Widget _buildCarrierBadge(String carrier, Color color) {
-    // Map carrier to display text and icon
-    final String displayText = _getCarrierDisplayText(carrier);
-    final IconData? icon = _getCarrierIcon(carrier);
+    final ShippingProvider provider = getProviderEnum(carrier);
+    final String displayText = providerDisplayNames[provider] ?? carrier;
+    final IconData icon = _getCarrierIcon(provider);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -151,10 +152,8 @@ class LocationCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (icon != null) ...<Widget>[
-            Icon(icon, size: 10, color: color),
-            const SizedBox(width: 4),
-          ],
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 4),
           Text(
             displayText,
             style: TextStyle(
@@ -168,29 +167,26 @@ class LocationCard extends StatelessWidget {
     );
   }
 
-  /// Get display text for carrier
-  String _getCarrierDisplayText(String carrier) {
-    final String lowerCarrier = carrier.toLowerCase();
-    if (lowerCarrier.contains('dhl')) return 'DHL';
-    if (lowerCarrier.contains('fedex')) return 'FedEx';
-    if (lowerCarrier.contains('ups')) return 'UPS';
-    if (lowerCarrier.contains('amazon')) return 'Amazon';
-    if (lowerCarrier.contains('gls')) return 'GLS';
-    if (lowerCarrier.contains('hermes')) return 'Hermes';
-    if (lowerCarrier.contains('royal')) return 'Royal Mail';
-    return carrier;
-  }
-
   /// Get icon for carrier type
-  IconData? _getCarrierIcon(String carrier) {
-    final String lowerCarrier = carrier.toLowerCase();
-    if (lowerCarrier.contains('dhl')) return Icons.local_shipping;
-    if (lowerCarrier.contains('fedex')) return Icons.local_shipping;
-    if (lowerCarrier.contains('ups')) return Icons.local_shipping;
-    if (lowerCarrier.contains('amazon')) return Icons.store;
-    if (lowerCarrier.contains('gls')) return Icons.local_shipping;
-    if (lowerCarrier.contains('hermes')) return Icons.local_shipping;
-    if (lowerCarrier.contains('royal')) return Icons.mail;
-    return Icons.local_shipping;
+  IconData _getCarrierIcon(ShippingProvider provider) {
+    switch (provider) {
+      case ShippingProvider.dhl:
+      case ShippingProvider.ups:
+      case ShippingProvider.fedex:
+      case ShippingProvider.gls:
+      case ShippingProvider.dpd:
+      case ShippingProvider.postnl:
+      case ShippingProvider.usps:
+      case ShippingProvider.hermes:
+      case ShippingProvider.inpost:
+      case ShippingProvider.evri:
+      case ShippingProvider.sendcloud:
+      case ShippingProvider.shippo:
+        return Icons.local_shipping;
+      case ShippingProvider.royalmail:
+        return Icons.mail;
+      case ShippingProvider.other:
+        return Icons.local_shipping;
+    }
   }
 }
