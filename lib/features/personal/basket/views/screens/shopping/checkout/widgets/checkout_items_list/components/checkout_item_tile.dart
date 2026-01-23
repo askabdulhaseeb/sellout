@@ -142,9 +142,9 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Please add a delivery address before selecting pickup.',
-          ).tr(),
+          content: Text(
+            'please_add_delivery_address_before_selecting_pickup'.tr(),
+          ),
         ),
       );
       return null;

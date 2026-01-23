@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
@@ -54,7 +55,9 @@ class CartSellerHeader extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '$itemCount item${itemCount > 1 ? 's' : ''}',
+                  itemCount == 1
+                      ? 'one_item'.tr()
+                      : 'items_count'.tr(args: [itemCount.toString()]),
                   style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),

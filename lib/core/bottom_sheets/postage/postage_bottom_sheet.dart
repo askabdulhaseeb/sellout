@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../sources/data_state.dart';
 import '../../widgets/app_snackbar.dart';
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
-import '../../../features/personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../features/personal/basket/domain/enums/cart_type.dart';
 import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import 'widgets/postage_header.dart';
