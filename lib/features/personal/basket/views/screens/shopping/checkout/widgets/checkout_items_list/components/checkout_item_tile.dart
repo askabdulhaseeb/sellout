@@ -29,6 +29,7 @@ class CheckoutItemTile extends StatefulWidget {
 
 class _CheckoutItemTileState extends State<CheckoutItemTile> {
   late Future<PostEntity?> _postFuture;
+  bool _isLoadingServicePoints = false;
 
   @override
   void initState() {
@@ -70,7 +71,7 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
         ItemDeliveryPreference(
           cartItemId: widget.item.cartItemID,
           deliveryMode: 'pickup',
-          servicePointId: null,
+          servicePoint: null,
         ),
       );
     } else {
@@ -89,10 +90,18 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
     final CartProvider cartProvider = context.read<CartProvider>();
 
     if (value == PostageType.pickupOnly) {
+      setState(() {
+        _isLoadingServicePoints = true;
+      });
+
       final String postalCode = cartProvider.address?.postalCode ?? '';
       final ServicePointEntity? selectedPoint = await _showServicePointsDialog(
         postalCode,
       );
+
+      setState(() {
+        _isLoadingServicePoints = false;
+      });
 
       if (!mounted) return;
 
@@ -102,11 +111,18 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
           ItemDeliveryPreference(
             cartItemId: widget.item.cartItemID,
             deliveryMode: 'pickup',
-            servicePointId: selectedPoint.id.toString(),
+            servicePoint: selectedPoint,
           ),
         );
       } else {
-        cartProvider.removeDeliveryItem(widget.item.cartItemID);
+        // If user cancelled, revert to delivery
+        cartProvider.addOrUpdateDeliveryItem(
+          ItemDeliveryPreference(
+            cartItemId: widget.item.cartItemID,
+            deliveryMode: 'delivery',
+            servicePoint: null,
+          ),
+        );
       }
     } else {
       AppLog.info(
@@ -125,10 +141,10 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
     if (postalCode.isEmpty) {
       if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
+        SnackBar(
+          content: const Text(
             'Please add a delivery address before selecting pickup.',
-          ),
+          ).tr(),
         ),
       );
       return null;
@@ -162,8 +178,6 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
             ? PostageType.pickupOnly
             : PostageType.postageOnly;
 
-        final bool isLoadingServicePoints = false;
-
         return FutureBuilder<PostEntity?>(
           future: _postFuture,
           builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
@@ -172,27 +186,30 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
                 colorScheme: colorScheme,
                 selectedPostageType: selectedPostageType,
                 onPostageTypeChange: _handlePostageTypeChange,
+                enabled: widget.forcedPostageType == null,
               );
             }
 
             final PostEntity? post = snapshot.data;
             return Column(
-              spacing: AppSpacing.vXs,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                const SizedBox(height: AppSpacing.xs),
                 _CheckoutItemCard(
                   post: post,
                   textTheme: textTheme,
                   colorScheme: colorScheme,
                   selectedPostageType: selectedPostageType,
-                  isLoadingServicePoints: isLoadingServicePoints,
+                  isLoadingServicePoints: _isLoadingServicePoints,
                   onPostageTypeChange: _handlePostageTypeChange,
+                  enabled: widget.forcedPostageType == null,
                 ),
 
                 if (selectedPostageType == PostageType.pickupOnly)
+                  const SizedBox(height: AppSpacing.sm),
+                if (selectedPostageType == PostageType.pickupOnly)
                   _PickupLocationPrompt(
-                    servicePointId: deliveryPref?.servicePointId,
-                    titleSelect: 'select_pickup_location',
+                    servicePointName: deliveryPref?.servicePoint?.name,
+                    titleSelect: 'select_pickup_location'.tr(),
                     colorScheme: colorScheme,
                     textTheme: textTheme,
                     titleSelected: 'change'.tr(),
@@ -205,9 +222,12 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
 
                       if (!mounted || selectedPoint == null) return;
 
-                      cartProvider.updateServicePointForItem(
-                        widget.item.cartItemID,
-                        selectedPoint.id.toString(),
+                      cartProvider.addOrUpdateDeliveryItem(
+                        ItemDeliveryPreference(
+                          cartItemId: widget.item.cartItemID,
+                          deliveryMode: 'pickup',
+                          servicePoint: selectedPoint,
+                        ),
                       );
                     },
                   ),
@@ -225,11 +245,13 @@ class _CheckoutItemTileSkeleton extends StatelessWidget {
     required this.colorScheme,
     required this.selectedPostageType,
     required this.onPostageTypeChange,
+    required this.enabled,
   });
 
   final ColorScheme colorScheme;
   final PostageType selectedPostageType;
   final ValueChanged<PostageType> onPostageTypeChange;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +290,8 @@ class _CheckoutItemTileSkeleton extends StatelessWidget {
           CheckoutDeliveryPickupToggle(
             showText: false,
             value: selectedPostageType,
-            onChanged: onPostageTypeChange,
+            onChanged: (PostageType value) =>
+                enabled ? onPostageTypeChange : null,
           ),
         ],
       ),
@@ -284,14 +307,16 @@ class _CheckoutItemCard extends StatelessWidget {
     required this.selectedPostageType,
     required this.isLoadingServicePoints,
     required this.onPostageTypeChange,
+    required this.enabled,
   });
 
-  final dynamic post;
+  final PostEntity? post;
   final TextTheme textTheme;
   final ColorScheme colorScheme;
   final PostageType selectedPostageType;
   final bool isLoadingServicePoints;
   final ValueChanged<PostageType> onPostageTypeChange;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -309,7 +334,7 @@ class _CheckoutItemCard extends StatelessWidget {
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.md),
                   child: CustomNetworkImage(
-                    imageURL: post?.imageURL,
+                    imageURL: post!.imageURL,
                     fit: BoxFit.cover,
                   ),
                 )
@@ -334,7 +359,7 @@ class _CheckoutItemCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                post != null ? '£${post.price.toStringAsFixed(2)}' : '',
+                post != null ? '£${post!.price.toStringAsFixed(2)}' : '',
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -346,7 +371,8 @@ class _CheckoutItemCard extends StatelessWidget {
           showText: false,
           value: selectedPostageType,
           isLoading: isLoadingServicePoints,
-          onChanged: onPostageTypeChange,
+          onChanged: (PostageType value) =>
+              enabled ? onPostageTypeChange : null,
         ),
       ],
     );
@@ -357,7 +383,7 @@ class _PickupLocationPrompt extends StatelessWidget {
   const _PickupLocationPrompt({
     required this.colorScheme,
     required this.textTheme,
-    this.servicePointId,
+    this.servicePointName,
     required this.titleSelected,
     required this.titleSelect,
     required this.hintSelect,
@@ -366,7 +392,7 @@ class _PickupLocationPrompt extends StatelessWidget {
 
   final ColorScheme colorScheme;
   final TextTheme textTheme;
-  final String? servicePointId;
+  final String? servicePointName;
   final String titleSelected;
   final String titleSelect;
   final String hintSelect;
@@ -375,7 +401,7 @@ class _PickupLocationPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasSelection =
-        servicePointId != null && servicePointId!.isNotEmpty;
+        servicePointName != null && servicePointName!.isNotEmpty;
 
     return Material(
       color: Colors.transparent,
@@ -389,7 +415,9 @@ class _PickupLocationPrompt extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: hasSelection
-                ? colorScheme.tertiaryContainer.withValues(alpha: 0.25)
+                ? colorScheme.tertiaryContainer.withValues(
+                    alpha: 0.25,
+                  )
                 : colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.md),
             border: Border.all(
@@ -413,7 +441,7 @@ class _PickupLocationPrompt extends StatelessWidget {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              servicePointId!,
+                              servicePointName!,
                               style: textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface,
                                 fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../auth/signin/data/models/address_model.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 
@@ -6,17 +7,17 @@ class ItemDeliveryPreference {
   const ItemDeliveryPreference({
     required this.cartItemId,
     required this.deliveryMode,
-    this.servicePointId,
+    this.servicePoint,
   });
 
   final String cartItemId;
   final String deliveryMode;
-  final String? servicePointId;
+  final ServicePointEntity? servicePoint;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'cart_item_id': cartItemId,
     'delivery_mode': deliveryMode,
-    if (servicePointId != null) 'service_point_id': servicePointId,
+    if (servicePoint != null) 'service_point_id': servicePoint!.id,
   };
 }
 
