@@ -9,6 +9,7 @@ import '../../../features/personal/basket/domain/enums/cart_type.dart';
 import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_item_card.dart';
+import '../../../features/postage/presentation/controllers/postage_controller.dart';
 
 class PostageBottomSheet extends StatefulWidget {
   const PostageBottomSheet({super.key});
@@ -19,33 +20,22 @@ class PostageBottomSheet extends StatefulWidget {
 
 class _PostageBottomSheetState extends State<PostageBottomSheet> {
   bool _isSubmitting = false;
+  final PostageController _controller = PostageController();
 
   Future<void> _submitPostage(CartProvider cartPro) async {
     setState(() => _isSubmitting = true);
 
-    final DataState<AddShippingResponseModel> result = await cartPro
-        .submitShipping();
+    final DataState<void> outcome = await _controller
+        .submitPostageAndFetchBilling(cartPro);
 
     if (!mounted) return;
 
-    if (result is DataSuccess<AddShippingResponseModel>) {
-      // Fetch billing details after successful shipping submission
-      final DataState billingResult = await cartPro.getBillingDetails();
-
-      if (!mounted) return;
-
-      if (billingResult is DataSuccess) {
-        cartPro.setCartType(CartType.reviewOrder);
-        Navigator.of(context).pop(cartPro.selectedShippingItems);
-      } else {
-        AppSnackBar.show(
-          billingResult.exception?.reason ?? 'failed_to_get_billing'.tr(),
-        );
-        setState(() => _isSubmitting = false);
-      }
+    if (outcome is DataSuccess<void>) {
+      cartPro.setCartType(CartType.reviewOrder);
+      Navigator.of(context).pop(cartPro.selectedShippingItems);
     } else {
       AppSnackBar.show(
-        result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
+        outcome.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
       );
       setState(() => _isSubmitting = false);
     }

@@ -6,6 +6,7 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
+import '../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../postage/domain/usecase/add_shipping_usecase.dart';
 import '../../../../postage/domain/usecase/get_postage_detail_usecase.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
@@ -79,7 +80,7 @@ class CartProvider extends ChangeNotifier {
   final List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
 
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
-  List<ItemDeliveryPreference> _deliveryItems = [];
+  List<ItemDeliveryPreference> _deliveryItems = <ItemDeliveryPreference>[];
   List<ItemDeliveryPreference> get deliveryItems => _deliveryItems;
 
   void setDeliveryItems(List<ItemDeliveryPreference> items) {
@@ -89,7 +90,7 @@ class CartProvider extends ChangeNotifier {
 
   void addOrUpdateDeliveryItem(ItemDeliveryPreference item) {
     final int index = _deliveryItems.indexWhere(
-      (element) => element.cartItemId == item.cartItemId,
+      (ItemDeliveryPreference element) => element.cartItemId == item.cartItemId,
     );
     bool changed = false;
 
@@ -97,7 +98,7 @@ class CartProvider extends ChangeNotifier {
       final ItemDeliveryPreference existing = _deliveryItems[index];
       // Only notify when something actually changes to avoid rebuilds
       if (existing.deliveryMode != item.deliveryMode ||
-          existing.servicePointId != item.servicePointId) {
+          existing.servicePoint != item.servicePoint) {
         _deliveryItems[index] = item;
         changed = true;
       }
@@ -109,19 +110,22 @@ class CartProvider extends ChangeNotifier {
     if (changed) notifyListeners();
   }
 
-  void updateServicePointForItem(String cartItemId, String? servicePointId) {
+  void updateServicePointForItem(
+    String cartItemId,
+    ServicePointEntity? servicePoint,
+  ) {
     final int index = _deliveryItems.indexWhere(
-      (element) => element.cartItemId == cartItemId,
+      (ItemDeliveryPreference element) => element.cartItemId == cartItemId,
     );
 
     if (index >= 0) {
       final ItemDeliveryPreference existing = _deliveryItems[index];
-      if (existing.servicePointId == servicePointId) return;
+      if (existing.servicePoint == servicePoint) return;
 
       _deliveryItems[index] = ItemDeliveryPreference(
         cartItemId: cartItemId,
         deliveryMode: _deliveryItems[index].deliveryMode,
-        servicePointId: servicePointId,
+        servicePoint: servicePoint,
       );
       notifyListeners();
     }
@@ -129,14 +133,15 @@ class CartProvider extends ChangeNotifier {
 
   void removeDeliveryItem(String cartItemId) {
     final int before = _deliveryItems.length;
-    _deliveryItems.removeWhere((item) => item.cartItemId == cartItemId);
+    _deliveryItems.removeWhere(
+      (ItemDeliveryPreference item) => item.cartItemId == cartItemId,
+    );
     if (_deliveryItems.length != before) notifyListeners();
   }
 
   bool hasAllPickupItemsWithServicePoints() {
     for (final ItemDeliveryPreference item in _deliveryItems) {
-      if (item.deliveryMode == 'pickup' &&
-          (item.servicePointId == null || item.servicePointId!.isEmpty)) {
+      if (item.deliveryMode == 'pickup' && (item.servicePoint == null)) {
         return false;
       }
     }
@@ -144,7 +149,9 @@ class CartProvider extends ChangeNotifier {
   }
 
   bool hasAnyPickupItems() {
-    return _deliveryItems.any((item) => item.deliveryMode == 'pickup');
+    return _deliveryItems.any(
+      (ItemDeliveryPreference item) => item.deliveryMode == 'pickup',
+    );
   }
 
   void updateShippingSelection(String cartItemId, String objectId) {
