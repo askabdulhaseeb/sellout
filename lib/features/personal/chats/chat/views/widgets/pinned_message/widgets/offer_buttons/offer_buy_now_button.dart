@@ -7,7 +7,7 @@ import '../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../postage/data/models/postage_detail_repsonse_model.dart';
+import '../../../../../../../../postage/data/models/postage_detail_response_model.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';

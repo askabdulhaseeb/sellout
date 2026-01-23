@@ -12,7 +12,7 @@ import '../../../../personal/order/domain/entities/order_entity.dart';
 import '../../../domain/params/add_label_params.dart';
 import '../../../domain/params/add_order_label_params.dart';
 import '../../../domain/params/get_order_postage_detail_params.dart';
-import '../../models/postage_detail_repsonse_model.dart';
+import '../../models/postage_detail_response_model.dart';
 import '../../models/service_points_response_model.dart';
 import '../../../domain/params/get_service_points_param.dart';
 

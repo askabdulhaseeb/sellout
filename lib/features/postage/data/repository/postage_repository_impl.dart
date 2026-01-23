@@ -8,7 +8,7 @@ import '../../domain/params/add_order_label_params.dart';
 import '../../domain/params/get_order_postage_detail_params.dart';
 import '../../domain/params/get_service_points_param.dart';
 import '../../domain/repository/postage_repository.dart';
-import '../models/postage_detail_repsonse_model.dart';
+import '../models/postage_detail_response_model.dart';
 import '../source/remote/postage_remote_source.dart';
 
 class PostageRepositoryImpl implements PostageRepository {

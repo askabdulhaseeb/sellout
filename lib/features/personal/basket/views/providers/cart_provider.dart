@@ -60,12 +60,12 @@ class CartProvider extends ChangeNotifier {
 
   // MARK: 📍 Service Points State
   final Map<String, bool> _loadingServicePoints = <String, bool>{};
-  final Map<String, List<ServicePointEntity>> _servicePointsCache =
-      <String, List<ServicePointEntity>>{};
+  final Map<String, CartItemServicePointsEntity> _servicePointsCache =
+      <String, CartItemServicePointsEntity>{};
 
   bool isLoadingServicePoints(String cartItemId) =>
       _loadingServicePoints[cartItemId] ?? false;
-  List<ServicePointEntity>? getServicePoints(String cartItemId) =>
+  CartItemServicePointsEntity? getServicePoints(String cartItemId) =>
       _servicePointsCache[cartItemId];
 
   // MARK: 🧱  Dependencies
@@ -609,12 +609,16 @@ class CartProvider extends ChangeNotifier {
           await _getServicePointsUsecase(param);
 
       if (result is DataSuccess<ServicePointsResponseEntity>) {
-        _servicePointsCache[cartItemId] =
-            result.entity?.points ?? <ServicePointEntity>[];
-        AppLog.info(
-          'Fetched ${result.entity?.points.length ?? 0} service points',
-          name: 'CartProvider.fetchServicePoints',
-        );
+        // Store the cart item service points data
+        final CartItemServicePointsEntity? itemData =
+            result.entity?.results[cartItemId];
+        if (itemData != null) {
+          _servicePointsCache[cartItemId] = itemData;
+          AppLog.info(
+            'Fetched ${itemData.totalServicePoints} service points for cart item $cartItemId',
+            name: 'CartProvider.fetchServicePoints',
+          );
+        }
       } else {
         AppLog.error(
           'Failed to fetch service points',
