@@ -58,6 +58,10 @@ class ServicePointEntity {
     required this.isOpenUpcomingWeek,
     required this.status,
   });
+
+  @override
+  String toString() =>
+      'ServicePointEntity(id: $id, name: $name, carrier: $carrier, type: $type, distance: $distance, isActive: $isActive)';
 }
 
 /// Entity representing grouped service points by carrier

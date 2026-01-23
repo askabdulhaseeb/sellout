@@ -6,7 +6,7 @@ import 'checkout_delivery_pickup_style.dart';
 class CheckoutDeliveryPickupToggle extends StatelessWidget {
   const CheckoutDeliveryPickupToggle({
     required this.onChanged,
-    this.value = PostageType.postageOnly,
+    this.value = PostageType.home,
     this.isLoading = false,
     this.showText = true,
     super.key,
@@ -23,8 +23,8 @@ class CheckoutDeliveryPickupToggle extends StatelessWidget {
       context,
     ).onSurface.withValues(alpha: 0.6);
 
-    final bool isDeliverySelected = value == PostageType.postageOnly;
-    final bool isPickupSelected = value == PostageType.pickupOnly;
+    final bool isDeliverySelected = value == PostageType.home;
+    final bool isPickupSelected = value == PostageType.pickup;
     final bool isDeliveryLoading = isLoading && isDeliverySelected;
     final bool isPickupLoading = isLoading && isPickupSelected;
 
@@ -52,7 +52,7 @@ class CheckoutDeliveryPickupToggle extends StatelessWidget {
             isDisabled: isLoading,
             unselectedColor: unselectedColor,
             showText: showText,
-            onTap: isLoading ? null : () => onChanged(PostageType.postageOnly),
+            onTap: isLoading ? null : () => onChanged(PostageType.home),
           ),
           SizedBox(width: CheckoutDeliveryPickupStyle.spacing),
           // PICKUP BUTTON
@@ -62,7 +62,7 @@ class CheckoutDeliveryPickupToggle extends StatelessWidget {
             isDisabled: isLoading,
             unselectedColor: unselectedColor,
             showText: showText,
-            onTap: isLoading ? null : () => onChanged(PostageType.pickupOnly),
+            onTap: isLoading ? null : () => onChanged(PostageType.pickup),
           ),
         ],
       ),

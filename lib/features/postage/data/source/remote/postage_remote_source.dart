@@ -134,7 +134,7 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         AppLog.error(
           param.toJson(),
           name: 'PostageRemoteApiImpl.getPostageDetails - Else',
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
+          error: result.exception?.detail ?? 'something_wrong'.tr(),
         );
         return DataFailer<PostageDetailResponseModel>(
           CustomException('Failed to get postage details'),

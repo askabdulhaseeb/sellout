@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
-import '../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../user/profiles/domain/entities/user_entity.dart';
 import 'components/checkout_delivery_pickup_toggle.dart';
 
@@ -34,15 +33,6 @@ class CartSellerHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          CustomNetworkImage(
-            size: 24,
-            imageURL:
-                seller.profilePhotoURL != null &&
-                    seller.profilePhotoURL!.isNotEmpty
-                ? seller.profilePhotoURL!
-                : null,
-          ),
-          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

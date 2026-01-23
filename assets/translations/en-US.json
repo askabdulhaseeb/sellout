@@ -1410,6 +1410,7 @@
   "grand_total": "Grand total",
   "transfer_success": "Transfer successful",
   "transfer_failed": "Transfer failed. Please try again.",
+  "get_shipping_options":"Get Shipping Options",
 
   
    "legal_documents": {
