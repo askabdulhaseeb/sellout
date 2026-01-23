@@ -170,7 +170,7 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
       builder: (BuildContext context, CartProvider cartProvider, _) {
         // Get delivery preference from CartProvider
         final ItemDeliveryPreference? deliveryPref = cartProvider.deliveryItems
-            .where((item) => item.cartItemId == widget.item.cartItemID)
+            .where((ItemDeliveryPreference item) => item.cartItemId == widget.item.cartItemID)
             .firstOrNull;
 
         final PostageType selectedPostageType =
@@ -201,7 +201,6 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
                   selectedPostageType: selectedPostageType,
                   isLoadingServicePoints: _isLoadingServicePoints,
                   onPostageTypeChange: _handlePostageTypeChange,
-                  enabled: widget.forcedPostageType == null,
                 ),
 
                 if (selectedPostageType == PostageType.pickupOnly)
@@ -290,8 +289,7 @@ class _CheckoutItemTileSkeleton extends StatelessWidget {
           CheckoutDeliveryPickupToggle(
             showText: false,
             value: selectedPostageType,
-            onChanged: (PostageType value) =>
-                enabled ? onPostageTypeChange : null,
+            onChanged:  onPostageTypeChange ,
           ),
         ],
       ),
@@ -307,7 +305,6 @@ class _CheckoutItemCard extends StatelessWidget {
     required this.selectedPostageType,
     required this.isLoadingServicePoints,
     required this.onPostageTypeChange,
-    required this.enabled,
   });
 
   final PostEntity? post;
@@ -316,7 +313,6 @@ class _CheckoutItemCard extends StatelessWidget {
   final PostageType selectedPostageType;
   final bool isLoadingServicePoints;
   final ValueChanged<PostageType> onPostageTypeChange;
-  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -371,8 +367,7 @@ class _CheckoutItemCard extends StatelessWidget {
           showText: false,
           value: selectedPostageType,
           isLoading: isLoadingServicePoints,
-          onChanged: (PostageType value) =>
-              enabled ? onPostageTypeChange : null,
+          onChanged: onPostageTypeChange ,
         ),
       ],
     );
@@ -383,10 +378,11 @@ class _PickupLocationPrompt extends StatelessWidget {
   const _PickupLocationPrompt({
     required this.colorScheme,
     required this.textTheme,
-    this.servicePointName,
-    required this.titleSelected,
+        required this.titleSelected,
     required this.titleSelect,
     required this.hintSelect,
+    this.servicePointName,
+
     this.onTap,
   });
 
@@ -415,9 +411,7 @@ class _PickupLocationPrompt extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: hasSelection
-                ? colorScheme.tertiaryContainer.withValues(
-                    alpha: 0.25,
-                  )
+                ? colorScheme.tertiaryContainer.withValues(alpha: 0.25)
                 : colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.md),
             border: Border.all(
@@ -432,7 +426,7 @@ class _PickupLocationPrompt extends StatelessWidget {
               Icon(
                 hasSelection ? Icons.check_circle : Icons.location_on,
                 color: hasSelection ? colorScheme.tertiary : colorScheme.error,
-                size: 22,
+                size: 16,
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
@@ -442,9 +436,8 @@ class _PickupLocationPrompt extends StatelessWidget {
                           Expanded(
                             child: Text(
                               servicePointName!,
-                              style: textTheme.bodyMedium?.copyWith(
+                              style: textTheme.bodySmall?.copyWith(
                                 color: colorScheme.onSurface,
-                                fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
