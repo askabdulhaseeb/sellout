@@ -1,5 +1,5 @@
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../postage/data/models/postage_detail_repsonse_model.dart';
+import '../../../../../postage/data/models/postage_detail_response_model.dart';
 import '../../../../post/data/sources/remote/offer_remote_api.dart';
 import '../../../../post/domain/entities/offer/offer_payment_response.dart';
 import '../../../../post/domain/params/buy_now_add_shipping_param.dart';

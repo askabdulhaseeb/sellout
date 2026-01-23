@@ -19,7 +19,10 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
   @override
   void initState() {
     super.initState();
-    _loadGroupedItems();
+    // Defer loading to after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadGroupedItems();
+    });
   }
 
   void _loadGroupedItems() {
