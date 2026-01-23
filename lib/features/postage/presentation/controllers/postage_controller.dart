@@ -1,6 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../../core/sources/data_state.dart';
 import '../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../personal/basket/domain/entities/checkout/payment_intent_entity.dart';

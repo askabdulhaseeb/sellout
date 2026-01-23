@@ -170,7 +170,10 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
       builder: (BuildContext context, CartProvider cartProvider, _) {
         // Get delivery preference from CartProvider
         final ItemDeliveryPreference? deliveryPref = cartProvider.deliveryItems
-            .where((ItemDeliveryPreference item) => item.cartItemId == widget.item.cartItemID)
+            .where(
+              (ItemDeliveryPreference item) =>
+                  item.cartItemId == widget.item.cartItemID,
+            )
             .firstOrNull;
 
         final PostageType selectedPostageType =
@@ -212,7 +215,7 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
                     colorScheme: colorScheme,
                     textTheme: textTheme,
                     titleSelected: 'change'.tr(),
-                    hintSelect: 'no_pickup_location_selected'.tr(),
+                    hintSelect: 'select_pickup_location'.tr(),
                     onTap: () async {
                       final String postalCode =
                           cartProvider.address?.postalCode ?? '';
@@ -289,7 +292,7 @@ class _CheckoutItemTileSkeleton extends StatelessWidget {
           CheckoutDeliveryPickupToggle(
             showText: false,
             value: selectedPostageType,
-            onChanged:  onPostageTypeChange ,
+            onChanged: onPostageTypeChange,
           ),
         ],
       ),
@@ -367,7 +370,7 @@ class _CheckoutItemCard extends StatelessWidget {
           showText: false,
           value: selectedPostageType,
           isLoading: isLoadingServicePoints,
-          onChanged: onPostageTypeChange ,
+          onChanged: onPostageTypeChange,
         ),
       ],
     );
@@ -378,7 +381,7 @@ class _PickupLocationPrompt extends StatelessWidget {
   const _PickupLocationPrompt({
     required this.colorScheme,
     required this.textTheme,
-        required this.titleSelected,
+    required this.titleSelected,
     required this.titleSelect,
     required this.hintSelect,
     this.servicePointName,

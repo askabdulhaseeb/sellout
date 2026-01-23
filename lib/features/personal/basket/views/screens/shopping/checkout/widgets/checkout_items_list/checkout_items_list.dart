@@ -2,8 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
+import '../../../../../../../../../core/dialogs/service_point_selection/service_point_selection_dialog.dart';
 import '../../../../../../../../../core/widgets/shadow_container.dart';
 import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
+import '../../../../../../../../../features/postage/data/models/service_points_response_model.dart';
+import '../../../../../../../../postage/domain/entities/service_point_entity.dart';
+import '../../../../../../domain/param/get_postage_detail_params.dart';
 import '../../../../../providers/cart_provider.dart';
 import 'checkout_item_seller_header.dart';
 import 'components/checkout_item_tile.dart';
@@ -36,10 +40,69 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
     cartProvider.loadGroupedItems();
   }
 
-  void _updateGroupPostage(int groupIndex, PostageType value) {
-    setState(() {
-      _groupPostageType[groupIndex] = value;
-    });
+  void _updateGroupPostage(int groupIndex, PostageType value) async {
+    final CartProvider cartProvider = context.read<CartProvider>();
+    final SellerGroup? group = cartProvider.groupedSellerItems?[groupIndex];
+
+    if (group == null) return;
+
+    if (value == PostageType.pickupOnly) {
+      // Show service points dialog for group
+      final String postalCode = cartProvider.address?.postalCode ?? '';
+      if (postalCode.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'please_add_delivery_address_before_selecting_pickup'.tr(),
+            ),
+          ),
+        );
+        return;
+      }
+
+      // Get cartItemIds for all items in this group
+      final List<String> cartItemIds = group.items
+          .map((item) => item.cartItemID)
+          .toList();
+
+      if (!mounted) return;
+      final ServicePointEntity?
+      selectedPoint = await ServicePointSelectionDialog.show(
+        context: context,
+        servicePoints: <ServicePointModel>[],
+        productName:
+            '${group.items.length} ${group.items.length == 1 ? 'item' : 'items'}',
+      );
+
+      if (!mounted) return;
+
+      if (selectedPoint != null) {
+        // Apply the same pickup location to all items in the group
+        for (final String cartItemId in cartItemIds) {
+          cartProvider.addOrUpdateDeliveryItem(
+            ItemDeliveryPreference(
+              cartItemId: cartItemId,
+              deliveryMode: 'pickup',
+              servicePoint: selectedPoint,
+            ),
+          );
+        }
+
+        setState(() {
+          _groupPostageType[groupIndex] = value;
+        });
+      }
+    } else {
+      // Clear pickup locations for all items when switching back to delivery
+      for (final item in group.items) {
+        cartProvider.removeDeliveryItem(item.cartItemID);
+      }
+
+      setState(() {
+        _groupPostageType[groupIndex] = value;
+      });
+    }
   }
 
   @override
