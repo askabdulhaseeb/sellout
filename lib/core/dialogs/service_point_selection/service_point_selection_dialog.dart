@@ -1,10 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../features/postage/data/models/service_points_response_model.dart';
-import '../../constants/app_spacings.dart';
 import 'enums/service_point_enums.dart';
+import 'state/service_point_dialog_state.dart';
+import 'widgets/dialog_footer.dart';
+import 'widgets/dialog_header.dart';
 import 'widgets/filters_section.dart';
-import 'widgets/location_card.dart';
+import 'widgets/locations_list.dart';
 
 /// A reusable dialog for selecting service points/pickup locations
 ///
@@ -91,70 +92,62 @@ class ServicePointSelectionDialog extends StatefulWidget {
 
 class _ServicePointSelectionDialogState
     extends State<ServicePointSelectionDialog> {
-  ServicePointModel? _selectedPoint;
-  late SearchRadius _selectedRadius;
-  late ServicePointCategory _selectedCategory;
+  late ServicePointDialogState _state;
 
   @override
   void initState() {
     super.initState();
-    _selectedRadius = widget.initialRadius;
-    _selectedCategory = widget.initialCategory;
-    _selectedPoint = widget.servicePoints.isNotEmpty
-        ? widget.servicePoints.first
-        : null;
+    _state = ServicePointDialogState(
+      selectedRadius: widget.initialRadius,
+      selectedCategory: widget.initialCategory,
+      servicePoints: widget.servicePoints,
+      selectedPoint: widget.servicePoints.isNotEmpty
+          ? widget.servicePoints.first
+          : null,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant ServicePointSelectionDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.servicePoints != widget.servicePoints) {
+      _state = _state.copyWith(servicePoints: widget.servicePoints);
+    }
   }
 
   void _selectServicePoint(ServicePointModel point) {
-    setState(() => _selectedPoint = point);
+    setState(() {
+      _state = _state.copyWith(selectedPoint: point);
+    });
   }
 
   void _handleRadiusChange(SearchRadius radius) {
-    setState(() => _selectedRadius = radius);
+    setState(() {
+      _state = _state.copyWith(selectedRadius: radius);
+    });
     widget.onRadiusChanged?.call(radius);
   }
 
   void _handleCategoryChange(ServicePointCategory category) {
     setState(() {
-      _selectedCategory = category;
+      _state = _state.copyWith(selectedCategory: category);
+
       // Reset selected point if it doesn't match the new filter
-      if (_selectedPoint != null &&
-          !_filteredServicePoints.contains(_selectedPoint)) {
-        _selectedPoint = _filteredServicePoints.isNotEmpty
-            ? _filteredServicePoints.first
-            : null;
+      if (_state.selectedPoint != null &&
+          !_state.filteredServicePoints.contains(_state.selectedPoint)) {
+        _state = _state.copyWith(
+          selectedPoint: _state.filteredServicePoints.isNotEmpty
+              ? _state.filteredServicePoints.first
+              : null,
+        );
       }
     });
     widget.onCategoryChanged?.call(category);
   }
 
-  /// Get filtered service points based on selected category
-  List<ServicePointModel> get _filteredServicePoints {
-    if (_selectedCategory == ServicePointCategory.all) {
-      return widget.servicePoints;
-    }
-
-    return widget.servicePoints.where((ServicePointModel point) {
-      final String type = point.type.toLowerCase();
-
-      // Match category with point type
-      switch (_selectedCategory) {
-        case ServicePointCategory.shops:
-          return type.contains('shop');
-        case ServicePointCategory.lockers:
-          return type.contains('locker');
-        case ServicePointCategory.post:
-          return type.contains('post') || type.contains('office');
-        case ServicePointCategory.all:
-          return true;
-      }
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
     final Size size = MediaQuery.of(context).size;
 
     return Dialog(
@@ -166,190 +159,32 @@ class _ServicePointSelectionDialogState
         height: size.height * 0.85,
         child: Column(
           children: <Widget>[
-            _buildGradientHeader(textTheme, colorScheme),
+            const DialogHeader(),
             Expanded(
               child: Column(
                 children: <Widget>[
-                  _buildFiltersSection(textTheme, colorScheme),
-                  Expanded(child: _buildLocationsList(textTheme, colorScheme)),
+                  FiltersSection(
+                    selectedRadius: _state.selectedRadius,
+                    selectedCategory: _state.selectedCategory,
+                    onRadiusChanged: _handleRadiusChange,
+                    onCategoryChanged: _handleCategoryChange,
+                    productName: widget.productName,
+                  ),
+                  Expanded(
+                    child: LocationsList(
+                      servicePoints: _state.filteredServicePoints,
+                      selectedPoint: _state.selectedPoint,
+                      selectedCategory: _state.selectedCategory,
+                      onLocationTap: _selectServicePoint,
+                      isLoading: widget.isLoading,
+                    ),
+                  ),
                 ],
               ),
             ),
-            _buildFooter(textTheme, colorScheme),
+            DialogFooter(selectedPoint: _state.selectedPoint),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildGradientHeader(TextTheme textTheme, ColorScheme colorScheme) {
-    return Container(
-      height: 64,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: <Color>[colorScheme.primary, colorScheme.secondary],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.location_pin,
-              color: colorScheme.primary,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Text(
-              'select_pickup_location'.tr(),
-              style: textTheme.titleLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close, color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFiltersSection(TextTheme textTheme, ColorScheme colorScheme) {
-    return FiltersSection(
-      selectedRadius: _selectedRadius,
-      selectedCategory: _selectedCategory,
-      onRadiusChanged: _handleRadiusChange,
-      onCategoryChanged: _handleCategoryChange,
-      productName: widget.productName,
-    );
-  }
-
-  Widget _buildLocationsList(TextTheme textTheme, ColorScheme colorScheme) {
-    // Show loading state
-    if (widget.isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              width: 48,
-              height: 48,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
-                strokeWidth: 3,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'finding_pickup_locations'.tr(),
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final List<ServicePointModel> filteredPoints = _filteredServicePoints;
-
-    if (filteredPoints.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'no_locations_found'.tr(
-                namedArgs: <String, String>{'category': _selectedCategory.key},
-              ),
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'try_different_category'.tr(),
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      itemCount: filteredPoints.length,
-      itemBuilder: (BuildContext context, int index) {
-        final ServicePointModel point = filteredPoints[index];
-        return LocationCard(
-          point: point,
-          isSelected: _selectedPoint?.id == point.id,
-          onTap: () => _selectServicePoint(point),
-        );
-      },
-    );
-  }
-
-  Widget _buildFooter(TextTheme textTheme, ColorScheme colorScheme) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border(top: BorderSide(color: colorScheme.outline)),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: OutlinedButton(
-              onPressed: () => Navigator.pop(context),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                side: BorderSide(color: colorScheme.outline),
-              ),
-              child: Text('cancel'.tr()),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            flex: 3,
-            child: ElevatedButton(
-              onPressed: _selectedPoint != null
-                  ? () => Navigator.pop(context, _selectedPoint)
-                  : null,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(48),
-                backgroundColor: colorScheme.primary,
-                foregroundColor: colorScheme.onPrimary,
-                disabledBackgroundColor: colorScheme.outline,
-              ),
-              child: Text(
-                'confirm_pickup_location'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

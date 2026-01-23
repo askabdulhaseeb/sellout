@@ -68,10 +68,10 @@ class LocationCard extends StatelessWidget {
                     children: <Widget>[
                       _buildBadge(point.type, colorScheme.tertiary),
                       _buildBadge(
-                        point.distance.toString(),
+                        '${point.distance.toString()} km',
                         colorScheme.secondary,
                       ),
-                      _buildBadge(point.carrier, colorScheme.primary),
+                      _buildCarrierBadge(point.carrier, colorScheme.primary),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -134,5 +134,63 @@ class LocationCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Build carrier badge with text and optional icon
+  Widget _buildCarrierBadge(String carrier, Color color) {
+    // Map carrier to display text and icon
+    final String displayText = _getCarrierDisplayText(carrier);
+    final IconData? icon = _getCarrierIcon(carrier);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (icon != null) ...<Widget>[
+            Icon(icon, size: 10, color: color),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            displayText,
+            style: TextStyle(
+              color: color,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Get display text for carrier
+  String _getCarrierDisplayText(String carrier) {
+    final String lowerCarrier = carrier.toLowerCase();
+    if (lowerCarrier.contains('dhl')) return 'DHL';
+    if (lowerCarrier.contains('fedex')) return 'FedEx';
+    if (lowerCarrier.contains('ups')) return 'UPS';
+    if (lowerCarrier.contains('amazon')) return 'Amazon';
+    if (lowerCarrier.contains('gls')) return 'GLS';
+    if (lowerCarrier.contains('hermes')) return 'Hermes';
+    if (lowerCarrier.contains('royal')) return 'Royal Mail';
+    return carrier;
+  }
+
+  /// Get icon for carrier type
+  IconData? _getCarrierIcon(String carrier) {
+    final String lowerCarrier = carrier.toLowerCase();
+    if (lowerCarrier.contains('dhl')) return Icons.local_shipping;
+    if (lowerCarrier.contains('fedex')) return Icons.local_shipping;
+    if (lowerCarrier.contains('ups')) return Icons.local_shipping;
+    if (lowerCarrier.contains('amazon')) return Icons.store;
+    if (lowerCarrier.contains('gls')) return Icons.local_shipping;
+    if (lowerCarrier.contains('hermes')) return Icons.local_shipping;
+    if (lowerCarrier.contains('royal')) return Icons.mail;
+    return Icons.local_shipping;
   }
 }
