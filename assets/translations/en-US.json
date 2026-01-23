@@ -1343,7 +1343,6 @@
   "no_chats_found": "No chats found",
   "feature_garden": "Garden",
   "feature_size": "sq ft",
-  "closed": "Closed",
   "default": "Default",
   "none": "none",
   "na": "N/A",
@@ -1411,6 +1410,7 @@
   "grand_total": "Grand total",
   "transfer_success": "Transfer successful",
   "transfer_failed": "Transfer failed. Please try again.",
+
   
    "legal_documents": {
     "title": "Legal Documents",
