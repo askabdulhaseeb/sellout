@@ -6,11 +6,8 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
-import '../../../../postage/domain/entities/service_point_entity.dart';
-import '../../../../postage/domain/params/get_service_points_param.dart';
 import '../../../../postage/domain/usecase/add_shipping_usecase.dart';
 import '../../../../postage/domain/usecase/get_postage_detail_usecase.dart';
-import '../../../../postage/domain/usecase/get_service_points_usecase.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../data/models/cart/add_shipping_response_model.dart';
@@ -42,7 +39,6 @@ class CartProvider extends ChangeNotifier {
     this._payIntentUsecase,
     this._getPostageDetailUsecase,
     this._addShippingUsecase,
-    this._getServicePointsUsecase,
   );
   // Track if postage rates are loading
   bool _loadingPostage = false;
@@ -58,16 +54,6 @@ class CartProvider extends ChangeNotifier {
   List<SellerGroup>? get groupedSellerItems => _groupedSellerItems;
   bool get isLoadingGroupedItems => _isLoadingGroupedItems;
 
-  // MARK: 📍 Service Points State
-  final Map<String, bool> _loadingServicePoints = <String, bool>{};
-  final Map<String, CartItemServicePointsEntity> _servicePointsCache =
-      <String, CartItemServicePointsEntity>{};
-
-  bool isLoadingServicePoints(String cartItemId) =>
-      _loadingServicePoints[cartItemId] ?? false;
-  CartItemServicePointsEntity? getServicePoints(String cartItemId) =>
-      _servicePointsCache[cartItemId];
-
   // MARK: 🧱  Dependencies
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
@@ -76,7 +62,6 @@ class CartProvider extends ChangeNotifier {
   final PayIntentUsecase _payIntentUsecase;
   final GetPostageDetailUsecase _getPostageDetailUsecase;
   final AddShippingUsecase _addShippingUsecase;
-  final GetServicePointsUsecase _getServicePointsUsecase;
 
   // MARK: ⚙️ State Variables
   ShoppingBasketPageType _shoppingBasketType = ShoppingBasketPageType.basket;
@@ -94,6 +79,73 @@ class CartProvider extends ChangeNotifier {
   final List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
 
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
+  List<ItemDeliveryPreference> _deliveryItems = [];
+  List<ItemDeliveryPreference> get deliveryItems => _deliveryItems;
+
+  void setDeliveryItems(List<ItemDeliveryPreference> items) {
+    _deliveryItems = items;
+    notifyListeners();
+  }
+
+  void addOrUpdateDeliveryItem(ItemDeliveryPreference item) {
+    final int index = _deliveryItems.indexWhere(
+      (element) => element.cartItemId == item.cartItemId,
+    );
+    bool changed = false;
+
+    if (index >= 0) {
+      final ItemDeliveryPreference existing = _deliveryItems[index];
+      // Only notify when something actually changes to avoid rebuilds
+      if (existing.deliveryMode != item.deliveryMode ||
+          existing.servicePointId != item.servicePointId) {
+        _deliveryItems[index] = item;
+        changed = true;
+      }
+    } else {
+      _deliveryItems.add(item);
+      changed = true;
+    }
+
+    if (changed) notifyListeners();
+  }
+
+  void updateServicePointForItem(String cartItemId, String? servicePointId) {
+    final int index = _deliveryItems.indexWhere(
+      (element) => element.cartItemId == cartItemId,
+    );
+
+    if (index >= 0) {
+      final ItemDeliveryPreference existing = _deliveryItems[index];
+      if (existing.servicePointId == servicePointId) return;
+
+      _deliveryItems[index] = ItemDeliveryPreference(
+        cartItemId: cartItemId,
+        deliveryMode: _deliveryItems[index].deliveryMode,
+        servicePointId: servicePointId,
+      );
+      notifyListeners();
+    }
+  }
+
+  void removeDeliveryItem(String cartItemId) {
+    final int before = _deliveryItems.length;
+    _deliveryItems.removeWhere((item) => item.cartItemId == cartItemId);
+    if (_deliveryItems.length != before) notifyListeners();
+  }
+
+  bool hasAllPickupItemsWithServicePoints() {
+    for (final ItemDeliveryPreference item in _deliveryItems) {
+      if (item.deliveryMode == 'pickup' &&
+          (item.servicePointId == null || item.servicePointId!.isEmpty)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool hasAnyPickupItems() {
+    return _deliveryItems.any((item) => item.deliveryMode == 'pickup');
+  }
 
   void updateShippingSelection(String cartItemId, String objectId) {
     final int idx = _selectedShippingItems.indexWhere(
@@ -372,6 +424,7 @@ class CartProvider extends ChangeNotifier {
       }
       final GetPostageDetailParam params = GetPostageDetailParam(
         buyerAddress: _address!,
+        itemsDeliveryPreferences: _deliveryItems,
         fastDelivery: fastDeliveryProducts,
       );
 
@@ -583,73 +636,6 @@ class CartProvider extends ChangeNotifier {
   void clearRatesAndCheckout() {
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
-    notifyListeners();
-  }
-
-  // MARK: � Service Points Management
-
-  /// Fetches service points for a specific cart item
-  Future<void> fetchServicePoints({
-    required String cartItemId,
-    required String carrier,
-    int radius = 1000,
-  }) async {
-    _loadingServicePoints[cartItemId] = true;
-    notifyListeners();
-
-    try {
-      final GetServicePointsParam param = GetServicePointsParam(
-        cartItemIds: <String>[cartItemId],
-        postalCode: address?.postalCode ?? '',
-        carrier: carrier,
-        radius: radius,
-      );
-
-      final DataState<ServicePointsResponseEntity> result =
-          await _getServicePointsUsecase(param);
-
-      if (result is DataSuccess<ServicePointsResponseEntity>) {
-        // Store the cart item service points data
-        final CartItemServicePointsEntity? itemData =
-            result.entity?.results[cartItemId];
-        if (itemData != null) {
-          _servicePointsCache[cartItemId] = itemData;
-          AppLog.info(
-            'Fetched ${itemData.totalServicePoints} service points for cart item $cartItemId',
-            name: 'CartProvider.fetchServicePoints',
-          );
-        }
-      } else {
-        AppLog.error(
-          'Failed to fetch service points',
-          name: 'CartProvider.fetchServicePoints',
-          error: result.exception?.message,
-        );
-        AppSnackBar.show('Failed to load pickup points');
-      }
-    } catch (e, st) {
-      AppLog.error(
-        'Error fetching service points',
-        name: 'CartProvider.fetchServicePoints',
-        error: e,
-        stackTrace: st,
-      );
-      AppSnackBar.show('something_wrong'.tr());
-    } finally {
-      _loadingServicePoints[cartItemId] = false;
-      notifyListeners();
-    }
-  }
-
-  /// Clears service points cache for a specific item or all items
-  void clearServicePoints([String? cartItemId]) {
-    if (cartItemId != null) {
-      _servicePointsCache.remove(cartItemId);
-      _loadingServicePoints.remove(cartItemId);
-    } else {
-      _servicePointsCache.clear();
-      _loadingServicePoints.clear();
-    }
     notifyListeners();
   }
 

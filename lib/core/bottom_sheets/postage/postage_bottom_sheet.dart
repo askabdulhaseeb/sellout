@@ -1,6 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../sources/data_state.dart';
+import '../../widgets/app_snackbar.dart';
 import '../../../features/personal/basket/views/providers/cart_provider.dart';
+import '../../../features/personal/basket/data/models/cart/add_shipping_response_model.dart';
+import '../../../features/personal/basket/domain/enums/cart_type.dart';
 import '../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import 'widgets/postage_header.dart';
 import 'widgets/postage_item_card.dart';
@@ -13,6 +18,27 @@ class PostageBottomSheet extends StatefulWidget {
 }
 
 class _PostageBottomSheetState extends State<PostageBottomSheet> {
+  bool _isSubmitting = false;
+
+  Future<void> _submitPostage(CartProvider cartPro) async {
+    setState(() => _isSubmitting = true);
+
+    final DataState<AddShippingResponseModel> result = await cartPro
+        .submitShipping();
+
+    if (!mounted) return;
+
+    if (result is DataSuccess<AddShippingResponseModel>) {
+      cartPro.setCartType(CartType.reviewOrder);
+      Navigator.of(context).pop(cartPro.selectedShippingItems);
+    } else {
+      AppSnackBar.show(
+        result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
+      );
+      setState(() => _isSubmitting = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final CartProvider cartPro = context.read<CartProvider>();
@@ -36,8 +62,9 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
 
     return SafeArea(
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -55,8 +82,10 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
             Expanded(
               child: ListView.separated(
                 cacheExtent: 5000,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 itemCount: entries.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (BuildContext context, int index) {
@@ -68,7 +97,25 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
                   );
                 },
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isSubmitting
+                      ? null
+                      : () => _submitPostage(cartPro),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Submit'),
+                ),
+              ),
+            ),
           ],
         ),
       ),

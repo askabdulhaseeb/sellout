@@ -534,7 +534,6 @@ void _cart() {
       locator(),
       locator(),
       locator(),
-      locator(),
     ),
   );
 }

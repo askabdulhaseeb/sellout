@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
@@ -6,6 +7,7 @@ import '../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../../../../data/sources/local/local_cart.dart';
+import '../../../../../../../domain/param/get_postage_detail_params.dart';
 import '../../../../../../providers/cart_provider.dart';
 import '../../../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../../../post/domain/entities/post/post_entity.dart';
@@ -13,8 +15,13 @@ import 'checkout_delivery_pickup_toggle.dart';
 import 'service_points_dialog.dart';
 
 class CheckoutItemTile extends StatefulWidget {
-  const CheckoutItemTile({required this.item, super.key});
+  const CheckoutItemTile({
+    required this.item,
+    this.forcedPostageType,
+    super.key,
+  });
   final CartItemEntity item;
+  final PostageType? forcedPostageType;
 
   @override
   State<CheckoutItemTile> createState() => _CheckoutItemTileState();
@@ -22,13 +29,55 @@ class CheckoutItemTile extends StatefulWidget {
 
 class _CheckoutItemTileState extends State<CheckoutItemTile> {
   late Future<PostEntity?> _postFuture;
-  PostageType _selectedPostageType = PostageType.postageOnly;
-  ServicePointEntity? _selectedServicePoint;
 
   @override
   void initState() {
     super.initState();
     _postFuture = LocalPost().getPost(widget.item.postID);
+    // Apply any forced postage type after the first frame to avoid notifying
+    // listeners during widget build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyForcedPostageType();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant CheckoutItemTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-sync forced postage type changes after frame
+    if (widget.forcedPostageType != oldWidget.forcedPostageType) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _applyForcedPostageType();
+      });
+    }
+  }
+
+  void _applyForcedPostageType() {
+    final PostageType? forced = widget.forcedPostageType;
+    if (forced == null || !mounted) return;
+
+    final CartProvider cartProvider = context.read<CartProvider>();
+    final bool isPickup = forced == PostageType.pickupOnly;
+    final bool isAlreadyPickup = cartProvider.deliveryItems.any(
+      (ItemDeliveryPreference pref) =>
+          pref.cartItemId == widget.item.cartItemID &&
+          pref.deliveryMode == 'pickup',
+    );
+
+    if (isPickup) {
+      if (isAlreadyPickup) return;
+      cartProvider.addOrUpdateDeliveryItem(
+        ItemDeliveryPreference(
+          cartItemId: widget.item.cartItemID,
+          deliveryMode: 'pickup',
+          servicePointId: null,
+        ),
+      );
+    } else {
+      if (isAlreadyPickup) {
+        cartProvider.removeDeliveryItem(widget.item.cartItemID);
+      }
+    }
   }
 
   Future<void> _handlePostageTypeChange(PostageType value) async {
@@ -37,58 +86,63 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
       name: 'CheckoutItemTile._handlePostageTypeChange',
     );
 
+    final CartProvider cartProvider = context.read<CartProvider>();
+
     if (value == PostageType.pickupOnly) {
-      final CartProvider cartProvider = Provider.of<CartProvider>(
-        context,
-        listen: false,
+      final String postalCode = cartProvider.address?.postalCode ?? '';
+      final ServicePointEntity? selectedPoint = await _showServicePointsDialog(
+        postalCode,
       );
 
-      AppLog.info(
-        'Fetching service points for cart item: ${widget.item.cartItemID}',
-        name: 'CheckoutItemTile._handlePostageTypeChange',
-      );
+      if (!mounted) return;
 
-      // TODO: Get actual postal code and carrier from address/item
-      await cartProvider.fetchServicePoints(
-        cartItemId: widget.item.cartItemID,
-        carrier: '', // Replace with actual carrier
-      );
-
-      // Show service points dialog after fetching
-      if (mounted) {
-        final servicePointsData = cartProvider.getServicePoints(
-          widget.item.cartItemID,
+      // Only set pickup mode when a service point is chosen
+      if (selectedPoint != null) {
+        cartProvider.addOrUpdateDeliveryItem(
+          ItemDeliveryPreference(
+            cartItemId: widget.item.cartItemID,
+            deliveryMode: 'pickup',
+            servicePointId: selectedPoint.id.toString(),
+          ),
         );
-        if (servicePointsData != null &&
-            servicePointsData.servicePoints.isNotEmpty) {
-          _showServicePointsDialog(servicePointsData);
-        }
+      } else {
+        cartProvider.removeDeliveryItem(widget.item.cartItemID);
       }
     } else {
       AppLog.info(
-        'Delivery selected, clearing service points if any',
+        'Delivery selected, removing from pickup list',
         name: 'CheckoutItemTile._handlePostageTypeChange',
       );
-    }
 
-    setState(() {
-      _selectedPostageType = value;
-    });
+      // Remove from delivery items list
+      cartProvider.removeDeliveryItem(widget.item.cartItemID);
+    }
   }
 
-  Future<void> _showServicePointsDialog(
-    CartItemServicePointsEntity servicePointsData,
+  Future<ServicePointEntity?> _showServicePointsDialog(
+    String postalCode,
   ) async {
+    if (postalCode.isEmpty) {
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please add a delivery address before selecting pickup.',
+          ),
+        ),
+      );
+      return null;
+    }
+
     final ServicePointEntity? selectedPoint = await ServicePointsDialog.show(
       context: context,
-      servicePointsData: servicePointsData,
-      cartItemId: widget.item.cartItemID,
-      productName: '',
+      cartItemIds: <String>[widget.item.cartItemID],
+      postalCode: postalCode,
     );
 
-    if (selectedPoint != null && mounted) {
-      setState(() => _selectedServicePoint = selectedPoint);
-    }
+    if (!mounted) return null;
+
+    return selectedPoint;
   }
 
   @override
@@ -98,31 +152,87 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
 
     return Consumer<CartProvider>(
       builder: (BuildContext context, CartProvider cartProvider, _) {
-        final bool isLoadingServicePoints = cartProvider.isLoadingServicePoints(
-          widget.item.cartItemID,
-        );
+        // Get delivery preference from CartProvider
+        final ItemDeliveryPreference? deliveryPref = cartProvider.deliveryItems
+            .where((item) => item.cartItemId == widget.item.cartItemID)
+            .firstOrNull;
+
+        final PostageType selectedPostageType =
+            deliveryPref?.deliveryMode == 'pickup'
+            ? PostageType.pickupOnly
+            : PostageType.postageOnly;
+
+        final bool isLoadingServicePoints = false;
 
         return FutureBuilder<PostEntity?>(
           future: _postFuture,
           builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return _buildSkeleton(colorScheme);
+              return _CheckoutItemTileSkeleton(
+                colorScheme: colorScheme,
+                selectedPostageType: selectedPostageType,
+                onPostageTypeChange: _handlePostageTypeChange,
+              );
             }
 
             final PostEntity? post = snapshot.data;
-            return _buildCartTile(
-              post,
-              textTheme,
-              colorScheme,
-              isLoadingServicePoints,
+            return Column(
+              spacing: AppSpacing.vXs,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _CheckoutItemCard(
+                  post: post,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
+                  selectedPostageType: selectedPostageType,
+                  isLoadingServicePoints: isLoadingServicePoints,
+                  onPostageTypeChange: _handlePostageTypeChange,
+                ),
+
+                if (selectedPostageType == PostageType.pickupOnly)
+                  _PickupLocationPrompt(
+                    servicePointId: deliveryPref?.servicePointId,
+                    titleSelect: 'select_pickup_location',
+                    colorScheme: colorScheme,
+                    textTheme: textTheme,
+                    titleSelected: 'change'.tr(),
+                    hintSelect: 'no_pickup_location_selected'.tr(),
+                    onTap: () async {
+                      final String postalCode =
+                          cartProvider.address?.postalCode ?? '';
+                      final ServicePointEntity? selectedPoint =
+                          await _showServicePointsDialog(postalCode);
+
+                      if (!mounted || selectedPoint == null) return;
+
+                      cartProvider.updateServicePointForItem(
+                        widget.item.cartItemID,
+                        selectedPoint.id.toString(),
+                      );
+                    },
+                  ),
+              ],
             );
           },
         );
       },
     );
   }
+}
 
-  Widget _buildSkeleton(ColorScheme colorScheme) {
+class _CheckoutItemTileSkeleton extends StatelessWidget {
+  const _CheckoutItemTileSkeleton({
+    required this.colorScheme,
+    required this.selectedPostageType,
+    required this.onPostageTypeChange,
+  });
+
+  final ColorScheme colorScheme;
+  final PostageType selectedPostageType;
+  final ValueChanged<PostageType> onPostageTypeChange;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
@@ -157,184 +267,181 @@ class _CheckoutItemTileState extends State<CheckoutItemTile> {
           const SizedBox(width: AppSpacing.md),
           CheckoutDeliveryPickupToggle(
             showText: false,
-            value: _selectedPostageType,
-            onChanged: _handlePostageTypeChange,
+            value: selectedPostageType,
+            onChanged: onPostageTypeChange,
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildCartTile(
-    dynamic post,
-    TextTheme textTheme,
-    ColorScheme colorScheme,
-    bool isLoadingServicePoints,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+class _CheckoutItemCard extends StatelessWidget {
+  const _CheckoutItemCard({
+    required this.post,
+    required this.textTheme,
+    required this.colorScheme,
+    required this.selectedPostageType,
+    required this.isLoadingServicePoints,
+    required this.onPostageTypeChange,
+  });
+
+  final dynamic post;
+  final TextTheme textTheme;
+  final ColorScheme colorScheme;
+  final PostageType selectedPostageType;
+  final bool isLoadingServicePoints;
+  final ValueChanged<PostageType> onPostageTypeChange;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Container(
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(AppSpacing.lg),
-            border: Border.all(color: colorScheme.outlineVariant, width: 1.2),
+            borderRadius: BorderRadius.circular(AppSpacing.md),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: colorScheme.surface,
+          child: post?.imageURL != null
+              ? ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.md),
+                  child: CustomNetworkImage(
+                    imageURL: post?.imageURL,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Icon(
+                  Icons.inventory_2_outlined,
+                  color: colorScheme.outlineVariant,
+                  size: 36,
                 ),
-                child: post?.imageURL != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(AppSpacing.md),
-                        child: CustomNetworkImage(
-                          imageURL: post?.imageURL,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Icon(
-                        Icons.inventory_2_outlined,
-                        color: colorScheme.outlineVariant,
-                        size: 36,
-                      ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                post?.title ?? '',
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      post?.title ?? '',
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      post != null ? '£${post.price.toStringAsFixed(2)}' : '',
-                      style: textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    CheckoutDeliveryPickupToggle(
-                      showText: false,
-                      value: _selectedPostageType,
-                      isLoading: isLoadingServicePoints,
-                      onChanged: _handlePostageTypeChange,
-                    ),
-                  ],
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                post != null ? '£${post.price.toStringAsFixed(2)}' : '',
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
         ),
-        // Show pickup location selection prompt
-        if (_selectedPostageType == PostageType.pickupOnly)
-          _buildPickupLocationPrompt(colorScheme, textTheme),
+        CheckoutDeliveryPickupToggle(
+          showText: false,
+          value: selectedPostageType,
+          isLoading: isLoadingServicePoints,
+          onChanged: onPostageTypeChange,
+        ),
       ],
     );
   }
+}
 
-  Widget _buildPickupLocationPrompt(
-    ColorScheme colorScheme,
-    TextTheme textTheme,
-  ) {
-    final CartProvider cartProvider = Provider.of<CartProvider>(
-      context,
-      listen: false,
-    );
-    final servicePointsData = cartProvider.getServicePoints(
-      widget.item.cartItemID,
-    );
+class _PickupLocationPrompt extends StatelessWidget {
+  const _PickupLocationPrompt({
+    required this.colorScheme,
+    required this.textTheme,
+    this.servicePointId,
+    required this.titleSelected,
+    required this.titleSelect,
+    required this.hintSelect,
+    this.onTap,
+  });
 
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.md),
-      child: GestureDetector(
-        onTap: () {
-          if (servicePointsData != null &&
-              servicePointsData.servicePoints.isNotEmpty) {
-            _showServicePointsDialog(servicePointsData);
-          }
-        },
+  final ColorScheme colorScheme;
+  final TextTheme textTheme;
+  final String? servicePointId;
+  final String titleSelected;
+  final String titleSelect;
+  final String hintSelect;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasSelection =
+        servicePointId != null && servicePointId!.isNotEmpty;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.md),
+        onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
-            color: _selectedServicePoint != null
-                ? colorScheme.tertiaryContainer
-                : colorScheme.errorContainer.withValues(alpha: 0.3),
+            color: hasSelection
+                ? colorScheme.tertiaryContainer.withValues(alpha: 0.25)
+                : colorScheme.surface,
             borderRadius: BorderRadius.circular(AppSpacing.md),
             border: Border.all(
-              color: _selectedServicePoint != null
+              color: hasSelection
                   ? colorScheme.tertiary
-                  : colorScheme.error.withValues(alpha: 0.5),
-              width: 1.2,
+                  : colorScheme.outlineVariant,
+              width: 1,
             ),
           ),
           child: Row(
             children: <Widget>[
               Icon(
-                _selectedServicePoint != null
-                    ? Icons.check_circle
-                    : Icons.location_on,
-                color: _selectedServicePoint != null
-                    ? colorScheme.tertiary
-                    : colorScheme.error,
-                size: 24,
+                hasSelection ? Icons.check_circle : Icons.location_on,
+                color: hasSelection ? colorScheme.tertiary : colorScheme.error,
+                size: 22,
               ),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      _selectedServicePoint != null
-                          ? 'Pickup Location Selected'
-                          : 'Select Pickup Location',
-                      style: textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: _selectedServicePoint != null
-                            ? colorScheme.tertiary
-                            : colorScheme.error,
-                      ),
-                    ),
-                    if (_selectedServicePoint != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        _selectedServicePoint!.name,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onTertiaryContainer,
+                child: hasSelection
+                    ? Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              servicePointId!,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(
+                            titleSelected,
+                            style: textTheme.labelMedium?.copyWith(
+                              color: colorScheme.tertiary,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        hintSelect,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.error,
+                          fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ] else
-                      const SizedBox(height: AppSpacing.xs),
-                    if (_selectedServicePoint == null) ...[
-                      Text(
-                        'Tap to choose a pickup location',
-                        style: textTheme.labelSmall?.copyWith(
-                          color: colorScheme.error.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: _selectedServicePoint != null
-                    ? colorScheme.tertiary
-                    : colorScheme.error,
               ),
             ],
           ),
