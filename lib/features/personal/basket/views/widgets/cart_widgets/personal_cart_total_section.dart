@@ -2,17 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
-import '../../../../post/domain/entities/post/post_entity.dart';
-import '../../../data/models/cart/add_shipping_response_model.dart';
 import '../../../data/models/cart/cart_item_model.dart';
 import '../../../data/sources/local/local_cart.dart';
-import '../../../../post/data/sources/local/local_post.dart';
-import '../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../../domain/enums/cart_type.dart';
 import '../../providers/cart_provider.dart';
 
@@ -105,8 +101,11 @@ class PersonalCartTotalSection extends StatelessWidget {
                     title: _getButtonTitle(cartPro.cartType),
                     isLoading: cartPro.loadingPostage,
                     isDisable:
-                        cartPro.cartType == CartType.checkoutOrder &&
-                        cartPro.hasItemsRequiringRemoval,
+                        (cartPro.cartType == CartType.checkoutOrder &&
+                            cartPro.hasItemsRequiringRemoval) ||
+                        (cartPro.cartType == CartType.checkoutOrder &&
+                            cartPro.hasAnyPickupItems() &&
+                            !cartPro.hasAllPickupItemsWithServicePoints()),
                     onTap: () async => _handleButtonTap(context, cartPro, cart),
                   ),
                 ],
@@ -123,7 +122,7 @@ class PersonalCartTotalSection extends StatelessWidget {
       case CartType.shoppingBasket:
         return 'proceed_to_checkout'.tr();
       case CartType.checkoutOrder:
-        return 'continue'.tr();
+        return 'get_shipping_options'.tr();
       case CartType.reviewOrder:
         return 'proceed_to_payment'.tr();
       case CartType.payment:
@@ -137,7 +136,6 @@ class PersonalCartTotalSection extends StatelessWidget {
     CartEntity cart,
   ) async {
     if (cartPro.cartType == CartType.shoppingBasket) {
-      // if (cartPro.cartItems.isNotEmpty) await cartPro.getRates();
       cartPro.setCartType(CartType.checkoutOrder);
       return;
     }
@@ -145,34 +143,38 @@ class PersonalCartTotalSection extends StatelessWidget {
     if (cartPro.cartType == CartType.checkoutOrder) {
       if (cartPro.hasItemsRequiringRemoval) return;
 
-      final bool hasPaidOrFast = cartPro.cartItems.any((CartItemEntity item) {
-        final PostEntity? post = LocalPost().post(item.postID);
-        return post?.deliveryType == DeliveryType.paid ||
-            (post?.deliveryType == DeliveryType.freeDelivery &&
-                cartPro.fastDeliveryProducts.contains(item));
-      });
-
-      if (hasPaidOrFast) {
-        final DataState<AddShippingResponseModel> result = await cartPro
-            .submitShipping();
-        if (result is! DataSuccess<AddShippingResponseModel>) {
-          if (context.mounted) {
-            AppSnackBar.show(
-              result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
-            );
-          }
-          return;
+      // Check if any items are set to pickup but don't have service points selected
+      if (cartPro.hasAnyPickupItems() &&
+          !cartPro.hasAllPickupItemsWithServicePoints()) {
+        if (context.mounted) {
+          AppSnackBar.show(
+            'Please select a pickup location for all pickup items'.tr(),
+          );
         }
+        return;
       }
 
-      final DataState<PaymentIntentEntity> billingResult = await cartPro
-          .getBillingDetails();
-      if (billingResult is DataSuccess) {
-        cartPro.setCartType(CartType.reviewOrder);
+      // Call getRates to fetch postage details with delivery preferences
+      final DataState<dynamic> ratesResult = await cartPro.getRates();
+      if (ratesResult is! DataSuccess) {
+        if (context.mounted) {
+          AppSnackBar.show(
+            ratesResult.exception?.reason ?? 'failed_to_get_postage'.tr(),
+          );
+        }
         return;
-      } else if (context.mounted) {
-        AppSnackBar.show(
-          billingResult.exception?.reason ?? 'failed_to_get_billing'.tr(),
+      }
+
+      // Show postage bottomsheet to let user select rates
+      if (context.mounted) {
+        await showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (_) => const PostageBottomSheet(),
         );
       }
       return;

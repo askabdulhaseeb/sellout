@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../providers/cart_provider.dart';
 import 'checkout_item_seller_header.dart';
 import 'components/checkout_item_tile.dart';
@@ -16,6 +17,8 @@ class CheckoutItemsList extends StatefulWidget {
 }
 
 class _CheckoutItemsListState extends State<CheckoutItemsList> {
+  final Map<int, PostageType> _groupPostageType = <int, PostageType>{};
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +34,12 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
       listen: false,
     );
     cartProvider.loadGroupedItems();
+  }
+
+  void _updateGroupPostage(int groupIndex, PostageType value) {
+    setState(() {
+      _groupPostageType[groupIndex] = value;
+    });
   }
 
   @override
@@ -55,22 +64,15 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-              child: Text(
-                'items'.tr(),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
+            Text('items'.tr(), style: Theme.of(context).textTheme.titleMedium),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: groups.length,
               itemBuilder: (BuildContext context, int groupIndex) {
                 final SellerGroup group = groups[groupIndex];
+                final PostageType groupPostageType =
+                    _groupPostageType[groupIndex] ?? PostageType.postageOnly;
 
                 return ShadowContainer(
                   padding: EdgeInsets.all(0),
@@ -81,6 +83,9 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
                         CartSellerHeader(
                           seller: group.seller!,
                           itemCount: group.items.length,
+                          postageType: groupPostageType,
+                          onPostageTypeChanged: (PostageType value) =>
+                              _updateGroupPostage(groupIndex, value),
                         ),
                       Column(
                         children: <Widget>[
@@ -91,7 +96,10 @@ class _CheckoutItemsListState extends State<CheckoutItemsList> {
                           ) ...<Widget>[
                             Padding(
                               padding: const EdgeInsets.all(AppSpacing.md),
-                              child: CheckoutItemTile(item: group.items[i]),
+                              child: CheckoutItemTile(
+                                item: group.items[i],
+                                forcedPostageType: groupPostageType,
+                              ),
                             ),
                             if (i < group.items.length - 1)
                               Divider(

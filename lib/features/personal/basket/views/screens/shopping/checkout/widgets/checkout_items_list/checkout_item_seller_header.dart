@@ -9,10 +9,14 @@ class CartSellerHeader extends StatelessWidget {
   const CartSellerHeader({
     required this.seller,
     required this.itemCount,
+    required this.postageType,
+    required this.onPostageTypeChanged,
     super.key,
   });
   final UserEntity seller;
   final int itemCount;
+  final PostageType postageType;
+  final ValueChanged<PostageType> onPostageTypeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +63,8 @@ class CartSellerHeader extends StatelessWidget {
             ),
           ),
           CheckoutDeliveryPickupToggle(
-            onChanged: (PostageType value) {},
-            value: PostageType.postageOnly,
+            onChanged: onPostageTypeChanged,
+            value: postageType,
             isLoading: false,
             showText: true,
           ),

@@ -209,7 +209,7 @@ class _PickupButton extends StatelessWidget {
                       ),
                     )
                   : Icon(
-                      Icons.store,
+                      Icons.location_on_outlined,
                       color: isSelected || isLoading
                           ? CheckoutDeliveryPickupStyle.pickupColor
                           : unselectedColor,
