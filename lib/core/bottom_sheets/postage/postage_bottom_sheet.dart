@@ -29,8 +29,20 @@ class _PostageBottomSheetState extends State<PostageBottomSheet> {
     if (!mounted) return;
 
     if (result is DataSuccess<AddShippingResponseModel>) {
-      cartPro.setCartType(CartType.reviewOrder);
-      Navigator.of(context).pop(cartPro.selectedShippingItems);
+      // Fetch billing details after successful shipping submission
+      final DataState billingResult = await cartPro.getBillingDetails();
+
+      if (!mounted) return;
+
+      if (billingResult is DataSuccess) {
+        cartPro.setCartType(CartType.reviewOrder);
+        Navigator.of(context).pop(cartPro.selectedShippingItems);
+      } else {
+        AppSnackBar.show(
+          billingResult.exception?.reason ?? 'failed_to_get_billing'.tr(),
+        );
+        setState(() => _isSubmitting = false);
+      }
     } else {
       AppSnackBar.show(
         result.exception?.reason ?? 'failed_to_submit_shipping'.tr(),
