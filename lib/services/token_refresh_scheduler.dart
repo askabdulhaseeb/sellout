@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 /// Handles periodic token refresh logic for the app.
 class TokenRefreshScheduler {
@@ -31,8 +32,9 @@ class TokenRefreshScheduler {
       if (_nextRefreshTime != null) {
         final Duration remaining = _nextRefreshTime!.difference(DateTime.now());
         final int seconds = remaining.inSeconds > 0 ? remaining.inSeconds : 0;
-        // ignore: avoid_print
-        print('[Token Refresh] Time remaining for next refresh: ${seconds}s');
+        if (kDebugMode) {
+          debugPrint('[Token Refresh] Time remaining for next refresh: ${seconds}s');
+        }
       }
     });
   }

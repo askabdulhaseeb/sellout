@@ -11,15 +11,17 @@ class BusinessRepositoryImpl implements BusinessRepository {
   final ServiceRemoteApi serviceRemoteApi;
 
   @override
-  Future<DataState<BusinessEntity>> createBusiness(business) {
-    // TODO: implement createBusiness
-    throw UnimplementedError();
+  Future<DataState<BusinessEntity>> createBusiness(dynamic business) async {
+    return DataFailer<BusinessEntity>(
+      CustomException('createBusiness is not yet implemented'),
+    );
   }
 
   @override
-  Future<DataState<bool>> deleteBusiness(String businessID) {
-    // TODO: implement deleteBusiness
-    throw UnimplementedError();
+  Future<DataState<bool>> deleteBusiness(String businessID) async {
+    return DataFailer<bool>(
+      CustomException('deleteBusiness is not yet implemented'),
+    );
   }
 
   @override
@@ -33,9 +35,10 @@ class BusinessRepositoryImpl implements BusinessRepository {
   }
 
   @override
-  Future<DataState<BusinessEntity>> updateBusiness(business) {
-    // TODO: implement updateBusiness
-    throw UnimplementedError();
+  Future<DataState<BusinessEntity>> updateBusiness(dynamic business) async {
+    return DataFailer<BusinessEntity>(
+      CustomException('updateBusiness is not yet implemented'),
+    );
   }
 
   @override

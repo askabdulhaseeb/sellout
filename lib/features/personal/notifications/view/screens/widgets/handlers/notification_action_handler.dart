@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
@@ -36,7 +37,9 @@ class NotificationActionHandler {
         await _handleOrderNotification(context, notification);
         break;
       default:
-        print('❌ NO ACTION - No valid data found');
+        if (kDebugMode) {
+          debugPrint('❌ NO ACTION - No valid data found');
+        }
     }
   }
 
@@ -47,26 +50,34 @@ class NotificationActionHandler {
     final String? orderId = notification.orderId;
 
     if (orderId == null || orderId.isEmpty) {
-      print('❌ Order ID is empty');
+      if (kDebugMode) {
+        debugPrint('❌ Order ID is empty');
+      }
       if (context.mounted) {
         AppSnackBar.showSnackBar(context, 'order_not_found'.tr());
       }
       return;
     }
 
-    print('✅ Processing ORDER: $orderId');
+    if (kDebugMode) {
+      debugPrint('✅ Processing ORDER: $orderId');
+    }
 
     final String notificationFor = notification.notificationFor.toLowerCase();
     final bool forSeller =
         notificationFor.contains('seller') ||
         notificationFor.contains('business');
 
-    print('   notificationFor: "$notificationFor" | forSeller: $forSeller');
+    if (kDebugMode) {
+      debugPrint('   notificationFor: "$notificationFor" | forSeller: $forSeller');
+    }
 
     if (!context.mounted) return;
 
     if (forSeller) {
-      print('   ✅ Navigating to SELLER view');
+      if (kDebugMode) {
+        debugPrint('   ✅ Navigating to SELLER view');
+      }
       AppNavigator.pushNamed(
         OrderSellerScreen.routeName,
         arguments: <String, dynamic>{'order-id': orderId},
@@ -74,7 +85,9 @@ class NotificationActionHandler {
       return;
     }
 
-    print('   ✅ Navigating to BUYER view');
+    if (kDebugMode) {
+      debugPrint('   ✅ Navigating to BUYER view');
+    }
     AppNavigator.pushNamed(
       OrderBuyerScreen.routeName,
       arguments: <String, dynamic>{'order-id': orderId},
@@ -86,14 +99,18 @@ class NotificationActionHandler {
     String? chatId,
   ) async {
     if (chatId == null || chatId.trim().isEmpty) {
-      print('❌ Chat ID is empty');
+      if (kDebugMode) {
+        debugPrint('❌ Chat ID is empty');
+      }
       if (context.mounted) {
         AppSnackBar.showSnackBar(context, 'chat_not_found'.tr());
       }
       return;
     }
 
-    print('✅ Opening CHAT: $chatId');
+    if (kDebugMode) {
+      debugPrint('✅ Opening CHAT: $chatId');
+    }
 
     if (!context.mounted) return;
 
@@ -106,14 +123,18 @@ class NotificationActionHandler {
     String? postId,
   ) async {
     if (postId == null || postId.isEmpty) {
-      print('❌ Post ID is empty');
+      if (kDebugMode) {
+        debugPrint('❌ Post ID is empty');
+      }
       if (context.mounted) {
         AppSnackBar.showSnackBar(context, 'post_not_found'.tr());
       }
       return;
     }
 
-    print('✅ Opening POST: $postId');
+    if (kDebugMode) {
+      debugPrint('✅ Opening POST: $postId');
+    }
     if (context.mounted) {
       AppNavigator.pushNamed(
         PostDetailScreen.routeName,

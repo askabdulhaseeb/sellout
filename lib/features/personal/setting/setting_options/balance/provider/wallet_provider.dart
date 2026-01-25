@@ -130,15 +130,21 @@ class WalletProvider extends ChangeNotifier {
   }
 
   Future<void> fetchWallet({bool isRefresh = false}) async {
-    print('🔍 WalletProvider.fetchWallet called - isRefresh: $isRefresh');
+    if (kDebugMode) {
+      debugPrint('🔍 WalletProvider.fetchWallet called - isRefresh: $isRefresh');
+    }
     _prepareWalletFetch(isRefresh);
     final String walletId = LocalAuth.stripeAccountId ?? '';
-    print('🔍 WalletProvider.fetchWallet - walletId: $walletId');
+    if (kDebugMode) {
+      debugPrint('🔍 WalletProvider.fetchWallet - walletId: $walletId');
+    }
     final DataState<WalletEntity> result = await _getWallet(
       walletId,
       isRefresh,
     );
-    print('🔍 WalletProvider.fetchWallet - result: $result');
+    if (kDebugMode) {
+      debugPrint('🔍 WalletProvider.fetchWallet - result: $result');
+    }
     _handleWalletFetchResult(result);
   }
 
@@ -162,16 +168,22 @@ class WalletProvider extends ChangeNotifier {
   }
 
   void _handleWalletFetchResult(DataState<WalletEntity> result) {
-    print(
-      '🔍 WalletProvider._handleWalletFetchResult - result type: ${result.runtimeType}',
-    );
+    if (kDebugMode) {
+      debugPrint(
+        '🔍 WalletProvider._handleWalletFetchResult - result type: ${result.runtimeType}',
+      );
+    }
     if (result is DataSuccess && result.entity != null) {
-      print('🔍 WalletProvider - Success! Wallet: ${result.entity}');
+      if (kDebugMode) {
+        debugPrint('🔍 WalletProvider - Success! Wallet: ${result.entity}');
+      }
       _wallet = result.entity;
       setLoading(false);
       setRefreshing(false);
     } else {
-      print('🔍 WalletProvider - Failed! Error: ${result.exception?.message}');
+      if (kDebugMode) {
+        debugPrint('🔍 WalletProvider - Failed! Error: ${result.exception?.message}');
+      }
       _error = result.exception?.message ?? 'something_wrong'.tr();
       setLoading(false);
       setRefreshing(false);

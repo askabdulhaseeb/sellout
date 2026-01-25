@@ -216,7 +216,10 @@ class ServicesPageProvider extends ChangeNotifier {
         _specialOffer = result.entity ?? <ServiceEntity>[];
         notifyListeners();
       } else {
-        print('Error: ${result.exception?.message}');
+        AppLog.error(
+          result.exception?.message ?? 'Failed to get special offers',
+          name: 'ServicesPageProvider.getSpecialOffer - else',
+        );
       }
     } catch (e) {
       AppLog.error(
