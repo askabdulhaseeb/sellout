@@ -1,6 +1,6 @@
 {
   "java.compile.nullAnalysis.mode": "automatic",
-  "cmake.sourceDirectory": "D:/sellout/windows/flutter",
+  "cmake.sourceDirectory": "/Users/askabdulhaseeb/Flutter/Upwork/sellout/linux",
   "java.configuration.updateBuildConfiguration": "automatic",
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
