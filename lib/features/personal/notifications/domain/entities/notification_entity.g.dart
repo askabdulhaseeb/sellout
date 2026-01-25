@@ -87,9 +87,9 @@ class OrderContextEntityAdapter extends TypeAdapter<OrderContextEntity> {
       postId: fields[0] as String,
       buyerId: fields[1] as String,
       orderId: fields[2] as String,
-      businessId: fields[3] as String?,
       trackId: fields[4] as String,
       sellerId: fields[5] as String,
+      businessId: fields[3] as String?,
     );
   }
 

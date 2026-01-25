@@ -44,6 +44,7 @@ class UserEntity {
     required this.timestamp,
     required this.createdAt,
     required this.inHiveAt,
+    required this.isBlocked,
   });
 
   @HiveField(0)
@@ -110,6 +111,8 @@ class UserEntity {
   final DateTime timestamp;
   @HiveField(74)
   final DateTime createdAt;
+  @HiveField(75)
+  final bool isBlocked;
   @HiveField(99)
   final DateTime inHiveAt;
 

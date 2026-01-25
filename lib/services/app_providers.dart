@@ -92,7 +92,7 @@ final List<SingleChildWidget> appProviders = <SingleChildWidget>[
     ),
   ),
   ChangeNotifierProvider<UserProfileProvider>.value(
-    value: UserProfileProvider(locator(), locator(), locator()),
+    value: UserProfileProvider(locator(), locator(), locator(), locator()),
   ),
   ChangeNotifierProvider<OrderProvider>.value(value: OrderProvider(locator())),
   //

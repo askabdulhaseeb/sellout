@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../core/widgets/profile_photo.dart';
 import '../../../../../../../core/widgets/rating_display_widget.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
@@ -104,6 +106,14 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: <Widget>[
+          if (isBlocked) ...<Widget>[
+            _BlockedBanner(
+              displayName: widget.user?.displayName,
+              onUnblock: () => _confirmBlockToggle(context, unblock: true),
+              busy: isProcessingBlock,
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -192,6 +202,90 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BlockedBanner extends StatelessWidget {
+  const _BlockedBanner({
+    required this.displayName,
+    required this.onUnblock,
+    required this.busy,
+  });
+
+  final String? displayName;
+  final VoidCallback onUnblock;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        border: Border.all(
+          color: colorScheme.error.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Row(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.xs),
+            decoration: BoxDecoration(
+              color: colorScheme.errorContainer,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.block_rounded,
+              color: colorScheme.error,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.hMd),
+          Expanded(
+            child: Text(
+              'blocked_banner_message'.tr(
+                namedArgs: <String, String>{
+                  'name': displayName ?? 'this_user'.tr(),
+                },
+              ),
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.error,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.hSm),
+          CustomElevatedButton(
+            title: 'unblock'.tr(),
+            onTap: onUnblock,
+            isLoading: busy,
+            isDisable: busy,
+            bgColor: colorScheme.error,
+            textColor: colorScheme.onError,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            margin: EdgeInsets.zero,
+            loadingWidget: SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: colorScheme.onError,
+              ),
+            ),
           ),
         ],
       ),

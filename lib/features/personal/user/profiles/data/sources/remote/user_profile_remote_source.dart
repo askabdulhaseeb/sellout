@@ -11,6 +11,7 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../views/params/add_remove_supporter_params.dart';
 import '../../../views/params/update_user_params.dart';
+import '../../../views/params/block_user_params.dart';
 import '../../models/supporter_detail_model.dart';
 import '../local/local_user.dart';
 
@@ -24,6 +25,7 @@ abstract interface class UserProfileRemoteSource {
     AddRemoveSupporterParams params,
   );
   Future<DataState<bool?>> deleteUser(String value);
+  Future<DataState<bool?>> blockUser(BlockUserParams params);
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
@@ -390,6 +392,70 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<bool?>(CustomException('user not deletd'));
     } catch (e) {
       return DataFailer<bool?>(CustomException('User not deleted'));
+    }
+  }
+
+  @override
+  Future<DataState<bool?>> blockUser(BlockUserParams params) async {
+    if (params.userId.isEmpty) {
+      return DataFailer<bool?>(CustomException('User ID is null'));
+    }
+
+    const String endpoint = '/user/block';
+    AppLog.info(
+      'Block user request | action: ${params.action.value} | userId: ${params.userId} | payload: ${params.toJson()}',
+      name: 'UserProfileRemoteSourceImpl.blockUser',
+    );
+
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toJson()),
+      );
+
+      if (result is DataSuccess<String>) {
+        bool? isBlocked;
+        try {
+          final dynamic decoded = jsonDecode(result.data ?? '');
+          if (decoded is Map<String, dynamic>) {
+            final dynamic maybeBlocked = decoded['is_blocked'];
+            if (maybeBlocked is bool) {
+              isBlocked = maybeBlocked;
+            }
+          }
+        } catch (_) {
+          // Ignore parsing issues and fall back to action-based state
+        }
+
+        final bool resolvedState =
+            isBlocked ?? (params.action == BlockAction.block);
+        
+        AppLog.info(
+          'Block user success | is_blocked: $isBlocked | resolved_state: $resolvedState',
+          name: 'UserProfileRemoteSourceImpl.blockUser',
+        );
+        
+        return DataSuccess<bool?>(result.data ?? '', resolvedState);
+      }
+
+      AppLog.error(
+        'Block user failed | message: ${result.exception?.message}',
+        name: 'UserProfileRemoteSourceImpl.blockUser',
+        error: result.exception,
+      );
+
+      return DataFailer<bool?>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
+    } catch (e, st) {
+      AppLog.error(
+        'Exception caught while blocking user',
+        name: 'UserProfileRemoteSourceImpl.blockUser',
+        error: CustomException(e.toString()),
+        stackTrace: st,
+      );
+      return DataFailer<bool?>(CustomException('something_wrong'.tr()));
     }
   }
 }

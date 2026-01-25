@@ -81,16 +81,19 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
 
     Navigator.of(context).push(
       MaterialPageRoute<ReviewListScreen>(
-        builder: (BuildContext context) =>
-            ReviewListScreen(param: ReviewListScreenParam(reviews: reviews)),
+        builder: (BuildContext context) => ReviewListScreen(
+          param: ReviewListScreenParam(
+            reviews: reviews,
+          ),
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserProfileProvider profileProvider = context
-        .watch<UserProfileProvider>();
+    final UserProfileProvider profileProvider =
+        context.watch<UserProfileProvider>();
     final bool isBlocked =
         profileProvider.isBlocked || (widget.user?.isBlocked ?? false);
     final bool isProcessingBlock = profileProvider.isProcessingBlock;
@@ -104,6 +107,14 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: <Widget>[
+          if (isBlocked) ...<Widget>[
+            _BlockedBanner(
+              displayName: widget.user?.displayName,
+              onUnblock: () => _confirmBlockToggle(context, unblock: true),
+              busy: isProcessingBlock,
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -142,23 +153,23 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
                           },
                           itemBuilder: (BuildContext context) =>
                               <PopupMenuEntry<_ProfileOverflowAction>>[
-                                PopupMenuItem<_ProfileOverflowAction>(
-                                  value: _ProfileOverflowAction.blockToggle,
-                                  child: isProcessingBlock
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : Text(
-                                          isBlocked
-                                              ? 'unblock_user'.tr()
-                                              : 'block_user'.tr(),
-                                        ),
-                                ),
-                              ],
+                            PopupMenuItem<_ProfileOverflowAction>(
+                              value: _ProfileOverflowAction.blockToggle,
+                              child: isProcessingBlock
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      isBlocked
+                                          ? 'unblock_user'.tr()
+                                          : 'block_user'.tr(),
+                                    ),
+                            ),
+                          ],
                           icon: const Icon(Icons.more_vert),
                         ),
                       ],

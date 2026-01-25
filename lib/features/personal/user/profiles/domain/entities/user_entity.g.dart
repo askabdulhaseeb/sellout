@@ -47,13 +47,14 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       timestamp: fields[73] as DateTime,
       createdAt: fields[74] as DateTime,
       inHiveAt: fields[99] as DateTime,
+      isBlocked: fields[75] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserEntity obj) {
     writer
-      ..writeByte(30)
+      ..writeByte(31)
       ..writeByte(0)
       ..write(obj.uid)
       ..writeByte(1)
@@ -112,6 +113,8 @@ class UserEntityAdapter extends TypeAdapter<UserEntity> {
       ..write(obj.timestamp)
       ..writeByte(74)
       ..write(obj.createdAt)
+      ..writeByte(75)
+      ..write(obj.isBlocked)
       ..writeByte(99)
       ..write(obj.inHiveAt);
   }
