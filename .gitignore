@@ -1,3 +1,5 @@
+release.apks
+tools/bundletool.jar
 # Miscellaneous
 *.class
 *.log
