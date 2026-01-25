@@ -46,4 +46,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Android local Gradle caches (can be very large)
+android/.gradle/
+
 prod.env
