@@ -17,50 +17,33 @@ class CreateBookingCalender extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Normalize dates to remove time components for consistent comparison
-<<<<<<< HEAD
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
     // Calculate safe first and last dates (date-only, no time component)
     final firstDate = today;
     final effectiveLastDate = lastDate != null
-=======
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
 
-    // Calculate safe first and last dates (date-only, no time component)
-    final DateTime firstDate = today;
-    final DateTime effectiveLastDate = lastDate != null
->>>>>>> e947def20999a92448313553bb695b63691bc934
         ? DateTime(lastDate!.year, lastDate!.month, lastDate!.day)
         : DateTime(now.year + 5, now.month, now.day);
 
     // Ensure lastDate is not before firstDate
-<<<<<<< HEAD
-    final safeLastDate = effectiveLastDate.isBefore(firstDate)
-=======
+
     final DateTime safeLastDate = effectiveLastDate.isBefore(firstDate)
->>>>>>> e947def20999a92448313553bb695b63691bc934
         ? firstDate.add(const Duration(days: 365))
         : effectiveLastDate;
 
     // Normalize initial date to remove time component
-<<<<<<< HEAD
     final normalizedInitialDate = DateTime(
-=======
-    final DateTime normalizedInitialDate = DateTime(
->>>>>>> e947def20999a92448313553bb695b63691bc934
+
       initialDate.year,
       initialDate.month,
       initialDate.day,
     );
 
     // Clamp initial date to be within valid range [firstDate, safeLastDate]
-<<<<<<< HEAD
     final safeInitialDate = _clampDate(
-=======
-    final DateTime safeInitialDate = _clampDate(
->>>>>>> e947def20999a92448313553bb695b63691bc934
+
       normalizedInitialDate,
       firstDate,
       safeLastDate,
@@ -78,11 +61,8 @@ class CreateBookingCalender extends StatelessWidget {
         lastDate: safeLastDate,
         selectableDayPredicate: (DateTime date) {
           // Normalize the date for comparison
-<<<<<<< HEAD
-          final normalizedDate = DateTime(date.year, date.month, date.day);
-=======
           final DateTime normalizedDate = DateTime(date.year, date.month, date.day);
->>>>>>> e947def20999a92448313553bb695b63691bc934
+
           // Allow selection of today and future dates within range
           return !normalizedDate.isBefore(firstDate) &&
               !normalizedDate.isAfter(safeLastDate);

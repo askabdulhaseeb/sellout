@@ -27,26 +27,20 @@ class NotificationMetadataEntityAdapter
       status: fields[6] as StatusType?,
       createdAt: fields[7] as DateTime?,
       paymentDetail: fields[8] as OrderPaymentDetailEntity?,
-<<<<<<< HEAD
       quantity: (fields[9] as num?)?.toInt(),
       totalAmount: (fields[10] as num?)?.toDouble(),
       currency: fields[11] as String?,
       itemTitle: fields[12] as String?,
       event: fields[13] as String?,
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
+
     );
   }
 
   @override
   void write(BinaryWriter writer, NotificationMetadataEntity obj) {
     writer
-<<<<<<< HEAD
       ..writeByte(14)
-=======
-      ..writeByte(9)
->>>>>>> e947def20999a92448313553bb695b63691bc934
-      ..writeByte(0)
+   ..writeByte(0)
       ..write(obj.postId)
       ..writeByte(1)
       ..write(obj.orderId)
@@ -63,7 +57,6 @@ class NotificationMetadataEntityAdapter
       ..writeByte(7)
       ..write(obj.createdAt)
       ..writeByte(8)
-<<<<<<< HEAD
       ..write(obj.paymentDetail)
       ..writeByte(9)
       ..write(obj.quantity)
@@ -75,10 +68,7 @@ class NotificationMetadataEntityAdapter
       ..write(obj.itemTitle)
       ..writeByte(13)
       ..write(obj.event);
-=======
-      ..write(obj.paymentDetail);
->>>>>>> e947def20999a92448313553bb695b63691bc934
-  }
+ }
 
   @override
   int get hashCode => typeId.hashCode;

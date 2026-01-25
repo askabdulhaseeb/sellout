@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-<<<<<<< HEAD
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
@@ -9,26 +8,18 @@ import '../../../data/sources/local/local_user.dart';
 import '../providers/user_profile_provider.dart';
 import '../widgets/bottomsheets/block_user_bottomsheet.dart';
 import '../widgets/bottomsheets/unblock_user_bottomsheet.dart';
-=======
-import '../../../../../../../core/sources/data_state.dart';
-import '../../../data/sources/local/local_user.dart';
-import '../providers/user_profile_provider.dart';
->>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../widgets/user_profile_grid_section.dart';
 import '../widgets/user_profile_grid_type_selection_section.dart';
 import '../widgets/user_profile_header_section.dart';
 import '../widgets/user_profile_score_section.dart';
 
-<<<<<<< HEAD
 enum _ProfileMenuAction { blockToggle, close }
 
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({required this.uid, super.key});
+
   final String uid;
 
-<<<<<<< HEAD
   Future<void> _handleBlockToggle(
     BuildContext context, {
     required UserProfileProvider profileProvider,
@@ -37,13 +28,14 @@ class UserProfileScreen extends StatelessWidget {
   }) async {
     final String? targetUserId = user?.uid;
     if (targetUserId == null || targetUserId.isEmpty) {
-      AppSnackBar.error(context, 'unable_to_find_user'.tr());
+      AppSnackBar.showSnackBar(context, 'unable_to_find_user'.tr());
       return;
     }
 
     final bool willBlock = unblock != null
         ? !unblock
-        : !(profileProvider.isBlocked || (user?.isBlocked ?? false));
+        : !(profileProvider.isBlocked);
+
     if (profileProvider.isProcessingBlock) return;
 
     final String name = user?.displayName ?? 'this_user'.tr();
@@ -66,22 +58,20 @@ class UserProfileScreen extends StatelessWidget {
         context.read<FeedProvider>().removeBlockedUserPosts(targetUserId);
       }
 
-      AppSnackBar.success(
+      AppSnackBar.showSnackBar(
         context,
         profileProvider.isBlocked
             ? 'user_blocked_successfully'.tr()
             : 'user_unblocked_successfully'.tr(),
       );
     } else {
-      AppSnackBar.error(
+      AppSnackBar.showSnackBar(
         context,
         result.exception?.message ?? 'failed_to_update_block_state'.tr(),
       );
     }
   }
 
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,9 +80,10 @@ class UserProfileScreen extends StatelessWidget {
         shadowColor: Theme.of(context).scaffoldBackgroundColor,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Text(LocalUser().userEntity(uid)?.username.toUpperCase() ?? ''),
-<<<<<<< HEAD
-        actions: <Widget>[
+        title: Text(
+          LocalUser().userEntity(uid)?.displayName?.toUpperCase() ?? '',
+        ),
+        actions: [
           Consumer<UserProfileProvider>(
             builder:
                 (
@@ -102,9 +93,8 @@ class UserProfileScreen extends StatelessWidget {
                 ) {
                   final UserEntity? cachedUser = LocalUser().userEntity(uid);
                   final bool isBlocked =
-                      profileProvider.isBlocked ||
-                      (profileProvider.user?.isBlocked ?? false) ||
-                      (cachedUser?.isBlocked ?? false);
+                      profileProvider.isBlocked 
+                     ;
 
                   return PopupMenuButton<_ProfileMenuAction>(
                     onSelected: (_ProfileMenuAction action) async {
@@ -138,6 +128,7 @@ class UserProfileScreen extends StatelessWidget {
                                         : 'block_user'.tr(),
                                   ),
                           ),
+                          const PopupMenuDivider(),
                           PopupMenuItem<_ProfileMenuAction>(
                             value: _ProfileMenuAction.close,
                             child: Text('cancel'.tr()),
@@ -164,7 +155,8 @@ class UserProfileScreen extends StatelessWidget {
               final UserProfileProvider profileProvider = context
                   .watch<UserProfileProvider>();
               final bool isBlocked =
-                  profileProvider.isBlocked || (user?.isBlocked ?? false);
+                  profileProvider.isBlocked;
+
               return SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -176,7 +168,7 @@ class UserProfileScreen extends StatelessWidget {
                       onUnblock: () async {
                         final String? targetUserId = user?.uid;
                         if (targetUserId == null || targetUserId.isEmpty) {
-                          AppSnackBar.error(
+                         AppSnackBar.showSnackBar(
                             context,
                             'unable_to_find_user'.tr(),
                           );
@@ -196,12 +188,12 @@ class UserProfileScreen extends StatelessWidget {
                         );
                         if (!context.mounted) return;
                         if (result is DataSuccess<bool?>) {
-                          AppSnackBar.success(
+                        AppSnackBar.showSnackBar(
                             context,
                             'user_unblocked_successfully'.tr(),
                           );
                         } else {
-                          AppSnackBar.error(
+                          AppSnackBar.showSnackBar(
                             context,
                             result.exception?.message ??
                                 'failed_to_update_block_state'.tr(),
@@ -215,27 +207,6 @@ class UserProfileScreen extends StatelessWidget {
                 ),
               );
             },
-=======
-      ),
-      body: FutureBuilder<DataState<UserEntity?>?>(
-        future: Provider.of<UserProfileProvider>(context, listen: false)
-            .getUserByUid(uid),
-        initialData: LocalUser().userState(uid),
-        builder: (BuildContext context,
-            AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
-          final UserEntity? user = snapshot.data?.entity;
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                UserProfileHeaderSection(user: user),
-                UserProfileScoreSection(user: user),
-                const UserProfileGridTypeSelectionSection(),
-                UserProfileGridSection(user: user),
-              ],
-            ),
-          );
-        },
->>>>>>> e947def20999a92448313553bb695b63691bc934
       ),
     );
   }

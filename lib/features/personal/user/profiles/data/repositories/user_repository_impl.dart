@@ -11,10 +11,7 @@ import '../sources/remote/my_visting_remote.dart';
 import '../../../../order/data/source/remote/order_by_user_remote.dart';
 import '../sources/remote/post_by_user_remote.dart';
 import '../sources/remote/user_profile_remote_source.dart';
-<<<<<<< HEAD
 import '../../views/params/block_user_params.dart';
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
   const UserProfileRepositoryImpl(
@@ -50,12 +47,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
-<<<<<<< HEAD
     PickedAttachment photo,
   ) async {
-=======
-      PickedAttachment photo) async {
->>>>>>> e947def20999a92448313553bb695b63691bc934
     return await userProfileRemoteSource.updateProfilePicture(photo);
   }
 
@@ -66,12 +59,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<DataState<String>> addRemoveSupporters(
-<<<<<<< HEAD
     AddRemoveSupporterParams params,
   ) async {
-=======
-      AddRemoveSupporterParams params) async {
->>>>>>> e947def20999a92448313553bb695b63691bc934
     return await userProfileRemoteSource.addRemoveSupporters(params);
   }
 
@@ -80,11 +69,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     return await userProfileRemoteSource.deleteUser(value);
   }
 
-<<<<<<< HEAD
   @override
   Future<DataState<bool?>> blockUser(BlockUserParams params) async {
     return await userProfileRemoteSource.blockUser(params);
   }
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
 }

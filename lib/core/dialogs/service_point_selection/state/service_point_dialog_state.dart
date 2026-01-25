@@ -4,15 +4,11 @@ import '../../../../features/postage/data/models/service_points_response_model.d
 /// State management for service point selection dialog
 class ServicePointDialogState {
   ServicePointDialogState({
-<<<<<<< HEAD
     this.selectedPoint,
     required this.selectedRadius,
     required this.selectedCategory,
     required this.servicePoints,
-=======
-    required this.selectedRadius, required this.selectedCategory, required this.servicePoints, this.selectedPoint,
->>>>>>> e947def20999a92448313553bb695b63691bc934
-  });
+ });
 
   final ServicePointModel? selectedPoint;
   final SearchRadius selectedRadius;

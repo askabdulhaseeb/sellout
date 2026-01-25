@@ -6,10 +6,7 @@ import '../../../../post/domain/entities/visit/visiting_entity.dart';
 import '../../views/params/add_remove_supporter_params.dart';
 import '../../views/params/update_user_params.dart';
 import '../entities/user_entity.dart';
-<<<<<<< HEAD
 import '../../views/params/block_user_params.dart';
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
 
 abstract interface class UserProfileRepository {
   Future<DataState<UserEntity?>> byUID(String uid);
@@ -19,7 +16,6 @@ abstract interface class UserProfileRepository {
   Future<DataState<List<VisitingEntity>>> iMhost();
 
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
-<<<<<<< HEAD
     PickedAttachment photo,
   );
   Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
@@ -28,11 +24,4 @@ abstract interface class UserProfileRepository {
   );
   Future<DataState<bool?>> deleteUser(String value);
   Future<DataState<bool?>> blockUser(BlockUserParams params);
-=======
-      PickedAttachment photo);
-  Future<DataState<String>> updatePRofileDetail(UpdateUserParams photo);
-  Future<DataState<String>> addRemoveSupporters(
-      AddRemoveSupporterParams params);
-  Future<DataState<bool?>> deleteUser(String value);
->>>>>>> e947def20999a92448313553bb695b63691bc934
 }

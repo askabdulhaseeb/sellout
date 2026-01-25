@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import '../../../../../core/sources/api_call.dart';
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../../../../../core/usecase/usecase.dart';
 import '../entities/service_point_entity.dart';
 import '../params/get_service_points_param.dart';

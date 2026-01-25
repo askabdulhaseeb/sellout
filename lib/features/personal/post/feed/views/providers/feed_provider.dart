@@ -87,7 +87,6 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-<<<<<<< HEAD
   /// Remove all posts from a blocked user from the feed
   void removeBlockedUserPosts(String userId) {
     final int initialCount = _posts.length;
@@ -102,9 +101,7 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-=======
->>>>>>> e947def20999a92448313553bb695b63691bc934
-  // ——————————————————————————————
+ // ——————————————————————————————
   // FEED LOGIC
   // ——————————————————————————————
 

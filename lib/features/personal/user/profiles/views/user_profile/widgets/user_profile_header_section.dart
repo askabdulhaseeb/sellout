@@ -8,22 +8,16 @@ import '../../../../../review/views/screens/review_list_screen.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../providers/user_profile_provider.dart';
 
-<<<<<<< HEAD
 class UserProfileHeaderSection extends StatefulWidget {
-=======
-class UserProfileHeaderSection extends StatelessWidget {
->>>>>>> e947def20999a92448313553bb695b63691bc934
   const UserProfileHeaderSection({required this.user, super.key});
   final UserEntity? user;
 
   @override
-<<<<<<< HEAD
   State<UserProfileHeaderSection> createState() =>
       _UserProfileHeaderSectionState();
 }
 
 class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
-
   Future<void> _navigateToReviews(BuildContext context) async {
     final List<ReviewEntity> reviews = await Provider.of<UserProfileProvider>(
       context,
@@ -42,13 +36,10 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
 
   @override
   Widget build(BuildContext context) {
-    final UserProfileProvider profileProvider = context
-        .watch<UserProfileProvider>();
+    final UserProfileProvider profileProvider =
+        context.watch<UserProfileProvider>();
     final bool isBlocked =
-        profileProvider.isBlocked || (widget.user?.isBlocked ?? false);
-=======
-  Widget build(BuildContext context) {
->>>>>>> e947def20999a92448313553bb695b63691bc934
+        profileProvider.isBlocked;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double photoSize = screenWidth * 0.25;
     final double nameFontSize = screenWidth * 0.045;
@@ -57,7 +48,6 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-<<<<<<< HEAD
       child: Column(
         children: <Widget>[
           // if (isBlocked) ...<Widget>[
@@ -109,8 +99,8 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
                         onTap: () => _navigateToReviews(context),
                       ),
                     ),
-                    SizedBox(height: verticalGap),
-                    if ((widget.user?.bio ?? '').isNotEmpty)
+                    if ((widget.user?.bio ?? '').isNotEmpty) ...[
+                      SizedBox(height: verticalGap),
                       IgnorePointer(
                         ignoring: isBlocked,
                         child: Text(
@@ -124,78 +114,11 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
                           ),
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),
             ],
-=======
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            width: photoSize,
-            height: photoSize,
-            child: ProfilePhoto(
-              url: user?.profilePhotoURL,
-              placeholder: user?.displayName ?? '',
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        user?.displayName ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: nameFontSize,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: verticalGap),
-                RatingDisplayWidget(
-                  size: 16,
-                  fontSize: 13,
-                  ratingList: user?.listOfReviews ?? <double>[],
-                  onTap: () async {
-                    final List<ReviewEntity> reviews =
-                        await Provider.of<UserProfileProvider>(
-                      context,
-                      listen: false,
-                    ).getReviews(user?.uid);
-                    Navigator.of(context).push(
-                      MaterialPageRoute<ReviewListScreenParam>(
-                        builder: (BuildContext context) => ReviewListScreen(
-                          param: ReviewListScreenParam(reviews: reviews),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: verticalGap),
-                if ((user?.bio ?? '').isNotEmpty)
-                  Text(
-                    user?.bio ?? '',
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: bioFontSize,
-                      fontWeight: FontWeight.w400,
-                      height: 1.3,
-                    ),
-                  ),
-              ],
-            ),
->>>>>>> e947def20999a92448313553bb695b63691bc934
           ),
         ],
       ),
