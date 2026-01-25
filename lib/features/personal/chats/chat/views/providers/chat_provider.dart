@@ -11,7 +11,10 @@ import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../listing/listing_form/views/widgets/attachment_selection/cept_group_invite_usecase.dart';
+import '../../../../user/profiles/data/sources/local/local_blocked_users.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../../user/profiles/domain/usecase/block_user_usecase.dart';
+import '../../../../user/profiles/views/params/block_user_params.dart';
 import '../../../chat_dashboard/data/sources/local/local_chat.dart';
 import '../../../chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
@@ -48,6 +51,8 @@ class ChatProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _expandVisitingMessage = true;
   bool _showPinnedMessage = true;
+  bool _isOtherUserBlocked = false;
+  bool _isBlockingBusy = false;
 
   /// Cache for sender display names to avoid repeated async lookups
   final Map<String, String> _senderNameCache = <String, String>{};
@@ -57,7 +62,7 @@ class ChatProvider extends ChangeNotifier {
   String? _lastReadMessageId;
   static const Duration _readReceiptDebounceDelay = Duration(milliseconds: 500);
 
-//
+  //
 
   GettedMessageEntity? get gettedMessage => _gettedMessage;
   DateTime? get chatAT => _chatAt;
@@ -65,7 +70,16 @@ class ChatProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get expandVisitingMessage => _expandVisitingMessage;
   bool get showPinnedMessage => _showPinnedMessage;
-//
+  bool get isOtherUserBlocked => _isOtherUserBlocked;
+  bool get isBlockingBusy => _isBlockingBusy;
+  String? get otherUserId {
+    if (_chat == null) return null;
+    if (_chat!.type == ChatType.group) return null;
+    final String other = _chat!.otherPerson();
+    return other.isEmpty ? null : other;
+  }
+
+  //
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -90,7 +104,7 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-//
+  //
   void setChat(BuildContext context, ChatEntity? value) {
     _chat = value;
     clearSenderNameCache();
@@ -105,18 +119,20 @@ class ChatProvider extends ChangeNotifier {
       lastEvaluatedKey: _key!,
       messages: <MessageEntity>[],
     );
+    _syncBlockState().then((_) => notifyListeners());
     notifyListeners();
   }
 
   Future<bool> getMessages() async {
     _isLoading = true;
-    final DataState<GettedMessageEntity> result =
-        await _getMessagesUsecase(_gettedMessage?.lastEvaluatedKey ??
-            _key ??
-            MessageLastEvaluatedKeyModel(
-              chatID: _chat?.chatId ?? '',
-              createdAt: 'null',
-            ));
+    final DataState<GettedMessageEntity> result = await _getMessagesUsecase(
+      _gettedMessage?.lastEvaluatedKey ??
+          _key ??
+          MessageLastEvaluatedKeyModel(
+            chatID: _chat?.chatId ?? '',
+            createdAt: 'null',
+          ),
+    );
     if (result is DataSuccess) {
       _gettedMessage = result.entity;
       _isLoading = false;
@@ -130,6 +146,65 @@ class ChatProvider extends ChangeNotifier {
       // Show error message
       _isLoading = false;
       return false;
+    }
+  }
+
+  /// Refresh block state from local cache for the current peer (non-group chats).
+  Future<void> _syncBlockState() async {
+    final String? peerId = otherUserId;
+    if (peerId == null) {
+      _isOtherUserBlocked = false;
+      return;
+    }
+    _isOtherUserBlocked = await LocalBlockedUsers().isUserBlocked(peerId);
+  }
+
+  /// Public helper to refresh and expose latest block state for current peer.
+  Future<bool> refreshBlockState() async {
+    await _syncBlockState();
+    notifyListeners();
+    return _isOtherUserBlocked;
+  }
+
+  /// Block or unblock the current peer in private/product chats.
+  Future<DataState<bool?>> toggleBlockPeer({required bool block}) async {
+    final String? peerId = otherUserId;
+    if (peerId == null) {
+      return DataFailer<bool?>(CustomException('User ID is null'));
+    }
+    if (_isBlockingBusy) {
+      return DataFailer<bool?>(CustomException('busy'));
+    }
+
+    _isBlockingBusy = true;
+    notifyListeners();
+
+    try {
+      final BlockUserUsecase blockUsecase = locator<BlockUserUsecase>();
+      final DataState<bool?> result = await blockUsecase(
+        BlockUserParams(
+          userId: peerId,
+          action: block ? BlockAction.block : BlockAction.unblock,
+        ),
+      );
+
+      if (result is DataSuccess<bool?>) {
+        _isOtherUserBlocked = result.entity ?? block;
+        // Note: BlockUserUsecase now handles syncing with server automatically
+        await _syncBlockState(); // Refresh local state after server sync
+      }
+
+      return result;
+    } catch (e, st) {
+      AppLog.error(
+        'toggleBlockPeer failed: $e',
+        name: 'ChatProvider.toggleBlockPeer',
+        stackTrace: st,
+      );
+      return DataFailer<bool?>(CustomException(e.toString()));
+    } finally {
+      _isBlockingBusy = false;
+      notifyListeners();
     }
   }
 
@@ -180,7 +255,9 @@ class ChatProvider extends ChangeNotifier {
     String? displayName;
 
     if (isBusiness) {
-      final BusinessEntity? business = await LocalBusiness().getBusiness(senderId);
+      final BusinessEntity? business = await LocalBusiness().getBusiness(
+        senderId,
+      );
       displayName = business?.displayName;
     } else {
       final UserEntity? user = await LocalUser().user(senderId);
@@ -212,8 +289,9 @@ class ChatProvider extends ChangeNotifier {
     if (unreadMessages.isEmpty) return;
 
     // Find the latest message ID
-    unreadMessages.sort((MessageEntity a, MessageEntity b) =>
-        b.createdAt.compareTo(a.createdAt));
+    unreadMessages.sort(
+      (MessageEntity a, MessageEntity b) => b.createdAt.compareTo(a.createdAt),
+    );
     final String latestMessageId = unreadMessages.first.messageId;
 
     // Don't re-emit if we already marked this message as read
@@ -265,7 +343,9 @@ class ChatProvider extends ChangeNotifier {
 
   // Helper to filter messages after join time
   List<MessageEntity> _filterMessagesAfter(
-      List<MessageEntity> messages, DateTime threshold) {
+    List<MessageEntity> messages,
+    DateTime threshold,
+  ) {
     return messages
         .where((MessageEntity m) => m.createdAt.isAfter(threshold))
         .toList();
@@ -300,8 +380,9 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> createOrOpenChatById(BuildContext context, String chatId) async {
-    final DataState<List<ChatEntity>> chatResult =
-        await _getmychatusecase.call(<String>[chatId]);
+    final DataState<List<ChatEntity>> chatResult = await _getmychatusecase.call(
+      <String>[chatId],
+    );
 
     if (chatResult is DataSuccess && (chatResult.data?.isNotEmpty ?? false)) {
       final ChatEntity chat = chatResult.entity!.first;
@@ -329,12 +410,13 @@ class ChatProvider extends ChangeNotifier {
     return await getMessages();
   }
 
-//
+  //
 
   Future<void> acceptGroupInvite(BuildContext context) async {
     setLoading(true);
-    final DataState<bool> result =
-        await _acceptGroupInviteUsecase.call(chat?.chatId ?? '');
+    final DataState<bool> result = await _acceptGroupInviteUsecase.call(
+      chat?.chatId ?? '',
+    );
     try {
       if (result is DataSuccess) {
         setChat(context, LocalChat().chatEntity(chat?.chatId ?? ''));
@@ -346,20 +428,28 @@ class ChatProvider extends ChangeNotifier {
           result.exception?.message ?? 'something_wrong'.tr(),
         );
         setLoading(false);
-        AppLog.error('you accepted group invite',
-            name: 'ChatPRovider.LeaveGroup - else');
+        AppLog.error(
+          'you accepted group invite',
+          name: 'ChatPRovider.LeaveGroup - else',
+        );
       }
     } catch (e, stc) {
-      AppLog.error('failed to accept invite',
-          name: 'ChatPRovider.LeaveGroup - else', error: e, stackTrace: stc);
+      AppLog.error(
+        'failed to accept invite',
+        name: 'ChatPRovider.LeaveGroup - else',
+        error: e,
+        stackTrace: stc,
+      );
       setLoading(false);
     }
   }
 
   Future<void> leaveGroup(BuildContext context) async {
     setLoading(true);
-    LeaveGroupParams leaveparams =
-        LeaveGroupParams(chatId: chat?.chatId ?? '', removalType: 'leave');
+    LeaveGroupParams leaveparams = LeaveGroupParams(
+      chatId: chat?.chatId ?? '',
+      removalType: 'leave',
+    );
     final DataState<bool> result = await _leaveGroupparams.call(leaveparams);
     try {
       if (result is DataSuccess) {
@@ -367,19 +457,27 @@ class ChatProvider extends ChangeNotifier {
         debugPrint('you left the group${leaveparams.chatId}');
         setLoading(false);
       } else {
-        AppLog.error('you failed to leave the group${leaveparams.chatId}',
-            name: 'ChatPRovider.LeaveGroup - else');
+        AppLog.error(
+          'you failed to leave the group${leaveparams.chatId}',
+          name: 'ChatPRovider.LeaveGroup - else',
+        );
         setLoading(false);
       }
     } catch (e, stc) {
-      AppLog.error('error chatprovider - LeaveGroup',
-          name: 'ChatPRovider.LeaveGroup - Catch', error: e, stackTrace: stc);
+      AppLog.error(
+        'error chatprovider - LeaveGroup',
+        name: 'ChatPRovider.LeaveGroup - Catch',
+        error: e,
+        stackTrace: stc,
+      );
       setLoading(false);
     }
   }
 
   Future<void> removeFromGroup(
-      BuildContext context, String? partcicpantId) async {
+    BuildContext context,
+    String? partcicpantId,
+  ) async {
     setLoading(true);
     LeaveGroupParams leaveparams = LeaveGroupParams(
       participantId: partcicpantId,
@@ -391,17 +489,23 @@ class ChatProvider extends ChangeNotifier {
       if (result is DataSuccess) {
         setChat(context, LocalChat().chatEntity(chat?.chatId ?? ''));
         debugPrint(
-            'you removed ${leaveparams.participantId} from group${leaveparams.chatId}');
+          'you removed ${leaveparams.participantId} from group${leaveparams.chatId}',
+        );
         setLoading(false);
       } else {
         AppLog.error(
-            'you failed to remove ${leaveparams.participantId} from group${leaveparams.chatId}',
-            name: 'ChatPRovider.LeaveGroup - else');
+          'you failed to remove ${leaveparams.participantId} from group${leaveparams.chatId}',
+          name: 'ChatPRovider.LeaveGroup - else',
+        );
         setLoading(false);
       }
     } catch (e, stc) {
-      AppLog.error('error chatprovider - LeaveGroup',
-          name: 'ChatPRovider.LeaveGroup - Catch', error: e, stackTrace: stc);
+      AppLog.error(
+        'error chatprovider - LeaveGroup',
+        name: 'ChatPRovider.LeaveGroup - Catch',
+        error: e,
+        stackTrace: stc,
+      );
       setLoading(false);
     }
   }
@@ -409,24 +513,32 @@ class ChatProvider extends ChangeNotifier {
   Future<void> sendGroupInvite(List<String> newParticipant) async {
     setLoading(true);
     SendGroupInviteParams inviteparams = SendGroupInviteParams(
-        chatId: chat?.chatId ?? '', newParticipants: newParticipant);
-    final DataState<bool> result =
-        await _sendGroupInviteUsecase.call(inviteparams);
+      chatId: chat?.chatId ?? '',
+      newParticipants: newParticipant,
+    );
+    final DataState<bool> result = await _sendGroupInviteUsecase.call(
+      inviteparams,
+    );
     try {
       if (result is DataSuccess) {
         debugPrint(
-            'you invited${inviteparams.newParticipants} to ${inviteparams.chatId}');
+          'you invited${inviteparams.newParticipants} to ${inviteparams.chatId}',
+        );
         setLoading(false);
       } else {
-        AppLog.error('you failed to invite to the group${inviteparams.chatId}',
-            name: 'ChatPRovider.sendGroupInvite - else');
+        AppLog.error(
+          'you failed to invite to the group${inviteparams.chatId}',
+          name: 'ChatPRovider.sendGroupInvite - else',
+        );
         setLoading(false);
       }
     } catch (e, stc) {
-      AppLog.error('error chatprovider - sendGroupInvite',
-          name: 'ChatPRovider.sendGroupInvite - Catch',
-          error: e,
-          stackTrace: stc);
+      AppLog.error(
+        'error chatprovider - sendGroupInvite',
+        name: 'ChatPRovider.sendGroupInvite - Catch',
+        error: e,
+        stackTrace: stc,
+      );
       setLoading(false);
     }
   }

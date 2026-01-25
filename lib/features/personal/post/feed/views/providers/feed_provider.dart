@@ -10,6 +10,7 @@ import '../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../chats/chat/views/screens/chat_screen.dart';
 import '../../../../chats/chat_dashboard/domain/entities/chat/chat_entity.dart';
 import '../../../../chats/chat_dashboard/domain/usecase/get_my_chats_usecase.dart';
+import '../../../../user/profiles/data/sources/local/local_blocked_users.dart';
 import '../../../domain/entities/post/post_entity.dart';
 import '../../../domain/params/create_offer_params.dart';
 import '../../../domain/params/feed_response_params.dart';
@@ -101,7 +102,7 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- // ——————————————————————————————
+  // ——————————————————————————————
   // FEED LOGIC
   // ——————————————————————————————
 
@@ -160,16 +161,42 @@ class FeedProvider extends ChangeNotifier {
         final List<PostEntity> fetchedPosts = result.entity!.posts;
         _nextPageToken = result.entity!.nextPageToken;
 
+        final List<String> blockedUserIds = await LocalBlockedUsers()
+            .getBlockedUsers();
+        final List<PostEntity> filteredPosts = blockedUserIds.isEmpty
+            ? fetchedPosts
+            : fetchedPosts
+                  .where(
+                    (PostEntity post) =>
+                        !blockedUserIds.contains(post.createdBy),
+                  )
+                  .toList();
+        final int removedCount = fetchedPosts.length - filteredPosts.length;
+        if (removedCount > 0) {
+          AppLog.info(
+            'Filtered $removedCount posts from blocked users',
+            name: 'FeedProvider._fetchFeed',
+          );
+        }
+
         if (fetchedPosts.isEmpty) {
           _noMorePosts = true;
           AppLog.info(
             'No more posts available',
             name: 'FeedProvider._fetchFeed',
           );
+        } else if (filteredPosts.isEmpty) {
+          AppLog.info(
+            'All fetched posts belong to blocked users; skipping append',
+            name: 'FeedProvider._fetchFeed',
+          );
         } else {
           // Merge + remove duplicates
           final Map<String, PostEntity> unique = <String, PostEntity>{
-            for (final PostEntity p in <PostEntity>[..._posts, ...fetchedPosts])
+            for (final PostEntity p in <PostEntity>[
+              ..._posts,
+              ...filteredPosts,
+            ])
               p.postID: p,
           };
           _posts = unique.values.toList();

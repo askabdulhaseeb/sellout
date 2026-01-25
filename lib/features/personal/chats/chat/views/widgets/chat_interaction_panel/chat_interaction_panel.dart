@@ -21,12 +21,14 @@ class ChatInteractionPanel extends StatelessWidget {
         final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
         final String? currentUid = LocalAuth.uid;
 
-        final bool isInvited = groupInfo?.invitations.any(
+        final bool isInvited =
+            groupInfo?.invitations.any(
               (InvitationEntity invitation) => invitation.uid == currentUid,
             ) ==
             true;
 
-        final bool isParticipant = groupInfo?.participants.any(
+        final bool isParticipant =
+            groupInfo?.participants.any(
               (ChatParticipantEntity participant) =>
                   participant.uid == currentUid,
             ) ==
@@ -36,10 +38,7 @@ class ChatInteractionPanel extends StatelessWidget {
           if (isParticipant) {
             return const Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SendMessagePanel(),
-                InlineEmojiPicker(),
-              ],
+              children: <Widget>[SendMessagePanel(), InlineEmojiPicker()],
             );
           } else if (isInvited) {
             return const GroupInviteActionWidget();
@@ -52,10 +51,7 @@ class ChatInteractionPanel extends StatelessWidget {
             pro.chat?.type == ChatType.product) {
           return const Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SendMessagePanel(),
-              InlineEmojiPicker(),
-            ],
+            children: <Widget>[SendMessagePanel(), InlineEmojiPicker()],
           );
         }
 

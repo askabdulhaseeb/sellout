@@ -15,10 +15,11 @@ import '../enums/profile_grid_state.dart';
 
 abstract class BaseProfilePostsProvider extends ChangeNotifier {
   BaseProfilePostsProvider(this._getPostByFiltersUsecase, {String? userUid})
-      : _userUid = userUid;
+    : _userUid = userUid;
 
   final GetPostByFiltersUsecase _getPostByFiltersUsecase;
   final String? _userUid;
+  bool _isDisposed = false;
 
   ProfileGridState _state = ProfileGridState.initial;
   SortOption? _sort;
@@ -42,6 +43,9 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
   List<PostEntity>? get posts => _posts;
   String? get errorMessage => _errorMessage;
 
+  @protected
+  bool get isDisposed => _isDisposed;
+
   /// Override in subclass to provide the listing types for filtering
   List<ListingType> get listingTypes;
 
@@ -52,11 +56,13 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
   String get providerName;
 
   void _setState(ProfileGridState newState) {
+    if (_isDisposed) return;
     _state = newState;
     notifyListeners();
   }
 
   void setSort(SortOption? value) {
+    if (_isDisposed) return;
     _sort = value;
     notifyListeners();
   }
@@ -93,8 +99,9 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
 
     try {
       final PostByFiltersParams params = _buildParams();
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        params,
+      );
 
       if (result is DataSuccess<List<PostEntity>>) {
         _posts = result.entity ?? <PostEntity>[];
@@ -112,10 +119,7 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
       _errorMessage = result.exception?.message ?? 'something_wrong'.tr();
 
       if (kDebugMode) {
-        AppLog.error(
-          'Failed: $_errorMessage',
-          name: '$providerName.loadPosts',
-        );
+        AppLog.error('Failed: $_errorMessage', name: '$providerName.loadPosts');
       }
 
       _setState(ProfileGridState.error);
@@ -124,10 +128,7 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
       _errorMessage = e.toString();
 
       if (kDebugMode) {
-        AppLog.error(
-          'Unexpected error: $e',
-          name: '$providerName.loadPosts',
-        );
+        AppLog.error('Unexpected error: $e', name: '$providerName.loadPosts');
       }
 
       _setState(ProfileGridState.error);
@@ -197,6 +198,7 @@ abstract class BaseProfilePostsProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _minPriceController.dispose();
     _maxPriceController.dispose();
     _queryController.dispose();

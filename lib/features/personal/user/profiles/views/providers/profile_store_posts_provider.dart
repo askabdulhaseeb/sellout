@@ -48,17 +48,20 @@ class ProfileStorePostsProvider extends BaseProfilePostsProvider {
 
   @override
   void resetAdditionalFilters() {
+    if (isDisposed) return;
     _selectedConditionType = null;
     _selectedDeliveryType = null;
     notifyListeners();
   }
 
   void setConditionType(ConditionType? value) {
+    if (isDisposed) return;
     _selectedConditionType = value;
     notifyListeners();
   }
 
   void setDeliveryType(DeliveryType? value) {
+    if (isDisposed) return;
     _selectedDeliveryType = value;
     notifyListeners();
   }

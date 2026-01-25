@@ -89,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           controller: scrollController,
                         ),
                       ),
-                      const ChatInteractionPanel(),
+                      if (!pro.isOtherUserBlocked) const ChatInteractionPanel(),
                     ],
                   ),
                 ),
