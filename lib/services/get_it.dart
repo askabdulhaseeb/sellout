@@ -203,7 +203,10 @@ import '../features/personal/user/profiles/data/sources/remote/post_by_user_remo
 import '../features/personal/user/profiles/data/sources/remote/user_profile_remote_source.dart';
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
 import '../features/personal/user/profiles/domain/usecase/add_remove_supporter_usecase.dart';
+<<<<<<< HEAD
 import '../features/personal/user/profiles/domain/usecase/block_user_usecase.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
@@ -383,7 +386,10 @@ void _profile() {
   locator.registerFactory<AddRemoveSupporterUsecase>(
     () => AddRemoveSupporterUsecase(locator()),
   );
+<<<<<<< HEAD
   locator.registerFactory<BlockUserUsecase>(() => BlockUserUsecase(locator()));
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
   locator.registerLazySingleton<ProfileProvider>(
     () => ProfileProvider(
       locator(),
@@ -396,7 +402,11 @@ void _profile() {
     ),
   );
   locator.registerLazySingleton<UserProfileProvider>(
+<<<<<<< HEAD
     () => UserProfileProvider(locator(), locator(), locator(), locator()),
+=======
+    () => UserProfileProvider(locator(), locator(), locator()),
+>>>>>>> e947def20999a92448313553bb695b63691bc934
   );
 }
 

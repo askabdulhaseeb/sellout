@@ -11,7 +11,10 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../views/params/add_remove_supporter_params.dart';
 import '../../../views/params/update_user_params.dart';
+<<<<<<< HEAD
 import '../../../views/params/block_user_params.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../../models/supporter_detail_model.dart';
 import '../local/local_user.dart';
 
@@ -25,7 +28,10 @@ abstract interface class UserProfileRemoteSource {
     AddRemoveSupporterParams params,
   );
   Future<DataState<bool?>> deleteUser(String value);
+<<<<<<< HEAD
   Future<DataState<bool?>> blockUser(BlockUserParams params);
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
@@ -394,6 +400,7 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<bool?>(CustomException('User not deleted'));
     }
   }
+<<<<<<< HEAD
 
   @override
   Future<DataState<bool?>> blockUser(BlockUserParams params) async {
@@ -470,4 +477,6 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<bool?>(CustomException('something_wrong'.tr()));
     }
   }
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 }

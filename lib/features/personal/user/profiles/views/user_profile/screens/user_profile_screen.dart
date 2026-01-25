@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
@@ -8,17 +9,26 @@ import '../../../data/sources/local/local_user.dart';
 import '../providers/user_profile_provider.dart';
 import '../widgets/bottomsheets/block_user_bottomsheet.dart';
 import '../widgets/bottomsheets/unblock_user_bottomsheet.dart';
+=======
+import '../../../../../../../core/sources/data_state.dart';
+import '../../../data/sources/local/local_user.dart';
+import '../providers/user_profile_provider.dart';
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../widgets/user_profile_grid_section.dart';
 import '../widgets/user_profile_grid_type_selection_section.dart';
 import '../widgets/user_profile_header_section.dart';
 import '../widgets/user_profile_score_section.dart';
 
+<<<<<<< HEAD
 enum _ProfileMenuAction { blockToggle, close }
 
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({required this.uid, super.key});
   final String uid;
 
+<<<<<<< HEAD
   Future<void> _handleBlockToggle(
     BuildContext context, {
     required UserProfileProvider profileProvider,
@@ -70,6 +80,8 @@ class UserProfileScreen extends StatelessWidget {
     }
   }
 
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,6 +91,7 @@ class UserProfileScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(LocalUser().userEntity(uid)?.username.toUpperCase() ?? ''),
+<<<<<<< HEAD
         actions: <Widget>[
           Consumer<UserProfileProvider>(
             builder:
@@ -202,6 +215,27 @@ class UserProfileScreen extends StatelessWidget {
                 ),
               );
             },
+=======
+      ),
+      body: FutureBuilder<DataState<UserEntity?>?>(
+        future: Provider.of<UserProfileProvider>(context, listen: false)
+            .getUserByUid(uid),
+        initialData: LocalUser().userState(uid),
+        builder: (BuildContext context,
+            AsyncSnapshot<DataState<UserEntity?>?> snapshot) {
+          final UserEntity? user = snapshot.data?.entity;
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                UserProfileHeaderSection(user: user),
+                UserProfileScoreSection(user: user),
+                const UserProfileGridTypeSelectionSection(),
+                UserProfileGridSection(user: user),
+              ],
+            ),
+          );
+        },
+>>>>>>> e947def20999a92448313553bb695b63691bc934
       ),
     );
   }

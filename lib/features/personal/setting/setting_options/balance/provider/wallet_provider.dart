@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+<<<<<<< HEAD
 import 'package:flutter/material.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';

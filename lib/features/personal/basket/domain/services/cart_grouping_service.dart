@@ -1,7 +1,10 @@
 import '../../../post/data/sources/local/local_post.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
+<<<<<<< HEAD
 import '../../../user/profiles/domain/entities/user_entity.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../../data/sources/local/local_cart.dart';
 import '../../views/screens/shopping/checkout/widgets/checkout_items_list/models/seller_group.dart';
 

@@ -1,12 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/widgets/shadow_container.dart';
+<<<<<<< HEAD
 import '../../../../../../../core/widgets/custom_elevated_button.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 import '../../../domain/entities/user_entity.dart';
 import '../../widgets/score_widget_bottomsheets/supporter_bottom_sheet.dart';
 import '../../widgets/subwidgets/support_button.dart';
 
 class UserProfileScoreSection extends StatelessWidget {
+<<<<<<< HEAD
   const UserProfileScoreSection({
     required this.user,
     this.isBlocked = false,
@@ -18,6 +22,10 @@ class UserProfileScoreSection extends StatelessWidget {
   final bool isBlocked;
   final VoidCallback? onUnblock;
   final bool isBusy;
+=======
+  const UserProfileScoreSection({required this.user, super.key});
+  final UserEntity? user;
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +34,7 @@ class UserProfileScoreSection extends StatelessWidget {
       child: SizedBox(
         height: 35,
         child: Row(
+<<<<<<< HEAD
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
@@ -111,6 +120,56 @@ class UserProfileScoreSection extends StatelessWidget {
                         context,
                       ).colorScheme.onPrimary,
                     ),
+=======
+          spacing: 4,
+          children: <Widget>[
+            Expanded(
+              child: _ScoreButton(
+                title: 'supporting'.tr(),
+                count: (user?.supportings?.length ?? 0).toString(),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return SupporterBottomsheet(
+                      supporters: user?.supportings,
+                    );
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: _ScoreButton(
+                title: 'supporters'.tr(),
+                count: (user?.supporters?.length ?? 0).toString(),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return SupporterBottomsheet(
+                      supporters: user?.supporters,
+                    );
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: SupportButton(
+                supporterId: user?.uid ?? '',
+                supportColor: Theme.of(context).primaryColor,
+                supportingColor: Theme.of(context).colorScheme.secondary,
+                supportTextColor: ColorScheme.of(context).onPrimary,
+                supportingTextColor: ColorScheme.of(context).onPrimary,
+              ),
+>>>>>>> e947def20999a92448313553bb695b63691bc934
             ),
           ],
         ),

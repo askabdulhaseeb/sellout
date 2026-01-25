@@ -9,21 +9,30 @@ import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_post_by_id_usecase.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
 import '../enums/user_profile_page_tab_type.dart';
+<<<<<<< HEAD
 import '../../../domain/usecase/block_user_usecase.dart';
 import '../../params/block_user_params.dart';
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 
 class UserProfileProvider extends ChangeNotifier {
   UserProfileProvider(
     this._getUserByUidUsecase,
     this._getPostByIdUsecase,
     this._getReviewsUsecase,
+<<<<<<< HEAD
     this._blockUserUsecase,
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
   );
 
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
+<<<<<<< HEAD
   final BlockUserUsecase _blockUserUsecase;
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 
   //---------------------------------------------------------------------------------variables
   DataState<UserEntity?>? _user;
@@ -31,8 +40,11 @@ class UserProfileProvider extends ChangeNotifier {
   bool _isLoading = false;
   List<PostEntity>? _storePosts;
   List<PostEntity>? _viewingPosts;
+<<<<<<< HEAD
   bool _isBlocked = false;
   bool _isProcessingBlock = false;
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 
   //---------------------------------------------------------------------------------getters
   UserEntity? get user => _user?.entity;
@@ -40,8 +52,11 @@ class UserProfileProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<PostEntity>? get storePosts => _storePosts;
   List<PostEntity>? get viewingPosts => _viewingPosts;
+<<<<<<< HEAD
   bool get isBlocked => _isBlocked;
   bool get isProcessingBlock => _isProcessingBlock;
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 
   //---------------------------------------------------------------------------------setters
   set displayType(UserProfilePageTabType value) {
@@ -70,8 +85,11 @@ class UserProfileProvider extends ChangeNotifier {
     _isLoading = false;
     _storePosts = null;
     _viewingPosts = null;
+<<<<<<< HEAD
     _isBlocked = false;
     _isProcessingBlock = false;
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
   }
 
   //---------------------------------------------------------------------------------api usecases
@@ -81,9 +99,12 @@ class UserProfileProvider extends ChangeNotifier {
       'UserProfileProvider: User loaded: ${_user?.entity?.displayName}',
       name: 'UserProfileProvider.getUserByUid',
     );
+<<<<<<< HEAD
     // Initialize blocked state from the loaded user entity
     _isBlocked = _user?.entity?.isBlocked ?? false;
     _isProcessingBlock = false;
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
     displayType = UserProfilePageTabType.store;
     return _user;
   }
@@ -101,6 +122,7 @@ class UserProfileProvider extends ChangeNotifier {
     );
     return reviews.entity ?? <ReviewEntity>[];
   }
+<<<<<<< HEAD
 
   Future<DataState<bool?>> toggleBlockUser({
     required String userId,
@@ -128,4 +150,6 @@ class UserProfileProvider extends ChangeNotifier {
     notifyListeners();
     return result;
   }
+=======
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 }
