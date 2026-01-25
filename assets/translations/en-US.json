@@ -133,6 +133,7 @@
   "user_not_found": "User not found",
   "block_user": "Block user",
   "unblock_user": "Unblock user",
+  "unblock":"Unblock",
   "block_user_question": "Block {name}?",
   "unblock_user_question": "Unblock {name}?",
   "block_user_description": "You and this user will no longer see each other's posts, messages, or profile updates.",

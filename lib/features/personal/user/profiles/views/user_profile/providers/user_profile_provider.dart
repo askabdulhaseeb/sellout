@@ -82,7 +82,7 @@ class UserProfileProvider extends ChangeNotifier {
       name: 'UserProfileProvider.getUserByUid',
     );
     // Initialize blocked state from the loaded user entity
-    _isBlocked = true;
+    _isBlocked = _user?.entity?.isBlocked ?? false;
     _isProcessingBlock = false;
     displayType = UserProfilePageTabType.store;
     return _user;

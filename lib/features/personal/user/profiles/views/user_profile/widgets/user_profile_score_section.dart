@@ -26,7 +26,7 @@ class UserProfileScoreSection extends StatelessWidget {
       child: SizedBox(
         height: 35,
         child: Row(
-          spacing: 4,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
               child: IgnorePointer(
@@ -51,6 +51,7 @@ class UserProfileScoreSection extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(width: 8),
             Expanded(
               child: IgnorePointer(
                 ignoring: isBlocked,
@@ -58,45 +59,40 @@ class UserProfileScoreSection extends StatelessWidget {
                   title: 'supporters'.tr(),
                   count: (user?.supporters?.length ?? 0).toString(),
                   onPressed: () => showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
                       ),
-                      isScrollControlled: true,
-                      builder: (BuildContext context) {
-                        return SupporterBottomsheet(
-                          supporters: user?.supporters,
-                        );
-                      },
                     ),
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return SupporterBottomsheet(supporters: user?.supporters);
+                    },
                   ),
                 ),
               ),
             ),
+            const SizedBox(width: 8),
             Expanded(
               child: isBlocked
-                  ? CustomElevatedButton(
-                      title: 'unblock'.tr(),
-                      onTap: onUnblock ?? () {},
-                      isLoading: isBusy,
-                      isDisable: isBusy || onUnblock == null,
-                      bgColor: Theme.of(context).colorScheme.error,
-                      textColor: Theme.of(context).colorScheme.onError,
-                      borderRadius: BorderRadius.circular(12),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 5,
-                      ),
-                      margin: EdgeInsets.zero,
-                      fontWeight: FontWeight.w500,
-                      loadingWidget: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.onError,
+                  ? SizedBox(
+                      height: 35,
+                      child: CustomElevatedButton(
+                        margin: const EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(6),
+                        title: 'unblock'.tr(),
+                        onTap: onUnblock ?? () {},
+                        isLoading: isBusy,
+                        isDisable: isBusy || onUnblock == null,
+                        fontWeight: FontWeight.w500,
+                        loadingWidget: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context).colorScheme.onError,
+                          ),
                         ),
                       ),
                     )
@@ -104,8 +100,10 @@ class UserProfileScoreSection extends StatelessWidget {
                       supporterId: user?.uid ?? '',
                       supportColor: Theme.of(context).primaryColor,
                       supportingColor: Theme.of(context).colorScheme.secondary,
-                      supportTextColor: ColorScheme.of(context).onPrimary,
-                      supportingTextColor: ColorScheme.of(context).onPrimary,
+                      supportTextColor: Theme.of(context).colorScheme.onPrimary,
+                      supportingTextColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimary,
                     ),
             ),
           ],

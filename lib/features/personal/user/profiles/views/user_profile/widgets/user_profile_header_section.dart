@@ -104,6 +104,14 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Column(
         children: <Widget>[
+          // if (isBlocked) ...<Widget>[
+          //   _BlockedBanner(
+          //     displayName: widget.user?.displayName,
+          //     onUnblock: () => _confirmBlockToggle(context, unblock: true),
+          //     busy: isProcessingBlock,
+          //   ),
+          //   const SizedBox(height: 12),
+          // ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
