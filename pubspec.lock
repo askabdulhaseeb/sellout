@@ -401,6 +401,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.4.0"
+  expandable:
+    dependency: "direct main"
+    description:
+      name: expandable
+      sha256: "9604d612d4d1146dafa96c6d8eec9c2ff0994658d6d09fed720ab788c7f5afc2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -590,14 +598,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.21.3+1"
-  flutter_html:
-    dependency: "direct main"
-    description:
-      name: flutter_html
-      sha256: "38a2fd702ffdf3243fb7441ab58aa1bc7e6922d95a50db76534de8260638558d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -902,7 +902,7 @@ packages:
     source: hosted
     version: "1.10.1"
   html:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: html
       sha256: "6d1264f2dffa1b1101c25a91dff0dc2daee4c18e87cd8538729773c073dbf602"
@@ -1109,14 +1109,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  list_counter:
-    dependency: transitive
-    description:
-      name: list_counter
-      sha256: c447ae3dfcd1c55f0152867090e67e219d42fe6d4f2807db4bbe8b8d69912237
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   lists:
     dependency: transitive
     description:

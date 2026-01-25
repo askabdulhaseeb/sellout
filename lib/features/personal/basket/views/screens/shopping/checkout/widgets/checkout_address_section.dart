@@ -31,7 +31,6 @@ class SimpleCheckoutAddressSectionState
     if (newAddress != null) {
       setState(() => _isLoading = true);
       cartPro.setAddress(newAddress);
-      await cartPro.getRates();
       setState(() => _isLoading = false);
 
       if (mounted && cartPro.postageResponseEntity != null) {
@@ -51,8 +50,7 @@ class SimpleCheckoutAddressSectionState
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
-      builder: (_, CartProvider cartPro, __) {
-        // Set default address if not set and available in LocalAuth
+      builder: (_, CartProvider cartPro, _) {
         if (cartPro.address == null &&
             LocalAuth.currentUser?.address != null &&
             LocalAuth.currentUser!.address.isNotEmpty) {

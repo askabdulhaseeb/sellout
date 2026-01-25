@@ -6,6 +6,7 @@ import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
 import '../../../../../core/widgets/app_snackbar.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
+import '../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../postage/domain/usecase/add_shipping_usecase.dart';
 import '../../../../postage/domain/usecase/get_postage_detail_usecase.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
@@ -27,6 +28,8 @@ import '../../domain/usecase/cart/get_cart_usecase.dart';
 import '../../domain/usecase/cart/remove_from_cart_usecase.dart';
 import '../../domain/usecase/checkout/pay_intent_usecase.dart';
 import '../widgets/checkout/tile/payment_success_bottomsheet.dart';
+import '../../domain/services/cart_grouping_service.dart';
+import '../screens/shopping/checkout/widgets/checkout_items_list/models/seller_group.dart';
 
 class CartProvider extends ChangeNotifier {
   CartProvider(
@@ -42,6 +45,16 @@ class CartProvider extends ChangeNotifier {
   bool _loadingPostage = false;
 
   bool get loadingPostage => _loadingPostage;
+
+  // MARK: 🔄 Checkout Data Grouping
+  final CartGroupingService _cartGroupingService = CartGroupingService();
+  List<SellerGroup>? _groupedSellerItems;
+  bool _isLoadingGroupedItems = false;
+
+  // Getters for checkout data
+  List<SellerGroup>? get groupedSellerItems => _groupedSellerItems;
+  bool get isLoadingGroupedItems => _isLoadingGroupedItems;
+
   // MARK: 🧱  Dependencies
   final GetCartUsecase _getCartUsecase;
   final CartItemStatusUpdateUsecase _cartItemStatusUpdateUsecase;
@@ -67,6 +80,79 @@ class CartProvider extends ChangeNotifier {
   final List<ShippingItemParam> _selectedShippingItems = <ShippingItemParam>[];
 
   List<ShippingItemParam> get selectedShippingItems => _selectedShippingItems;
+  List<ItemDeliveryPreference> _deliveryItems = <ItemDeliveryPreference>[];
+  List<ItemDeliveryPreference> get deliveryItems => _deliveryItems;
+
+  void setDeliveryItems(List<ItemDeliveryPreference> items) {
+    _deliveryItems = items;
+    notifyListeners();
+  }
+
+  void addOrUpdateDeliveryItem(ItemDeliveryPreference item) {
+    final int index = _deliveryItems.indexWhere(
+      (ItemDeliveryPreference element) => element.cartItemId == item.cartItemId,
+    );
+    bool changed = false;
+
+    if (index >= 0) {
+      final ItemDeliveryPreference existing = _deliveryItems[index];
+      // Only notify when something actually changes to avoid rebuilds
+      if (existing.deliveryMode != item.deliveryMode ||
+          existing.servicePoint != item.servicePoint) {
+        _deliveryItems[index] = item;
+        changed = true;
+      }
+    } else {
+      _deliveryItems.add(item);
+      changed = true;
+    }
+
+    if (changed) notifyListeners();
+  }
+
+  void updateServicePointForItem(
+    String cartItemId,
+    ServicePointEntity? servicePoint,
+  ) {
+    final int index = _deliveryItems.indexWhere(
+      (ItemDeliveryPreference element) => element.cartItemId == cartItemId,
+    );
+
+    if (index >= 0) {
+      final ItemDeliveryPreference existing = _deliveryItems[index];
+      if (existing.servicePoint == servicePoint) return;
+
+      _deliveryItems[index] = ItemDeliveryPreference(
+        cartItemId: cartItemId,
+        deliveryMode: _deliveryItems[index].deliveryMode,
+        servicePoint: servicePoint,
+      );
+      notifyListeners();
+    }
+  }
+
+  void removeDeliveryItem(String cartItemId) {
+    final int before = _deliveryItems.length;
+    _deliveryItems.removeWhere(
+      (ItemDeliveryPreference item) => item.cartItemId == cartItemId,
+    );
+    if (_deliveryItems.length != before) notifyListeners();
+  }
+
+  bool hasAllPickupItemsWithServicePoints() {
+    for (final ItemDeliveryPreference item in _deliveryItems) {
+      if (item.deliveryMode == 'pickup' && (item.servicePoint == null)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool hasAnyPickupItems() {
+    return _deliveryItems.any(
+      (ItemDeliveryPreference item) => item.deliveryMode == 'pickup',
+    );
+  }
 
   void updateShippingSelection(String cartItemId, String objectId) {
     final int idx = _selectedShippingItems.indexWhere(
@@ -163,7 +249,6 @@ class CartProvider extends ChangeNotifier {
     _postageResponseEntity = null;
     _selectedPostageRates.clear();
     _selectedShippingItems.clear();
-    getRates();
   }
 
   void addFastDeliveryProduct(String id) {
@@ -346,6 +431,7 @@ class CartProvider extends ChangeNotifier {
       }
       final GetPostageDetailParam params = GetPostageDetailParam(
         buyerAddress: _address!,
+        itemsDeliveryPreferences: _deliveryItems,
         fastDelivery: fastDeliveryProducts,
       );
 
@@ -560,6 +646,38 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // MARK: �🛒 Checkout Item Grouping
+
+  /// Loads and groups all cart items by seller.
+  /// Caches the result to avoid redundant operations.
+  Future<List<SellerGroup>> loadGroupedItems() async {
+    if (_groupedSellerItems != null) {
+      return _groupedSellerItems!;
+    }
+
+    _isLoadingGroupedItems = true;
+    notifyListeners();
+
+    try {
+      _groupedSellerItems = await _cartGroupingService.groupItemsBySeller(
+        _cartItems,
+      );
+      return _groupedSellerItems!;
+    } catch (e) {
+      AppLog.error('Error grouping items: $e');
+      return <SellerGroup>[];
+    } finally {
+      _isLoadingGroupedItems = false;
+      notifyListeners();
+    }
+  }
+
+  /// Clears all cached checkout data.
+  void clearCheckoutCache() {
+    _groupedSellerItems = null;
+    notifyListeners();
+  }
+
   // MARK: ♻️ RESET
   void reset() {
     _orderBilling = null;
@@ -578,6 +696,7 @@ class CartProvider extends ChangeNotifier {
               .where((AddressEntity e) => e.isDefault)
               .first
         : null;
+    clearCheckoutCache();
     notifyListeners();
   }
 }

@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 
+// Moved to ui/size_category_tile.dart
 class SizeCategoryTile extends StatelessWidget {
   const SizeCategoryTile({
-    required this.label, required this.presets, required this.isSelectedDims, required this.onSelectDims, super.key,
+    required this.label,
+    required this.presets,
+    required this.isSelectedDims,
+    required this.onSelectDims,
+    super.key,
   });
 
   final String label;
@@ -20,10 +25,9 @@ class SizeCategoryTile extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: Text(
         label,
-        style: Theme.of(context)
-            .textTheme
-            .titleSmall
-            ?.copyWith(fontWeight: FontWeight.w500),
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
       ),
       children: <Widget>[
         Wrap(
@@ -47,9 +51,9 @@ class SizeCategoryTile extends StatelessWidget {
                 border: Border.all(color: scheme.outline),
                 title: '${preset["label"]} (${dims.join("×")} ${tr("cm")})',
                 textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: scheme.onSurface,
-                    ),
+                  fontWeight: FontWeight.w400,
+                  color: scheme.onSurface,
+                ),
                 onTap: () => onSelectDims(dims),
               ),
             );

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../postage/data/models/postage_detail_repsonse_model.dart';
+import '../../../../../postage/data/models/postage_detail_response_model.dart';
 import '../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';
 import '../../../domain/entities/offer/offer_payment_response.dart';
 import '../../../domain/params/create_offer_params.dart';

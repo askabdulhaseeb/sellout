@@ -4,6 +4,7 @@ import '../../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../../../../../../core/widgets/custom_textformfield.dart';
 
+// Moved to ui/weight_section.dart
 class WeightSection extends StatelessWidget {
   const WeightSection({
     required this.controller,

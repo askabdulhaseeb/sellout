@@ -43,7 +43,7 @@ class _MultiWidgetState<T> extends State<MultiSelectionDropdown<T>> {
       builder: (BuildContext context) {
         List<T> tempSelected = List<T>.from(widget.selectedItems);
         return StatefulBuilder(
-          builder: (BuildContext context, setModalState) {
+          builder: (BuildContext context,StateSetter setModalState) {
             return Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,

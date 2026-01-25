@@ -48,8 +48,8 @@ class ProfilePhoto extends StatelessWidget {
           fit: BoxFit.cover,
           height: size * 2,
           width: size * 2,
-          placeholder: (_, __) => _staticPlaceholder(context),
-          errorWidget: (_, __, ___) =>
+          placeholder: (_, _) => _staticPlaceholder(context),
+          errorWidget: (_, _, _) =>
               _textPlaceholder(context, placeholderText),
           // Added protection for Flutter image decoder crash
           imageBuilder:

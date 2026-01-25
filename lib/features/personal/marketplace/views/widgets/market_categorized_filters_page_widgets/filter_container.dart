@@ -12,14 +12,14 @@ import 'widgets/property_filter/property_filter_widget.dart';
 import 'widgets/vehicle_filter/vehicle_filter_widget.dart';
 
 class MarketFilterContainer extends StatelessWidget {
-  const MarketFilterContainer({
-    super.key,
-  });
+  const MarketFilterContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MarketPlaceProvider marketPro =
-        Provider.of<MarketPlaceProvider>(context, listen: false);
+    final MarketPlaceProvider marketPro = Provider.of<MarketPlaceProvider>(
+      context,
+      listen: false,
+    );
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(8),
@@ -27,6 +27,12 @@ class MarketFilterContainer extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: ColorScheme.of(context).outline),
+        image: DecorationImage(
+          opacity: 0.4,
+
+          image: AssetImage(marketPro.marketplaceCategory?.imagePath ?? ''),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

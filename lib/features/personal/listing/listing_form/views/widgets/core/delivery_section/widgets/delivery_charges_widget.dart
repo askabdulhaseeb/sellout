@@ -46,9 +46,16 @@ class DeliveryPayerToggle extends StatelessWidget {
     return Column(
       children: <Widget>[
         CustomToggleSwitch<DeliveryPayer>(
-          containerHeight: 48,
+          bgColor: ColorScheme.of(context).outlineVariant,
+          verticalMargin: 4,
+          horizontalMargin: 4,
           initialValue: selectedPayer,
           isShaded: false,
+          solidbgColor: true,
+          selectedColors: <Color>[
+            Theme.of(context).colorScheme.primaryContainer,
+          ],
+          unseletedBorderColor: Colors.transparent,
           labels: const <DeliveryPayer>[
             DeliveryPayer.buyerPays,
             DeliveryPayer.sellerPays,

@@ -93,8 +93,8 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
   //   }
   // }
 
-  void _handleKeyEvent(RawKeyEvent event, int index) {
-    if (event is RawKeyDownEvent) {
+  void _handleKeyEvent(KeyEvent event, int index) {
+    if (event is KeyDownEvent) {
       // Handle backspace on empty field
       if (event.logicalKey == LogicalKeyboardKey.backspace) {
         if (_controllers[index].text.isEmpty && index > 0) {
@@ -126,9 +126,9 @@ class CustomPinInputFieldState extends State<CustomPinInputField> {
               alignment: WrapAlignment.center,
               spacing: widget.gap,
               children: List<Widget>.generate(widget.pinLength, (int index) {
-                return RawKeyboardListener(
+                return KeyboardListener(
                   focusNode: FocusNode(skipTraversal: true),
-                  onKey: (RawKeyEvent event) => _handleKeyEvent(event, index),
+                  onKeyEvent: (KeyEvent event) => _handleKeyEvent(event, index),
                   child: SizedBox(
                     width: 30,
                     height: 40,
