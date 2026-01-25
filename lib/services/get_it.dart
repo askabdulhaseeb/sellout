@@ -221,6 +221,7 @@ import '../features/postage/domain/usecase/add_shipping_usecase.dart';
 import '../features/postage/domain/usecase/buy_label_usecase.dart';
 import '../features/postage/domain/usecase/get_order_postage_detail_usecase.dart';
 import '../features/postage/domain/usecase/get_postage_detail_usecase.dart';
+import '../features/postage/domain/usecase/get_service_points_usecase.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -749,7 +750,9 @@ void _sockets() {
 
   // Feature handlers - each lives in its feature's sources/socket folder
   locator.registerLazySingleton<ChatSocketHandler>(() => ChatSocketHandler());
-  locator.registerLazySingleton<WalletSocketHandler>(() => WalletSocketHandler());
+  locator.registerLazySingleton<WalletSocketHandler>(
+    () => WalletSocketHandler(),
+  );
   locator.registerLazySingleton<NotificationSocketHandler>(
     () => NotificationSocketHandler(),
   );
@@ -986,5 +989,8 @@ void _postage() {
   );
   locator.registerFactory<AddShippingUsecase>(
     () => AddShippingUsecase(locator()),
+  );
+  locator.registerFactory<GetServicePointsUsecase>(
+    () => GetServicePointsUsecase(locator()),
   );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/checkout_address_section.dart';
-import 'widgets/checkout_postage_section.dart';
+import 'widgets/checkout_items_list/checkout_items_list.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -12,12 +12,12 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SimpleCheckoutAddressSection(),
-          SizedBox(height: 12),
-          SimplePostageSection(),
+          CheckoutItemsList(),
+          // SimplePostageSection(),
         ],
       ),
     );

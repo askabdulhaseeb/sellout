@@ -44,13 +44,7 @@ class HomePostTitleSection extends StatelessWidget {
               ),
             ],
           ),
-          // const SizedBox(height: 8),
-          // post.description.isEmpty
-          //     ? const SizedBox()
-          //     : LimitedLinesHtmlText(
-          //         htmlData: post.description,
-          //         maxLines: 3,
-          //       ),
+         
         ],
       ),
     );

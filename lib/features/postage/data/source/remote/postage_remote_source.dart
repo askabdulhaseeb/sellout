@@ -12,7 +12,9 @@ import '../../../../personal/order/domain/entities/order_entity.dart';
 import '../../../domain/params/add_label_params.dart';
 import '../../../domain/params/add_order_label_params.dart';
 import '../../../domain/params/get_order_postage_detail_params.dart';
-import '../../models/postage_detail_repsonse_model.dart';
+import '../../models/postage_detail_response_model.dart';
+import '../../models/service_points_response_model.dart';
+import '../../../domain/params/get_service_points_param.dart';
 
 abstract interface class PostageRemoteApi {
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
@@ -28,6 +30,11 @@ abstract interface class PostageRemoteApi {
 
   /// Adds shipping to an order
   Future<DataState<bool>> addOrderShipping(AddOrderShippingParams params);
+
+  /// Fetches service points (pickup locations) for given coordinates
+  Future<DataState<ServicePointsResponseModel>> getServicePoints(
+    GetServicePointsParam param,
+  );
 }
 
 class PostageRemoteApiImpl implements PostageRemoteApi {
@@ -127,7 +134,7 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         AppLog.error(
           param.toJson(),
           name: 'PostageRemoteApiImpl.getPostageDetails - Else',
-          error: result.exception?.reason ?? 'something_wrong'.tr(),
+          error: result.exception?.detail ?? 'something_wrong'.tr(),
         );
         return DataFailer<PostageDetailResponseModel>(
           CustomException('Failed to get postage details'),
@@ -386,6 +393,58 @@ class PostageRemoteApiImpl implements PostageRemoteApi {
         error: e,
       );
       return DataFailer<bool>(CustomException(e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<ServicePointsResponseModel>> getServicePoints(
+    GetServicePointsParam param,
+  ) async {
+    try {
+      const String endpoint = '/cart/service-points';
+
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        isAuth: true,
+        requestType: ApiRequestType.post,
+        body: jsonEncode(param.toJson()),
+      );
+
+      if (result is DataSuccess<String>) {
+        final String raw = result.data ?? '';
+        AppLog.info('getServicePoints response: $raw');
+
+        final dynamic parsed = jsonDecode(raw);
+        final ServicePointsResponseModel response =
+            ServicePointsResponseModel.fromJson(
+              parsed is Map<String, dynamic>
+                  ? parsed
+                  : <String, dynamic>{'points': parsed},
+            );
+        return DataSuccess<ServicePointsResponseModel>('', response);
+      } else {
+        AppLog.error(
+          'Failed to get service points',
+          name: 'PostageRemoteApiImpl.getServicePoints',
+          error:
+              result.exception?.reason ??
+              result.exception?.message ??
+              result.exception?.code ??
+              'something_wrong'.tr(),
+        );
+        return DataFailer<ServicePointsResponseModel>(
+          CustomException('Failed to get service points'),
+        );
+      }
+    } catch (e) {
+      AppLog.error(
+        e.toString(),
+        name: 'PostageRemoteApiImpl.getServicePoints - Catch',
+        error: e,
+      );
+      return DataFailer<ServicePointsResponseModel>(
+        CustomException(e.toString()),
+      );
     }
   }
 }

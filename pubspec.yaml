@@ -34,13 +34,14 @@ dependencies:
   permission_handler: ^12.0.1
 
   get_it: ^9.1.1
-  flutter_html: ^3.0.0
+  html: ^0.15.4
   crypto: ^3.0.7
   
   video_player: ^2.10.1
   flutter_sound: ^9.30.0
   audio_waveforms: ^2.0.0
   just_audio: ^0.10.5
+  expandable: ^5.0.1
 
   syncfusion_flutter_calendar: ^31.2.15
 

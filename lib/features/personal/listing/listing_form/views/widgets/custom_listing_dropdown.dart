@@ -59,15 +59,19 @@ class _CustomListingDropDownState<T extends ChangeNotifier, O>
   @override
   Widget build(BuildContext context) {
     final List<DropdownMenuItem<String>> dropdownItems = filteredOptions
-        .map((opt) => DropdownMenuItem<String>(
-              value: widget.valueGetter(opt),
-              child: Text(widget.labelGetter(opt),
-                  style: Theme.of(context).textTheme.bodySmall),
-            ))
+        .map(
+          (O opt) => DropdownMenuItem<String>(
+            value: widget.valueGetter(opt),
+            child: Text(
+              widget.labelGetter(opt),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        )
         .toList();
 
     return Consumer<T>(
-      builder: (BuildContext context, provider, _) {
+      builder: (BuildContext context, T provider, _) {
         return CustomDropdown<String>(
           overlayAbove: widget.overlayAbove,
           title: widget.title,

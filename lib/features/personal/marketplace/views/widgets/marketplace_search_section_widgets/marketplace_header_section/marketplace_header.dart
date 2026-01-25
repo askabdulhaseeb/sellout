@@ -47,11 +47,6 @@ class MarketPlaceHeader extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Divider(
-                        color: ColorScheme.of(
-                          context,
-                        ).onSurface.withValues(alpha: 0.2),
-                      ),
                       const MarketPlaceHeaderButtons(),
                       if (pro.queryController.text.isNotEmpty)
                         Padding(

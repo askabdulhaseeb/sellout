@@ -26,6 +26,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
     this.verticalMargin = 0,
     this.unseletedBorderColor,
     this.unseletedTextColor,
+    this.bgColor,
     this.borderWidth = 1,
     this.borderRad = 8,
     super.key,
@@ -52,6 +53,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   /// Border and color behavior
   final Color? unseletedBorderColor;
   final Color? unseletedTextColor;
+  final Color? bgColor;
   final double borderWidth;
   final double borderRad;
 
@@ -63,7 +65,7 @@ class CustomToggleSwitch<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (labelText.isNotEmpty) _buildLabelText(),
-        _buildToggleRow(context, radius),
+        _buildToggleRow(context, radius, bgColor),
       ],
     );
   }
@@ -82,15 +84,23 @@ class CustomToggleSwitch<T> extends StatelessWidget {
   }
 
   // 🔹 Row Builder
-  Widget _buildToggleRow(BuildContext context, BorderRadius radius) {
-    return Padding(
+  Widget _buildToggleRow(
+    BuildContext context,
+    BorderRadius radius,
+    Color? bgColor,
+  ) {
+    return Container(
       padding: EdgeInsets.symmetric(
         vertical: verticalMargin,
         horizontal: horizontalMargin,
       ),
+      decoration: BoxDecoration(
+        color: bgColor ?? Colors.transparent,
+        borderRadius: radius,
+      ),
       child: Row(
         spacing: AppSpacing.hSm,
-        children: List.generate(labels.length, (int index) {
+        children: List<Widget>.generate(labels.length, (int index) {
           final T labelValue = labels[index];
           final bool isSelected = labelValue == initialValue;
           final Color selectedColor = _getSelectedColor(index, context);
@@ -167,14 +177,15 @@ class _ToggleButton<T> extends StatelessWidget {
     // 🔹 Background color logic
     final Color bgColor = isSelected
         ? (solidbgColor
-            ? color // full solid
-            : color.withValues(alpha: isShaded ? 0.1 : 0))
+              ? color // full solid
+              : color.withValues(alpha: isShaded ? 0.1 : 0))
         : scheme.outlineVariant.withValues(alpha: isShaded ? 0.1 : 0);
     // 🔹 Text color logic
     final Color textColor = isSelected
         ? (solidbgColor
-            ? Colors.white // ensure visibility
-            : color)
+              ? Colors
+                    .white // ensure visibility
+              : color)
         : unselectedTextColor ?? scheme.onSurface.withValues(alpha: 0.5);
     return InkWell(
       borderRadius: borderRadius,
@@ -199,10 +210,7 @@ class _ToggleButton<T> extends StatelessWidget {
               text,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                color: textColor,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w400, color: textColor),
             ),
           ),
         ),

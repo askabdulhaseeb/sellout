@@ -146,7 +146,7 @@ class OfferMessageTileDetail extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 child: Text(
                   offerDetail?.offerStatus?.code.tr() ?? 'na'.tr(),
-                  key: ValueKey(offerDetail?.offerStatus?.code),
+                  key: ValueKey<String?>(offerDetail?.offerStatus?.code),
                   style: TextTheme.of(context).labelSmall,
                 ),
               ),

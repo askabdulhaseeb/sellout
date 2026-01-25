@@ -7,6 +7,8 @@ import '../../../../../../../../../../../core/widgets/custom_textformfield.dart'
 import '../../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../providers/add_listing_form_provider.dart';
 
+// Moved to ui/custom_size_tile.dart
+
 class CustomSizeTile extends StatelessWidget {
   const CustomSizeTile({required this.formPro, super.key});
 
@@ -18,10 +20,9 @@ class CustomSizeTile extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: Text(
         tr('custom_size'),
-        style: Theme.of(context)
-            .textTheme
-            .titleSmall
-            ?.copyWith(fontWeight: FontWeight.w500),
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
       ),
       children: <Widget>[
         Row(
@@ -67,8 +68,10 @@ class _PackageInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Access provider to know if parcel details are required
-    final AddListingFormProvider formPro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
+    final AddListingFormProvider formPro = Provider.of<AddListingFormProvider>(
+      context,
+      listen: false,
+    );
 
     String? validator(String? value) {
       // Only enforce when delivery requires parcel details

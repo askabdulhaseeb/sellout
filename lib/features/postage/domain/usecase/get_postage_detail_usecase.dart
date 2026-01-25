@@ -1,6 +1,6 @@
 import '../../../../../../core/usecase/usecase.dart';
 import '../../../personal/basket/domain/param/get_postage_detail_params.dart';
-import '../../data/models/postage_detail_repsonse_model.dart';
+import '../../data/models/postage_detail_response_model.dart';
 import '../entities/postage_detail_response_entity.dart';
 import '../repository/postage_repository.dart';
 

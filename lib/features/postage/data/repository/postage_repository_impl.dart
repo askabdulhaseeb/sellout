@@ -2,11 +2,13 @@ import '../../../../../core/sources/data_state.dart';
 import '../../../personal/basket/data/models/cart/add_shipping_response_model.dart';
 import '../../../personal/basket/domain/param/get_postage_detail_params.dart';
 import '../../../personal/basket/domain/param/submit_shipping_param.dart';
+import '../../domain/entities/service_point_entity.dart';
 import '../../domain/params/add_label_params.dart';
 import '../../domain/params/add_order_label_params.dart';
 import '../../domain/params/get_order_postage_detail_params.dart';
+import '../../domain/params/get_service_points_param.dart';
 import '../../domain/repository/postage_repository.dart';
-import '../models/postage_detail_repsonse_model.dart';
+import '../models/postage_detail_response_model.dart';
 import '../source/remote/postage_remote_source.dart';
 
 class PostageRepositoryImpl implements PostageRepository {
@@ -15,7 +17,7 @@ class PostageRepositoryImpl implements PostageRepository {
 
   @override
   Future<DataState<PostageDetailResponseModel>> getPostageDetails(
-    GetPostageDetailParam param,
+    GetPostageDetailParam param
   ) async {
     return await _remoteAPI.getPostageDetails(param);
   }
@@ -42,5 +44,12 @@ class PostageRepositoryImpl implements PostageRepository {
   @override
   Future<DataState<bool>> addOrderShipping(AddOrderShippingParams param) async {
     return await _remoteAPI.addOrderShipping(param);
+  }
+
+  @override
+  Future<DataState<ServicePointsResponseEntity>> getServicePoints(
+    GetServicePointsParam param,
+  ) async {
+    return await _remoteAPI.getServicePoints(param);
   }
 }
