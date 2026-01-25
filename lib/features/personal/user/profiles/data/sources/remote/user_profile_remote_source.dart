@@ -430,12 +430,24 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
 
         final bool resolvedState =
             isBlocked ?? (params.action == BlockAction.block);
-        
+        // Sync local cache so UI reflects block state immediately
+        final UserEntity? cachedUser = LocalUser().userEntity(params.userId);
+        if (cachedUser != null) {
+          final UserEntity updatedUser = cachedUser.copyWith(
+            isBlocked: resolvedState,
+          );
+          await LocalUser().save(params.userId, updatedUser);
+          AppLog.info(
+            'Local cache updated for user ${params.userId} | isBlocked: $resolvedState',
+            name: 'UserProfileRemoteSourceImpl.blockUser',
+          );
+        }
+
         AppLog.info(
           'Block user success | is_blocked: $isBlocked | resolved_state: $resolvedState',
           name: 'UserProfileRemoteSourceImpl.blockUser',
         );
-        
+
         return DataSuccess<bool?>(result.data ?? '', resolvedState);
       }
 

@@ -79,12 +79,18 @@ class UserProfileScoreSection extends StatelessWidget {
                   ? SizedBox(
                       height: 35,
                       child: CustomElevatedButton(
-                        margin: const EdgeInsets.all(0),
-                        padding: const EdgeInsets.all(6),
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
                         title: 'unblock'.tr(),
                         onTap: onUnblock ?? () {},
                         isLoading: isBusy,
                         isDisable: isBusy || onUnblock == null,
+                        bgColor: Theme.of(context).colorScheme.error,
+                        textColor: Theme.of(context).colorScheme.onError,
+                        borderRadius: BorderRadius.circular(12),
                         fontWeight: FontWeight.w500,
                         loadingWidget: SizedBox(
                           width: 16,
