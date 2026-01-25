@@ -87,6 +87,20 @@ class FeedProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Remove all posts from a blocked user from the feed
+  void removeBlockedUserPosts(String userId) {
+    final int initialCount = _posts.length;
+    _posts.removeWhere((PostEntity post) => post.createdBy == userId);
+    final int removedCount = initialCount - _posts.length;
+
+    AppLog.info(
+      'Removed $removedCount posts from blocked user: $userId',
+      name: 'FeedProvider.removeBlockedUserPosts',
+    );
+
+    notifyListeners();
+  }
+
   // ——————————————————————————————
   // FEED LOGIC
   // ——————————————————————————————

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../../data/sources/local/local_user.dart';
 import '../providers/user_profile_provider.dart';
 import '../widgets/bottomsheets/block_user_bottomsheet.dart';
@@ -50,6 +51,11 @@ class UserProfileScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result is DataSuccess<bool?>) {
+      // Clear feed if blocking user
+      if (willBlock) {
+        context.read<FeedProvider>().removeBlockedUserPosts(targetUserId);
+      }
+
       AppSnackBar.success(
         context,
         profileProvider.isBlocked
