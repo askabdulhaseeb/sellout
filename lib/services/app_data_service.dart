@@ -11,6 +11,9 @@ import '../features/personal/auth/signin/domain/usecase/refresh_token_usecase.da
 import '../features/personal/notifications/data/source/local/local_notification.dart';
 import '../features/personal/notifications/domain/entities/notification_entity.dart';
 import '../features/personal/notifications/domain/usecase/get_all_notifications_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/get_blocked_users_usecase.dart';
+import '../features/personal/user/profiles/domain/entities/user_entity.dart';
+import '../features/personal/user/profiles/data/sources/local/local_blocked_users.dart';
 import 'token_refresh_scheduler.dart';
 import 'get_it.dart';
 
@@ -27,6 +30,9 @@ class AppDataService extends WidgetsBindingObserver {
   final CountryApi _countryApi = locator<CountryApi>();
   final GetAllNotificationsUseCase _getAllNotificationsUseCase =
       GetAllNotificationsUseCase(locator());
+  final GetBlockedUsersUsecase _getBlockedUsersUsecase = GetBlockedUsersUsecase(
+    locator(),
+  );
 
   final TokenRefreshScheduler _tokenRefreshScheduler = TokenRefreshScheduler(
     onRefresh: () => AppDataService().ensureTokenRefreshed(),
@@ -97,6 +103,11 @@ class AppDataService extends WidgetsBindingObserver {
     } catch (e, s) {
       AppLog.error('Error fetching notifications', error: e, stackTrace: s);
     }
+    try {
+      await _fetchBlockedUsers();
+    } catch (e, s) {
+      AppLog.error('Error fetching blocked users', error: e, stackTrace: s);
+    }
   }
 
   // ---------------------------------------------------------------
@@ -134,6 +145,48 @@ class AppDataService extends WidgetsBindingObserver {
         error: e,
         stackTrace: s,
         name: 'AppDataService._fetchCountries',
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // BLOCKED USERS
+  // ---------------------------------------------------------------
+  Future<void> _fetchBlockedUsers() async {
+    try {
+      final DataState<List<UserEntity>> result = await _getBlockedUsersUsecase(
+        null,
+      );
+
+      if (result is DataSuccess<List<UserEntity>>) {
+        final List<UserEntity> blockedUsers = result.entity ?? <UserEntity>[];
+        final List<String> blockedUserIds = blockedUsers
+            .map((UserEntity user) => user.uid)
+            .where((String? uid) => uid != null && uid.isNotEmpty)
+            .cast<String>()
+            .toList();
+
+        await LocalBlockedUsers().saveBlockedUsers(blockedUserIds);
+        AppLog.info(
+          'Blocked users fetched and saved: ${blockedUserIds.length}',
+          name: 'AppDataService._fetchBlockedUsers',
+        );
+        return;
+      }
+
+      if (result is DataFailer) {
+        AppLog.error(
+          'Failed fetching blocked users',
+          error: result.exception,
+          name: 'AppDataService._fetchBlockedUsers',
+        );
+      }
+    } catch (e, s) {
+      AppLog.error(
+        'Exception fetching blocked users',
+        error: e,
+        stackTrace: s,
+        name: 'AppDataService._fetchBlockedUsers',
       );
     }
   }

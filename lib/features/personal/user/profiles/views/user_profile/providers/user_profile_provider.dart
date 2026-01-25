@@ -85,18 +85,8 @@ class UserProfileProvider extends ChangeNotifier {
       name: 'UserProfileProvider.getUserByUid',
     );
 
-    // Fetch blocked users and check if current user is in the list
-    final DataState<List<UserEntity>> blockedUsersResult =
-        await getBlockedUsers();
-    if (blockedUsersResult is DataSuccess<List<UserEntity>>) {
-      final List<UserEntity> blockedUsers =
-          blockedUsersResult.entity ?? <UserEntity>[];
-      _isBlocked = blockedUsers.any((UserEntity user) => user.uid == uid);
-    } else {
-      // Fallback to local cache if API call fails
-      _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
-    }
-
+    // Check if user is blocked from local cache
+    _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
     _isProcessingBlock = false;
 
     displayType = UserProfilePageTabType.store;

@@ -84,12 +84,13 @@ class UserProfileScoreSection extends StatelessWidget {
                           vertical: 6,
                         ),
                         title: 'unblock'.tr(),
+                        textStyle: TextTheme.of(
+                          context,
+                        ).labelMedium?.copyWith(),
                         onTap: onUnblock ?? () {},
                         isLoading: isBusy,
                         isDisable: isBusy || onUnblock == null,
-                        bgColor: Theme.of(context).colorScheme.error,
                         textColor: Theme.of(context).colorScheme.onError,
-                        borderRadius: BorderRadius.circular(12),
                         fontWeight: FontWeight.w500,
                         loadingWidget: SizedBox(
                           width: 16,
