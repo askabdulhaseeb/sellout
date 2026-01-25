@@ -11,5 +11,6 @@
 ///   servicePoints: myServicePoints,
 /// );
 /// ```
+library;
 
 export 'service_point_selection_dialog.dart';

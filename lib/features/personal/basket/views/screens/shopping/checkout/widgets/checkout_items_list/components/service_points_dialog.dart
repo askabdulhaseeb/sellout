@@ -54,7 +54,7 @@ class _ServicePointsDialogHost extends StatefulWidget {
 class _ServicePointsDialogHostState extends State<_ServicePointsDialogHost> {
   List<ServicePointModel> _servicePoints = <ServicePointModel>[];
   bool _isLoading = true;
-  String _carrier = '';
+  final String _carrier = '';
 
   @override
   void initState() {

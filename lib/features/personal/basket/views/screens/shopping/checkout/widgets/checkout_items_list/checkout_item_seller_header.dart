@@ -47,7 +47,7 @@ class CartSellerHeader extends StatelessWidget {
                 Text(
                   itemCount == 1
                       ? 'one_item'.tr()
-                      : 'items_count'.tr(args: [itemCount.toString()]),
+                      : 'items_count'.tr(args: <String>[itemCount.toString()]),
                   style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
