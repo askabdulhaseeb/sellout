@@ -24,4 +24,5 @@ abstract interface class UserProfileRepository {
   );
   Future<DataState<bool?>> deleteUser(String value);
   Future<DataState<bool?>> blockUser(BlockUserParams params);
+  Future<DataState<List<UserEntity>>> getBlockedUsers();
 }

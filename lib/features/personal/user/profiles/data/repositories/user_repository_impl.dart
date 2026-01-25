@@ -73,4 +73,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   Future<DataState<bool?>> blockUser(BlockUserParams params) async {
     return await userProfileRemoteSource.blockUser(params);
   }
+
+  @override
+  Future<DataState<List<UserEntity>>> getBlockedUsers() async {
+    return await userProfileRemoteSource.getBlockedUsers();
+  }
 }

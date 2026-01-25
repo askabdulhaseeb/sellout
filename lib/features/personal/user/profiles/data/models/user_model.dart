@@ -46,7 +46,6 @@ class UserModel extends UserEntity {
     required super.otpExpiry,
     required super.timestamp,
     required super.createdAt,
-
   }) : super(inHiveAt: DateTime.now());
 
   factory UserModel.fromRawJson(String str) =>
@@ -131,7 +130,6 @@ class UserModel extends UserEntity {
     createdAt: json['created_at'] == null
         ? DateTime.now()
         : (json['created_at']?.toString().toDateTime()) ?? DateTime.now(),
-  
-  );
+ );
 
 }

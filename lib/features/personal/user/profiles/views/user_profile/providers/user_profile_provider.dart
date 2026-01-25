@@ -10,6 +10,7 @@ import '../../../domain/usecase/get_post_by_id_usecase.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
 import '../enums/user_profile_page_tab_type.dart';
 import '../../../domain/usecase/block_user_usecase.dart';
+import '../../../data/sources/local/local_blocked_users.dart';
 import '../../params/block_user_params.dart';
 
 class UserProfileProvider extends ChangeNotifier {
@@ -82,11 +83,12 @@ class UserProfileProvider extends ChangeNotifier {
       'UserProfileProvider: User loaded: ${_user?.entity?.displayName}',
       name: 'UserProfileProvider.getUserByUid',
     );
-    // Initialize blocked state from the loaded user entity
-    _isBlocked =  false;
+    // Check if user is blocked from local cache
+    _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
     _isProcessingBlock = false;
 
     displayType = UserProfilePageTabType.store;
+    notifyListeners();
     return _user;
   }
 

@@ -44,7 +44,6 @@ class UserEntity {
     required this.timestamp,
     required this.createdAt,
     required this.inHiveAt,
-
   });
 
   @HiveField(0)
@@ -113,6 +112,73 @@ class UserEntity {
   final DateTime createdAt;
   @HiveField(99)
   final DateTime inHiveAt;
+
+  UserEntity copyWith({
+    String? uid,
+    String? email,
+    String? username,
+    String? displayName,
+    String? bio,
+    PrivacyType? privacyType,
+    List<AttachmentEntity>? profilePic,
+    List<AttachmentEntity>? verificationPic,
+    bool? isImageVerified,
+    String? currency,
+    String? language,
+    List<double>? listOfReviews,
+    String? countryAlpha3,
+    String? countryCode,
+    String? phoneNumber,
+    List<AddressEntity>? address,
+    UserStripeAccountEntity? stripeDetails,
+    List<String>? chatIDs,
+    List<String>? businessIds,
+    List<String>? saved,
+    List<dynamic>? interest,
+    List<SupporterDetailEntity>? supporters,
+    List<SupporterDetailEntity>? supportings,
+    List<ProfileBusinessDetailEntity>? businessDetail,
+    DateTime? date,
+    DateTime? updateAt,
+    DateTime? otpExpiry,
+    DateTime? timestamp,
+    DateTime? createdAt,
+    bool? isBlocked,
+    DateTime? inHiveAt,
+  }) {
+    return UserEntity(
+      uid: uid ?? this.uid,
+      email: email ?? this.email,
+      username: username ?? this.username,
+      displayName: displayName ?? this.displayName,
+      bio: bio ?? this.bio,
+      privacyType: privacyType ?? this.privacyType,
+      profilePic: profilePic ?? this.profilePic,
+      verificationPic: verificationPic ?? this.verificationPic,
+      isImageVerified: isImageVerified ?? this.isImageVerified,
+      currency: currency ?? this.currency,
+      language: language ?? this.language,
+      listOfReviews: listOfReviews ?? this.listOfReviews,
+      countryAlpha3: countryAlpha3 ?? this.countryAlpha3,
+      countryCode: countryCode ?? this.countryCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+      stripeDetails: stripeDetails ?? this.stripeDetails,
+      chatIDs: chatIDs ?? this.chatIDs,
+      businessIds: businessIds ?? this.businessIds,
+      saved: saved ?? this.saved,
+      interest: interest ?? this.interest,
+      supporters: supporters ?? this.supporters,
+      supportings: supportings ?? this.supportings,
+      businessDetail: businessDetail ?? this.businessDetail,
+      date: date ?? this.date,
+      updateAt: updateAt ?? this.updateAt,
+      otpExpiry: otpExpiry ?? this.otpExpiry,
+      timestamp: timestamp ?? this.timestamp,
+      createdAt: createdAt ?? this.createdAt,
+      inHiveAt: inHiveAt ?? this.inHiveAt,
+    );
+  }
 
   String? get profilePhotoURL =>
       profilePic.isEmpty ? null : profilePic.first.url;

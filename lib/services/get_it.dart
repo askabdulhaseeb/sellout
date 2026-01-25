@@ -204,6 +204,7 @@ import '../features/personal/user/profiles/data/sources/remote/user_profile_remo
 import '../features/personal/user/profiles/domain/repositories/user_repositories.dart';
 import '../features/personal/user/profiles/domain/usecase/add_remove_supporter_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/block_user_usecase.dart';
+import '../features/personal/user/profiles/domain/usecase/get_blocked_users_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/edit_profile_picture_usecase.dart';
 import '../features/personal/user/profiles/domain/usecase/get_my_host_usecase.dart';
@@ -384,6 +385,9 @@ void _profile() {
     () => AddRemoveSupporterUsecase(locator()),
   );
   locator.registerFactory<BlockUserUsecase>(() => BlockUserUsecase(locator()));
+  locator.registerFactory<GetBlockedUsersUsecase>(
+    () => GetBlockedUsersUsecase(locator()),
+  );
   locator.registerLazySingleton<ProfileProvider>(
     () => ProfileProvider(
       locator(),

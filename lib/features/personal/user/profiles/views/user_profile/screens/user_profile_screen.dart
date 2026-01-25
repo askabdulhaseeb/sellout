@@ -34,8 +34,9 @@ class UserProfileScreen extends StatelessWidget {
 
     final bool willBlock = unblock != null
         ? !unblock
-        : !(profileProvider.isBlocked);
 
+
+        : !profileProvider.isBlocked;
     if (profileProvider.isProcessingBlock) return;
 
     final String name = user?.displayName ?? 'this_user'.tr();
@@ -92,9 +93,8 @@ class UserProfileScreen extends StatelessWidget {
                   Widget? child,
                 ) {
                   final UserEntity? cachedUser = LocalUser().userEntity(uid);
-                  final bool isBlocked =
-                      profileProvider.isBlocked 
-                     ;
+
+                  final bool isBlocked = profileProvider.isBlocked;
 
                   return PopupMenuButton<_ProfileMenuAction>(
                     onSelected: (_ProfileMenuAction action) async {
@@ -154,9 +154,8 @@ class UserProfileScreen extends StatelessWidget {
               final UserEntity? user = snapshot.data?.entity;
               final UserProfileProvider profileProvider = context
                   .watch<UserProfileProvider>();
-              final bool isBlocked =
-                  profileProvider.isBlocked;
 
+              final bool isBlocked = profileProvider.isBlocked;
               return SingleChildScrollView(
                 child: Column(
                   children: <Widget>[

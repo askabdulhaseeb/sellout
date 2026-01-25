@@ -36,10 +36,9 @@ class _UserProfileHeaderSectionState extends State<UserProfileHeaderSection> {
 
   @override
   Widget build(BuildContext context) {
-    final UserProfileProvider profileProvider =
-        context.watch<UserProfileProvider>();
-    final bool isBlocked =
-        profileProvider.isBlocked;
+    final UserProfileProvider profileProvider = context
+        .watch<UserProfileProvider>();
+    final bool isBlocked = profileProvider.isBlocked;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double photoSize = screenWidth * 0.25;
     final double nameFontSize = screenWidth * 0.045;
