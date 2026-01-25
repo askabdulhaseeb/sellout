@@ -4,6 +4,7 @@ import '../../../../../../../core/functions/app_log.dart';
 /// Local Hive-based storage for blocked user IDs
 class LocalBlockedUsers {
   static const String _boxName = 'blocked_users_box';
+  static const String _boxKey = 'blocked_users';
 
   /// Get the Hive box for blocked users
   Future<Box<List>> _getBox() async {
@@ -26,7 +27,7 @@ class LocalBlockedUsers {
   Future<void> saveBlockedUsers(List<String> blockedUserIds) async {
     try {
       final Box<List> box = await _getBox();
-      await box.put('blocked_users', blockedUserIds);
+      await box.put(_boxKey, blockedUserIds);
       AppLog.info(
         'Saved ${blockedUserIds.length} blocked users to local cache',
         name: 'LocalBlockedUsers.saveBlockedUsers',
@@ -44,10 +45,10 @@ class LocalBlockedUsers {
   Future<List<String>> getBlockedUsers() async {
     try {
       final Box<List> box = await _getBox();
-      final List? blockedUsers = box.get('blocked_users');
+      final List? blockedUsers = box.get(_boxKey);
 
       if (blockedUsers == null) {
-        return [];
+        return <String>[];
       }
 
       return List<String>.from(blockedUsers);
@@ -57,11 +58,11 @@ class LocalBlockedUsers {
         name: 'LocalBlockedUsers.getBlockedUsers',
         error: Exception(e),
       );
-      return [];
+      return <String>[];
     }
   }
 
-  /// Check if a user is blocked
+  /// Check if a user is blocked (async)
   Future<bool> isUserBlocked(String userId) async {
     try {
       final List<String> blockedUsers = await getBlockedUsers();
@@ -120,7 +121,7 @@ class LocalBlockedUsers {
   Future<void> clearBlockedUsers() async {
     try {
       final Box<List> box = await _getBox();
-      await box.delete('blocked_users');
+      await box.delete(_boxKey);
       AppLog.info(
         'Cleared all blocked users from local cache',
         name: 'LocalBlockedUsers.clearBlockedUsers',
@@ -132,5 +133,25 @@ class LocalBlockedUsers {
         error: Exception(e),
       );
     }
+  }
+
+  /// Replace the entire blocked users list (e.g., after a fresh sync from server).
+  Future<void> replaceAll(List<String> userIds) async {
+    final List<String> normalized = userIds.where((e) => e.isNotEmpty).toList();
+    await saveBlockedUsers(normalized);
+  }
+
+  /// Returns the cached blocked user IDs (sync, if box is already open).
+  List<String> allSync() {
+    if (!Hive.isBoxOpen(_boxName)) return <String>[];
+    final Box<List> box = Hive.box<List>(_boxName);
+    final List? blockedUsers = box.get(_boxKey);
+    return blockedUsers == null ? <String>[] : List<String>.from(blockedUsers);
+  }
+
+  /// Returns true if the given userId is currently cached as blocked (sync).
+  bool isBlocked(String userId) {
+    if (userId.isEmpty) return false;
+    return allSync().contains(userId);
   }
 }

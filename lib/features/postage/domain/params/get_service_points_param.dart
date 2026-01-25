@@ -1,9 +1,5 @@
 /// Parameters for getting service points
 class GetServicePointsParam {
-  final List<String> cartItemIds;
-  final String postalCode;
-  final String carrier;
-  final int radius;
 
   GetServicePointsParam({
     required this.cartItemIds,
@@ -11,6 +7,10 @@ class GetServicePointsParam {
     required this.carrier,
     this.radius = 1000,
   });
+  final List<String> cartItemIds;
+  final String postalCode;
+  final String carrier;
+  final int radius;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'cart_item_ids': cartItemIds,

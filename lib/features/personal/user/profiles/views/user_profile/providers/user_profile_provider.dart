@@ -12,6 +12,7 @@ import '../enums/user_profile_page_tab_type.dart';
 import '../../../domain/usecase/block_user_usecase.dart';
 import '../../../data/sources/local/local_blocked_users.dart';
 import '../../params/block_user_params.dart';
+import '../../../domain/usecase/get_blocked_users_usecase.dart';
 
 class UserProfileProvider extends ChangeNotifier {
   UserProfileProvider(
@@ -19,12 +20,13 @@ class UserProfileProvider extends ChangeNotifier {
     this._getPostByIdUsecase,
     this._getReviewsUsecase,
     this._blockUserUsecase,
+    this._getBlockedUsersUsecase,
   );
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
   final BlockUserUsecase _blockUserUsecase;
-
+  final GetBlockedUsersUsecase _getBlockedUsersUsecase;
 
   //---------------------------------------------------------------------------------variables
   DataState<UserEntity?>? _user;
@@ -73,7 +75,6 @@ class UserProfileProvider extends ChangeNotifier {
     _viewingPosts = null;
     _isBlocked = false;
     _isProcessingBlock = false;
-
   }
 
   //---------------------------------------------------------------------------------api usecases
@@ -83,8 +84,19 @@ class UserProfileProvider extends ChangeNotifier {
       'UserProfileProvider: User loaded: ${_user?.entity?.displayName}',
       name: 'UserProfileProvider.getUserByUid',
     );
-    // Check if user is blocked from local cache
-    _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
+
+    // Fetch blocked users and check if current user is in the list
+    final DataState<List<UserEntity>> blockedUsersResult =
+        await getBlockedUsers();
+    if (blockedUsersResult is DataSuccess<List<UserEntity>>) {
+      final List<UserEntity> blockedUsers =
+          blockedUsersResult.entity ?? <UserEntity>[];
+      _isBlocked = blockedUsers.any((UserEntity user) => user.uid == uid);
+    } else {
+      // Fallback to local cache if API call fails
+      _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
+    }
+
     _isProcessingBlock = false;
 
     displayType = UserProfilePageTabType.store;
@@ -130,6 +142,26 @@ class UserProfileProvider extends ChangeNotifier {
 
     _isProcessingBlock = false;
     notifyListeners();
+    return result;
+  }
+
+  Future<DataState<List<UserEntity>>> getBlockedUsers() async {
+    final DataState<List<UserEntity>> result = await _getBlockedUsersUsecase(
+      null,
+    );
+
+    if (result is DataSuccess<List<UserEntity>>) {
+      AppLog.info(
+        'UserProfileProvider: Blocked users fetched: ${result.entity?.length ?? 0}',
+        name: 'UserProfileProvider.getBlockedUsers',
+      );
+    } else {
+      AppLog.error(
+        'UserProfileProvider: Failed to fetch blocked users: ${result.exception?.message}',
+        name: 'UserProfileProvider.getBlockedUsers',
+      );
+    }
+
     return result;
   }
 }

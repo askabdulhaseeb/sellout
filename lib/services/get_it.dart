@@ -400,7 +400,13 @@ void _profile() {
     ),
   );
   locator.registerLazySingleton<UserProfileProvider>(
-    () => UserProfileProvider(locator(), locator(), locator(), locator()),
+    () => UserProfileProvider(
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+      locator(),
+    ),
   );
 }
 
