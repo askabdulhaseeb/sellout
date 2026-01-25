@@ -118,7 +118,7 @@ The app uses environment files:
 - `dev.env` - Development configuration
 - `prod.env` - Production configuration
 
-Environment is automatically selected based on debug mode in `main.dart:20`.
+Environment is automatically selected based on debug mode in `main.dart:36`.
 
 ## Code Generation
 
@@ -162,3 +162,6 @@ All string constants, API endpoints, and asset paths are in `lib/core/utilities/
 - Payment processing via Flutter Stripe
 - Auth tokens stored encrypted, auto-refresh via `TokenRefreshScheduler`
 - Custom widgets in `lib/core/widgets/` (40+ reusable components)
+- Internationalization support via `easy_localization` package
+- Firebase integration for push notifications and messaging
+- Native splash screen configuration in pubspec.yaml with light/dark theme support
