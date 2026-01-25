@@ -9,17 +9,24 @@ import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecase/get_post_by_id_usecase.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
 import '../enums/user_profile_page_tab_type.dart';
+import '../../../domain/usecase/block_user_usecase.dart';
+import '../../../data/sources/local/local_blocked_users.dart';
+import '../../params/block_user_params.dart';
+import '../../../domain/usecase/get_blocked_users_usecase.dart';
 
 class UserProfileProvider extends ChangeNotifier {
   UserProfileProvider(
     this._getUserByUidUsecase,
     this._getPostByIdUsecase,
     this._getReviewsUsecase,
+    this._blockUserUsecase,
+    this._getBlockedUsersUsecase,
   );
-
   final GetUserByUidUsecase _getUserByUidUsecase;
   final GetPostByIdUsecase _getPostByIdUsecase;
   final GetReviewsUsecase _getReviewsUsecase;
+  final BlockUserUsecase _blockUserUsecase;
+  final GetBlockedUsersUsecase _getBlockedUsersUsecase;
 
   //---------------------------------------------------------------------------------variables
   DataState<UserEntity?>? _user;
@@ -27,6 +34,8 @@ class UserProfileProvider extends ChangeNotifier {
   bool _isLoading = false;
   List<PostEntity>? _storePosts;
   List<PostEntity>? _viewingPosts;
+  bool _isBlocked = false;
+  bool _isProcessingBlock = false;
 
   //---------------------------------------------------------------------------------getters
   UserEntity? get user => _user?.entity;
@@ -34,6 +43,8 @@ class UserProfileProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<PostEntity>? get storePosts => _storePosts;
   List<PostEntity>? get viewingPosts => _viewingPosts;
+  bool get isBlocked => _isBlocked;
+  bool get isProcessingBlock => _isProcessingBlock;
 
   //---------------------------------------------------------------------------------setters
   set displayType(UserProfilePageTabType value) {
@@ -62,6 +73,8 @@ class UserProfileProvider extends ChangeNotifier {
     _isLoading = false;
     _storePosts = null;
     _viewingPosts = null;
+    _isBlocked = false;
+    _isProcessingBlock = false;
   }
 
   //---------------------------------------------------------------------------------api usecases
@@ -71,7 +84,13 @@ class UserProfileProvider extends ChangeNotifier {
       'UserProfileProvider: User loaded: ${_user?.entity?.displayName}',
       name: 'UserProfileProvider.getUserByUid',
     );
+
+    // Check if user is blocked from local cache
+    _isBlocked = await LocalBlockedUsers().isUserBlocked(uid);
+    _isProcessingBlock = false;
+
     displayType = UserProfilePageTabType.store;
+    notifyListeners();
     return _user;
   }
 
@@ -87,5 +106,52 @@ class UserProfileProvider extends ChangeNotifier {
       ),
     );
     return reviews.entity ?? <ReviewEntity>[];
+  }
+
+  Future<DataState<bool?>> toggleBlockUser({
+    required String userId,
+    required bool block,
+  }) async {
+    if (userId.isEmpty) {
+      return DataFailer<bool?>(CustomException('User ID is null'));
+    }
+
+    _isProcessingBlock = true;
+    notifyListeners();
+
+    final DataState<bool?> result = await _blockUserUsecase(
+      BlockUserParams(
+        userId: userId,
+        action: block ? BlockAction.block : BlockAction.unblock,
+      ),
+    );
+
+    if (result is DataSuccess<bool?>) {
+      _isBlocked = result.entity ?? block;
+    }
+
+    _isProcessingBlock = false;
+    notifyListeners();
+    return result;
+  }
+
+  Future<DataState<List<UserEntity>>> getBlockedUsers() async {
+    final DataState<List<UserEntity>> result = await _getBlockedUsersUsecase(
+      null,
+    );
+
+    if (result is DataSuccess<List<UserEntity>>) {
+      AppLog.info(
+        'UserProfileProvider: Blocked users fetched: ${result.entity?.length ?? 0}',
+        name: 'UserProfileProvider.getBlockedUsers',
+      );
+    } else {
+      AppLog.error(
+        'UserProfileProvider: Failed to fetch blocked users: ${result.exception?.message}',
+        name: 'UserProfileProvider.getBlockedUsers',
+      );
+    }
+
+    return result;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
@@ -11,8 +12,11 @@ import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../views/params/add_remove_supporter_params.dart';
 import '../../../views/params/update_user_params.dart';
+import '../../../views/params/block_user_params.dart';
 import '../../models/supporter_detail_model.dart';
+import '../../models/user_model.dart';
 import '../local/local_user.dart';
+import '../local/local_blocked_users.dart';
 
 abstract interface class UserProfileRemoteSource {
   Future<DataState<UserEntity?>> byUID(String value);
@@ -24,6 +28,8 @@ abstract interface class UserProfileRemoteSource {
     AddRemoveSupporterParams params,
   );
   Future<DataState<bool?>> deleteUser(String value);
+  Future<DataState<bool?>> blockUser(BlockUserParams params);
+  Future<DataState<List<UserEntity>>> getBlockedUsers();
 }
 
 class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
@@ -390,6 +396,188 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
       return DataFailer<bool?>(CustomException('user not deletd'));
     } catch (e) {
       return DataFailer<bool?>(CustomException('User not deleted'));
+    }
+  }
+
+  @override
+  Future<DataState<bool?>> blockUser(BlockUserParams params) async {
+    if (params.userId.isEmpty) {
+      return DataFailer<bool?>(CustomException('User ID is null'));
+    }
+
+    const String endpoint = '/user/block';
+    AppLog.info(
+      'Block user request | action: ${params.action.value} | userId: ${params.userId} | payload: ${params.toJson()}',
+      name: 'UserProfileRemoteSourceImpl.blockUser',
+    );
+
+    try {
+      final DataState<String> result = await ApiCall<String>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.post,
+        body: json.encode(params.toJson()),
+      );
+
+      if (result is DataSuccess<String>) {
+        bool? isBlocked;
+        try {
+          final dynamic decoded = jsonDecode(result.data ?? '');
+          if (decoded is Map<String, dynamic>) {
+            final dynamic maybeBlocked = decoded['is_blocked'];
+            if (maybeBlocked is bool) {
+              isBlocked = maybeBlocked;
+            }
+          }
+        } catch (_) {
+          // Ignore parsing issues and fall back to action-based state
+        }
+
+        final bool resolvedState =
+            isBlocked ?? (params.action == BlockAction.block);
+
+        // Update local blocked users cache
+        if (resolvedState) {
+          await LocalBlockedUsers().blockUser(params.userId);
+        } else {
+          await LocalBlockedUsers().unblockUser(params.userId);
+        }
+
+        // Sync local user cache
+        final UserEntity? cachedUser = LocalUser().userEntity(params.userId);
+        if (cachedUser != null) {
+          final UserEntity updatedUser = cachedUser.copyWith(
+            isBlocked: resolvedState,
+          );
+          await LocalUser().save(params.userId, updatedUser);
+          AppLog.info(
+            'Local cache updated for user ${params.userId} | isBlocked: $resolvedState',
+            name: 'UserProfileRemoteSourceImpl.blockUser',
+          );
+        }
+
+        AppLog.info(
+          'Block user success | is_blocked: $isBlocked | resolved_state: $resolvedState',
+          name: 'UserProfileRemoteSourceImpl.blockUser',
+        );
+
+        return DataSuccess<bool?>(result.data ?? '', resolvedState);
+      }
+
+      AppLog.error(
+        'Block user failed | message: ${result.exception?.message}',
+        name: 'UserProfileRemoteSourceImpl.blockUser',
+        error: result.exception,
+      );
+
+      return DataFailer<bool?>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
+    } catch (e, st) {
+      AppLog.error(
+        'Exception caught while blocking user',
+        name: 'UserProfileRemoteSourceImpl.blockUser',
+        error: CustomException(e.toString()),
+        stackTrace: st,
+      );
+      return DataFailer<bool?>(CustomException('something_wrong'.tr()));
+    }
+  }
+
+  @override
+  Future<DataState<List<UserEntity>>> getBlockedUsers() async {
+    const String endpoint = '/user/blocked';
+    AppLog.info(
+      'Fetching blocked users list',
+      name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+    );
+
+    try {
+      final DataState<bool> result = await ApiCall<bool>().call(
+        endpoint: endpoint,
+        requestType: ApiRequestType.get,
+        isAuth: true,
+      );
+
+      if (result is DataSuccess<bool>) {
+        final String rawJson = result.data ?? '';
+
+        if (rawJson.isEmpty) {
+          AppLog.info(
+            'Blocked users response is empty',
+            name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+          );
+          return DataSuccess<List<UserEntity>>(rawJson, []);
+        }
+
+        try {
+          final dynamic decoded = jsonDecode(rawJson);
+          final List<UserEntity> blockedUsers = <UserEntity>[];
+
+          if (decoded is List) {
+            for (final dynamic item in decoded) {
+              if (item is Map<String, dynamic>) {
+                final UserModel user = UserModel.fromJson(item);
+                blockedUsers.add(user);
+              }
+            }
+          } else if (decoded is Map<String, dynamic>) {
+            // Handle paginated or nested response
+            final dynamic data =
+                decoded['data'] ?? decoded['blocked_users'] ?? decoded['users'];
+            if (data is List) {
+              for (final dynamic item in data) {
+                if (item is Map<String, dynamic>) {
+                  final UserModel user = UserModel.fromJson(item);
+                  blockedUsers.add(user);
+                }
+              }
+            }
+          }
+
+          AppLog.info(
+            'Successfully fetched ${blockedUsers.length} blocked users',
+            name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+          );
+
+          // Save blocked user IDs to local cache for quick lookup
+          final List<String> blockedUserIds = blockedUsers
+              .map((UserEntity user) => user.uid)
+              .toList();
+          await LocalBlockedUsers().saveBlockedUsers(blockedUserIds);
+
+          return DataSuccess<List<UserEntity>>(rawJson, blockedUsers);
+        } catch (e, st) {
+          AppLog.error(
+            'Error parsing blocked users response: $e',
+            name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+            error: CustomException(e.toString()),
+            stackTrace: st,
+          );
+          return DataFailer<List<UserEntity>>(
+            CustomException('Failed to parse blocked users'),
+          );
+        }
+      }
+
+      AppLog.error(
+        'Failed to fetch blocked users: ${result.exception?.message}',
+        name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+        error: result.exception,
+      );
+
+      return DataFailer<List<UserEntity>>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
+    } catch (e, st) {
+      AppLog.error(
+        'Exception caught while fetching blocked users',
+        name: 'UserProfileRemoteSourceImpl.getBlockedUsers',
+        error: CustomException(e.toString()),
+        stackTrace: st,
+      );
+      return DataFailer<List<UserEntity>>(
+        CustomException('something_wrong'.tr()),
+      );
     }
   }
 }

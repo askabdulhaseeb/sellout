@@ -26,7 +26,7 @@ class ProfileMySavedGridview extends StatelessWidget {
                   icon: CupertinoIcons.photo,
                   childBelow: Text('no_posts_found'.tr())));
         }
-        final List<String> saved = snapshot.data?.saved ?? <String>[];
+        final List<dynamic> saved = snapshot.data?.saved ??[];
         if (saved.isEmpty) {
           return Center(
               child: EmptyPageWidget(

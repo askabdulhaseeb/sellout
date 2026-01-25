@@ -11,6 +11,7 @@ import '../sources/remote/my_visting_remote.dart';
 import '../../../../order/data/source/remote/order_by_user_remote.dart';
 import '../sources/remote/post_by_user_remote.dart';
 import '../sources/remote/user_profile_remote_source.dart';
+import '../../views/params/block_user_params.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
   const UserProfileRepositoryImpl(
@@ -46,7 +47,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<DataState<List<AttachmentEntity>>> updateProfilePicture(
-      PickedAttachment photo) async {
+    PickedAttachment photo,
+  ) async {
     return await userProfileRemoteSource.updateProfilePicture(photo);
   }
 
@@ -57,7 +59,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<DataState<String>> addRemoveSupporters(
-      AddRemoveSupporterParams params) async {
+    AddRemoveSupporterParams params,
+  ) async {
     return await userProfileRemoteSource.addRemoveSupporters(params);
   }
 
@@ -66,4 +69,13 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     return await userProfileRemoteSource.deleteUser(value);
   }
 
+  @override
+  Future<DataState<bool?>> blockUser(BlockUserParams params) async {
+    return await userProfileRemoteSource.blockUser(params);
+  }
+
+  @override
+  Future<DataState<List<UserEntity>>> getBlockedUsers() async {
+    return await userProfileRemoteSource.getBlockedUsers();
+  }
 }

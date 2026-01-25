@@ -1,6 +1,8 @@
 import '../../../post/data/sources/local/local_post.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
+import '../../../user/profiles/domain/entities/user_entity.dart';
+
 import '../../data/sources/local/local_cart.dart';
 import '../../views/screens/shopping/checkout/widgets/checkout_items_list/models/seller_group.dart';
 

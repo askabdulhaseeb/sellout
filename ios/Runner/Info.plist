@@ -3,6 +3,15 @@
 <plist version="1.0">
 	<dict>
 		<key>NSContactsUsageDescription</key>
+<<<<<<< HEAD
+		<string>Sellout need to access your Contacts to share your friends with you</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Sellout need to access your Camera to take a photo of your product</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Sellout need to access your Microphone to record your voice</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Sellout need to access your Photo Library to upload your product photo</string>
+=======
 		<string>Sellout uses your contacts to help you invite friends to the marketplace and find people you know who are already using the app</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Sellout uses your camera to take photos of marketplace products, capture profile pictures, and share images in chat conversations</string>
@@ -10,6 +19,7 @@
 		<string>Sellout uses your microphone to record voice messages in chat conversations, audio notes for marketplace listings, and voice reviews for products and services</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Sellout accesses your photo library to upload marketplace product images, select profile pictures, and share photos in chat conversations</string>
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>This app saves photos to your gallery.</string>
 		<key>NSAppTransportSecurity</key>
@@ -68,11 +78,19 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSAppleMusicUsageDescription</key>
+<<<<<<< HEAD
+		<string>Sellout need to access your Apple Music to play/share your favorite music</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Sellout need to access your Location to improve your user experience</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Sellout need to access your Location to improve your user experience</string>
+=======
 		<string>Sellout integrates with Apple Music to let you share your favorite songs with friends in chat conversations and showcase music preferences on your profile</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Sellout uses your location to show nearby marketplace listings, provide local pickup options, and help you find services in your area</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Sellout uses your location to show nearby marketplace listings, provide local pickup options, and help you find services in your area</string>
+>>>>>>> e947def20999a92448313553bb695b63691bc934
 		<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
