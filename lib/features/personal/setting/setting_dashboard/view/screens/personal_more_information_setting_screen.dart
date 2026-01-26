@@ -1,17 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/sources/local/hive_db.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/in_dev_mode.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../../services/get_it.dart';
-import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/usecase/logout_usecase.dart';
 import '../../../../dashboard/views/screens/dashboard_screen.dart';
-import '../../../../user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../../../setting_options/terms&policies/about_us_screen.dart';
 import '../../../setting_options/time_away/screens/time_away_screen.dart';
 import '../widgets/personal_setting_tile.dart';
@@ -105,66 +102,7 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
             icon: AppStrings.selloutDeleteAccountSettingIcon,
             title: 'delete_account'.tr(),
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    title: Text(
-                      'are_you_sure'.tr(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    content: Text(
-                      'do_you_really_want_to_delete_your_account'.tr(),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(
-                          'cancel'.tr(),
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: Text(
-                          'delete'.tr(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                        onPressed: () async {
-                          final DataState<bool?> result =
-                              await DeleteUserUsecase(
-                                locator(),
-                              ).call(LocalAuth.uid ?? '');
-
-                          if (result is DataSuccess) {
-                            await HiveDB.signout();
-                            AppNavigator.pushNamedAndRemoveUntil(
-                              DashboardScreen.routeName,
-                              (_) => false,
-                            );
-                          } else {
-                            if (context.mounted) {
-                              AppSnackBar.error(
-                                context,
-                                'something_wrong'.tr(),
-                              );
-                            }
-                          }
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+              AppNavigator.pushNamed('/account/deactivation-deletion');
             },
           ),
           PersonalSettingTile(
@@ -188,9 +126,7 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-                    content: Text(
-                      'do_you_want_to_logout'.tr(),
-                    ),
+                    content: Text('do_you_want_to_logout'.tr()),
                     actions: <Widget>[
                       TextButton(
                         child: Text(
@@ -209,8 +145,9 @@ class PersonalSettingMoreInformationScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () async {
-                          final NavigatorState navigator =
-                              Navigator.of(context);
+                          final NavigatorState navigator = Navigator.of(
+                            context,
+                          );
                           final DataState<bool> result =
                               await locator<LogoutUsecase>().call(null);
 

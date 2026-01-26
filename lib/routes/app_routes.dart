@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/functions/app_log.dart';
+import '../features/account/views/screens/account_deactivation_deletion_screen.dart';
 import '../features/business/service/views/screens/add_service_screen.dart';
 import '../features/personal/address/shipping_address/view/screens/selling_address_screen.dart';
 import '../features/personal/auth/find_account/view/screens/confirm_email_screen.dart';
@@ -136,6 +137,8 @@ class AppRoutes {
         const PersonalSettingEmailNotificationScreen(),
     AccountSettingsScreen.routeName: (_) => const AccountSettingsScreen(),
     EditAccountSettingScreen.routeName: (_) => const EditAccountSettingScreen(),
+    '/account/deactivation-deletion': (_) =>
+        const AccountDeactivationDeletionScreen(),
     SettingSecurityScreen.routeName: (_) => const SettingSecurityScreen(),
     PersonalPrivacySettingScreen.routeName: (_) =>
         const PersonalPrivacySettingScreen(),

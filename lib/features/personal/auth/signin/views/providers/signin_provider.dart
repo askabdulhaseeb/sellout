@@ -74,7 +74,10 @@ class SigninProvider extends ChangeNotifier {
         AppLog.error(
           'Signin Error in Provider',
           name: 'SigninProvider.signIn - Else',
-          error: result,
+          error:
+              result.exception?.message ??
+              result.exception?.reason ??
+              'unknown error',
         );
         AppSnackBar.showSnackBar(
           context,

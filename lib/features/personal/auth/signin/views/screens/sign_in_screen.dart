@@ -102,7 +102,12 @@ class SignInScreen extends StatelessWidget {
                           title: 'login'.tr(),
                           isLoading: authPro.isLoading,
                           loadingTitle: 'signing_in'.tr(),
-                          onTap: () async => await authPro.signIn(context),
+                          onTap: () async {
+                            if (!signInFormKey.currentState!.validate()) {
+                              return;
+                            }
+                            await authPro.signIn(context);
+                          },
                         ),
                       ],
                     ),
