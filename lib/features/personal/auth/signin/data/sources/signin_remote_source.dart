@@ -27,7 +27,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         endpoint: 'userAuth/login',
         requestType: ApiRequestType.post,
         body: bodyJson,
-        isConnectType: true,
+        isConnectType: false,
         isAuth: false,
       );
       if (responce is DataSuccess<bool>) {
@@ -210,7 +210,8 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         // Log error but still return success since local cleanup was done
         AppLog.error(
           responce.exception?.message ?? 'something_wrong'.tr(),
-          name: 'SignInRemoteSourceImpl.logout - API failed but local cleanup done',
+          name:
+              'SignInRemoteSourceImpl.logout - API failed but local cleanup done',
           error: responce.exception?.reason ?? '',
         );
         // Return success anyway since local state is cleared

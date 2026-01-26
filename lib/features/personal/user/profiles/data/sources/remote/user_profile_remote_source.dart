@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import '../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../core/sources/api_call.dart';
+import '../../../../../../../core/sources/local/hive_db.dart';
 import '../../../../../../../core/sources/local/local_request_history.dart';
 import '../../../../../../attachment/data/attchment_model.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
@@ -391,11 +392,14 @@ class UserProfileRemoteSourceImpl implements UserProfileRemoteSource {
         requestType: ApiRequestType.delete,
       );
       if (result is DataSuccess<bool>) {
+        await HiveDB.signout();
         return DataSuccess<bool>('', true);
       }
-      return DataFailer<bool?>(CustomException('user not deletd'));
+      return DataFailer<bool?>(
+        CustomException(result.exception?.message ?? 'something_wrong'.tr()),
+      );
     } catch (e) {
-      return DataFailer<bool?>(CustomException('User not deleted'));
+      return DataFailer<bool?>(CustomException('something_wrong'.tr()));
     }
   }
 

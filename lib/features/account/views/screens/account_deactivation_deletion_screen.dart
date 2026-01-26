@@ -1,6 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../core/sources/data_state.dart';
+import '../../../personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../personal/user/profiles/domain/usecase/delete_user_usecase.dart';
 import '../../domain/entities/account_action_type.dart';
+import 'package:get_it/get_it.dart';
 import '../widgets/account_action_card.dart';
 import '../widgets/account_warning_banner.dart';
 
@@ -18,6 +23,7 @@ class _AccountDeactivationDeletionScreenState
     extends State<AccountDeactivationDeletionScreen> {
   AccountActionType? _selectedOption;
   bool _showConfirmation = false;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +44,7 @@ class _AccountDeactivationDeletionScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Account Settings',
+                'account_settings_title'.tr(),
                 style: textTheme.titleLarge?.copyWith(
                   color: const Color(0xFF1A1A1A),
                   fontSize: 20,
@@ -48,7 +54,7 @@ class _AccountDeactivationDeletionScreenState
               ),
               const SizedBox(height: 2),
               Text(
-                'Deactivate or delete account',
+                'deactivate_or_delete_account'.tr(),
                 style: textTheme.labelSmall?.copyWith(
                   color: const Color(0xFF666666),
                   fontSize: 12,
@@ -92,7 +98,7 @@ class _AccountDeactivationDeletionScreenState
                     Expanded(
                       child: CustomElevatedButton(
                         isLoading: false,
-                        title: 'Cancel',
+                        title: 'cancel'.tr(),
                         bgColor: Colors.white,
                         textColor: const Color(0xFF666666),
                         border: Border.all(
@@ -107,7 +113,7 @@ class _AccountDeactivationDeletionScreenState
                     Expanded(
                       child: CustomElevatedButton(
                         isLoading: false,
-                        title: 'Continue',
+                        title: 'continue'.tr(),
                         bgColor: _selectedOption == null
                             ? const Color(0xFFD0D0D0)
                             : (_selectedOption == AccountActionType.delete
@@ -127,18 +133,41 @@ class _AccountDeactivationDeletionScreenState
               ] else ...<Widget>[
                 _ConfirmationWidget(
                   actionType: _selectedOption!,
+                  isProcessing: _isProcessing,
                   onCancel: () => setState(() => _showConfirmation = false),
-                  onConfirm: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          _selectedOption == AccountActionType.delete
-                              ? 'account_deleted_successfully'
-                              : 'account_deactivated_successfully',
+                  onConfirm: () async {
+                    setState(() => _isProcessing = true);
+                    if (_selectedOption == AccountActionType.delete) {
+                      final DeleteUserUsecase deleteUserUsecase =
+                          GetIt.I<DeleteUserUsecase>();
+                      // You may want to pass a userId or token here; using empty string for now
+                      final DataState<bool?> result = await deleteUserUsecase
+                          .call(LocalAuth.uid ?? '');
+                      setState(() => _isProcessing = false);
+                      if (result.exception != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(result.exception!.message)),
+                        );
+                        return;
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('account_deleted_successfully'.tr()),
                         ),
-                      ),
-                    );
-                    Navigator.of(context).popUntil((Route<dynamic> route) => route.isFirst);
+                      );
+                      Navigator.of(
+                        context,
+                      ).popUntil((Route<dynamic> route) => route.isFirst);
+                    } else {
+                      setState(() => _isProcessing = false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'deactivation_not_supported_error'.tr(),
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ),
               ],
@@ -155,10 +184,12 @@ class _ConfirmationWidget extends StatelessWidget {
     required this.actionType,
     required this.onCancel,
     required this.onConfirm,
+    this.isProcessing = false,
   });
   final AccountActionType actionType;
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
+  final bool isProcessing;
 
   @override
   Widget build(BuildContext context) {
@@ -172,44 +203,44 @@ class _ConfirmationWidget extends StatelessWidget {
         : const Color(0xFFF5A623);
     final Color titleColor = iconColor;
     final String title = isDelete
-        ? 'Confirm Account Deletion'
-        : 'Confirm Deactivation';
-    final String subtitle = 'Please review before proceeding';
+        ? 'confirm_account_deletion'.tr()
+        : 'confirm_account_deactivation'.tr();
+    final String subtitle = 'please_review_before_proceeding'.tr();
     final List<_ConsequenceItem> consequences = isDelete
         ? <_ConsequenceItem>[
             _ConsequenceItem(
               Icons.person_off_rounded,
-              'Your profile and all personal information will be erased',
+              'your_profile_and_all_personal_information_will_be_erased'.tr(),
             ),
             _ConsequenceItem(
               Icons.delete_forever,
-              'All posts, listings, and photos will be deleted',
+              'all_posts_listings_and_photos_will_be_deleted'.tr(),
             ),
             _ConsequenceItem(
               Icons.chat_bubble_outline,
-              'Chat history and messages will be removed',
+              'chat_history_and_messages_will_be_removed'.tr(),
             ),
             _ConsequenceItem(
               Icons.block,
-              'You will not be able to recover any data',
+              'you_will_not_be_able_to_recover_any_data'.tr(),
             ),
           ]
         : <_ConsequenceItem>[
             _ConsequenceItem(
               Icons.visibility_off,
-              'Your profile will be hidden from other users',
+              'your_profile_will_be_hidden_from_other_users'.tr(),
             ),
             _ConsequenceItem(
               Icons.remove_circle_outline,
-              'Your posts and listings will be temporarily removed',
+              'your_posts_and_listings_will_be_temporarily_removed'.tr(),
             ),
             _ConsequenceItem(
               Icons.verified_user,
-              'All your data will be preserved safely',
+              'all_your_data_will_be_preserved_safely'.tr(),
             ),
             _ConsequenceItem(
               Icons.restore,
-              'You can reactivate anytime by logging back in',
+              'you_can_reactivate_anytime_by_logging_back_in'.tr(),
             ),
           ];
 
@@ -289,7 +320,7 @@ class _ConfirmationWidget extends StatelessWidget {
             Expanded(
               child: CustomElevatedButton(
                 isLoading: false,
-                title: 'Go Back',
+                title: 'go_back'.tr(),
                 bgColor: Colors.white,
                 textColor: const Color(0xFF666666),
                 border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
@@ -300,14 +331,14 @@ class _ConfirmationWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: CustomElevatedButton(
-                isLoading: false,
-                title: isDelete ? 'Delete Forever' : 'Deactivate Now',
+                isLoading: isProcessing,
+                title: isDelete ? 'delete_forever'.tr() : 'deactivate_now'.tr(),
                 bgColor: isDelete
                     ? const Color(0xFFD32F2F)
                     : const Color(0xFFF5A623),
                 textColor: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                onTap: onConfirm,
+                onTap: isProcessing ? () {} : onConfirm,
               ),
             ),
           ],
@@ -333,8 +364,8 @@ class _ConfirmationWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   isDelete
-                      ? 'Account deletion is permanent and irreversible. Make sure to download any data you want to keep before proceeding. This action cannot be undone.'
-                      : 'Deactivation is temporary. Your account will be hidden but all your data, posts, and settings will be preserved. Simply log back in to reactivate your account at any time.',
+                      ? 'account_deletion_is_permanent_and_irreversible'.tr()
+                      : 'deactivation_is_temporary'.tr(),
                   style: textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF555555),
                   ),

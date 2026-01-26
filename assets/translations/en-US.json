@@ -1,3 +1,5 @@
+
+
 {
   "username_already_used": "This username is already taken.",
   "sellout": "SellOut",
@@ -257,6 +259,17 @@
   "about": "About",
   "deactivate_account": "Deactivate Account",
   "delete_account": "Delete Account",
+  "deactivate_or_delete_account": "Deactivate or delete account",
+  "please_review_before_proceeding": "Please review before proceeding",
+  "your_profile_and_all_personal_information_will_be_erased": "Your profile and all personal information will be erased",
+  "all_posts_listings_and_photos_will_be_deleted": "All posts, listings, and photos will be deleted",
+  "chat_history_and_messages_will_be_removed": "Chat history and messages will be removed",
+  "you_will_not_be_able_to_recover_any_data": "You will not be able to recover any data",
+  "delete_forever": "Delete Forever",
+  "account_deletion_is_permanent_and_irreversible": "Account deletion is permanent and irreversible. Make sure to download any data you want to keep before proceeding. This action cannot be undone.",
+  "deactivation_not_supported_error": "Account deactivation is not supported at this time.",
+  "deactivate_account_description": "Take a break from SellOut. Your profile and data will be hidden but preserved. You can reactivate anytime and everything will be restored.",
+  "delete_account_description": "Permanently delete your SellOut account and all associated data. This action cannot be undone. All your posts, messages, and profile will be gone forever.",
   "delete_account_deactivate": "Account Management",
   "manage_account_status": "Deactivate or delete your account",
   "confirm_account_deletion": "Confirm Account Deletion",

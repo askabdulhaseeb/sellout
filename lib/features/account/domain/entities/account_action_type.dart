@@ -1,21 +1,23 @@
+import 'package:easy_localization/easy_localization.dart';
+
 enum AccountActionType { deactivate, delete }
 
 extension AccountActionTypeExtension on AccountActionType {
   String get displayName {
     switch (this) {
       case AccountActionType.deactivate:
-        return 'Deactivate Account';
+        return 'deactivate_account'.tr();
       case AccountActionType.delete:
-        return 'Delete Account';
+        return 'delete_account'.tr();
     }
   }
 
   String get description {
     switch (this) {
       case AccountActionType.deactivate:
-        return 'Take a break from SellOut. Your profile and data will be hidden but preserved. You can reactivate anytime and everything will be restored.';
+        return 'deactivate_account_description'.tr();
       case AccountActionType.delete:
-        return 'Permanently delete your SellOut account and all associated data. This action cannot be undone. All your posts, messages, and profile will be gone forever.';
+        return 'delete_account_description'.tr();
     }
   }
 

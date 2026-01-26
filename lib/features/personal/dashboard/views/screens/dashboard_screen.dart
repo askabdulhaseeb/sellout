@@ -11,9 +11,38 @@ import '../../../user/profiles/views/screens/profile_screen.dart';
 import '../../../services/services_screen/screens/services_screen.dart';
 import '../providers/personal_bottom_nav_provider.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
   static const String routeName = '/';
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  late final ValueNotifier<String?> _uidNotifier;
+  @override
+  void initState() {
+    super.initState();
+    _uidNotifier = LocalAuth.uidNotifier;
+    _uidNotifier.addListener(_onUidChanged);
+  }
+
+  void _onUidChanged() {
+    if (_uidNotifier.value == null) {
+      // Reset bottom nav index to 0 if user signs out or is deleted
+      final navPro = context.read<PersonalBottomNavProvider>();
+      if (navPro.currentTabIndex != 0) {
+        navPro.setCurrentTabIndex(0);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _uidNotifier.removeListener(_onUidChanged);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
