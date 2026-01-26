@@ -31,7 +31,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _onUidChanged() {
     if (_uidNotifier.value == null) {
       // Reset bottom nav index to 0 if user signs out or is deleted
-      final navPro = context.read<PersonalBottomNavProvider>();
+      final PersonalBottomNavProvider navPro = context
+          .read<PersonalBottomNavProvider>();
       if (navPro.currentTabIndex != 0) {
         navPro.setCurrentTabIndex(0);
       }
@@ -46,36 +47,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<AddressEntity?>(
-      valueListenable: LocalAuth.sellingAddressNotifier,
-      builder: (BuildContext context, AddressEntity? sellingAddress, _) {
-        final CurrentUserEntity? uid = LocalAuth.currentUser;
-        final bool otpVerified = LocalAuth.currentUser?.otpVerified ?? false;
+    return ValueListenableBuilder<String?>(
+      valueListenable: LocalAuth.uidNotifier,
+      builder: (BuildContext context, String? uidValue, _) {
+        return ValueListenableBuilder<AddressEntity?>(
+          valueListenable: LocalAuth.sellingAddressNotifier,
+          builder: (BuildContext context, AddressEntity? sellingAddress, _) {
+            final CurrentUserEntity? uid = LocalAuth.currentUser;
+            final bool otpVerified =
+                LocalAuth.currentUser?.otpVerified ?? false;
 
-        final List<Widget> screens = <Widget>[
-          const HomeScreen(),
-          const MarketPlaceScreen(),
-          const ServicesScreen(),
-          (uid == null && !otpVerified)
-              ? const WelcomeScreen()
-              : const StartListingScreen(),
-          (uid == null && !otpVerified)
-              ? const WelcomeScreen()
-              : const ChatDashboardScreen(),
-          (uid == null && !otpVerified)
-              ? const WelcomeScreen()
-              : const ProfileScreen(),
-        ];
+            final List<Widget> screens = <Widget>[
+              const HomeScreen(),
+              const MarketPlaceScreen(),
+              const ServicesScreen(),
+              (uid == null && !otpVerified)
+                  ? const WelcomeScreen()
+                  : const StartListingScreen(),
+              (uid == null && !otpVerified)
+                  ? const WelcomeScreen()
+                  : const ChatDashboardScreen(),
+              (uid == null && !otpVerified)
+                  ? const WelcomeScreen()
+                  : const ProfileScreen(),
+            ];
 
-        return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          resizeToAvoidBottomInset: false,
-          body: Consumer<PersonalBottomNavProvider>(
-            builder:
-                (BuildContext context, PersonalBottomNavProvider navPro, _) {
-                  return screens[navPro.currentTabIndex];
-                },
-          ),
+            return Scaffold(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              resizeToAvoidBottomInset: false,
+              body: Consumer<PersonalBottomNavProvider>(
+                builder:
+                    (
+                      BuildContext context,
+                      PersonalBottomNavProvider navPro,
+                      _,
+                    ) {
+                      return screens[navPro.currentTabIndex];
+                    },
+              ),
+            );
+          },
         );
       },
     );

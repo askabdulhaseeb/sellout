@@ -27,7 +27,7 @@ class SigninRemoteSourceImpl implements SigninRemoteSource {
         endpoint: 'userAuth/login',
         requestType: ApiRequestType.post,
         body: bodyJson,
-        isConnectType: false,
+        isConnectType: true,
         isAuth: false,
       );
       if (responce is DataSuccess<bool>) {
