@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../services/get_it.dart';
@@ -56,7 +57,6 @@ class _ServicePointsDialogHostState extends State<_ServicePointsDialogHost> {
   bool _isLoading = true;
   String _carrier = '';
 
-
   @override
   void initState() {
     super.initState();
@@ -83,7 +83,7 @@ class _ServicePointsDialogHostState extends State<_ServicePointsDialogHost> {
         await GetServicePointsUsecase(locator()).call(param);
 
     AppLog.info(
-      'API Response: $result',
+      'API Response: ${result.exception?.message ?? 'something_wrong'.tr()}',
       name: 'ServicePointsDialog._fetchServicePoints',
     );
 

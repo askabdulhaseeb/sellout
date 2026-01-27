@@ -7,11 +7,15 @@ import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
+import '../../../../../../../../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../../../../../../../domain/params/add_to_cart_param.dart';
 import '../../../../../../../../../domain/usecase/add_to_cart_usecase.dart';
+import '../../../../../../../../../../basket/views/screens/shopping/checkout/widgets/checkout_items_list/components/service_points_dialog.dart';
+import '../../../../../../../../../../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
+import '../../../../../../../../../../../../features/personal/auth/signin/domain/entities/address_entity.dart';
 
 class PostBuyNowButton extends StatefulWidget {
   const PostBuyNowButton({
@@ -48,6 +52,23 @@ class PostBuyNowButton extends StatefulWidget {
 class _PostBuyNowButtonState extends State<PostBuyNowButton> {
   bool isLoading = false;
 
+  // Placeholder: Replace with your actual delivery method selection state.
+  // For example, you might have: DeliveryMethod _selectedDeliveryMethod;
+  bool get _isPickupSelected {
+    // TODO: Replace with actual check for 'Pickup Point' selection
+    return true; // Always true for demonstration; integrate with your state
+  }
+
+  AddressEntity? get _defaultAddress {
+    // Use the default address from LocalAuth
+    final addresses = LocalAuth.currentUser?.address ?? <AddressEntity>[];
+    if (addresses.isEmpty) return null;
+    return addresses.firstWhere(
+      (a) => a.isDefault,
+      orElse: () => addresses.first,
+    );
+  }
+
   Future<void> _buyNow(BuildContext context) async {
     if (isLoading) return; // Prevent double taps
     setState(() => isLoading = true);
@@ -64,8 +85,32 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
             actionType: PostTileClothFootType.buy,
           ),
         );
+      } else if (_isPickupSelected) {
+        // Use the user's actual default address
+        final address = _defaultAddress;
+        if (address == null || address.postalCode.isEmpty) {
+          if (mounted) {
+            AppSnackBar.showSnackBar(
+              context,
+              'please_add_delivery_address_before_selecting_pickup'.tr(),
+            );
+          }
+          setState(() => isLoading = false);
+          return;
+        }
+        final ServicePointEntity? servicePoint = await ServicePointsDialog.show(
+          context: context,
+          cartItemIds: <String>[widget.post.postID],
+          postalCode: address.postalCode,
+        );
+        if (servicePoint == null) {
+          setState(() => isLoading = false);
+          return;
+        }
+        // TODO: Store servicePoint.id for use in your order payload
+        // After selection, continue with your flow (e.g., shipping option, summary, etc.)
       } else {
-        // Prepare add to cart param
+        // Home Delivery or other method: continue as before
         final AddToCartParam param = AddToCartParam(
           post: widget.post,
           color: widget.detailWidgetColor,
