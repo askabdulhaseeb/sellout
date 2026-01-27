@@ -1,5 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
@@ -7,7 +7,6 @@ import '../../../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../../basket/views/screens/personal_shopping_basket_screen.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
@@ -26,6 +25,7 @@ class PostBuyNowButton extends StatefulWidget {
     this.border,
     this.padding,
     this.margin,
+    this.onSuccess,
     super.key,
   });
 
@@ -39,6 +39,7 @@ class PostBuyNowButton extends StatefulWidget {
   final BoxBorder? border;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
+  final VoidCallback? onSuccess;
 
   @override
   State<PostBuyNowButton> createState() => _PostBuyNowButtonState();
@@ -73,10 +74,8 @@ class _PostBuyNowButtonState extends State<PostBuyNowButton> {
         );
         final DataState<bool> result = await usecase(param);
         if (result is DataSuccess) {
-          if (mounted) {
-            await Navigator.of(
-              context,
-            ).pushNamed(PersonalShoppingBasketScreen.routeName);
+          if (mounted && widget.onSuccess != null) {
+            widget.onSuccess!();
           }
         } else {
           AppLog.error(
