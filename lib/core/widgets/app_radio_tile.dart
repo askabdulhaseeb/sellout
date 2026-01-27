@@ -35,15 +35,14 @@ class AppRadioTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSelected = selected ?? value == groupValue;
-    final Color effectiveActiveColor =
-        activeColor ?? Theme.of(context).colorScheme.primary;
-    final Color effectiveInactiveColor = inactiveColor ?? Colors.grey.shade400;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color effectiveActiveColor = activeColor ?? colorScheme.primary;
     final Color borderColor = isSelected
         ? effectiveActiveColor
-        : Colors.grey.shade300;
+        : colorScheme.outline;
     final Color tileColor = isSelected
-        ? effectiveActiveColor.withValues(alpha: 0.08)
-        : Colors.transparent;
+        ? colorScheme.primaryContainer.withValues(alpha: 0.18)
+        : colorScheme.surface;
 
     return InkWell(
       borderRadius: borderRadius,
@@ -61,8 +60,8 @@ class AppRadioTile<T> extends StatelessWidget {
               Icon(
                 icon,
                 color: isSelected
-                    ? effectiveActiveColor
-                    : effectiveInactiveColor,
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
                 size: 28,
               ),
               const SizedBox(width: 14),
@@ -77,8 +76,8 @@ class AppRadioTile<T> extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: isSelected
-                          ? effectiveActiveColor
-                          : effectiveInactiveColor,
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
                     ),
                   ),
                   if (subtitle != null) ...<Widget>[
@@ -87,7 +86,7 @@ class AppRadioTile<T> extends StatelessWidget {
                       subtitle!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -107,11 +106,11 @@ class AppRadioTile<T> extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isSelected
-                          ? effectiveActiveColor
-                          : effectiveInactiveColor,
+                          ? colorScheme.primary
+                          : colorScheme.outlineVariant,
                       width: 2,
                     ),
-                    color: Colors.transparent,
+                    color: colorScheme.surface,
                   ),
                   child: Center(
                     child: Transform.scale(
@@ -122,7 +121,7 @@ class AppRadioTile<T> extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isSelected
-                              ? effectiveActiveColor
+                              ? colorScheme.primary
                               : Colors.transparent,
                         ),
                       ),
