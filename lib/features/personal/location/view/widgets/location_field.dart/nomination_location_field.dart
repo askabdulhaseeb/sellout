@@ -5,7 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../../core/sources/api_call.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';

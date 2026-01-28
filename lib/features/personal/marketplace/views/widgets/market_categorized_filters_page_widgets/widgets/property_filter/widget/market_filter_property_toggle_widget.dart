@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../../../providers/marketplace_provider.dart';
 
 class MarketFilterPropertyToggleWidget extends StatelessWidget {

@@ -7,7 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../core/constants/app_spacings.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../../../services/get_it.dart';
 import '../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';

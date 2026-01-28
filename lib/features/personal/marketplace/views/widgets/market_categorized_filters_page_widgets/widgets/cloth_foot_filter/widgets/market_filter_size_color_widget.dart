@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../core/widgets/custom_multi_selection_dropdown.dart';
+import '../../../../../../../../../core/widgets/inputs/custom_multi_selection_dropdown.dart';
 import '../../../../../../../listing/listing_form/data/sources/local/local_categories.dart';
 import '../../../../../../../listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../../../providers/marketplace_provider.dart';

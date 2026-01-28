@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../../enums/added_filter_options.dart';
 import '../../../providers/marketplace_provider.dart';
 

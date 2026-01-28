@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/promo_provider.dart';
 import '../screens/pages/choose_linked_post_screen.dart';
@@ -16,10 +16,11 @@ class ChoosePostForPromoWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute<ChooseLinkedPromoPost>(
-                builder: (BuildContext context) =>
-                    const ChooseLinkedPromoPost()));
+          context,
+          MaterialPageRoute<ChooseLinkedPromoPost>(
+            builder: (BuildContext context) => const ChooseLinkedPromoPost(),
+          ),
+        );
       },
       child: Consumer<PromoProvider>(
         builder: (BuildContext context, PromoProvider pro, _) {
@@ -93,14 +94,17 @@ class SelectedPostTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     FutureBuilder<String>(
                       future: post.getPriceStr(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<String> snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Text('...');
-                        }
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<String> snapshot,
+                          ) {
+                            if (!snapshot.hasData) {
+                              return const Text('...');
+                            }
 
-                        return Text(snapshot.data!);
-                      },
+                            return Text(snapshot.data!);
+                          },
                     ),
                   ],
                 ),
@@ -108,13 +112,14 @@ class SelectedPostTile extends StatelessWidget {
               SizedBox(
                 width: 80,
                 child: CustomElevatedButton(
-                  bgColor:
-                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  bgColor: Theme.of(
+                    context,
+                  ).primaryColor.withValues(alpha: 0.1),
                   isLoading: false,
                   onTap: () => pro.clearPost(),
                   textStyle: TextTheme.of(context).labelMedium?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    color: Theme.of(context).primaryColor,
+                  ),
                   title: 'deselect'.tr(),
                 ),
               ),

@@ -6,7 +6,7 @@ import '../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../core/enums/listing/core/item_condition_type.dart';
 import '../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../listing/listing_form/data/models/sub_category_model.dart';
 import '../../../location/domain/entities/location_entity.dart';
@@ -23,14 +23,15 @@ class MarketPlaceProvider extends ChangeNotifier {
   MarketPlaceProvider(this._getPostByFiltersUsecase);
   final GetPostByFiltersUsecase _getPostByFiltersUsecase;
 
-//Api calls
+  //Api calls
   Future<bool> loadPosts() async {
     setLoading(true);
     setMainPageKey('');
     try {
       final PostByFiltersParams params = _buildPostMarketSearchParams();
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        params,
+      );
       if (result is DataSuccess<List<PostEntity>>) {
         setPosts(result.entity);
         setMainPageKey(result.data);
@@ -38,7 +39,8 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         setPosts(<PostEntity>[]);
         debugPrint(
-            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+          'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        );
       }
     } catch (e) {
       setPosts(<PostEntity>[]);
@@ -58,8 +60,9 @@ class MarketPlaceProvider extends ChangeNotifier {
         category: _chipsCategory ?? '',
         filters: <FilterParam>[],
       );
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        params,
+      );
       if (result is DataSuccess<List<PostEntity>>) {
         setChoiceChipPosts(result.entity ?? <PostEntity>[]);
         setMainPageKey(result.data);
@@ -67,7 +70,8 @@ class MarketPlaceProvider extends ChangeNotifier {
       } else {
         setChoiceChipPosts(<PostEntity>[]);
         debugPrint(
-            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+          'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        );
       }
     } catch (e) {
       debugPrint('Unexpected error: $e');
@@ -81,15 +85,17 @@ class MarketPlaceProvider extends ChangeNotifier {
     setMainPageKey('');
     try {
       setLoading(true);
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(_buildPostByFiltersParams());
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        _buildPostByFiltersParams(),
+      );
       if (result is DataSuccess<List<PostEntity>>) {
         setFilterContainerPosts(result.entity ?? <PostEntity>[]);
         setMainPageKey(result.data);
         return true;
       } else {
         debugPrint(
-            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+          'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        );
         setFilterContainerPosts(<PostEntity>[]);
         setLoading(false);
       }
@@ -110,8 +116,9 @@ class MarketPlaceProvider extends ChangeNotifier {
         lastKey: mainPageKey,
       );
 
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        params,
+      );
 
       if (result is DataSuccess<List<PostEntity>>) {
         final List<PostEntity> newPosts = result.entity ?? <PostEntity>[];
@@ -125,7 +132,8 @@ class MarketPlaceProvider extends ChangeNotifier {
         }
       } else {
         debugPrint(
-            'Failed to load more: ${result.exception?.message ?? 'something_wrong'.tr()}');
+          'Failed to load more: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        );
       }
     } catch (e) {
       debugPrint('Error loading more posts: $e');
@@ -136,24 +144,33 @@ class MarketPlaceProvider extends ChangeNotifier {
 
   Future<bool> loadPrivatePost(BuildContext context) async {
     try {
-      final PostByFiltersParams params =
-          PostByFiltersParams(filters: <FilterParam>[
-        FilterParam(
+      final PostByFiltersParams params = PostByFiltersParams(
+        filters: <FilterParam>[
+          FilterParam(
             attribute: 'access_code',
             operator: 'eq',
-            value: accessCodeController.text)
-      ]);
-      final DataState<List<PostEntity>> result =
-          await _getPostByFiltersUsecase(params);
+            value: accessCodeController.text,
+          ),
+        ],
+      );
+      final DataState<List<PostEntity>> result = await _getPostByFiltersUsecase(
+        params,
+      );
       if (result is DataSuccess<List<PostEntity>>) {
-        Navigator.pushNamed(context, PostDetailScreen.routeName,
-            arguments: <String, dynamic>{'pid': result.entity?.first.postID});
+        Navigator.pushNamed(
+          context,
+          PostDetailScreen.routeName,
+          arguments: <String, dynamic>{'pid': result.entity?.first.postID},
+        );
         return true;
       } else {
         AppSnackBar.showSnackBar(
-            context, 'no_posts_found_with_this_access_code'.tr());
+          context,
+          'no_posts_found_with_this_access_code'.tr(),
+        );
         debugPrint(
-            'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}');
+          'Failed: ${result.exception?.message ?? 'something_wrong'.tr()}',
+        );
       }
     } catch (e) {
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
@@ -164,7 +181,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     return false;
   }
 
-// button
+  // button
   void sortCheckButton(SortOption? option) async {
     setSort(option);
     await loadPosts();
@@ -182,7 +199,8 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedLocation = locationVal;
     notifyListeners();
     debugPrint(
-        'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+      'Updated LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider',
+    );
   }
 
   void resetFilterContainerLocation(
@@ -193,17 +211,23 @@ class MarketPlaceProvider extends ChangeNotifier {
     _selectedLocation = locationVal;
     notifyListeners();
     debugPrint(
-        'Reseting LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider');
+      'Reseting LatLng: $_selectedlatlng, Location: $_selectedLocation in marketplaceProvider',
+    );
   }
 
-  void updateLocationSheet(LatLng? latlngVal, LocationEntity? locationVal,
-      RadiusType radiusTypeVal, double selectedRadVal) async {
+  void updateLocationSheet(
+    LatLng? latlngVal,
+    LocationEntity? locationVal,
+    RadiusType radiusTypeVal,
+    double selectedRadVal,
+  ) async {
     _radiusType = radiusTypeVal;
     _selectedRadius = selectedRadVal;
     _bottomsheetLatLng = latlngVal ?? LocalAuth.latlng;
     _bottomsheetLocation = locationVal;
     debugPrint(
-        'Updated LatLng: $_bottomsheetLatLng, Location: $_bottomsheetLocation in marketplaceProvider for bottomsheet');
+      'Updated LatLng: $_bottomsheetLatLng, Location: $_bottomsheetLocation in marketplaceProvider for bottomsheet',
+    );
     await loadPosts();
   }
 
@@ -220,7 +244,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-// set functions
+  // set functions
   void setMarketplaceCategory(ListingType category) {
     _marketplaceCategory = category;
     notifyListeners();
@@ -270,9 +294,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     loadChipsPosts();
   }
 
-  void setPosts(
-    List<PostEntity>? value,
-  ) {
+  void setPosts(List<PostEntity>? value) {
     _posts = value;
     debugPrint('Loaded normal filter and sorted posts: ${posts?.length}');
     if (queryController.text.isNotEmpty && queryController.text != '') {
@@ -394,7 +416,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-// reset functions
+  // reset functions
   void clearMarketplaceCategory() {
     _marketplaceCategory = null;
     _filteredContainerPosts = <PostEntity>[];
@@ -451,7 +473,7 @@ class MarketPlaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-//variables
+  //variables
   ListingType? _marketplaceCategory;
   String? _chipsCategory;
   List<PostEntity>? _posts;
@@ -487,7 +509,7 @@ class MarketPlaceProvider extends ChangeNotifier {
   LocationEntity? _bottomsheetLocation;
   double _selectedRadius = 5;
   RadiusType _radiusType = RadiusType.worldwide;
-// Getters
+  // Getters
   ListingType? get marketplaceCategory => _marketplaceCategory;
   String? get chipsCategory => _chipsCategory;
   bool get isFilteringPosts => _isFilteringPosts;
@@ -526,16 +548,17 @@ class MarketPlaceProvider extends ChangeNotifier {
   LocationEntity? get bottomsheetLocation => _bottomsheetLocation;
   double get selectedRadius => _selectedRadius;
   RadiusType get radiusType => _radiusType;
-// textfield controllers
+  // textfield controllers
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
   TextEditingController queryController = TextEditingController();
   TextEditingController vehicleModel = TextEditingController();
-  TextEditingController accessCodeController =
-      TextEditingController(text: kDebugMode ? '7DB79C' : null);
+  TextEditingController accessCodeController = TextEditingController(
+    text: kDebugMode ? '7DB79C' : null,
+  );
   TextEditingController usernameController = TextEditingController();
 
-//params
+  //params
   PostByFiltersParams _buildPostMarketSearchParams() {
     return PostByFiltersParams(
       lastKey: _mainPageKey,
@@ -550,8 +573,9 @@ class MarketPlaceProvider extends ChangeNotifier {
       clientLng: _bottomsheetLatLng != const LatLng(0, 0)
           ? _bottomsheetLatLng.longitude
           : null,
-      distance:
-          _radiusType == RadiusType.local ? _selectedRadius.toInt() : null,
+      distance: _radiusType == RadiusType.local
+          ? _selectedRadius.toInt()
+          : null,
       category: _marketplaceCategory?.json ?? '',
       filters: _buildFilters(),
     );
@@ -579,160 +603,184 @@ class MarketPlaceProvider extends ChangeNotifier {
   List<FilterParam> _buildFilters() {
     final List<FilterParam> filters = <FilterParam>[];
     // filters.add(FilterParam(attribute: '', operator: 'eq', value: ''));
-// filter bottom sheet filters
+    // filter bottom sheet filters
     if (_selectedConditionType != null) {
-      filters.add(FilterParam(
-        attribute: 'item_condition',
-        operator: 'eq',
-        value: _selectedConditionType?.json ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'item_condition',
+          operator: 'eq',
+          value: _selectedConditionType?.json ?? '',
+        ),
+      );
     }
     if (_selectedDeliveryType != null) {
-      filters.add(FilterParam(
-        attribute: 'delivery_type',
-        operator: 'eq',
-        value: _selectedDeliveryType?.json ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'delivery_type',
+          operator: 'eq',
+          value: _selectedDeliveryType?.json ?? '',
+        ),
+      );
     }
     if (_rating != null) {
-      filters.add(FilterParam(
-        attribute: 'average_rating',
-        operator: 'lt',
-        value: _rating.toString(),
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'average_rating',
+          operator: 'lt',
+          value: _rating.toString(),
+        ),
+      );
     }
 
     /// pets section filters
     if (age != null && age!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'age',
-        operator: 'eq',
-        value: age ?? '',
-      ));
+      filters.add(
+        FilterParam(attribute: 'age', operator: 'eq', value: age ?? ''),
+      );
     }
     if (readyToLeave != null && readyToLeave!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'ready_to_leave',
-        operator: 'eq',
-        value: readyToLeave ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'ready_to_leave',
+          operator: 'eq',
+          value: readyToLeave ?? '',
+        ),
+      );
     }
     if (_petCategory != null && _petCategory!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'pets_category',
-        operator: 'eq',
-        value: _petCategory ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'pets_category',
+          operator: 'eq',
+          value: _petCategory ?? '',
+        ),
+      );
     }
 
     /// Item section filters
     if (_listingItemCategory != null && _listingItemCategory!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'list_id',
-        operator: 'eq',
-        value: _listingItemCategory ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'list_id',
+          operator: 'eq',
+          value: _listingItemCategory ?? '',
+        ),
+      );
     }
     if (_addedFilterOption != null) {
-      filters.add(FilterParam(
-        attribute: 'created_at',
-        operator: 'lt',
-        value: _addedFilterOption?.formattedDate ?? '',
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'created_at',
+          operator: 'lt',
+          value: _addedFilterOption?.formattedDate ?? '',
+        ),
+      );
     }
     if (minPriceController.text.trim().isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'price',
-        operator: 'gt',
-        value: minPriceController.text.trim(),
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'price',
+          operator: 'gt',
+          value: minPriceController.text.trim(),
+        ),
+      );
     }
     if (maxPriceController.text.trim().isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'price',
-        operator: 'lt',
-        value: maxPriceController.text.trim(),
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'price',
+          operator: 'lt',
+          value: maxPriceController.text.trim(),
+        ),
+      );
     }
 
     /// property section filters
     if (_propertyType != null && _propertyType!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'property_type',
-        operator: 'eq',
-        value: _propertyType!,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'property_type',
+          operator: 'eq',
+          value: _propertyType!,
+        ),
+      );
     }
     if (_energyRating != null && _energyRating!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'energy_rating',
-        operator: 'eq',
-        value: _energyRating!,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'energy_rating',
+          operator: 'eq',
+          value: _energyRating!,
+        ),
+      );
     }
     if (_marketplaceCategory == ListingType.property) {
-      filters.add(FilterParam(
-        attribute: 'property_category',
-        operator: 'eq',
-        value: _propertyCategory,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'property_category',
+          operator: 'eq',
+          value: _propertyCategory,
+        ),
+      );
     }
 
     /// vehicle section filters
     if (_make != null && _make!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'make',
-        operator: 'eq',
-        value: _make!,
-      ));
+      filters.add(
+        FilterParam(attribute: 'make', operator: 'eq', value: _make!),
+      );
     }
     if (_year != null && _year!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'year',
-        operator: 'eq',
-        value: _year!,
-      ));
+      filters.add(
+        FilterParam(attribute: 'year', operator: 'eq', value: _year!),
+      );
     }
 
     if (_vehicleCatgory != null && _vehicleCatgory!.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'vehicles_category',
-        operator: 'eq',
-        value: _vehicleCatgory!,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'vehicles_category',
+          operator: 'eq',
+          value: _vehicleCatgory!,
+        ),
+      );
     }
 
     if (vehicleModel.text.isNotEmpty) {
-      filters.add(FilterParam(
-        attribute: 'model',
-        operator: 'eq',
-        value: vehicleModel.text,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'model',
+          operator: 'eq',
+          value: vehicleModel.text,
+        ),
+      );
     }
 
     /// food & drink section
     if (_marketplaceCategory == ListingType.foodAndDrink) {
-      filters.add(FilterParam(
-        attribute: 'type',
-        operator: 'eq',
-        value: _foodDrinkCategory,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'type',
+          operator: 'eq',
+          value: _foodDrinkCategory,
+        ),
+      );
     }
 
     /// cloth foot section
     if (_brand != null && _brand != '') {
-      filters.add(FilterParam(
-        attribute: 'brand',
-        operator: 'eq',
-        value: _brand!,
-      ));
+      filters.add(
+        FilterParam(attribute: 'brand', operator: 'eq', value: _brand!),
+      );
     }
     if (_marketplaceCategory == ListingType.clothAndFoot) {
-      filters.add(FilterParam(
-        attribute: 'type',
-        operator: 'eq',
-        value: _cLothFootCategory,
-      ));
+      filters.add(
+        FilterParam(
+          attribute: 'type',
+          operator: 'eq',
+          value: _cLothFootCategory,
+        ),
+      );
     }
 
     ///

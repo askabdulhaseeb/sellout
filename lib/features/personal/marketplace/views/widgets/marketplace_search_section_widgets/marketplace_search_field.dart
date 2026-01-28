@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../providers/marketplace_provider.dart';
 
 class MarketplaceSearchField extends StatefulWidget {
@@ -38,24 +38,24 @@ class _MarketplaceSearchFieldState extends State<MarketplaceSearchField> {
     return Consumer<MarketPlaceProvider>(
       builder: (BuildContext context, MarketPlaceProvider pro, Widget? child) =>
           Expanded(
-        child: CustomTextFormField(
-          autoFocus: false,
-          onChanged: (String value) => _onSearchChanged(pro, value),
-          controller: pro.queryController,
-          hint: 'search_prodcuts_here'.tr(),
-          prefixIcon: const Icon(CupertinoIcons.search),
-          suffixIcon: (pro.isLoading && pro.queryController.text.isNotEmpty)
-              ? const Padding(
-                  padding: EdgeInsets.all(6.0),
-                  child: SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              : null,
-        ),
-      ),
+            child: CustomTextFormField(
+              autoFocus: false,
+              onChanged: (String value) => _onSearchChanged(pro, value),
+              controller: pro.queryController,
+              hint: 'search_prodcuts_here'.tr(),
+              prefixIcon: const Icon(CupertinoIcons.search),
+              suffixIcon: (pro.isLoading && pro.queryController.text.isNotEmpty)
+                  ? const Padding(
+                      padding: EdgeInsets.all(6.0),
+                      child: SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : null,
+            ),
+          ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/loader.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../services/get_it.dart';

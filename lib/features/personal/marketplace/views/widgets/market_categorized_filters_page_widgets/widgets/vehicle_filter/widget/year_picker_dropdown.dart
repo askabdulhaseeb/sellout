@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 
 class CustomYearDropdown extends StatefulWidget {
   const CustomYearDropdown({
@@ -42,16 +42,17 @@ class _CustomYearDropdownState extends State<CustomYearDropdown> {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<String>(
-        title: widget.title,
-        selectedItem: widget.selectedYear,
-        hint: widget.hintText,
-        items: _yearList
-            .map((String year) => DropdownMenuItem<String>(
-                  value: year,
-                  child: Text(year),
-                ))
-            .toList(),
-        onChanged: widget.onChanged,
-        validator: widget.validator);
+      title: widget.title,
+      selectedItem: widget.selectedYear,
+      hint: widget.hintText,
+      items: _yearList
+          .map(
+            (String year) =>
+                DropdownMenuItem<String>(value: year, child: Text(year)),
+          )
+          .toList(),
+      onChanged: widget.onChanged,
+      validator: widget.validator,
+    );
   }
 }
