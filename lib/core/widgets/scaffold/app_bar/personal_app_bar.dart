@@ -14,7 +14,7 @@ import '../../../../features/personal/user/profiles/domain/entities/business_pro
 import '../../../../routes/app_linking.dart';
 import '../../../utilities/app_string.dart';
 import '../../custom_svg_icon.dart';
-import '../../profile_photo.dart';
+import '../../media/profile_photo.dart';
 
 AppBar personalAppbar(BuildContext context) {
   final String me = LocalAuth.uid ?? '';

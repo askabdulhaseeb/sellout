@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../core/domain/entity/service/service_entity.dart';
 import '../../../../../service/views/providers/add_service_provider.dart';
@@ -57,22 +57,24 @@ class BusinessPageServiceTile extends StatelessWidget {
                         padding: const EdgeInsets.all(4),
                         onTap: () {
                           final AddServiceProvider pro =
-                              Provider.of<AddServiceProvider>(context,
-                                  listen: false);
+                              Provider.of<AddServiceProvider>(
+                                context,
+                                listen: false,
+                              );
                           pro.reset();
                           pro.setService(service);
                           Navigator.pushNamed(
-                              context, AddServiceScreen.routeName);
+                            context,
+                            AddServiceScreen.routeName,
+                          );
                         },
                         isLoading: false,
                         title: 'edit'.tr(),
-                        textStyle:
-                            Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                        bgColor: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 0.1),
+                        textStyle: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(color: Theme.of(context).primaryColor),
+                        bgColor: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
                       ),
                     ),
                 ],

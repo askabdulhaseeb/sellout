@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../core/sources/data_state.dart';
 import '../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../personal/user/profiles/domain/usecase/delete_user_usecase.dart';

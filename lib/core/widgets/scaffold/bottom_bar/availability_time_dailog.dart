@@ -3,14 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../features/personal/listing/listing_form/views/providers/add_listing_form_provider.dart';
 import '../../../../features/personal/post/domain/entities/meetup/availability_entity.dart';
-import '../../custom_dropdown.dart';
-import '../../custom_elevated_button.dart';
+import '../../buttons/custom_elevated_button.dart';
+import '../../inputs/custom_dropdown.dart';
 
 class AvailabilityTimeDialog extends StatefulWidget {
-  const AvailabilityTimeDialog({
-    required this.entity,
-    super.key,
-  });
+  const AvailabilityTimeDialog({required this.entity, super.key});
 
   final AvailabilityEntity entity;
 
@@ -25,16 +22,20 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedStartTime =
-        widget.entity.openingTime.isNotEmpty ? widget.entity.openingTime : null;
-    _selectedEndTime =
-        widget.entity.closingTime.isNotEmpty ? widget.entity.closingTime : null;
+    _selectedStartTime = widget.entity.openingTime.isNotEmpty
+        ? widget.entity.openingTime
+        : null;
+    _selectedEndTime = widget.entity.closingTime.isNotEmpty
+        ? widget.entity.closingTime
+        : null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final AddListingFormProvider provider =
-        Provider.of<AddListingFormProvider>(context, listen: false);
+    final AddListingFormProvider provider = Provider.of<AddListingFormProvider>(
+      context,
+      listen: false,
+    );
     final List<String> timeSlots = provider.generateTimeSlots();
 
     return Dialog(
@@ -54,9 +55,9 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
                 const CloseButton(),
                 Text(
                   'set_time_range'.tr(),
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -75,7 +76,9 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
                         // reset end time if invalid
                         if (_selectedEndTime != null &&
                             !provider.isClosingTimeValid(
-                                _selectedStartTime!, _selectedEndTime!)) {
+                              _selectedStartTime!,
+                              _selectedEndTime!,
+                            )) {
                           _selectedEndTime = null;
                         }
                       });
@@ -107,7 +110,9 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
                       final bool isEnabled = _selectedStartTime == null
                           ? false
                           : provider.isClosingTimeValid(
-                              _selectedStartTime!, item);
+                              _selectedStartTime!,
+                              item,
+                            );
                       return DropdownMenuItem<String>(
                         value: item,
                         enabled: isEnabled,
@@ -128,11 +133,15 @@ class _AvailabilityTimeDialogState extends State<AvailabilityTimeDialog> {
                 onTap: () {
                   if (_selectedStartTime != null) {
                     provider.updateOpeningTime(
-                        widget.entity.day, _selectedStartTime!);
+                      widget.entity.day,
+                      _selectedStartTime!,
+                    );
                   }
                   if (_selectedEndTime != null) {
                     provider.setClosingTime(
-                        widget.entity.day, _selectedEndTime!);
+                      widget.entity.day,
+                      _selectedEndTime!,
+                    );
                   }
                   Navigator.pop(context);
                 },

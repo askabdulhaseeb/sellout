@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/sellout_title.dart';
+
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/text_display/sellout_title.dart';
 import '../providers/find_account_provider.dart';
 
 class ConfirmEmailScreen extends StatelessWidget {

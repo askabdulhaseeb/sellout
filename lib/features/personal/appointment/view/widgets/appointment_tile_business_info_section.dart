@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../business/core/data/sources/local_business.dart';
 import '../../../../business/core/domain/entity/business_entity.dart';
 import '../../../bookings/domain/entity/booking_entity.dart';
-import '../../../../../core/widgets/profile_photo.dart';
+import '../../../../../core/widgets/media/profile_photo.dart';
 
 class AppointmentTileBusienssInfoSection extends StatelessWidget {
   const AppointmentTileBusienssInfoSection({required this.booking, super.key});
@@ -15,10 +15,7 @@ class AppointmentTileBusienssInfoSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: FutureBuilder<BusinessEntity?>(
         future: LocalBusiness().getBusiness(booking.businessID ?? ''),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<BusinessEntity?> snapshot,
-        ) {
+        builder: (BuildContext context, AsyncSnapshot<BusinessEntity?> snapshot) {
           final BusinessEntity? business = snapshot.data;
           // if (user != null) {
           //   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -55,7 +52,7 @@ class AppointmentTileBusienssInfoSection extends StatelessWidget {
                           fontSize: 12,
                           fontWeight: FontWeight.w300,
                         ),
-                      )
+                      ),
                   ],
                 ),
               ),

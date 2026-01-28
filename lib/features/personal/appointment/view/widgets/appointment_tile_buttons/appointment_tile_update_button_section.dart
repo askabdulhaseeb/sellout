@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
 import '../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/loaders/loader.dart';
 import '../../providers/appointment_tile_provider.dart';
 
@@ -38,8 +38,9 @@ class AppointmentTileUpdateButtonSection extends StatelessWidget {
                       title: 'leave_a_review'.tr(),
                       isLoading: false,
                       bgColor: Colors.transparent,
-                      border:
-                          Border.all(color: Theme.of(context).disabledColor),
+                      border: Border.all(
+                        color: Theme.of(context).disabledColor,
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       onTap: () async =>
                           await pro.onLeaveReview(context, booking),

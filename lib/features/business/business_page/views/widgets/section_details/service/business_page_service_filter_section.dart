@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../personal/chats/quote/view/screens/request_quote_screen.dart';
 import '../../../../../core/domain/entity/business_entity.dart';
 import '../../../providers/business_page_provider.dart';
@@ -40,11 +40,7 @@ class _BusinessPageServiceFilterSectionState
   @override
   Widget build(BuildContext context) {
     return Consumer<BusinessPageProvider>(
-      builder: (
-        BuildContext context,
-        BusinessPageProvider businessPro,
-        _,
-      ) {
+      builder: (BuildContext context, BusinessPageProvider businessPro, _) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -71,18 +67,19 @@ class _BusinessPageServiceFilterSectionState
                   padding: const EdgeInsets.all(8),
                   isLoading: false,
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<RequestQuoteScreen>(
-                        builder: (BuildContext context) => RequestQuoteScreen(
-                            businessId: widget.business.businessID ?? ''),
-                      )),
-                  textStyle: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Theme.of(context).primaryColor),
+                    context,
+                    MaterialPageRoute<RequestQuoteScreen>(
+                      builder: (BuildContext context) => RequestQuoteScreen(
+                        businessId: widget.business.businessID ?? '',
+                      ),
+                    ),
+                  ),
+                  textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
                   title: 'request_quote'.tr(),
                 ),
-              )
+              ),
             ],
           ),
         );

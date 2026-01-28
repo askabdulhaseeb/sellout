@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../core/widgets/indicators/rating_display_widget.dart';
+import '../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/review/domain/entities/review_entity.dart';
 import '../../../../personal/review/views/params/review_list_param.dart';
@@ -62,9 +62,10 @@ class BusinessPageHeaderSection extends StatelessWidget {
                     ratingList: business.listOfReviews ?? <double>[],
                     onTap: () async {
                       final List<ReviewEntity> reviews =
-                          await Provider.of<BusinessPageProvider>(context,
-                                  listen: false)
-                              .getReviews(business.businessID);
+                          await Provider.of<BusinessPageProvider>(
+                            context,
+                            listen: false,
+                          ).getReviews(business.businessID);
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).push(
                         MaterialPageRoute<ReviewListScreenParam>(
@@ -87,13 +88,14 @@ class BusinessPageHeaderSection extends StatelessWidget {
                     isLoading: false,
                     title: 'edit'.tr(),
                     textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                    bgColor:
-                        Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                  )
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    bgColor: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.1),
+                  ),
               ],
-            )
+            ),
           ],
         ),
       ),

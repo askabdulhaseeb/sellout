@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_pin_input_field.dart';
-import '../../../../../../core/widgets/sellout_title.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/inputs/custom_pin_input_field.dart';
+import '../../../../../../core/widgets/text_display/sellout_title.dart';
 import '../providers/find_account_provider.dart';
 
 class EnterCodeScreen extends StatelessWidget {
@@ -30,33 +30,28 @@ class EnterCodeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
-            const SizedBox(
-              height: 10,
-              width: double.infinity,
-            ),
+            const SizedBox(height: 10, width: double.infinity),
             Text('enter_code_title'.tr(), style: textTheme.titleMedium),
             const SizedBox(height: 4),
             Text(
               'enter_code_description'.tr(),
               textAlign: TextAlign.center,
               style: textTheme.bodySmall?.copyWith(
-                  color:
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4),
+              ),
             ),
             const SizedBox(height: 12),
             Text(
               'sent_code_to'.tr(),
               textAlign: TextAlign.center,
               style: textTheme.bodySmall?.copyWith(
-                  color:
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.4)),
+                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.4),
+              ),
             ),
             const SizedBox(height: 4),
             Consumer<FindAccountProvider>(
-              builder: (_, FindAccountProvider provider, __) => Text(
-                provider.email ?? '',
-                style: textTheme.bodySmall,
-              ),
+              builder: (_, FindAccountProvider provider, __) =>
+                  Text(provider.email ?? '', style: textTheme.bodySmall),
             ),
             const SizedBox(height: 20),
             CustomPinInputField(
@@ -71,8 +66,9 @@ class EnterCodeScreen extends StatelessWidget {
               onPressed: null,
               child: Text(
                 'didnot_get_code'.tr(),
-                style: textTheme.bodyMedium
-                    ?.copyWith(color: Theme.of(context).primaryColor),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -97,15 +93,17 @@ class EnterCodeScreen extends StatelessWidget {
                           Text(
                             '${'resend_code'.tr()}: ',
                             style: textTheme.bodyMedium?.copyWith(
-                                color: ColorScheme.of(context)
-                                    .onSurface
-                                    .withValues(alpha: 0.4)),
+                              color: ColorScheme.of(
+                                context,
+                              ).onSurface.withValues(alpha: 0.4),
+                            ),
                           ),
                           Text(
                             '${minutes.toString()}:${seconds.toString().padLeft(2, '0')}',
                             style: textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: ColorScheme.of(context).outline),
+                              fontWeight: FontWeight.bold,
+                              color: ColorScheme.of(context).outline,
+                            ),
                           ),
                         ],
                       );

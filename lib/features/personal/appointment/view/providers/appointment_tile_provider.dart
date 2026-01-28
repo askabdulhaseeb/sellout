@@ -13,7 +13,7 @@ import '../../../review/views/screens/write_review_screen.dart';
 import '../../../user/profiles/domain/entities/user_entity.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../data/model/hold_service_payment_model.dart';
 import '../../domain/params/hold_service_params.dart';
 import '../../domain/params/update_appointment_params.dart';

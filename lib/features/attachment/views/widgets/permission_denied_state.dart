@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import '../../../../core/widgets/empty_page_widget.dart';
+import '../../../../core/widgets/text_display/empty_page_widget.dart';
 
 class PermissionDeniedState extends StatelessWidget {
   const PermissionDeniedState({super.key});
@@ -30,7 +30,7 @@ class PermissionDeniedState extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.7),
+                  ).colorScheme.onSurface.withValues(alpha:0.7),
                 ),
               ),
               const SizedBox(height: 24),

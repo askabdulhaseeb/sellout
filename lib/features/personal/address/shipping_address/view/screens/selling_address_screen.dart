@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/bottom_sheets/widgets/address_tile.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';

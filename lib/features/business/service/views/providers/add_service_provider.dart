@@ -5,7 +5,7 @@ import '../../../../../core/enums/business/services/service_model_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/functions/permission_fun.dart';
 import '../../../../../core/sources/api_call.dart';
-import '../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../attachment/domain/entities/picked_attachment_option.dart';
@@ -135,8 +135,9 @@ class AddServiceProvider extends ChangeNotifier {
 
   Future<void> addPhotos(BuildContext context) async {
     //
-    final bool hasPersmission =
-        await PermissionFun.hasPermission(Permission.storage);
+    final bool hasPersmission = await PermissionFun.hasPermission(
+      Permission.storage,
+    );
     if (!hasPersmission) return;
     //
     final List<PickedAttachment>? newPhotos = await Navigator.of(context).push(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/functions/permission_fun.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../providers/signup_provider.dart';
 
 class SignupLocationPage extends StatelessWidget {

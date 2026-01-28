@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 
 class BusinessPageEmptyServiceWidget extends StatelessWidget {
   const BusinessPageEmptyServiceWidget({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/country_entity.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';

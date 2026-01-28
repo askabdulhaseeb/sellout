@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/sellout_title.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/text_display/sellout_title.dart';
 import '../../../../../../routes/app_linking.dart';
 import 'enter_code_screen.dart';
 
@@ -23,8 +23,9 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => Navigator.pop(context)),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         elevation: 0,
         title: const SellOutTitle(),
       ),
@@ -32,21 +33,19 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
-            Text('send_code_title'.tr(),
-                style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(
-              height: 4,
-              width: double.infinity,
+            Text(
+              'send_code_title'.tr(),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            Text('send_code_description'.tr(),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey)),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 4, width: double.infinity),
+            Text(
+              'send_code_description'.tr(),
+              textAlign: TextAlign.center,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey),
             ),
+            const SizedBox(height: 20),
             ListTile(
               title: Text('send_via_email'.tr()),
               subtitle: const Text('zubair@gmail.com'),
@@ -96,13 +95,14 @@ class _SendCodeScreenState extends State<SendCodeScreen> {
           children: <Widget>[
             Flexible(
               child: CustomElevatedButton(
-                  margin: const EdgeInsets.all(10),
-                  title: 'not_you?'.tr(),
-                  isLoading: false,
-                  textColor: ColorScheme.of(context).onSurface,
-                  bgColor: ColorScheme.of(context).surface,
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  onTap: () => Navigator.pop(context)),
+                margin: const EdgeInsets.all(10),
+                title: 'not_you?'.tr(),
+                isLoading: false,
+                textColor: ColorScheme.of(context).onSurface,
+                bgColor: ColorScheme.of(context).surface,
+                border: Border.all(color: Theme.of(context).dividerColor),
+                onTap: () => Navigator.pop(context),
+              ),
             ),
             Flexible(
               child: CustomElevatedButton(

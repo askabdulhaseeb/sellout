@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
-import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../location/view/widgets/maps/flutter_location_map.dart';
 import '../../../../marketplace/domain/enum/radius_type.dart';
 
 class AppointmentMapSection extends StatelessWidget {
-  const AppointmentMapSection({
-    required this.business,
-    super.key,
-  });
+  const AppointmentMapSection({required this.business, super.key});
 
   final BusinessEntity business;
 
@@ -60,17 +57,13 @@ class AppointmentMapSection extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           business.displayName ?? '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
+                          style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(
                           business.location?.address ?? 'na'.tr(),
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
@@ -79,7 +72,7 @@ class AppointmentMapSection extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

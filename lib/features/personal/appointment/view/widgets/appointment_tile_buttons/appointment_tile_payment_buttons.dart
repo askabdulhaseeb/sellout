@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../bookings/domain/entity/booking_entity.dart';
 import '../../providers/appointment_tile_provider.dart';
 
@@ -13,13 +13,17 @@ class AppointmentTilePaymentButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentTileProvider pro =
-        Provider.of<AppointmentTileProvider>(context, listen: false);
+    final AppointmentTileProvider pro = Provider.of<AppointmentTileProvider>(
+      context,
+      listen: false,
+    );
     final bool allCompleted = booking.every((BookingEntity b) => b.isCompleted);
     final bool allPending = booking.every(
-        (BookingEntity b) => b.paymentDetail?.status == StatusType.pending);
+      (BookingEntity b) => b.paymentDetail?.status == StatusType.pending,
+    );
     final bool allOnHold = booking.every(
-        (BookingEntity b) => b.paymentDetail?.status == StatusType.onHold);
+      (BookingEntity b) => b.paymentDetail?.status == StatusType.onHold,
+    );
     if (allCompleted && allOnHold) {
       return CustomElevatedButton(
         title: 'release_payment'.tr(),

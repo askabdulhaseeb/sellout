@@ -5,7 +5,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../../services/get_it.dart';
 import '../../../usecase/usecase.dart';
 import '../../../utilities/app_validators.dart';
-import '../../custom_textformfield.dart';
+import '../../inputs/custom_textformfield.dart';
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
 import '../domain/usecase/get_counties_usecase.dart';

@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/empty_page_widget.dart';
+import '../../../../core/widgets/text_display/empty_page_widget.dart';
 
 class EmptyGalleryState extends StatelessWidget {
   const EmptyGalleryState({super.key});
@@ -18,7 +18,7 @@ class EmptyGalleryState extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.8),
+                        .withValues(alpha:0.8),
                   ),
             ),
             const SizedBox(height: 8),

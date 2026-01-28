@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/utilities/app_validators.dart';
-import '../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../providers/add_service_provider.dart';
 
 class AddServiceDescriptionSection extends StatelessWidget {
@@ -18,12 +18,13 @@ class AddServiceDescriptionSection extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             CustomTextFormField(
-                controller: pro.description,
-                labelText: 'description'.tr(),
-                maxLines: 5,
-                maxLength: 300,
-                isExpanded: true,
-                validator: (String? value) => AppValidator.isEmpty(value)),
+              controller: pro.description,
+              labelText: 'description'.tr(),
+              maxLines: 5,
+              maxLength: 300,
+              isExpanded: true,
+              validator: (String? value) => AppValidator.isEmpty(value),
+            ),
             CustomTextFormField(
               controller: pro.included,
               labelText: 'what_included_the_service'.tr(),
@@ -33,12 +34,13 @@ class AddServiceDescriptionSection extends StatelessWidget {
               validator: (String? value) => AppValidator.isEmpty(value),
             ),
             CustomTextFormField(
-                controller: pro.notIncluded,
-                labelText: 'what_not_included_the_service'.tr(),
-                maxLines: 5,
-                maxLength: 300,
-                isExpanded: true,
-                validator: (String? value) => AppValidator.isEmpty(value)),
+              controller: pro.notIncluded,
+              labelText: 'what_not_included_the_service'.tr(),
+              maxLines: 5,
+              maxLength: 300,
+              isExpanded: true,
+              validator: (String? value) => AppValidator.isEmpty(value),
+            ),
           ],
         );
       },

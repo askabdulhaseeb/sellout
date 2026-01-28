@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/password_textformfield.dart';
-import '../../../../../../core/widgets/sellout_title.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/inputs/password_textformfield.dart';
+import '../../../../../../core/widgets/text_display/sellout_title.dart';
 import '../providers/find_account_provider.dart';
 
 class NewPasswordScreen extends StatelessWidget {
@@ -33,33 +33,39 @@ class NewPasswordScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 10),
-                Text('new_password_title'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(
-                  height: 4,
+                Text(
+                  'new_password_title'.tr(),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-                Text('create_new_password'.tr(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: ColorScheme.of(context)
-                            .onSurface
-                            .withValues(alpha: 0.4))),
-                Text('six_characters_atleast'.tr(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: ColorScheme.of(context)
-                            .onSurface
-                            .withValues(alpha: 0.4))),
-                Text('letter_digit_combination'.tr(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: ColorScheme.of(context)
-                            .onSurface
-                            .withValues(alpha: 0.4))),
-                const SizedBox(
-                  height: 20,
-                  width: double.infinity,
+                const SizedBox(height: 4),
+                Text(
+                  'create_new_password'.tr(),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: ColorScheme.of(
+                      context,
+                    ).onSurface.withValues(alpha: 0.4),
+                  ),
                 ),
+                Text(
+                  'six_characters_atleast'.tr(),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: ColorScheme.of(
+                      context,
+                    ).onSurface.withValues(alpha: 0.4),
+                  ),
+                ),
+                Text(
+                  'letter_digit_combination'.tr(),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: ColorScheme.of(
+                      context,
+                    ).onSurface.withValues(alpha: 0.4),
+                  ),
+                ),
+                const SizedBox(height: 20, width: double.infinity),
                 PasswordTextFormField(
                   controller: prov.newPassword,
                   validator: (String? value) => AppValidator.password(value),

@@ -4,9 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../../services/get_it.dart';
 import '../../../sources/api_call.dart';
+import '../../inputs/custom_textformfield.dart' show CustomTextFormField;
 import '../data/sources/local_country.dart';
 import '../domain/entities/country_entity.dart';
-import '../../custom_textformfield.dart';
 import '../domain/usecase/get_counties_usecase.dart';
 
 class CountryTypeAheadField extends StatefulWidget {

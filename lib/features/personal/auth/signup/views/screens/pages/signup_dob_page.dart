@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/extension/datetime_ext.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../enums/gender_type.dart';
 import '../../providers/signup_provider.dart';
 

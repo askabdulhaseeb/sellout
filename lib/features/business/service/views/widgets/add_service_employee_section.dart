@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/profile_photo.dart';
+import '../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../../personal/user/profiles/data/sources/local/local_user.dart';
 import '../../../core/domain/entity/business_employee_entity.dart';
@@ -43,9 +43,9 @@ class AddServiceEmployeeSection extends StatelessWidget {
                 employee: employee,
                 isSelected: isSelected,
                 onTap: () {
-                  context
-                      .read<AddServiceProvider>()
-                      .toggleSelection(employee.uid);
+                  context.read<AddServiceProvider>().toggleSelection(
+                    employee.uid,
+                  );
                 },
               );
             },
@@ -78,10 +78,7 @@ class _EmployeeTile extends StatelessWidget {
         onTap: onTap,
         child: FutureBuilder<UserEntity?>(
           future: LocalUser().user(employee.uid),
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<UserEntity?> snapshot,
-          ) {
+          builder: (BuildContext context, AsyncSnapshot<UserEntity?> snapshot) {
             final UserEntity? user = snapshot.data;
 
             return Container(
@@ -89,10 +86,9 @@ class _EmployeeTile extends StatelessWidget {
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.2)
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.2)
                     : Theme.of(context).dividerColor,
                 border: Border.all(
                   color: isSelected

@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/coming_soon_overlay.dart';
 import '../../../../../core/widgets/scaffold/bottom_bar/business_bottom_nav_bar.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
+import '../../../../../core/widgets/text_display/coming_soon_overlay.dart';
 import '../../../core/data/sources/local_business.dart';
 import '../../../core/domain/entity/business_entity.dart';
 import '../providers/business_page_provider.dart';

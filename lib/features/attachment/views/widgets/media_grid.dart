@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../core/constants/app_spacings.dart';
-import '../../../../core/widgets/custom_shimmer_effect.dart';
+import '../../../../core/widgets/indicators/custom_shimmer_effect.dart';
 import '../providers/picked_media_provider.dart';
 import 'picked_media_display_tile.dart';
 
