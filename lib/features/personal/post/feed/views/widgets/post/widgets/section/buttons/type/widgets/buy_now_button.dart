@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+
+import '../../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 
 class BuyNowButton extends StatelessWidget {
   final VoidCallback onTap;

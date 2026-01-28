@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/dropdowns/color_dropdown.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../core/widgets/inputs/custom_dropdown.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 
 import '../../../../../marketplace/views/widgets/market_categorized_filters_page_widgets/widgets/vehicle_filter/widget/year_picker_dropdown.dart';

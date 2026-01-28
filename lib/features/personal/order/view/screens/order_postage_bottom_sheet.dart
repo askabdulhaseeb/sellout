@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../core/usecase/usecase.dart';
 import '../../../../../core/constants/app_spacings.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../services/get_it.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../../postage/domain/params/add_order_label_params.dart';

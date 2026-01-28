@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../domain/entities/post/post_entity.dart';
 
 class PostRatingSection extends StatelessWidget {

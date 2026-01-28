@@ -4,7 +4,7 @@ import '../../../../providers/add_listing_form_provider.dart';
 import '../enums/delivery_payer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import 'package_detail_card/package_details_card.dart';
 
 class DeliveryChargesWidget extends StatelessWidget {

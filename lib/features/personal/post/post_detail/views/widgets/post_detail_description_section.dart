@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/expandable_text_widget.dart';
+import '../../../../../../core/widgets/text_display/expandable_text_widget.dart';
 import '../../../domain/entities/post/post_entity.dart';
 
 class PostDetailDescriptionSection extends StatelessWidget {
@@ -23,10 +23,7 @@ class PostDetailDescriptionSection extends StatelessWidget {
           '''${'about_item'.tr()}:''',
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        ExpandableText(
-          text: post.description,
-          isHtml: true,
-        ),
+        ExpandableText(text: post.description, isHtml: true),
       ],
     );
   }

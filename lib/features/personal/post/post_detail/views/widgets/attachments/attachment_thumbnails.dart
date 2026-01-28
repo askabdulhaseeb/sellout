@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/video_widget.dart';
 import 'attachment_source.dart';
 
 class AttachmentConstants {
@@ -113,14 +113,11 @@ class _ThumbnailItemKeepAliveState extends State<_ThumbnailItemKeepAlive>
                         : widget.source.filePath!,
                   )
                 : widget.source.isNetwork
-                    ? CustomNetworkImage(
-                        imageURL: widget.source.networkUrl,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.file(
-                        File(widget.source.filePath!),
-                        fit: BoxFit.cover,
-                      ),
+                ? CustomNetworkImage(
+                    imageURL: widget.source.networkUrl,
+                    fit: BoxFit.cover,
+                  )
+                : Image.file(File(widget.source.filePath!), fit: BoxFit.cover),
           ),
         ),
       ),

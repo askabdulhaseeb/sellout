@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
-import '../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -15,7 +15,7 @@ import '../../../domain/entities/post/post_entity.dart';
 import '../../../feed/views/widgets/post/widgets/section/icon_butoons/post_inquiry_buttons.dart';
 import '../../../feed/views/widgets/post/widgets/section/icon_butoons/save_post_icon_button.dart';
 import '../../../feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
-import '../../../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 
 class PostDetailSellerSection extends StatefulWidget {
@@ -39,8 +39,9 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
     if (businessID == null || businessID.isEmpty || businessID == 'null') {
       // Fetch user
       final GetUserByUidUsecase getUserByUid = GetUserByUidUsecase(locator());
-      getUserByUid(widget.post.createdBy)
-          .then((DataState<UserEntity?> dataState) {
+      getUserByUid(widget.post.createdBy).then((
+        DataState<UserEntity?> dataState,
+      ) {
         if (mounted) {
           setState(() {
             user = dataState.entity;
@@ -48,8 +49,9 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
         }
       });
     } else {
-      final GetBusinessByIdUsecase getBusinessById =
-          GetBusinessByIdUsecase(locator());
+      final GetBusinessByIdUsecase getBusinessById = GetBusinessByIdUsecase(
+        locator(),
+      );
       getBusinessById(businessID).then((DataState<BusinessEntity?> dataState) {
         if (mounted) {
           setState(() {
@@ -81,9 +83,7 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const SizedBox(
-                width: 50,
-              ),
+              const SizedBox(width: 50),
               Column(
                 spacing: 6,
                 children: <Widget>[
@@ -96,9 +96,10 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
                   Text(
                     user?.displayName ?? business?.displayName ?? 'na'.tr(),
                     style: TextTheme.of(context).bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis),
-                  )
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
               Row(
@@ -110,12 +111,14 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
                     color: Theme.of(context).primaryColor,
                   ),
                   RatingDisplayWidget(
-                      prefixColor: ColorScheme.of(context).outline,
-                      displayStars: false,
-                      displayPrefix: false,
-                      ratingList: user?.listOfReviews ??
-                          business?.listOfReviews ??
-                          <double>[]),
+                    prefixColor: ColorScheme.of(context).outline,
+                    displayStars: false,
+                    displayPrefix: false,
+                    ratingList:
+                        user?.listOfReviews ??
+                        business?.listOfReviews ??
+                        <double>[],
+                  ),
                 ],
               ),
             ],
@@ -126,14 +129,12 @@ class _PostDetailSellerSectionState extends State<PostDetailSellerSection> {
             children: <Widget>[
               if (!isMine) CreatePostInquiryChatButton(post: widget.post),
               SharePostButton(
-                tappableWidget:
-                    const CustomSvgIcon(assetPath: AppStrings.selloutShareIcon),
+                tappableWidget: const CustomSvgIcon(
+                  assetPath: AppStrings.selloutShareIcon,
+                ),
                 postId: widget.post.postID,
               ),
-              if (!isMine)
-                SavePostIconButton(
-                  postId: widget.post.postID,
-                )
+              if (!isMine) SavePostIconButton(postId: widget.post.postID),
             ],
           ),
         ],

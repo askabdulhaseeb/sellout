@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../../../core/widgets/in_dev_mode.dart';
+
+import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/utils/in_dev_mode.dart';
 
 void showReportSuccessBottomSheet(BuildContext context, String reason) {
   final ThemeData theme = Theme.of(context);
@@ -45,11 +46,7 @@ void showReportSuccessBottomSheet(BuildContext context, String reason) {
             ),
             const SizedBox(height: 16),
             // icon
-            Icon(
-              Icons.check_box_outlined,
-              color: theme.primaryColor,
-              size: 60,
-            ),
+            Icon(Icons.check_box_outlined, color: theme.primaryColor, size: 60),
             const SizedBox(height: 16),
             // message
             Text(

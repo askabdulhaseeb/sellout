@@ -5,7 +5,7 @@ import '../../../../postage/domain/entities/postage_detail_response_entity.dart'
 import '../../../../personal/post/data/sources/local/local_post.dart';
 import '../../../../personal/post/domain/entities/post/post_entity.dart';
 import '../../../../../core/constants/app_spacings.dart';
-import '../../../../../core/widgets/shadow_container.dart';
+import '../../../../../core/widgets/text_display/shadow_container.dart';
 
 class OrderPostageItemCard extends StatefulWidget {
   const OrderPostageItemCard({
@@ -185,7 +185,9 @@ class _OrderPostageItemCardState extends State<OrderPostageItemCard> {
               child: Container(
                 decoration: BoxDecoration(
                   color: hasSelected
-                      ? Theme.of(context).colorScheme.error.withValues(alpha: 0.12)
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.error.withValues(alpha: 0.12)
                       : null,
                   borderRadius: BorderRadius.circular(8),
                 ),

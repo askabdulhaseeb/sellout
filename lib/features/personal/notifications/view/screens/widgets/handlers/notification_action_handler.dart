@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../chats/chat/views/providers/chat_provider.dart';
 import '../../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';
@@ -69,7 +69,9 @@ class NotificationActionHandler {
         notificationFor.contains('business');
 
     if (kDebugMode) {
-      debugPrint('   notificationFor: "$notificationFor" | forSeller: $forSeller');
+      debugPrint(
+        '   notificationFor: "$notificationFor" | forSeller: $forSeller',
+      );
     }
 
     if (!context.mounted) return;

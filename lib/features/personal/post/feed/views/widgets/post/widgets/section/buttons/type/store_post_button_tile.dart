@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/enums/listing/core/delivery_type.dart';
 import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/extension/string_ext.dart';
-import '../../../../../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../domain/entities/size_color/size_color_entity.dart';
@@ -14,8 +14,11 @@ import 'widgets/post_collection_button.dart';
 import 'widgets/post_make_offer_button.dart';
 
 class StorePostButtonTile extends StatefulWidget {
-  const StorePostButtonTile(
-      {required this.post, required this.detailWidget, super.key});
+  const StorePostButtonTile({
+    required this.post,
+    required this.detailWidget,
+    super.key,
+  });
   final PostEntity post;
   final bool detailWidget;
 
@@ -40,11 +43,13 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
                   title: '',
                   hint: 'select_your_size'.tr(),
                   items: widget.post.clothFootInfo!.sizeColors
-                      .map((SizeColorEntity e) =>
-                          DropdownMenuItem<SizeColorEntity>(
-                            value: e,
-                            child: Text(e.value),
-                          ))
+                      .map(
+                        (SizeColorEntity e) =>
+                            DropdownMenuItem<SizeColorEntity>(
+                              value: e,
+                              child: Text(e.value),
+                            ),
+                      )
                       .toList(),
                   selectedItem: selectedSize,
                   onChanged: (SizeColorEntity? value) {
@@ -64,15 +69,15 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
                   hint: 'select_color'.tr(),
                   items: (selectedSize?.colors ?? <ColorEntity>[])
                       .where((ColorEntity e) => e.quantity > 0)
-                      .map((ColorEntity e) => DropdownMenuItem<ColorEntity>(
-                            value: e,
-                            child: Text(
-                              e.code,
-                              style: TextStyle(
-                                color: e.code.toColor(),
-                              ),
-                            ),
-                          ))
+                      .map(
+                        (ColorEntity e) => DropdownMenuItem<ColorEntity>(
+                          value: e,
+                          child: Text(
+                            e.code,
+                            style: TextStyle(color: e.code.toColor()),
+                          ),
+                        ),
+                      )
                       .toList(),
                   selectedItem: selectedColor,
                   onChanged: (ColorEntity? value) {
@@ -89,9 +94,7 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
           ),
         // Collection Section
         if (widget.post.deliveryType == DeliveryType.collection)
-          PostCollectionButtons(
-            post: widget.post,
-          ),
+          PostCollectionButtons(post: widget.post),
         if (widget.post.deliveryType != DeliveryType.collection)
           _DeliverySection(
             post: widget.post,
@@ -101,7 +104,8 @@ class _StorePostButtonTileState extends State<StorePostButtonTile> {
           ),
         if (widget.post.type == ListingType.clothAndFoot && widget.detailWidget)
           SizeChartButtonTile(
-              sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '')
+            sizeChartURL: widget.post.clothFootInfo?.sizeChartUrl?.url ?? '',
+          ),
       ],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../order/view/order_buyer_screen/screen/order_buyer_screen.dart';

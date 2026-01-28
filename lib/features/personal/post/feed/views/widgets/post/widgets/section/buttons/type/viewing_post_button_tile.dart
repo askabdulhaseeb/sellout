@@ -1,14 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../../../../routes/app_linking.dart';
 import '../../../../../../../../../visits/view/book_visit/screens/booking_screen.dart';
 import '../../../../../../../../domain/entities/post/post_entity.dart';
 import 'widgets/post_make_offer_button.dart';
 
 class ViewingPostButtonTile extends StatelessWidget {
-  const ViewingPostButtonTile(
-      {required this.post, required this.detailWidget, super.key});
+  const ViewingPostButtonTile({
+    required this.post,
+    required this.detailWidget,
+    super.key,
+  });
   final PostEntity post;
   final bool? detailWidget;
 
@@ -21,8 +24,10 @@ class ViewingPostButtonTile extends StatelessWidget {
             title: 'book_visit'.tr(),
             isLoading: false,
             onTap: () {
-              AppNavigator.pushNamed(BookingScreen.routeName,
-                  arguments: <String, dynamic>{'post': post});
+              AppNavigator.pushNamed(
+                BookingScreen.routeName,
+                arguments: <String, dynamic>{'post': post},
+              );
             },
           ),
         if (post.acceptOffers == true)
@@ -35,8 +40,10 @@ class ViewingPostButtonTile extends StatelessWidget {
               CustomElevatedButton(
                 title: 'book_visit'.tr(),
                 bgColor: Colors.transparent,
-                border:
-                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                border: Border.all(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
                 textStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -44,8 +51,10 @@ class ViewingPostButtonTile extends StatelessWidget {
                 ),
                 isLoading: false,
                 onTap: () {
-                  AppNavigator.pushNamed(BookingScreen.routeName,
-                      arguments: <String, dynamic>{'post': post});
+                  AppNavigator.pushNamed(
+                    BookingScreen.routeName,
+                    arguments: <String, dynamic>{'post': post},
+                  );
                 },
               ),
             ],

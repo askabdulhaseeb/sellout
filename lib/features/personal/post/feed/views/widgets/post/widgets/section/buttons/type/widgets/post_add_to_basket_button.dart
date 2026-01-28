@@ -4,8 +4,9 @@ import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_fo
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+
+import '../../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
@@ -54,10 +55,11 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
         final AddToCartUsecase usecase = AddToCartUsecase(locator());
         final DataState<bool> result = await usecase(
           AddToCartParam(
-              post: widget.post,
-              color: widget.detailWidgetColor,
-              size: widget.detailWidgetSize,
-              quantity: 1),
+            post: widget.post,
+            color: widget.detailWidgetColor,
+            size: widget.detailWidgetSize,
+            quantity: 1,
+          ),
         );
         if (result is DataSuccess) {
           if (mounted) {
@@ -135,11 +137,7 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       successWidget: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(
-            Icons.check,
-            color: colorScheme.onSecondary,
-            size: 18,
-          ),
+          Icon(Icons.check, color: colorScheme.onSecondary, size: 18),
           const SizedBox(width: 6),
           Text(
             'added_to_basket'.tr(),
@@ -155,18 +153,12 @@ class _PostAddToBasketButtonState extends State<PostAddToBasketButton> {
       },
       loadingWidget: Text(
         'adding_to_basket'.tr(),
-        style: TextStyle(
-          fontWeight: FontWeight.w400,
-          color: color,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w400, color: color),
       ),
       bgColor: Colors.transparent,
       border: Border.all(color: color, width: 2),
       textColor: color,
-      textStyle: TextStyle(
-        fontWeight: FontWeight.w400,
-        color: color,
-      ),
+      textStyle: TextStyle(fontWeight: FontWeight.w400, color: color),
     );
   }
 }

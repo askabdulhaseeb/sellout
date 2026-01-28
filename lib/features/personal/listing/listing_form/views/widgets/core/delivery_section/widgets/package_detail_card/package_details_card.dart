@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../core/widgets/custom_expandable_tile.dart';
-import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../providers/add_listing_form_provider.dart';
 import 'data/package_presets.dart';
 

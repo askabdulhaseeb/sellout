@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 
 // Moved to ui/size_category_tile.dart
 class SizeCategoryTile extends StatelessWidget {

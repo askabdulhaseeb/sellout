@@ -4,18 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../../../../core/functions/app_log.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/video_widget.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class ListingAttachmentTile extends StatelessWidget {
-  const ListingAttachmentTile({
-    super.key,
-    this.attachment,
-    this.imageUrl,
-  });
+  const ListingAttachmentTile({super.key, this.attachment, this.imageUrl});
 
   final PickedAttachment? attachment;
   final AttachmentEntity? imageUrl;
@@ -33,8 +29,10 @@ class ListingAttachmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isLocal = attachment != null;
-    final AddListingFormProvider pro =
-        Provider.of<AddListingFormProvider>(context, listen: false);
+    final AddListingFormProvider pro = Provider.of<AddListingFormProvider>(
+      context,
+      listen: false,
+    );
     final Object? videoSource = isLocal ? attachment?.file.uri : imageUrl?.url;
     return Padding(
       padding: const EdgeInsets.all(3),
@@ -91,24 +89,18 @@ class ListingAttachmentTile extends StatelessWidget {
       child: isVideo
           ? _buildVideo(videoSource)
           : (isLocal
-              ? _buildLocalImage(context, attachment!)
-              : _buildRemoteImage(context, imageUrl?.url)),
+                ? _buildLocalImage(context, attachment!)
+                : _buildRemoteImage(context, imageUrl?.url)),
     );
   }
 
   Widget _buildVideo(Object? source) {
-    return VideoWidget(
-      videoSource: source,
-      play: false,
-    );
+    return VideoWidget(videoSource: source, play: false);
   }
 
   Widget _buildRemoteImage(BuildContext context, String? url) {
     AppLog.info('Render network image | url=$url', name: 'AttachmentSlider');
-    return CustomNetworkImage(
-      imageURL: url,
-      fit: BoxFit.cover,
-    );
+    return CustomNetworkImage(imageURL: url, fit: BoxFit.cover);
   }
 
   Widget _buildLocalImage(BuildContext context, PickedAttachment att) {
@@ -197,8 +189,8 @@ class ListingAttachmentTile extends StatelessWidget {
       fit: BoxFit.cover,
       errorBuilder:
           (BuildContext context, Object error, StackTrace? stackTrace) {
-        return _errorPlaceholder(context, isVideo: false);
-      },
+            return _errorPlaceholder(context, isVideo: false);
+          },
     );
   }
 }

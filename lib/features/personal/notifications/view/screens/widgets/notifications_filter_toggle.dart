@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../domain/enums/notification_type.dart';
 
 class NotificationsFilterToggle extends StatelessWidget {
@@ -19,7 +19,9 @@ class NotificationsFilterToggle extends StatelessWidget {
     return CustomToggleSwitch<NotificationType>(
       isShaded: false,
       borderWidth: 1,
-      unseletedBorderColor: ColorScheme.of(context).onSurface.withValues(alpha: 0.2),
+      unseletedBorderColor: ColorScheme.of(
+        context,
+      ).onSurface.withValues(alpha: 0.2),
       unseletedTextColor: ColorScheme.of(context).onSurface,
       borderRad: 6,
       labels: NotificationType.values.toList(),

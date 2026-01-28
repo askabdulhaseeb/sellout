@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../../../../../core/constants/app_spacings.dart';
-import '../../../../../core/widgets/sellout_title.dart';
+import '../../../../../core/widgets/text_display/sellout_title.dart';
 import '../../domain/entities/order_entity.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';

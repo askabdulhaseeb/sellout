@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../providers/post_detail_provider.dart';
 
@@ -23,9 +23,11 @@ class PostDetailReviewAttachmentListWidget extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: ColorScheme.of(context).outlineVariant)),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: ColorScheme.of(context).outlineVariant,
+                  ),
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: CustomNetworkImage(

@@ -8,8 +8,7 @@ import 'icon_butoons/save_post_icon_button.dart';
 import 'icon_butoons/share_post_icon_button.dart';
 
 class HomePostIconBottonSection extends StatelessWidget {
-  const HomePostIconBottonSection(
-      {required this.post, this.isPreview = false, super.key});
+  const HomePostIconBottonSection({required this.post, this.isPreview = false, super.key});
   final PostEntity post;
   final bool isPreview;
   @override

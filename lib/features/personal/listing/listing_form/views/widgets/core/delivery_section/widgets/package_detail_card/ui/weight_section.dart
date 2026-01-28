@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 
 class WeightSection extends StatelessWidget {
   const WeightSection({

@@ -7,8 +7,8 @@ import '../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../core/enums/listing/core/privacy_type.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/sources/remote/get_access_code_api.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -59,7 +59,8 @@ class AddListingConditionOfferSection extends StatelessWidget {
                   child: Center(
                     child: Text(
                       CountryHelper.currencySymbolHelper(
-                          LocalAuth.currency.toUpperCase()),
+                        LocalAuth.currency.toUpperCase(),
+                      ),
                     ),
                   ),
                 ),
@@ -82,34 +83,32 @@ class AddListingConditionOfferSection extends StatelessWidget {
               FutureBuilder<String?>(
                 future: GetAccessCodeApi().getCode(oldCode: formPro.accessCode),
                 initialData: formPro.accessCode,
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<String?> snapshot,
-                ) {
-                  if (snapshot.hasData && snapshot.data != null) {
-                    formPro.setAccessCode(snapshot.data!);
-                  }
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .primaryColor
-                          .withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${'access_code'.tr()}: ${snapshot.data ?? '...'}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  );
-                },
+                builder:
+                    (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        formPro.setAccessCode(snapshot.data!);
+                      }
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).primaryColor.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${'access_code'.tr()}: ${snapshot.data ?? '...'}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      );
+                    },
               ),
           ],
         );

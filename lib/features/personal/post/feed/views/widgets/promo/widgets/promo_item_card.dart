@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../promo/domain/entities/promo_entity.dart';
 import '../../../../../../promo/view/home_promo_screen/promo_feed_screen.dart';
 

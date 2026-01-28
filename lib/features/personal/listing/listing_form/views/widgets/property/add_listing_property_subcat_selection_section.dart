@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../providers/add_listing_form_provider.dart';
 
 class AddListingPropertySubcatSelectionSection extends StatelessWidget {
@@ -10,17 +10,19 @@ class AddListingPropertySubcatSelectionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> subCategories =
-        ListingType.property.cids.getRange(0, 2).toList();
+    final List<String> subCategories = ListingType.property.cids
+        .getRange(0, 2)
+        .toList();
     return Consumer<AddListingFormProvider>(
-        builder: (BuildContext context, AddListingFormProvider addPro, _) {
-      return CustomToggleSwitch<String>(
-        labels: subCategories,
-        labelStrs: subCategories.map((String e) => e.tr()).toList(),
-        labelText: 'please_select'.tr(),
-        initialValue: addPro.selectedPropertyType,
-        onToggle: addPro.setSelectedPropertySubType,
-      );
-    });
+      builder: (BuildContext context, AddListingFormProvider addPro, _) {
+        return CustomToggleSwitch<String>(
+          labels: subCategories,
+          labelStrs: subCategories.map((String e) => e.tr()).toList(),
+          labelText: 'please_select'.tr(),
+          initialValue: addPro.selectedPropertyType,
+          onToggle: addPro.setSelectedPropertySubType,
+        );
+      },
+    );
   }
 }

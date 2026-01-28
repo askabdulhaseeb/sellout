@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../../providers/feed_provider.dart';
 import '../../../../../../../../../../chats/chat_dashboard/domain/entities/messages/message_entity.dart';

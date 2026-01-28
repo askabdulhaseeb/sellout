@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../domain/entities/order_entity.dart';
 

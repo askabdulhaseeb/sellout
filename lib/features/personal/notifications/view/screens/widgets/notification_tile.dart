@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/notification_loader_list.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../post/data/sources/local/local_post.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';

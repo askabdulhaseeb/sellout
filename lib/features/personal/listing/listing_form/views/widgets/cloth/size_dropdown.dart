@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../../data/sources/local/local_categories.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -31,8 +31,10 @@ class SizeDropdown extends StatelessWidget {
         formPro.selectedClothSubType == 'clothes' ? clothesSizes : footSizes;
 
     // use the helper to find the selected item
-    final DropdownOptionEntity? selectedEntity =
-        formPro.findByValue(sizeOptions, selectedSize ?? '');
+    final DropdownOptionEntity? selectedEntity = formPro.findByValue(
+      sizeOptions,
+      selectedSize ?? '',
+    );
 
     return Padding(
       padding: EdgeInsets.zero,
@@ -44,9 +46,9 @@ class SizeDropdown extends StatelessWidget {
             .map(
               (DropdownOptionEntity e) =>
                   DropdownMenuItem<DropdownOptionEntity>(
-                value: e,
-                child: Text(e.label),
-              ),
+                    value: e,
+                    child: Text(e.label),
+                  ),
             )
             .toList(),
         // ✅ pre-select the entity

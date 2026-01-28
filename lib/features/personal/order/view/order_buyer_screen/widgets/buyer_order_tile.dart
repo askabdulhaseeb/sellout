@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';

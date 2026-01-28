@@ -1,12 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../chats/create_chat/view/provider/create_private_chat_provider.dart';
 import '../../../../../core/enums/core/status_type.dart';
 import '../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../services/get_it.dart';
 import '../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../post/domain/usecase/get_specific_post_usecase.dart';

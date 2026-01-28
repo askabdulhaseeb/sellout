@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../core/widgets/toggles/custom_switch_list_tile.dart';
 import '../../../../../post/domain/entities/discount_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
 
@@ -38,9 +38,7 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
   }) {
     _controllers.putIfAbsent(
       index,
-      () => TextEditingController(
-        text: value == 0 ? '' : value.toString(),
-      ),
+      () => TextEditingController(text: value == 0 ? '' : value.toString()),
     );
 
     return SizedBox(
@@ -63,10 +61,7 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
         hint: '0',
         keyboardType: TextInputType.number,
         textAlign: TextAlign.end,
-        suffixIcon: const Opacity(
-          opacity: 0.7,
-          child: Icon(Icons.percent),
-        ),
+        suffixIcon: const Opacity(opacity: 0.7, child: Icon(Icons.percent)),
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(\.\d{0,2})?$')),
         ],
@@ -80,7 +75,8 @@ class _AddListingDiscountSectionState extends State<AddListingDiscountSection> {
 
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider provider, _) {
-        final DiscountEntity discount = provider.discounts ??
+        final DiscountEntity discount =
+            provider.discounts ??
             DiscountEntity(twoItems: 0, threeItems: 0, fiveItems: 0);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

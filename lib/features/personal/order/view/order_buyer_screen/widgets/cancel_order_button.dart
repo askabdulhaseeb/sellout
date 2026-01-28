@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../user/profiles/domain/params/update_order_params.dart';
 import '../../../domain/entities/order_entity.dart';

@@ -2,20 +2,22 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
 import '../../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+
+import '../../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import '../../../bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
 
 class PostMakeOfferButton extends StatefulWidget {
-  const PostMakeOfferButton(
-      {required this.post,
-      required this.detailWidget,
-      this.detailWidgetColor,
-      this.detailWidgetSize,
-      super.key});
+  const PostMakeOfferButton({
+    required this.post,
+    required this.detailWidget,
+    this.detailWidgetColor,
+    this.detailWidgetSize,
+    super.key,
+  });
   final PostEntity post;
   final bool detailWidget;
   final SizeColorEntity? detailWidgetSize;

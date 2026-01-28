@@ -6,7 +6,7 @@ import '../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_
 import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../../../../../../auth/signin/domain/entities/address_entity.dart';
@@ -23,7 +23,6 @@ import '../type/widgets/delivery_method_dialog_helper.dart';
 
 /// Controller for PostBuyNowButtonView. Handles business logic and state updates via callbacks.
 class PostBuyNowButtonController {
-
   PostBuyNowButtonController({
     required this.context,
     required this.post,

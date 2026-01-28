@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/widgets/step_progress_indicator.dart';
+import '../../../../../../core/widgets/indicators/step_progress_indicator.dart';
 import '../../../domain/entities/order_entity.dart';
 
 class OrderBuyerStatusSection extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../domain/entities/order_entity.dart';

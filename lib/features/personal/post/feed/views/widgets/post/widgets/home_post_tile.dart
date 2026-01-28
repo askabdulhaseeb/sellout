@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../core/widgets/attachment_slider.dart';
+import '../../../../../../../../core/widgets/media/attachment_slider.dart';
 import '../../../../../domain/entities/post/post_entity.dart';
 import '../../../../../post_detail/views/screens/post_detail_screen.dart';
 import 'section/buttons/home_post_button_section.dart';

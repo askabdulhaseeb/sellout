@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../../domain/entities/category_entites/subentities/dropdown_option_entity.dart';
 import '../../../domain/entities/category_entites/subentities/parent_dropdown_entity.dart';
 import '../../providers/add_listing_form_provider.dart';
@@ -26,7 +26,8 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
         final ParentDropdownEntity? matchedBreed = breedOptions
             .where(
-                (ParentDropdownEntity p) => p.category == formPro.petCategory)
+              (ParentDropdownEntity p) => p.category == formPro.petCategory,
+            )
             .cast<ParentDropdownEntity?>()
             .firstOrNull;
         final List<DropdownOptionEntity> breedList =
@@ -44,9 +45,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                         .map(
                           (DropdownOptionEntity opt) =>
                               DropdownMenuItem<DropdownOptionEntity>(
-                            value: opt,
-                            child: Text(opt.label),
-                          ),
+                                value: opt,
+                                child: Text(opt.label),
+                              ),
                         )
                         .toList(),
                     selectedItem: formPro.findByValue(
@@ -67,9 +68,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                         .map(
                           (DropdownOptionEntity opt) =>
                               DropdownMenuItem<DropdownOptionEntity>(
-                            value: opt,
-                            child: Text(opt.label),
-                          ),
+                                value: opt,
+                                child: Text(opt.label),
+                              ),
                         )
                         .toList(),
                     selectedItem: formPro.findByValue(
@@ -86,15 +87,16 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                 ),
               ],
             ),
+
             /// Pet Category
             CustomDropdown<DropdownOptionEntity>(
               items: petCategories
                   .map(
                     (DropdownOptionEntity opt) =>
                         DropdownMenuItem<DropdownOptionEntity>(
-                      value: opt,
-                      child: Text(opt.label),
-                    ),
+                          value: opt,
+                          child: Text(opt.label),
+                        ),
                   )
                   .toList(),
               selectedItem: formPro.findByValue(
@@ -107,6 +109,7 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
               onChanged: (DropdownOptionEntity? value) =>
                   formPro.setPetCategory(value?.value.value),
             ),
+
             /// Breed dropdown (only if category selected)
             if (formPro.petCategory != null && formPro.petCategory!.isNotEmpty)
               CustomDropdown<DropdownOptionEntity>(
@@ -114,9 +117,9 @@ class AddListingPetAgeLeaveWidget extends StatelessWidget {
                     .map(
                       (DropdownOptionEntity opt) =>
                           DropdownMenuItem<DropdownOptionEntity>(
-                        value: opt,
-                        child: Text(opt.label),
-                      ),
+                            value: opt,
+                            child: Text(opt.label),
+                          ),
                     )
                     .toList(),
                 selectedItem: formPro.findByValue(

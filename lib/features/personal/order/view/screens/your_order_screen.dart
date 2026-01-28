@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../core/widgets/loaders/buyer_order_tile_loader.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../services/get_it.dart';
@@ -35,9 +35,9 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
   void initState() {
     super.initState();
     final String uid = LocalAuth.uid ?? '';
-    futureOrders = GetOrderByUidUsecase(locator()).call(
-      GetOrderParams(user: GetOrderUserType.buyerId, value: uid),
-    );
+    futureOrders = GetOrderByUidUsecase(
+      locator(),
+    ).call(GetOrderParams(user: GetOrderUserType.buyerId, value: uid));
 
     // Fetch orders and posts asynchronously
     futureOrders.then((DataState<List<OrderEntity>> dataState) async {
@@ -98,52 +98,55 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
               controller: searchController,
               onChanged: filterOrders,
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Expanded(
               child: FutureBuilder<DataState<List<OrderEntity>>>(
                 future: futureOrders,
-                builder: (BuildContext context,
-                    AsyncSnapshot<DataState<List<OrderEntity>>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Show loading placeholders
-                    return ListView.separated(
-                      itemCount: 10,
-                      separatorBuilder: (_, __) => const Divider(
-                        height: 1,
-                        endIndent: 12,
-                        indent: 12,
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return const BuyerOrderTileLoader();
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('something_wrong'.tr()));
-                  } else if (!snapshot.hasData) {
-                    return Center(child: Text('no_data_found'.tr()));
-                  }
+                builder:
+                    (
+                      BuildContext context,
+                      AsyncSnapshot<DataState<List<OrderEntity>>> snapshot,
+                    ) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        // Show loading placeholders
+                        return ListView.separated(
+                          itemCount: 10,
+                          separatorBuilder: (_, __) => const Divider(
+                            height: 1,
+                            endIndent: 12,
+                            indent: 12,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return const BuyerOrderTileLoader();
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('something_wrong'.tr()));
+                      } else if (!snapshot.hasData) {
+                        return Center(child: Text('no_data_found'.tr()));
+                      }
 
-                  if (filteredOrders.isEmpty) {
-                    return Center(child: Text('no_data_found'.tr()));
-                  }
-                  // Show orders
-                  return ListView.separated(
-                    itemCount: filteredOrders.length,
-                    separatorBuilder: (_, __) => Container(
-                      color: Theme.of(context).dividerColor,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 4),
-                      height: 1,
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      final OrderEntity order = filteredOrders[index];
-                      final PostEntity? post = postCache[order.postId];
-                      return BuyerOrderTileWidget(order: order, post: post);
+                      if (filteredOrders.isEmpty) {
+                        return Center(child: Text('no_data_found'.tr()));
+                      }
+                      // Show orders
+                      return ListView.separated(
+                        itemCount: filteredOrders.length,
+                        separatorBuilder: (_, __) => Container(
+                          color: Theme.of(context).dividerColor,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 4,
+                          ),
+                          height: 1,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          final OrderEntity order = filteredOrders[index];
+                          final PostEntity? post = postCache[order.postId];
+                          return BuyerOrderTileWidget(order: order, post: post);
+                        },
+                      );
                     },
-                  );
-                },
               ),
             ),
           ],

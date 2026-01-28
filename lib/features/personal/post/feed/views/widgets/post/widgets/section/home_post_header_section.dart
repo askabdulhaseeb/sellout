@@ -3,7 +3,7 @@ import '../../../../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
-import '../../../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
 import '../../../../../../../../business/core/data/sources/local_business.dart';

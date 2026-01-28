@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../../domain/entities/post/post_entity.dart';
 
 class PostCollectionButtons extends StatefulWidget {

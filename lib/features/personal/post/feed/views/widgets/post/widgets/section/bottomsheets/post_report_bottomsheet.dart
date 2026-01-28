@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../../../../../../../core/params/report_params.dart';
 import '../../../../../../../../../../core/sources/data_state.dart';
 import '../../../../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/indicators/step_progress_indicator.dart';
+import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../domain/usecase/report_post_usecase.dart';
 import '../../../../../enums/report_reason.dart';
-import '../../../../../../../../../../core/widgets/step_progress_indicator.dart';
 
 /// --- STATE CLASS ---
 class PostReportState {

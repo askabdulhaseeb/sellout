@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/text_display/shadow_container.dart';
+import '../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../../services/get_it.dart';
 import '../../../../../../../../chats/chat/domain/params/post_inquiry_params.dart';
 import '../../../../../../../../chats/chat/domain/usecase/create_post_inquiry_usecase.dart';
@@ -100,8 +101,6 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
       final PostInquiryParams params = PostInquiryParams(
         postId: widget.post.postID,
         text: inquiryText,
-          
-
       );
 
       await createPostInquiryUsecase.call(params);
@@ -180,9 +179,10 @@ class _PostInquiryDialogState extends State<_PostInquiryDialog> {
           isLoading: false,
         ),
         CustomElevatedButton(
-            isLoading: _isLoading,
-            onTap: () => _sendInquiry(context),
-            title: 'send'.tr()),
+          isLoading: _isLoading,
+          onTap: () => _sendInquiry(context),
+          title: 'send'.tr(),
+        ),
       ],
     );
   }

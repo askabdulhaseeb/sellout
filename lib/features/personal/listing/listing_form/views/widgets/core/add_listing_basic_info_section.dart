@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../attachment_selection/add_listing_attachment_selection_widget.dart';
 
@@ -17,9 +17,7 @@ class AddListingBasicInfoSection extends StatelessWidget {
         return Column(
           spacing: AppSpacing.vMd,
           children: <Widget>[
-            const SizedBox(
-              height: 0,
-            ),
+            const SizedBox(height: 0),
             CustomTextFormField(
               controller: formPro.title,
               // labelText: 'enter_product_name'.tr(),
