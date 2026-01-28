@@ -44,7 +44,7 @@ class _StripeOnboardingScreenState extends State<StripeOnboardingScreen> {
   void initState() {
     super.initState();
     // ✅ Delay ensures context is ready before calling
-    Future.delayed(
+    Future<void>.delayed(
       const Duration(milliseconds: 300),
       _openSecureStripeOnboarding,
     );

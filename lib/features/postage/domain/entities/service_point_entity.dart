@@ -1,41 +1,19 @@
 /// Entity representing item dimensions
 class ItemDimensionsEntity {
-  final double length;
-  final double width;
-  final double height;
-  final double weight;
-
   ItemDimensionsEntity({
     required this.length,
     required this.width,
     required this.height,
     required this.weight,
   });
+  final double length;
+  final double width;
+  final double height;
+  final double weight;
 }
 
 /// Entity representing a service point for pickup
 class ServicePointEntity {
-  final int id;
-  final String code;
-  final String name;
-  final String carrier;
-  final String carrierLogo;
-  final String type;
-  final String address;
-  final String city;
-  final String postalCode;
-  final String country;
-  final double latitude;
-  final double longitude;
-  final int distance;
-  final String distanceKm;
-  final Map<String, List<String>> openingHours;
-  final bool isOpen24Hours;
-  final bool isActive;
-  final bool isOpenTomorrow;
-  final bool isOpenUpcomingWeek;
-  final String status;
-
   ServicePointEntity({
     required this.id,
     required this.code,
@@ -58,6 +36,26 @@ class ServicePointEntity {
     required this.isOpenUpcomingWeek,
     required this.status,
   });
+  final int id;
+  final String code;
+  final String name;
+  final String carrier;
+  final String carrierLogo;
+  final String type;
+  final String address;
+  final String city;
+  final String postalCode;
+  final String country;
+  final double latitude;
+  final double longitude;
+  final int distance;
+  final String distanceKm;
+  final Map<String, List<String>> openingHours;
+  final bool isOpen24Hours;
+  final bool isActive;
+  final bool isOpenTomorrow;
+  final bool isOpenUpcomingWeek;
+  final String status;
 
   @override
   String toString() =>
@@ -66,26 +64,18 @@ class ServicePointEntity {
 
 /// Entity representing grouped service points by carrier
 class GroupedByCarrierEntity {
-  final String carrier;
-  final int count;
-  final List<ServicePointEntity> points;
-
   GroupedByCarrierEntity({
     required this.carrier,
     required this.count,
     required this.points,
   });
+  final String carrier;
+  final int count;
+  final List<ServicePointEntity> points;
 }
 
 /// Entity representing service points for a cart item
 class CartItemServicePointsEntity {
-  final String cartItemId;
-  final String postId;
-  final ItemDimensionsEntity itemDimensions;
-  final List<ServicePointEntity> servicePoints;
-  final List<GroupedByCarrierEntity> groupedByCarrier;
-  final int totalServicePoints;
-
   CartItemServicePointsEntity({
     required this.cartItemId,
     required this.postId,
@@ -94,34 +84,38 @@ class CartItemServicePointsEntity {
     required this.groupedByCarrier,
     required this.totalServicePoints,
   });
+  final String cartItemId;
+  final String postId;
+  final ItemDimensionsEntity itemDimensions;
+  final List<ServicePointEntity> servicePoints;
+  final List<GroupedByCarrierEntity> groupedByCarrier;
+  final int totalServicePoints;
 }
 
 /// Entity representing the query parameters
 class ServicePointQueryEntity {
-  final String postalCode;
-  final String carrier;
-  final int radius;
-  final List<String> cartItemIds;
-
   ServicePointQueryEntity({
     required this.postalCode,
     required this.carrier,
     required this.radius,
     required this.cartItemIds,
   });
+  final String postalCode;
+  final String carrier;
+  final int radius;
+  final List<String> cartItemIds;
 }
 
 /// Entity representing the service points response
 class ServicePointsResponseEntity {
-  final bool success;
-  final ServicePointQueryEntity query;
-  final int totalServicePoints;
-  final Map<String, CartItemServicePointsEntity> results;
-
   ServicePointsResponseEntity({
     required this.success,
     required this.query,
     required this.totalServicePoints,
     required this.results,
   });
+  final bool success;
+  final ServicePointQueryEntity query;
+  final int totalServicePoints;
+  final Map<String, CartItemServicePointsEntity> results;
 }

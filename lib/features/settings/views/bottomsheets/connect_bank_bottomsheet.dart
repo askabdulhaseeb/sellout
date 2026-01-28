@@ -48,13 +48,11 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
           entersReaderIfAvailable: false,
         ),
       );
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } catch (e) {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
     }
   }
 
@@ -81,13 +79,13 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
 
     final String url = result.entity ?? '';
 
-    if (url.isNotEmpty && mounted) {
+    if (!mounted) return;
+    if (url.isNotEmpty) {
       AppLog.info('Stripe Onboarding URL: $url');
       Navigator.pop(context);
       await _openSecureStripeOnboarding(url);
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (!mounted) return;
+      setState(() => _isLoading = false);
       // Navigator.push(
       //   context,
       //   MaterialPageRoute<StripeOnboardingScreen>(
@@ -95,9 +93,7 @@ class _LinkBankBottomSheetState extends State<LinkBankBottomSheet> {
       //   ),
       // );
     } else {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      setState(() => _isLoading = false);
       AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
     }
   }
