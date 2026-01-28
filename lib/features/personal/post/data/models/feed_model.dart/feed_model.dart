@@ -13,7 +13,7 @@ class FeedModel extends FeedEntity {
     return FeedModel(
       endpointHash: json['endpointHash'] as String,
       posts: (json['posts'] as List<dynamic>)
-          .map((e) => PostModel.fromJson(e as Map<String, dynamic>))
+          .map((dynamic e) => PostModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       nextPageToken: json['nextPageToken'] as String?,
       cachedAt: DateTime.parse(json['cachedAt'] as String),

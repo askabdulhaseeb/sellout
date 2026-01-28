@@ -120,7 +120,7 @@ class OrderProvider extends ChangeNotifier {
   Future<bool> buyLabel(String orderId) async {
     _setBuyingLabel(true);
     try {
-      final DataState<> res = await BuyLabelUsecase(
+      final DataState<bool> res = await BuyLabelUsecase(
         locator(),
       ).call(BuyLabelParams(orderId: orderId));
       if (res is DataSuccess) {

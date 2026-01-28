@@ -46,7 +46,7 @@ class ReportStep1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount: ReportType.values.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (BuildContext context, int index) {
         final ReportType type = ReportType.values[index];
         return ListTile(

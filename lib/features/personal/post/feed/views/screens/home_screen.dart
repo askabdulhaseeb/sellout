@@ -21,7 +21,7 @@ class HomeScreen extends HookWidget {
     // Initial feed load
     useEffect(() {
       if (feedProvider.posts.isEmpty) {
-        Future.microtask(() => feedProvider.loadInitialFeed(type));
+        Future<void>.microtask(() => feedProvider.loadInitialFeed(type));
       }
       return null;
     }, <Object?>[]);

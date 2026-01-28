@@ -111,7 +111,7 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
                         // Show loading placeholders
                         return ListView.separated(
                           itemCount: 10,
-                          separatorBuilder: (_, __) => const Divider(
+                          separatorBuilder: (_, _) => const Divider(
                             height: 1,
                             endIndent: 12,
                             indent: 12,
@@ -132,7 +132,7 @@ class _YourOrdersScreenState extends State<YourOrdersScreen> {
                       // Show orders
                       return ListView.separated(
                         itemCount: filteredOrders.length,
-                        separatorBuilder: (_, __) => Container(
+                        separatorBuilder: (_, _) => Container(
                           color: Theme.of(context).dividerColor,
                           margin: const EdgeInsets.symmetric(
                             vertical: 6,

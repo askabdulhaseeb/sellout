@@ -227,7 +227,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       barrierLabel: MaterialLocalizations.of(context).closeButtonTooltip,
       barrierColor: Colors.black.withValues(alpha: 0.25),
       transitionDuration: const Duration(milliseconds: 220),
-      pageBuilder: (BuildContext context, _, __) {
+      pageBuilder: (BuildContext context, _, _) {
         final ThemeData theme = Theme.of(context);
 
         const Duration receiptAnimDuration = Duration(milliseconds: 420);

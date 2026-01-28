@@ -5,19 +5,20 @@ import '../../../../domain/entities/post/post_entity.dart';
 import 'post_button_for_user_controller.dart';
 
 /// View for user post buttons. Handles UI and delegates logic to the controller.
-class PostButtonForUserView extends StatelessWidget {
-  final PostEntity? post;
-  final PostButtonForUserController controller;
-
+class PostButtonForUserView extends StatelessWidget {  
   const PostButtonForUserView({
     required this.post,
     required this.controller,
     super.key,
   });
+  final PostEntity? post;
+  final PostButtonForUserController controller;
+
+
 
   @override
   Widget build(BuildContext context) {
-    final isEditable = post != null;
+    final bool isEditable = post != null;
     return Column(
       children: <Widget>[
         Row(

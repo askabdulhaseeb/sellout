@@ -248,6 +248,9 @@ class FeedProvider extends ChangeNotifier {
 
     try {
       final DataState<bool> result = await _createOfferUsecase.call(params);
+      if (!context.mounted) {
+        return DataFailer<bool>(CustomException('something_wrong'.tr()));
+      }
       if (result is DataSuccess && result.data != null) {
         AppLog.info(
           'Offer created successfully',
@@ -256,6 +259,9 @@ class FeedProvider extends ChangeNotifier {
 
         final DataState<List<ChatEntity>> chatResult = await _getMyChatsUsecase
             .call(<String>[result.data!]);
+        if (!context.mounted) {
+          return DataFailer<bool>(CustomException('something_wrong'.tr()));
+        }
 
         if (chatResult is DataSuccess && chatResult.entity!.isNotEmpty) {
           final ChatProvider chatProvider = Provider.of<ChatProvider>(
@@ -263,6 +269,9 @@ class FeedProvider extends ChangeNotifier {
             listen: false,
           );
           chatProvider.setChat(context, chatResult.entity!.first);
+          if (!context.mounted) {
+            return DataFailer<bool>(CustomException('something_wrong'.tr()));
+          }
           Navigator.of(context).pushReplacementNamed(ChatScreen.routeName);
           return result;
         } else if (chatResult is DataFailer) {
@@ -276,6 +285,9 @@ class FeedProvider extends ChangeNotifier {
           result.exception?.message ?? 'something_wrong'.tr(),
           name: 'FeedProvider.createOffer - API failed',
         );
+        if (!context.mounted) {
+          return DataFailer<bool>(CustomException('something_wrong'.tr()));
+        }
         AppSnackBar.showSnackBar(
           context,
           result.exception?.message ?? 'something_wrong'.tr(),
@@ -325,6 +337,9 @@ class FeedProvider extends ChangeNotifier {
 
     try {
       final DataState<bool> result = await _updateOfferUsecase.call(params);
+      if (!context.mounted) {
+        return DataFailer<bool>(CustomException('something_wrong'.tr()));
+      }
       if (result is DataSuccess && result.data != null) {
         AppLog.info(
           'Offer updated successfully',

@@ -141,7 +141,6 @@ class LocalWallet extends LocalHiveBox<WalletEntity> {
     }
   }
 
-  /// Parse dynamic data to Map<String, dynamic>.
   Map<String, dynamic> _parseToMap(dynamic data) {
     if (data is Map) {
       return Map<String, dynamic>.from(data);

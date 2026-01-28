@@ -129,7 +129,7 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
                           vertical: AppSpacing.sm,
                         ),
                         itemCount: entries.length,
-                        separatorBuilder: (_, __) =>
+                        separatorBuilder: (_, _) =>
                             const SizedBox(height: AppSpacing.sm),
                         itemBuilder: (BuildContext context, int index) {
                           final PostageItemDetailEntity detail = entries[index];
@@ -165,11 +165,11 @@ class _OrderPostageBottomSheetState extends State<OrderPostageBottomSheet> {
                                       .then((DataState<bool> result) {
                                         if (result is DataSuccess<bool> &&
                                             result.entity == true) {
-                                          if (mounted) {
+                                          if (context.mounted) {
                                             Navigator.of(context).pop();
                                           }
                                         } else {
-                                          if (mounted) {
+                                          if (context.mounted) {
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
