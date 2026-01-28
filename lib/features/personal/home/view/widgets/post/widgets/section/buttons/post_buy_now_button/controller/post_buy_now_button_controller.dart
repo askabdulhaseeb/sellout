@@ -8,6 +8,7 @@ import '../../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../../core/sources/api_call.dart';
 import '../../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../../../services/get_it.dart';
+import '../../../../../../../../../../postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../../../../../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../../../../../../basket/domain/param/get_postage_detail_params.dart';
@@ -21,7 +22,6 @@ import '../../../../../../../../../post/domain/usecase/add_to_cart_usecase.dart'
 import '../../type/widgets/address_utils.dart';
 import '../widgets/delivery_method/delivery_method_dialog.dart';
 
-/// Controller for PostBuyNowButtonView. Handles business logic and state updates via callbacks.
 class PostBuyNowButtonController {
   PostBuyNowButtonController({
     required this.context,
@@ -56,11 +56,13 @@ class PostBuyNowButtonController {
       final bool? isPickup = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (context) => ChangeNotifierProvider<DeliveryMethodModel>(
-          create: (_) => DeliveryMethodModel(),
-          child: DeliveryMethodDialog(post: post),
-        ),
+        builder: (BuildContext context) =>
+            ChangeNotifierProvider<DeliveryMethodModel>(
+              create: (_) => DeliveryMethodModel(),
+              child: DeliveryMethodDialog(post: post),
+            ),
       );
+      if (!context.mounted) return;
       if (isPickup == null) return;
       if (isPickup) {
         await _handlePickupDelivery();
@@ -74,19 +76,25 @@ class PostBuyNowButtonController {
         error: e,
         stackTrace: stackTrace,
       );
-      AppSnackBar.showSnackBar(context, 'something_wrong'.tr());
+      if (context.mounted) {
+        AppSnackBar.show('something_wrong'.tr());
+      }
     } finally {
-      setLoading(false);
+      if (context.mounted) {
+        setLoading(false);
+      }
     }
   }
 
   Future<void> _handlePickupDelivery() async {
     final AddressEntity? address = AddressUtils.getDefaultAddress();
     if (address == null || address.postalCode.isEmpty) {
-      AppSnackBar.showSnackBar(
-        context,
-        'please_add_delivery_address_before_selecting_pickup'.tr(),
-      );
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(
+          context,
+          'please_add_delivery_address_before_selecting_pickup'.tr(),
+        );
+      }
       return;
     }
     final ServicePointEntity? servicePoint = await ServicePointsDialog.show(
@@ -94,6 +102,7 @@ class PostBuyNowButtonController {
       cartItemIds: <String>[post.postID],
       postalCode: address.postalCode,
     );
+    if (!context.mounted) return;
     if (servicePoint == null) return;
     debugPrint('Selected service point: ${servicePoint.id}');
     onSuccess?.call();
@@ -102,13 +111,16 @@ class PostBuyNowButtonController {
   Future<void> _handleHomeDelivery() async {
     final AddressEntity? address = AddressUtils.getDefaultAddress();
     if (address == null) {
-      AppSnackBar.showSnackBar(
-        context,
-        'please_add_delivery_address_before_selecting_delivery'.tr(),
-      );
+      if (context.mounted) {
+        AppSnackBar.showSnackBar(
+          context,
+          'please_add_delivery_address_before_selecting_delivery'.tr(),
+        );
+      }
       return;
     }
     final bool added = await _addToCart();
+    if (!context.mounted) return;
     if (!added) return;
     final CartProvider cartPro = context.read<CartProvider>();
     cartPro.addOrUpdateDeliveryItem(
@@ -118,7 +130,9 @@ class PostBuyNowButtonController {
         servicePoint: null,
       ),
     );
-    final rates = await cartPro.getRates();
+    final DataState<PostageDetailResponseEntity> rates = await cartPro
+        .getRates();
+    if (!context.mounted) return;
     if (rates is! DataSuccess) {
       AppSnackBar.showSnackBar(
         context,
@@ -135,7 +149,9 @@ class PostBuyNowButtonController {
       ),
       builder: (_) => const PostageBottomSheet(),
     );
-    onSuccess?.call();
+    if (context.mounted) {
+      onSuccess?.call();
+    }
   }
 
   Future<bool> _addToCart() async {
@@ -146,7 +162,8 @@ class PostBuyNowButtonController {
       size: detailWidgetSize,
       quantity: 1,
     );
-    final result = await usecase(param);
+    final DataState<bool> result = await usecase(param);
+    if (!context.mounted) return false;
     if (result is! DataSuccess) {
       AppSnackBar.showSnackBar(
         context,

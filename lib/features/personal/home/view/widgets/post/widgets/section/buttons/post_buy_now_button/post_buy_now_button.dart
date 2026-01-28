@@ -6,7 +6,6 @@ import '../../../../../../../../post/domain/entities/size_color/color_entity.dar
 import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../post/domain/entities/size_color/size_color_entity.dart';
 
-/// View for the PostBuyNowButton. Handles UI and delegates logic to the controller.
 class PostBuyNowButton extends StatefulWidget {
   const PostBuyNowButton({
     required this.post,
