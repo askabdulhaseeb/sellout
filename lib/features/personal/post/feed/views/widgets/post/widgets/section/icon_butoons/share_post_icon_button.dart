@@ -5,7 +5,6 @@ import '../../../../../../../../../../core/utilities/app_string.dart';
 import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../../../core/widgets/custom_svg_icon.dart';
-import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../../../../../core/widgets/utils/app_snackbar.dart';

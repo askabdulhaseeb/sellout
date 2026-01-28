@@ -5,7 +5,6 @@ import '../../../../../../core/enums/message/message_status.dart';
 import '../../../../../../core/enums/message/message_type.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
