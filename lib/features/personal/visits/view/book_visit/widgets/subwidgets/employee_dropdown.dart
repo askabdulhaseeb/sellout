@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../user/profiles/domain/entities/user_entity.dart';
 import '../../provider/booking_provider.dart';
 
@@ -17,8 +17,10 @@ class EmployeeDropdownState extends State<EmployeeDropdown> {
   @override
   void initState() {
     super.initState();
-    final BookingProvider provider =
-        Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider provider = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     provider.fetchEmployees(widget.employeesID);
   }
 
@@ -42,16 +44,21 @@ class EmployeeDropdownState extends State<EmployeeDropdown> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: CustomNetworkImage(
-                          imageURL: user.profilePhotoURL ?? ''),
+                        imageURL: user.profilePhotoURL ?? '',
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(user.displayName,
-                            style: TextTheme.of(context).titleMedium),
-                        Text(user.username,
-                            style: TextTheme.of(context).bodySmall),
+                        Text(
+                          user.displayName,
+                          style: TextTheme.of(context).titleMedium,
+                        ),
+                        Text(
+                          user.username,
+                          style: TextTheme.of(context).bodySmall,
+                        ),
                       ],
                     ),
                   ],

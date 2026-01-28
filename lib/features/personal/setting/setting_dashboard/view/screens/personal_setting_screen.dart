@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../../settings/views/screens/connect_bank_screen.dart';
 import '../../../../address/shipping_address/view/screens/selling_address_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
 import '../../../../../../core/utilities/app_string.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../data/models/user_model.dart';
 import '../enums/profile_page_tab_type.dart';

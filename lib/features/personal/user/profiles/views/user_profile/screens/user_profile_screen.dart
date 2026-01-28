@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../post/feed/views/providers/feed_provider.dart';
 import '../../../data/sources/local/local_blocked_users.dart';
 import '../../../data/sources/local/local_user.dart';

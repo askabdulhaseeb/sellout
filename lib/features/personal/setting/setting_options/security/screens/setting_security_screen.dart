@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../../routes/app_linking.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -35,17 +35,17 @@ class SettingSecurityScreen extends StatelessWidget {
           Text(
             'setting_security_subheader'.tr(),
             style: TextTheme.of(context).bodyMedium?.copyWith(
-                  color:
-                      ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
-                  letterSpacing: 0.25,
-                ),
+              color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
+              letterSpacing: 0.25,
+            ),
           ),
           const SizedBox(height: 20),
           const Divider(),
           _SecurityTile(
-              title: 'email'.tr(),
-              subtitle: 'check_email_is_correct'.tr(),
-              onTap: () => _showEmailBottomSheet(context)),
+            title: 'email'.tr(),
+            subtitle: 'check_email_is_correct'.tr(),
+            onTap: () => _showEmailBottomSheet(context),
+          ),
           const Divider(),
           _SecurityTile(
             title: 'password'.tr(),
@@ -60,17 +60,17 @@ class SettingSecurityScreen extends StatelessWidget {
             subtitle: 'verify_with_4_digit_code'.tr(),
             onTap: () {
               showModalBottomSheet(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  useSafeArea: true,
-                  isDismissible: false,
-                  enableDrag: false,
-                  isScrollControlled: true,
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  builder: (_) => const TwoFactorAuthBottomSheet());
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                useSafeArea: true,
+                isDismissible: false,
+                enableDrag: false,
+                isScrollControlled: true,
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (_) => const TwoFactorAuthBottomSheet(),
+              );
             },
           ),
           const Divider(),
@@ -113,24 +113,20 @@ class _SecurityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 4),
-        title: Text(
-          title,
-          style: TextTheme.of(context).bodyMedium,
+      contentPadding: const EdgeInsets.symmetric(vertical: 4),
+      title: Text(title, style: TextTheme.of(context).bodyMedium),
+      subtitle: Text(
+        subtitle,
+        style: TextTheme.of(context).bodySmall?.copyWith(
+          color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
+          letterSpacing: 0.25,
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextTheme.of(context).bodySmall?.copyWith(
-                color: ColorScheme.of(context).onSurface.withValues(alpha: 0.5),
-                letterSpacing: 0.25,
-              ),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        tileColor: Theme.of(context).scaffoldBackgroundColor);
+      ),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      tileColor: Theme.of(context).scaffoldBackgroundColor,
+    );
   }
 }
 
@@ -162,9 +158,10 @@ void _showEmailBottomSheet(BuildContext context) {
             SizedBox(
               width: double.infinity,
               child: CustomElevatedButton(
-                  onTap: () => Navigator.pop(context),
-                  isLoading: false,
-                  title: 'close'.tr()),
+                onTap: () => Navigator.pop(context),
+                isLoading: false,
+                title: 'close'.tr(),
+              ),
             ),
           ],
         ),

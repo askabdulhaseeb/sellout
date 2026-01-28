@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../payment/domain/entities/wallet_transaction_entity.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../transaction_history_screen.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../core/widgets/text_display/shadow_container.dart';
 
 class TransactionHistorySection extends StatelessWidget {
   const TransactionHistorySection({

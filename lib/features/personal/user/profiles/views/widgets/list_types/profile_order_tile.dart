@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../order/view/screens/order_seller_screen.dart';
 import '../../../../../post/data/sources/local/local_post.dart';

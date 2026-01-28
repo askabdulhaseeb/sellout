@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../core/widgets/toggles/custom_switch_list_tile.dart';
+import '../../../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../../setting_dashboard/view/providers/personal_setting_provider.dart';
 
 class PersonalSettingEmailNotificationScreen extends StatelessWidget {
@@ -16,10 +16,7 @@ class PersonalSettingEmailNotificationScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('email_notification'.tr()),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('email_notification'.tr()), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: <Widget>[
@@ -100,10 +97,7 @@ class PersonalSettingEmailNotificationScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ListTile(
-            title: Text(
-              'daily_limit_hint'.tr(),
-              style: textTheme.bodySmall,
-            ),
+            title: Text('daily_limit_hint'.tr(), style: textTheme.bodySmall),
             subtitle: Text(
               'daily_limit_value'.tr(),
               maxLines: 3,

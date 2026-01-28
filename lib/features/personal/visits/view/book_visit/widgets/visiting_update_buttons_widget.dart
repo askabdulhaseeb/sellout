@@ -8,7 +8,7 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../provider/booking_provider.dart';
 import '../screens/booking_screen.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import 'cancel_visiting_dialog.dart';
 
 class VisitingMessageTileUpdateButtonsWidget extends StatefulWidget {
@@ -40,8 +40,10 @@ class _VisitingMessageTileUpdateButtonsWidgetState
   }
 
   void _checkAndUpdateVisit() {
-    final BookingProvider pro =
-        Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider pro = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     final DateTime? visitTime = widget.message.visitingDetail?.dateTime;
     if (visitTime == null) return;
     final DateTime now = DateTime.now();
@@ -87,19 +89,17 @@ class _VisitingMessageTileUpdateButtonsWidgetState
 }
 
 class CancelAndChangeButtons extends StatelessWidget {
-  const CancelAndChangeButtons({
-    required this.message,
-    this.post,
-    super.key,
-  });
+  const CancelAndChangeButtons({required this.message, this.post, super.key});
 
   final MessageEntity message;
   final PostEntity? post;
 
   @override
   Widget build(BuildContext context) {
-    final BookingProvider pro =
-        Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider pro = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
     final DateTime? createdAt = message.visitingDetail!.createdAt;
     final bool cancellationTimeOver =
         createdAt != null && DateTime.now().difference(createdAt).inHours >= 24;
@@ -140,16 +140,19 @@ class CancelAndChangeButtons extends StatelessWidget {
                 title: 'change_date'.tr(),
                 isLoading: false,
                 textStyle: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).canvasColor),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).canvasColor,
+                ),
                 onTap: () {
                   pro.setMessageEntity(message);
-                  AppNavigator.pushNamed(BookingScreen.routeName,
-                      arguments: <String, dynamic>{
-                        'post': post,
-                        'visit': message.visitingDetail
-                      });
+                  AppNavigator.pushNamed(
+                    BookingScreen.routeName,
+                    arguments: <String, dynamic>{
+                      'post': post,
+                      'visit': message.visitingDetail,
+                    },
+                  );
                 },
               ),
             ),
@@ -168,8 +171,10 @@ class HostPendingButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BookingProvider pro =
-        Provider.of<BookingProvider>(context, listen: false);
+    final BookingProvider pro = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
 
     return Column(
       children: <Widget>[

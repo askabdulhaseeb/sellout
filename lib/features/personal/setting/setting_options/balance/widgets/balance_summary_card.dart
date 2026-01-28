@@ -6,8 +6,8 @@ import '../provider/wallet_provider.dart';
 import 'transfer_dialog/transfer_dialog.dart';
 import 'withdraw_funds_dialog/withdraw_funds_dialog.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/theme/app_colors.dart';
 

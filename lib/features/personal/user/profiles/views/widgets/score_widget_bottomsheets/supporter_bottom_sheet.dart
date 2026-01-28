@@ -1,23 +1,20 @@
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../data/models/user_model.dart';
 import '../../../domain/entities/supporter_detail_entity.dart';
 import '../../../domain/usecase/get_user_by_uid.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../../../business/core/domain/usecase/get_business_by_id_usecase.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../subwidgets/support_button.dart';
 
 class SupporterBottomsheet extends StatefulWidget {
-  const SupporterBottomsheet({
-    required this.supporters,
-    super.key,
-  });
+  const SupporterBottomsheet({required this.supporters, super.key});
 
   final List<SupporterDetailEntity>? supporters;
 
@@ -53,8 +50,11 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
             alignment: Alignment.topLeft,
             child: TextButton.icon(
               label: Text('close'.tr(), style: textTheme.labelSmall),
-              icon: Icon(Icons.close,
-                  size: 16, color: ColorScheme.of(context).onSurface),
+              icon: Icon(
+                Icons.close,
+                size: 16,
+                color: ColorScheme.of(context).onSurface,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -89,7 +89,7 @@ class _SupporterBottomsheetState extends State<SupporterBottomsheet> {
                       }
                     },
                   ),
-          )
+          ),
         ],
       ),
     );
@@ -124,8 +124,9 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
   }
 
   void _fetchBusiness() async {
-    final DataState<BusinessEntity?> result =
-        await getBusiness(widget.businessId);
+    final DataState<BusinessEntity?> result = await getBusiness(
+      widget.businessId,
+    );
     if (mounted) {
       setState(() {
         business = result.entity;
@@ -145,9 +146,9 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
       return _buildPlaceholderTile(context, 'Business not found');
     }
     // Filter by search query
-    if (!business!.displayName!
-        .toLowerCase()
-        .contains(widget.searchQuery.toLowerCase())) {
+    if (!business!.displayName!.toLowerCase().contains(
+      widget.searchQuery.toLowerCase(),
+    )) {
       return widget.alwaysShow
           ? _buildPlaceholderTile(context, 'No match')
           : const SizedBox();
@@ -162,7 +163,8 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         border: Border.all(
-            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -189,7 +191,8 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         border: Border.all(
-            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -216,10 +219,7 @@ class _BusinessSupporterTileState extends State<BusinessSupporterTile> {
               radius: 8,
               backgroundColor: Theme.of(context).primaryColor,
               child: const FittedBox(
-                child: Text(
-                  'B',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: Text('B', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
@@ -283,9 +283,9 @@ class _UserSupporterTileState extends State<UserSupporterTile> {
       return _buildPlaceholderTile(context, 'User not found');
     }
     // Filter by search query
-    if (!user!.username
-        .toLowerCase()
-        .contains(widget.searchQuery.toLowerCase())) {
+    if (!user!.username.toLowerCase().contains(
+      widget.searchQuery.toLowerCase(),
+    )) {
       return widget.alwaysShow
           ? _buildPlaceholderTile(context, 'No match')
           : const SizedBox();
@@ -300,7 +300,8 @@ class _UserSupporterTileState extends State<UserSupporterTile> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         border: Border.all(
-            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -327,7 +328,8 @@ class _UserSupporterTileState extends State<UserSupporterTile> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         border: Border.all(
-            color: ColorScheme.of(context).outline.withValues(alpha: 0.1)),
+          color: ColorScheme.of(context).outline.withValues(alpha: 0.1),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -348,10 +350,7 @@ class _UserSupporterTileState extends State<UserSupporterTile> {
           style: TextTheme.of(context).bodySmall,
         ),
         trailing: LocalAuth.uid != user!.uid
-            ? SizedBox(
-                width: 100,
-                child: SupportButton(supporterId: user!.uid),
-              )
+            ? SizedBox(width: 100, child: SupportButton(supporterId: user!.uid))
             : null,
       ),
     );

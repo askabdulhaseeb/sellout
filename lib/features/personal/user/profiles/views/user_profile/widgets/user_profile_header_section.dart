@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/profile_photo.dart';
-import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../../core/widgets/media/profile_photo.dart';
+import '../../../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../../../review/domain/entities/review_entity.dart';
 import '../../../../../review/views/params/review_list_param.dart';
 import '../../../../../review/views/screens/review_list_screen.dart';

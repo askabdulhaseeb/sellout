@@ -3,13 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../core/widgets/loaders/seller_order_tile_loader.dart';
+import '../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../../order/domain/entities/order_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../providers/profile_provider.dart';
 import 'list_types/profile_order_tile.dart';
-import '../../../../../../../core/widgets/custom_toggle_switch.dart';
 
 class ProfileOrdersSection extends StatefulWidget {
   const ProfileOrdersSection({required this.user, super.key});

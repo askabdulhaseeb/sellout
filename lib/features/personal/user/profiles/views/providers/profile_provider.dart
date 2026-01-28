@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/enums/core/status_type.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sources/data_state.dart';
 import '../../../../../attachment/domain/entities/attachment_entity.dart';

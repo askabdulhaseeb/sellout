@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -42,8 +42,10 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
     final String lowerQuery = query.toLowerCase();
     setState(() {
       _filteredPromos = _allPromos
-          .where((PromoEntity promo) =>
-              promo.title.toLowerCase().contains(lowerQuery))
+          .where(
+            (PromoEntity promo) =>
+                promo.title.toLowerCase().contains(lowerQuery),
+          )
           .toList();
     });
   }
@@ -56,82 +58,94 @@ class _ProfilePromoGridviewState extends State<ProfilePromoGridview> {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileProvider pro =
-        Provider.of<ProfileProvider>(context, listen: false);
+    final ProfileProvider pro = Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    );
 
     if (widget.user?.uid == null) {
       return const SizedBox.shrink();
     }
 
-    final GetPromoByIdUsecase getPromoByIdUsecase =
-        GetPromoByIdUsecase(locator());
+    final GetPromoByIdUsecase getPromoByIdUsecase = GetPromoByIdUsecase(
+      locator(),
+    );
 
     return FutureBuilder<DataState<List<PromoEntity>>>(
       future: getPromoByIdUsecase(widget.user!.uid),
       initialData: LocalPromo().getByUserId(widget.user!.uid),
-      builder: (BuildContext context,
-          AsyncSnapshot<DataState<List<PromoEntity>>> snapshot) {
-        if (!snapshot.hasData || snapshot.data?.entity == null) {
-          return Column(
-            children: <Widget>[
-              if (pro.user?.uid == LocalAuth.uid)
-                _SearchBar(controller: _searchController),
-              Center(
-                  child: EmptyPageWidget(
-                icon: CupertinoIcons.film,
-                childBelow: Text('no_promo_found'.tr()),
-              )),
-            ],
-          );
-        }
+      builder:
+          (
+            BuildContext context,
+            AsyncSnapshot<DataState<List<PromoEntity>>> snapshot,
+          ) {
+            if (!snapshot.hasData || snapshot.data?.entity == null) {
+              return Column(
+                children: <Widget>[
+                  if (pro.user?.uid == LocalAuth.uid)
+                    _SearchBar(controller: _searchController),
+                  Center(
+                    child: EmptyPageWidget(
+                      icon: CupertinoIcons.film,
+                      childBelow: Text('no_promo_found'.tr()),
+                    ),
+                  ),
+                ],
+              );
+            }
 
-        // 🔹 Sort by newest first
-        _allPromos = snapshot.data!.entity ?? <PromoEntity>[];
-        _allPromos.sort((PromoEntity a, PromoEntity b) =>
-            b.createdAt.compareTo(a.createdAt));
+            // 🔹 Sort by newest first
+            _allPromos = snapshot.data!.entity ?? <PromoEntity>[];
+            _allPromos.sort(
+              (PromoEntity a, PromoEntity b) =>
+                  b.createdAt.compareTo(a.createdAt),
+            );
 
-        // 🔹 Apply search filter on sorted list
-        _filteredPromos = _searchController.text.isEmpty
-            ? _allPromos
-            : _allPromos
-                .where((PromoEntity promo) => promo.title
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()))
-                .toList();
+            // 🔹 Apply search filter on sorted list
+            _filteredPromos = _searchController.text.isEmpty
+                ? _allPromos
+                : _allPromos
+                      .where(
+                        (PromoEntity promo) => promo.title
+                            .toLowerCase()
+                            .contains(_searchController.text.toLowerCase()),
+                      )
+                      .toList();
 
-        return Column(
-          children: <Widget>[
-            if (pro.user?.uid == LocalAuth.uid)
-              _SearchBar(controller: _searchController),
-            const SizedBox(height: 10),
-            if (_filteredPromos.isEmpty)
-              Center(
-                child: EmptyPageWidget(
-                  icon: CupertinoIcons.film,
-                  childBelow: Text('no_promo_found'.tr()),
-                ),
-              )
-            else
-              GridView.builder(
-                reverse: true,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _filteredPromos.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6,
-                  childAspectRatio: 1,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  final PromoEntity promo = _filteredPromos[index];
-                  return PromoHomeGridViewTile(promo: promo);
-                },
-              ),
-          ],
-        );
-      },
+            return Column(
+              children: <Widget>[
+                if (pro.user?.uid == LocalAuth.uid)
+                  _SearchBar(controller: _searchController),
+                const SizedBox(height: 10),
+                if (_filteredPromos.isEmpty)
+                  Center(
+                    child: EmptyPageWidget(
+                      icon: CupertinoIcons.film,
+                      childBelow: Text('no_promo_found'.tr()),
+                    ),
+                  )
+                else
+                  GridView.builder(
+                    reverse: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _filteredPromos.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 6,
+                          mainAxisSpacing: 6,
+                          childAspectRatio: 1,
+                        ),
+                    itemBuilder: (BuildContext context, int index) {
+                      final PromoEntity promo = _filteredPromos[index];
+                      return PromoHomeGridViewTile(promo: promo);
+                    },
+                  ),
+              ],
+            );
+          },
     );
   }
 }
@@ -170,10 +184,7 @@ class _SearchBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
               isLoading: false,
               title: 'promo'.tr(),
-              textStyle: TextStyle(
-                fontSize: 12,
-                color: colorScheme.onPrimary,
-              ),
+              textStyle: TextStyle(fontSize: 12, color: colorScheme.onPrimary),
               prefix: Icon(
                 CupertinoIcons.add_circled,
                 size: 12,

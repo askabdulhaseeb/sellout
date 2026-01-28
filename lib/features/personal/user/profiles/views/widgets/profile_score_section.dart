@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import 'score_widget_bottomsheets/employment_details_bottomsheet.dart';
 import 'score_widget_bottomsheets/supporter_bottom_sheet.dart';
@@ -14,63 +14,62 @@ class ProfileScoreSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: SizedBox(
-          height: 35,
-          child: Row(
-            spacing: 4,
-            children: <Widget>[
-              Expanded(
-                child: _ScoreButton(
-                  title: 'details'.tr(),
-                  count: '',
-                  onPressed: () {
-                    showBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const EmploymentDetailsBottomSheet(),
-                    );
+        height: 35,
+        child: Row(
+          spacing: 4,
+          children: <Widget>[
+            Expanded(
+              child: _ScoreButton(
+                title: 'details'.tr(),
+                count: '',
+                onPressed: () {
+                  showBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        const EmploymentDetailsBottomSheet(),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: _ScoreButton(
+                title: 'supporting'.tr(),
+                count: (user?.supporting.length ?? 0).toString(),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return SupporterBottomsheet(supporters: user?.supporting);
                   },
                 ),
               ),
-              Expanded(
-                child: _ScoreButton(
-                  title: 'supporting'.tr(),
-                  count: (user?.supporting.length ?? 0).toString(),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            Expanded(
+              child: _ScoreButton(
+                title: 'supporters'.tr(),
+                count: (user?.supporters.length ?? 0).toString(),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return SupporterBottomsheet(
-                        supporters: user?.supporting,
-                      );
-                    },
                   ),
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return SupporterBottomsheet(supporters: user?.supporters);
+                  },
                 ),
               ),
-              Expanded(
-                child: _ScoreButton(
-                  title: 'supporters'.tr(),
-                  count: (user?.supporters.length ?? 0).toString(),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return SupporterBottomsheet(
-                        supporters: user?.supporters,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

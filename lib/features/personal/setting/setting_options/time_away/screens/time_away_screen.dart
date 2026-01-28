@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../core/widgets/utils/in_dev_mode.dart';
 import 'automatic_response_screen.dart';
 
 class TimeAwayScreen extends StatelessWidget {
@@ -12,10 +12,7 @@ class TimeAwayScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('time_away_title'.tr()),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('time_away_title'.tr()), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: <Widget>[
@@ -26,10 +23,14 @@ class TimeAwayScreen extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text('schedule_time_away'.tr(),
-                      style: textTheme.bodyLarge),
-                  subtitle: Text('schedule_time_away_subtitle'.tr(),
-                      style: textTheme.bodySmall),
+                  title: Text(
+                    'schedule_time_away'.tr(),
+                    style: textTheme.bodyLarge,
+                  ),
+                  subtitle: Text(
+                    'schedule_time_away_subtitle'.tr(),
+                    style: textTheme.bodySmall,
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     //TODO:
@@ -37,9 +38,12 @@ class TimeAwayScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4, bottom: 16),
-                  child: Text('none_scheduled'.tr(),
-                      style: textTheme.bodySmall
-                          ?.copyWith(color: Theme.of(context).primaryColor)),
+                  child: Text(
+                    'none_scheduled'.tr(),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -51,21 +55,30 @@ class TimeAwayScreen extends StatelessWidget {
             children: <Widget>[
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title:
-                    Text('automatic_response'.tr(), style: textTheme.bodyLarge),
-                subtitle: Text('automatic_response_subtitle'.tr(),
-                    style: textTheme.bodySmall),
+                title: Text(
+                  'automatic_response'.tr(),
+                  style: textTheme.bodyLarge,
+                ),
+                subtitle: Text(
+                  'automatic_response_subtitle'.tr(),
+                  style: textTheme.bodySmall,
+                ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   Navigator.pushNamed(
-                      context, AutomaticResponseScreen.routeName);
+                    context,
+                    AutomaticResponseScreen.routeName,
+                  );
                 },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 4, bottom: 16),
-                child: Text('no_message'.tr(),
-                    style: textTheme.bodySmall
-                        ?.copyWith(color: Theme.of(context).primaryColor)),
+                child: Text(
+                  'no_message'.tr(),
+                  style: textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
               ),
             ],
           ),

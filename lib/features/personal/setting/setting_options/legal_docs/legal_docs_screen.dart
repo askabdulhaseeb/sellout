@@ -1,9 +1,9 @@
+import '../../../../../core/widgets/inputs/custom_textformfield.dart';
 import 'pdf_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/utilities/app_string.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 
 class LegalDocumentsScreen extends StatefulWidget {

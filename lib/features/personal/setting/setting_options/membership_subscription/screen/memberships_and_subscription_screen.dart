@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/widgets/coming_soon_overlay.dart';
+import '../../../../../../core/widgets/text_display/coming_soon_overlay.dart';
 
 class MembershipsAndSubscriptionScreen extends StatelessWidget {
   const MembershipsAndSubscriptionScreen({super.key});

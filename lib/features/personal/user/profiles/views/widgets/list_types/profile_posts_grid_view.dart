@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../../core/widgets/loaders/post_grid_loader.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../enums/profile_grid_state.dart';

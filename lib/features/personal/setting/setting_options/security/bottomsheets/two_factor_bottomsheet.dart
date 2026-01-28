@@ -5,7 +5,7 @@ import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/usecase/edit_profile_detail_usecase.dart';
 import '../../../../user/profiles/views/params/update_user_params.dart';
-import '../../../../../../core/widgets/custom_switch_list_tile.dart'; // Adjust path as needed
+import '../../../../../../core/widgets/toggles/custom_switch_list_tile.dart';
 
 class TwoFactorAuthBottomSheet extends StatefulWidget {
   const TwoFactorAuthBottomSheet({super.key});
@@ -16,8 +16,9 @@ class TwoFactorAuthBottomSheet extends StatefulWidget {
 }
 
 class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
-  final UpdateProfileDetailUsecase usecase =
-      UpdateProfileDetailUsecase(locator());
+  final UpdateProfileDetailUsecase usecase = UpdateProfileDetailUsecase(
+    locator(),
+  );
   late bool isTwoFactorEnabled;
   late String uid;
   bool loading = false;
@@ -33,8 +34,9 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
     final CurrentUserEntity? currentUser = LocalAuth.currentUser;
     if (currentUser == null) return;
 
-    final CurrentUserEntity updatedUser =
-        currentUser.copyWith(twoStepAuthEnabled: newValue);
+    final CurrentUserEntity updatedUser = currentUser.copyWith(
+      twoStepAuthEnabled: newValue,
+    );
     await LocalAuth().signin(updatedUser);
   }
 
@@ -58,10 +60,7 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
               ),
             ],
           ),
-          Text(
-            'two_step_verification'.tr(),
-            style: textTheme.bodyMedium,
-          ),
+          Text('two_step_verification'.tr(), style: textTheme.bodyMedium),
           const SizedBox(height: 4),
           Text(
             'verify_with_4_digit_code'.tr(),
@@ -86,9 +85,7 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
                 loading = true;
               });
               final DataState<String> result = await usecase.call(
-                UpdateUserParams(
-                  twoFactorAuth: value,
-                ),
+                UpdateUserParams(twoFactorAuth: value),
               );
               debugPrint('2FA update result: $result');
               if (result is DataSuccess) {
@@ -102,11 +99,9 @@ class _TwoFactorAuthBottomSheetState extends State<TwoFactorAuthBottomSheet> {
                   loading = false;
                 });
                 // ignore: use_build_context_synchronously
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('something_wrong'.tr()),
-                  ),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('something_wrong'.tr())));
               }
             },
           ),

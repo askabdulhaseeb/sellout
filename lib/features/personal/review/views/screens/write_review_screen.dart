@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../post/domain/entities/post/post_entity.dart';
 import '../providers/review_provider.dart';
@@ -16,8 +16,10 @@ class WriteReviewScreen extends StatelessWidget {
   static const String routeName = '/write-review';
   @override
   Widget build(BuildContext context) {
-    final ReviewProvider provider =
-        Provider.of<ReviewProvider>(context, listen: false);
+    final ReviewProvider provider = Provider.of<ReviewProvider>(
+      context,
+      listen: false,
+    );
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final PostEntity? post = args['post'];
@@ -26,22 +28,15 @@ class WriteReviewScreen extends StatelessWidget {
       onPopInvokedWithResult: (bool didPop, dynamic result) =>
           provider.disposed(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('leave_review'.tr()),
-        ),
+        appBar: AppBar(title: Text('leave_review'.tr())),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              WriteReviewHeaderSection(
-                post: post,
-                service: service,
-              ),
+              WriteReviewHeaderSection(post: post, service: service),
               Text('rate_product'.tr()),
-              const RatingSelectWidget(
-                size: 40,
-              ),
+              const RatingSelectWidget(size: 40),
               CustomTextFormField(
                 controller: provider.reviewTitle,
                 labelText: 'headline'.tr(),

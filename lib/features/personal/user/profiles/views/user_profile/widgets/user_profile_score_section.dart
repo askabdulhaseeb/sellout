@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/shadow_container.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../widgets/score_widget_bottomsheets/supporter_bottom_sheet.dart';
 import '../../widgets/subwidgets/support_button.dart';

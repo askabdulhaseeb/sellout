@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../core/widgets/text_display/shadow_container.dart';
 
 class AmountInputSection extends StatelessWidget {
   const AmountInputSection({
@@ -82,7 +82,9 @@ class AmountInputSection extends StatelessWidget {
 
   Widget _buildPercentageButton(String label, double percentage) {
     return GestureDetector(
-      onTap: onPercentageTap != null ? () => onPercentageTap!(percentage) : null,
+      onTap: onPercentageTap != null
+          ? () => onPercentageTap!(percentage)
+          : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(

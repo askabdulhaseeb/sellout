@@ -6,7 +6,7 @@ import '../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../core/extension/datetime_ext.dart';
 import '../../../../../../core/extension/string_ext.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../core/widgets/text_display/shadow_container.dart';
 
 class FundsInHoldItemCard extends StatelessWidget {
   const FundsInHoldItemCard({
@@ -19,7 +19,6 @@ class FundsInHoldItemCard extends StatelessWidget {
   final WalletFundsInHoldEntity hold;
   final OrderEntity? order;
   final PostEntity? post;
-
 
   @override
   Widget build(BuildContext context) {

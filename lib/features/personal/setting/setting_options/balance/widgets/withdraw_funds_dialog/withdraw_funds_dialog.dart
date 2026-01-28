@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../../core/theme/app_colors.dart';
-import '../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../core/widgets/text_display/shadow_container.dart';
 
 class WithdrawFundsDialog extends StatelessWidget {
   const WithdrawFundsDialog._({

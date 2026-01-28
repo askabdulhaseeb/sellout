@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/extension/datetime_ext.dart';
-import '../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../core/widgets/profile_photo.dart';
-import '../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../core/widgets/media/profile_photo.dart';
+import '../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../user/profiles/data/sources/local/local_user.dart';
 import '../../domain/entities/review_entity.dart';
 
@@ -38,7 +38,7 @@ class ReviewTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  )
+                  ),
                 ],
               ),
               //

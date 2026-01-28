@@ -1,7 +1,7 @@
 // import 'package:easy_localization/easy_localization.dart';
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
-// import '../../../../../core/widgets/video_widget.dart';
+// import '../../../../../core/widgets/media/video_widget.dart';
 // import '../../../../attachment/domain/entities/picked_attachment.dart';
 // import '../providers/review_provider.dart';
 

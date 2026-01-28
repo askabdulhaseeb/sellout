@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../core/widgets/inputs/custom_dropdown.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../domain/entities/review_entity.dart';
 import '../../domain/enums/review_sort_type.dart';
 import '../params/review_list_param.dart';
@@ -51,8 +51,12 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                       child: CustomDropdown<int>(
                         title: '',
                         items: <int>[1, 2, 3, 4, 5]
-                            .map((int e) => DropdownMenuItem<int>(
-                                value: e, child: Text('$e ${'star'.tr()}')))
+                            .map(
+                              (int e) => DropdownMenuItem<int>(
+                                value: e,
+                                child: Text('$e ${'star'.tr()}'),
+                              ),
+                            )
                             .toList(),
                         selectedItem: pro.star,
                         onChanged: pro.setStar,
@@ -65,11 +69,13 @@ class _ReviewListScreenState extends State<ReviewListScreen> {
                       child: CustomDropdown<ReviewSortType>(
                         title: '',
                         items: ReviewSortType.values
-                            .map((ReviewSortType e) =>
-                                DropdownMenuItem<ReviewSortType>(
-                                  value: e,
-                                  child: Text(e.code).tr(),
-                                ))
+                            .map(
+                              (ReviewSortType e) =>
+                                  DropdownMenuItem<ReviewSortType>(
+                                    value: e,
+                                    child: Text(e.code).tr(),
+                                  ),
+                            )
                             .toList(),
                         selectedItem: pro.sortReview,
                         onChanged: pro.setSortReview,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utilities/app_string.dart';
-import '../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../core/constants/app_spacings.dart';
 import '../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
@@ -43,8 +43,10 @@ class ConnectBankScreen extends StatelessWidget {
                 children: <Widget>[
                   CustomPaint(
                     size: const Size(double.infinity, 220),
-                    painter:
-                        _BubblePainter(primary: primary, onPrimary: onPrimary),
+                    painter: _BubblePainter(
+                      primary: primary,
+                      onPrimary: onPrimary,
+                    ),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
@@ -142,8 +144,9 @@ class ConnectBankScreen extends StatelessWidget {
                                 'bank_details_encrypted'.tr(),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 12,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

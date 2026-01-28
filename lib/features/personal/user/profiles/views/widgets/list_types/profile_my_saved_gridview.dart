@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
@@ -22,16 +22,20 @@ class ProfileMySavedGridview extends StatelessWidget {
 
         if (!snapshot.hasData || snapshot.data == null) {
           return Center(
-              child: EmptyPageWidget(
-                  icon: CupertinoIcons.photo,
-                  childBelow: Text('no_posts_found'.tr())));
+            child: EmptyPageWidget(
+              icon: CupertinoIcons.photo,
+              childBelow: Text('no_posts_found'.tr()),
+            ),
+          );
         }
-        final List<dynamic> saved = snapshot.data?.saved ??[];
+        final List<dynamic> saved = snapshot.data?.saved ?? [];
         if (saved.isEmpty) {
           return Center(
-              child: EmptyPageWidget(
-                  icon: CupertinoIcons.photo,
-                  childBelow: Text('no_posts_found'.tr())));
+            child: EmptyPageWidget(
+              icon: CupertinoIcons.photo,
+              childBelow: Text('no_posts_found'.tr()),
+            ),
+          );
         }
         return GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -49,11 +53,11 @@ class ProfileMySavedGridview extends StatelessWidget {
               future: LocalPost().getPost(saved[index]),
               builder:
                   (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
-                final PostEntity? post = snapshot.data;
-                return post == null
-                    ? const SizedBox.expand()
-                    : PostGridViewTile(post: post);
-              },
+                    final PostEntity? post = snapshot.data;
+                    return post == null
+                        ? const SizedBox.expand()
+                        : PostGridViewTile(post: post);
+                  },
             );
           },
         );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../../core/widgets/custom_Switch_list_tile.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../core/widgets/toggles/custom_switch_list_tile.dart';
+import '../../../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../setting_dashboard/view/providers/personal_setting_provider.dart';
 

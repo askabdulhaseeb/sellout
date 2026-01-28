@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
 import '../../../../../core/utilities/app_validators.dart';
-import '../../../../../core/widgets/password_textformfield.dart';
+import '../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../core/widgets/inputs/password_textformfield.dart';
 import '../security/provider/setting_security_provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -26,10 +26,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         Provider.of<SettingSecurityProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('change_password'.tr()),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('change_password'.tr()), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Form(
@@ -43,15 +40,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 16),
               PasswordTextFormField(
-                  controller: _newPassword,
-                  labelText: 'new_password'.tr(),
-                  validator: (String? value) => AppValidator.password(value)),
+                controller: _newPassword,
+                labelText: 'new_password'.tr(),
+                validator: (String? value) => AppValidator.password(value),
+              ),
               const SizedBox(height: 16),
               PasswordTextFormField(
-                  controller: _confirmPassword,
-                  labelText: 'confirm_password'.tr(),
-                  validator: (String? value) => AppValidator.confirmPassword(
-                      _newPassword.text, _confirmPassword.text)),
+                controller: _confirmPassword,
+                labelText: 'confirm_password'.tr(),
+                validator: (String? value) => AppValidator.confirmPassword(
+                  _newPassword.text,
+                  _confirmPassword.text,
+                ),
+              ),
               const SizedBox(height: 24),
               CustomElevatedButton(
                 title: 'save_password'.tr(),
