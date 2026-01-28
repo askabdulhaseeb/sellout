@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../../../core/widgets/media/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import 'attachment_detail_screen.dart';
 
@@ -72,7 +72,8 @@ class AttachmentMessageWidget extends StatelessWidget {
                     child: Text(
                       '+$remaining',
                       style: TextTheme.of(context).titleLarge?.copyWith(
-                        color: ColorScheme.of(context).onPrimary),
+                        color: ColorScheme.of(context).onPrimary,
+                      ),
                     ),
                   ),
                 ),

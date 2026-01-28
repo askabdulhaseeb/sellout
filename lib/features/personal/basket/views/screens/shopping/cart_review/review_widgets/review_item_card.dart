@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../../../core/helper_functions/country_helper.dart';
-import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../domain/entities/checkout/payment_item_entity.dart';
 import '../../../../../domain/entities/checkout/payment_item_shipping_details_entity.dart';
 import 'package:flutter/material.dart';

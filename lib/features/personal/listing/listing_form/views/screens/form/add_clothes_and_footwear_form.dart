@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/in_dev_mode.dart';
+import '../../../../../../../core/widgets/utils/in_dev_mode.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/category/subcateogry_selectable_widget.dart';
 import '../../widgets/cloth/add_listing_brand_field.dart';
@@ -28,7 +28,6 @@ class _AddClothsAndFootwearFormState extends State<AddClothsAndFootwearForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-
         return Form(
           key: formPro.clothesAndFootKey,
           child: SingleChildScrollView(

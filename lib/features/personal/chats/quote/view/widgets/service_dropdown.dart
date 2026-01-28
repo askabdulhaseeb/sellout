@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../core/sources/api_call.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../core/widgets/searchable_textfield.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../core/widgets//inputs/searchable_textfield.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../marketplace/domain/params/filter_params.dart';
@@ -27,8 +27,9 @@ class ServiceDropdown extends StatefulWidget {
 
 class _ServiceDropdownState extends State<ServiceDropdown>
     with SingleTickerProviderStateMixin {
-  final GetServicesByQueryUsecase _servicesUsecase =
-      GetServicesByQueryUsecase(locator());
+  final GetServicesByQueryUsecase _servicesUsecase = GetServicesByQueryUsecase(
+    locator(),
+  );
 
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -91,16 +92,16 @@ class _ServiceDropdownState extends State<ServiceDropdown>
   }
 
   ServiceByFiltersParams get _servicesParam => ServiceByFiltersParams(
-        lastKey: _lastKey,
-        query: _searchController.text,
-        filters: <FilterParam>[
-          FilterParam(
-            attribute: 'business_id',
-            operator: 'eq',
-            value: widget.businessId,
-          ),
-        ],
-      );
+    lastKey: _lastKey,
+    query: _searchController.text,
+    filters: <FilterParam>[
+      FilterParam(
+        attribute: 'business_id',
+        operator: 'eq',
+        value: widget.businessId,
+      ),
+    ],
+  );
 
   Future<void> _fetchServices({bool reset = false}) async {
     if (widget.businessId.isEmpty) return; // do nothing if no businessId yet
@@ -115,8 +116,9 @@ class _ServiceDropdownState extends State<ServiceDropdown>
     setState(() => _isLoading = true);
 
     try {
-      final DataState<List<ServiceEntity>> result =
-          await _servicesUsecase.call(_servicesParam);
+      final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(
+        _servicesParam,
+      );
 
       if (result is DataSuccess) {
         final List<ServiceEntity> fetched = result.entity ?? <ServiceEntity>[];
@@ -164,8 +166,8 @@ class _ServiceDropdownState extends State<ServiceDropdown>
     const double maxHeight = 250;
     final int count =
         (_services.isEmpty && !_isLoading && _errorMessage == null)
-            ? 1
-            : _services.length + (_isLoading ? 1 : 0);
+        ? 1
+        : _services.length + (_isLoading ? 1 : 0);
     return (count * itemHeight).clamp(56, maxHeight);
   }
 
@@ -202,17 +204,13 @@ class _ServiceDropdownState extends State<ServiceDropdown>
     return ListTile(
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(6),
-        child: CustomNetworkImage(
-          imageURL: service.thumbnailURL,
-          size: 40,
-        ),
+        child: CustomNetworkImage(imageURL: service.thumbnailURL, size: 40),
       ),
       title: Text(
         service.name,
-        style: Theme.of(context)
-            .textTheme
-            .bodySmall
-            ?.copyWith(fontWeight: FontWeight.w500),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
       ),
       onTap: () {
         widget.onSelected(service);

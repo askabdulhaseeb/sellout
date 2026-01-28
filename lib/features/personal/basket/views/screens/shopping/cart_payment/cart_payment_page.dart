@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../../domain/enums/cart_type.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../domain/entities/checkout/payment_intent_entity.dart';
 import '../../../widgets/checkout/tile/payment_success_bottomsheet.dart';
 
@@ -58,15 +58,12 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
 
     final CartProvider cartPro = context.read<CartProvider>();
     try {
-      final DataState<PaymentIntentEntity> billingState =
-          await cartPro.getBillingDetails();
+      final DataState<PaymentIntentEntity> billingState = await cartPro
+          .getBillingDetails();
       final String? clientSecret = billingState.entity?.clientSecret;
 
       if (clientSecret == null || clientSecret.isEmpty) {
-        _returnToReview(
-          message: 'payment_failed'.tr(),
-          isError: true,
-        );
+        _returnToReview(message: 'payment_failed'.tr(), isError: true);
         return;
       }
 
@@ -80,8 +77,9 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
       await Stripe.instance.presentPaymentSheet();
 
       // Check payment status
-      final PaymentIntent intent =
-          await Stripe.instance.retrievePaymentIntent(clientSecret);
+      final PaymentIntent intent = await Stripe.instance.retrievePaymentIntent(
+        clientSecret,
+      );
 
       if (intent.status == PaymentIntentsStatus.Succeeded) {
         await showModalBottomSheet(
@@ -96,18 +94,12 @@ class _CartPaymentPageState extends State<CartPaymentPage> {
         );
         Navigator.pop(context);
       } else {
-        _returnToReview(
-          message: 'payment_not_completed'.tr(),
-          isError: true,
-        );
+        _returnToReview(message: 'payment_not_completed'.tr(), isError: true);
         return;
       }
     } on StripeException catch (e) {
       final String message = e.error.message ?? 'payment_failed'.tr();
-      _returnToReview(
-        message: '$message. ${'try_again'.tr()}',
-        isError: true,
-      );
+      _returnToReview(message: '$message. ${'try_again'.tr()}', isError: true);
     } catch (e) {
       _returnToReview(
         message: '${'payment_failed'.tr()}. ${'try_again'.tr()}',

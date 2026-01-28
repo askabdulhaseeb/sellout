@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../visits/view/book_visit/widgets/visiting_update_buttons_widget.dart';
@@ -39,8 +39,9 @@ class VisitingMessageTile extends StatelessWidget {
       future: LocalPost().getPost(message.visitingDetail?.postID ?? ''),
       builder: (BuildContext context, AsyncSnapshot<PostEntity?> snapshot) {
         final PostEntity? post = snapshot.data;
-        final String imageUrl =
-            post?.fileUrls.isNotEmpty == true ? post!.fileUrls.first.url : '';
+        final String imageUrl = post?.fileUrls.isNotEmpty == true
+            ? post!.fileUrls.first.url
+            : '';
         final String title = post?.title ?? '';
         final String currency = post?.currency ?? '**';
         final double price = post?.price ?? 0;
@@ -65,22 +66,22 @@ class VisitingMessageTile extends StatelessWidget {
               if (showButtons &&
                   message.visitingDetail?.status == StatusType.pending)
                 VisitingMessageTileUpdateButtonsWidget(
-                    message: message, post: post),
+                  message: message,
+                  post: post,
+                ),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 statusTitle,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.black87),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.black87),
               ),
               const SizedBox(height: 8),
               Row(
@@ -100,17 +101,20 @@ class VisitingMessageTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('${'date'.tr()}: $date',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w500)),
+                        Text(
+                          '${'date'.tr()}: $date',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                         const SizedBox(height: 4),
-                        Text('${'time'.tr()}: $time',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w500)),
+                        Text(
+                          '${'time'.tr()}: $time',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                         const SizedBox(height: 4),
-                        Text('${'meet'.tr()}: $meet',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w500)),
+                        Text(
+                          '${'meet'.tr()}: $meet',
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                       ],
                     ),
                   ),
@@ -124,20 +128,18 @@ class VisitingMessageTile extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   CurrencyDisplay(
                     currency: currency,
                     price: price,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

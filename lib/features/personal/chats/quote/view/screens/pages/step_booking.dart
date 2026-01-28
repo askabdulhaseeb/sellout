@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../data/models/service_employee_model.dart';
@@ -31,8 +31,8 @@ class StepBooking extends StatelessWidget {
           }
         }
 
-        final List<ServiceEmployeeModel> aggregatedServices =
-            serviceMap.values.toList();
+        final List<ServiceEmployeeModel> aggregatedServices = serviceMap.values
+            .toList();
 
         final bool isGlobal =
             pro.appointmentTimeType == AppointmentTimeSelection.oneTimeForAll;
@@ -44,9 +44,9 @@ class StepBooking extends StatelessWidget {
             children: <Widget>[
               Text(
                 'when_would_you_like_appointment'.tr(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               const AppointmentCard(),
@@ -66,8 +66,8 @@ class StepBooking extends StatelessWidget {
                       .map(
                         (ServiceEmployeeModel service) =>
                             _ServiceBookingStepCard(
-                          serviceEmployeeEntity: service,
-                        ),
+                              serviceEmployeeEntity: service,
+                            ),
                       )
                       .toList(),
                 ),
@@ -93,34 +93,38 @@ class _GlobalAppointmentCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border:
-                Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 'services'.tr(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               // 🔹 Show list of services
               ...services.map((ServiceEmployeeModel s) {
                 return FutureBuilder<ServiceEntity?>(
                   future: LocalService().getService(s.serviceId),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<ServiceEntity?> snapshot) {
-                    final String name = snapshot.data?.name ?? s.serviceId;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Text(
-                        '• $name (x${s.quantity})',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    );
-                  },
+                  builder:
+                      (
+                        BuildContext context,
+                        AsyncSnapshot<ServiceEntity?> snapshot,
+                      ) {
+                        final String name = snapshot.data?.name ?? s.serviceId;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Text(
+                            '• $name (x${s.quantity})',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        );
+                      },
                 );
               }),
 
@@ -129,9 +133,9 @@ class _GlobalAppointmentCard extends StatelessWidget {
                 Text(
                   displayTime,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               const SizedBox(height: 8),
 
@@ -144,9 +148,8 @@ class _GlobalAppointmentCard extends StatelessWidget {
                   final String? selectedTime = await Navigator.push(
                     context,
                     MaterialPageRoute<String>(
-                      builder: (BuildContext context) => BookQuoteScreen(
-                        serviceEmployee: services.first,
-                      ),
+                      builder: (BuildContext context) =>
+                          BookQuoteScreen(serviceEmployee: services.first),
                     ),
                   );
 
@@ -185,7 +188,8 @@ class _ServiceBookingStepCard extends StatelessWidget {
         return Consumer<QuoteProvider>(
           builder: (BuildContext context, QuoteProvider pro, Widget? child) {
             /// 🔹 Determine which time to show (global or individual)
-            final bool useGlobal = pro.appointmentTimeType ==
+            final bool useGlobal =
+                pro.appointmentTimeType ==
                 AppointmentTimeSelection.oneTimeForAll;
             final String displayTime = useGlobal
                 ? (pro.globalBookAt ?? '')
@@ -203,26 +207,25 @@ class _ServiceBookingStepCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   Row(
                     children: <Widget>[
                       Text(
                         service?.priceStr ?? 'na'.tr(),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          color: Theme.of(context).colorScheme.outline,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '${service?.time ?? 'na'.tr()} ${'min'.tr()}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color:
-                                  Theme.of(context).colorScheme.outlineVariant,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -237,9 +240,7 @@ class _ServiceBookingStepCard extends StatelessWidget {
                             displayTime,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
+                            style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600,
@@ -255,14 +256,12 @@ class _ServiceBookingStepCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       bgColor: Colors.transparent,
-                      border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      textStyle:
-                          Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      textStyle: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                       title: 'select_time'.tr(),
                       isLoading: false,
                       onTap: () async {
@@ -283,7 +282,9 @@ class _ServiceBookingStepCard extends StatelessWidget {
                             pro.setGlobalBookAt(selectedTime);
                           } else {
                             pro.setServiceTime(
-                                serviceEmployeeEntity.serviceId, selectedTime);
+                              serviceEmployeeEntity.serviceId,
+                              selectedTime,
+                            );
                           }
                         }
                       },
@@ -299,9 +300,7 @@ class _ServiceBookingStepCard extends StatelessWidget {
 
   BoxDecoration _boxDecoration(BuildContext context) {
     return BoxDecoration(
-      border: Border.all(
-        color: Theme.of(context).colorScheme.outlineVariant,
-      ),
+      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       borderRadius: BorderRadius.circular(12),
     );
   }

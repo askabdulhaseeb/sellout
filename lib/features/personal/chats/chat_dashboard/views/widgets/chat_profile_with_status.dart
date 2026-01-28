@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../../../../core/sockets/handlers/presence_handler.dart';
-import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../services/get_it.dart';
 
 class ProfilePictureWithStatus extends HookWidget {
@@ -23,8 +23,9 @@ class ProfilePictureWithStatus extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final PresenceHandler presenceHandler = locator();
-    final List<String> onlineUserIds =
-        useListenable(presenceHandler.onlineUsers).value;
+    final List<String> onlineUserIds = useListenable(
+      presenceHandler.onlineUsers,
+    ).value;
     final bool isOnline = onlineUserIds.contains(userId);
 
     return Stack(

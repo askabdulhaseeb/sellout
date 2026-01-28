@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/helper_functions/duration_format_helper.dart';
 import '../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../../../../../core/widgets/buttons/custom_icon_button.dart';
 import '../../../../../../../../../core/widgets/custom_svg_icon.dart';
 import '../../../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';

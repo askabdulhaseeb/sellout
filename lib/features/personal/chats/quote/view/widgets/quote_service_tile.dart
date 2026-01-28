@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../visits/view/book_visit/screens/booking_screen.dart';
 
@@ -81,22 +81,26 @@ class QuoteServiceTile extends StatelessWidget {
                     child: CustomElevatedButton(
                       margin: EdgeInsets.zero,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const BookingScreen(),
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const BookingScreen(),
+                          ),
+                        );
                       },
                       isLoading: false,
                       title: 'add'.tr(),
                       textStyle: textTheme.labelSmall?.copyWith(
                         color: Theme.of(context).primaryColor,
                       ),
-                      bgColor:
-                          Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      bgColor: Theme.of(
+                        context,
+                      ).primaryColor.withValues(alpha: 0.1),
                     ),
                   ),
                 ],

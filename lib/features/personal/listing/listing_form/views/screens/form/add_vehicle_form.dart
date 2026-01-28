@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/editable_availablity_widget.dart';
+import '../../../../../../../core/widgets/utils/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/core/add_listing_basic_info_section.dart';
 import '../../widgets/core/add_listing_condition_offer_section.dart';
@@ -22,7 +22,6 @@ class _AddVehicleFormState extends State<AddVehicleForm> {
   Widget build(BuildContext context) {
     return Consumer<AddListingFormProvider>(
       builder: (BuildContext context, AddListingFormProvider formPro, _) {
-
         return Form(
           key: formPro.vehicleKey,
           child: SingleChildScrollView(

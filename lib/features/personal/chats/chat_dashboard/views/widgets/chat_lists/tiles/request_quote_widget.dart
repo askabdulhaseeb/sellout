@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 
 class EditableQuoteDialog extends StatefulWidget {
   const EditableQuoteDialog({super.key});
@@ -10,10 +10,12 @@ class EditableQuoteDialog extends StatefulWidget {
 }
 
 class EditableQuoteDialogState extends State<EditableQuoteDialog> {
-  final TextEditingController titleController =
-      TextEditingController(text: 'Quote title here');
-  final TextEditingController priceController =
-      TextEditingController(text: '100.0');
+  final TextEditingController titleController = TextEditingController(
+    text: 'Quote title here',
+  );
+  final TextEditingController priceController = TextEditingController(
+    text: '100.0',
+  );
   DateTime selectedDate = DateTime.now();
   List<String> includedServices = <String>[];
   List<String> excludedServices = <String>[];
@@ -42,28 +44,32 @@ class EditableQuoteDialogState extends State<EditableQuoteDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextField(
-                controller: controller,
-                decoration: const InputDecoration(hintText: 'Enter service')),
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'Enter service'),
+            ),
             const SizedBox(height: 10),
-            ...services.map((String service) => ListTile(
-                  title: Text(service),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      setState(() {
-                        services.remove(service);
-                      });
-                      Navigator.pop(context);
-                      _editServices(services, type);
-                    },
-                  ),
-                )),
+            ...services.map(
+              (String service) => ListTile(
+                title: Text(service),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      services.remove(service);
+                    });
+                    Navigator.pop(context);
+                    _editServices(services, type);
+                  },
+                ),
+              ),
+            ),
           ],
         ),
         actions: <Widget>[
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Done')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Done'),
+          ),
           TextButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
@@ -116,7 +122,8 @@ class EditableQuoteDialogState extends State<EditableQuoteDialog> {
                     Text(
                       'Date: ${DateFormat.yMMMd().format(selectedDate)}',
                       style: texttheme.bodyMedium?.copyWith(
-                          color: colorscheme.onSurface.withAlpha(200)),
+                        color: colorscheme.onSurface.withAlpha(200),
+                      ),
                     ),
                   ],
                 ),
@@ -165,10 +172,13 @@ class EditableQuoteDialogState extends State<EditableQuoteDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Text('Includes:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...includedServices
-                      .map((String service) => Text('- $service')),
+                  const Text(
+                    'Includes:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  ...includedServices.map(
+                    (String service) => Text('- $service'),
+                  ),
                 ],
               ),
             ),
@@ -178,10 +188,13 @@ class EditableQuoteDialogState extends State<EditableQuoteDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Text('Does not include:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...excludedServices
-                      .map((String service) => Text('- $service')),
+                  const Text(
+                    'Does not include:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  ...excludedServices.map(
+                    (String service) => Text('- $service'),
+                  ),
                 ],
               ),
             ),

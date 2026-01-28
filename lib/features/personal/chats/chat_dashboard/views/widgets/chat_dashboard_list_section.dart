@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/coming_soon_overlay.dart';
+import '../../../../../../core/widgets/text_display/coming_soon_overlay.dart';
 import '../providers/chat_dashboard_provider.dart';
 import 'chat_lists/group_chat_list_widget.dart';
 import 'chat_lists/order_chat_list_widget.dart';

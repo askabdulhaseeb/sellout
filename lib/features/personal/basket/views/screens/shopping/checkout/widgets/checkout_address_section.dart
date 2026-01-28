@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
-import '../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../../auth/signin/domain/entities/address_entity.dart';
 import '../../../../providers/cart_provider.dart';
 import '../../../../../../auth/signin/data/sources/local/local_auth.dart';
@@ -21,7 +21,7 @@ class SimpleCheckoutAddressSectionState
   bool _isLoading = false;
 
   /// Formats the address details, handling empty state gracefully.
- 
+
   Future<void> _onAddressTap(CartProvider cartPro) async {
     final AddressEntity? newAddress = await showModalBottomSheet<AddressEntity>(
       context: context,

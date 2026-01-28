@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/functions/app_log.dart';
 import '../../../../../../core/sockets/socket_service.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';

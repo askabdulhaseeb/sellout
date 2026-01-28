@@ -5,14 +5,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/enums/core/attachment_type.dart';
-import '../../../../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../providers/send_message_provider.dart';
 
 void showCameraPickerBottomSheet(BuildContext context) async {
-  final SendMessageProvider chatPro =
-      Provider.of<SendMessageProvider>(context, listen: false);
+  final SendMessageProvider chatPro = Provider.of<SendMessageProvider>(
+    context,
+    listen: false,
+  );
   showModalBottomSheet(
     showDragHandle: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -33,8 +36,10 @@ void showCameraPickerBottomSheet(BuildContext context) async {
               title: Text('take_photo'.tr()),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked =
-                    await pickFromCamera(isVideo: false, context: context);
+                final PickedAttachment? picked = await pickFromCamera(
+                  isVideo: false,
+                  context: context,
+                );
                 if (picked != null) {
                   chatPro.addAttachment(picked);
                 }
@@ -48,8 +53,10 @@ void showCameraPickerBottomSheet(BuildContext context) async {
               title: Text('record_video'.tr()),
               onTap: () async {
                 Navigator.pop(context);
-                final PickedAttachment? picked =
-                    await pickFromCamera(isVideo: true, context: context);
+                final PickedAttachment? picked = await pickFromCamera(
+                  isVideo: true,
+                  context: context,
+                );
                 if (picked != null) {
                   chatPro.addAttachment(picked);
                 }
@@ -77,10 +84,7 @@ Future<PickedAttachment?> pickFromCamera({
   final PermissionStatus cameraStatus = await Permission.camera.request();
 
   if (!cameraStatus.isGranted) {
-    AppSnackBar.showSnackBar(
-      context,
-      'camera_permission_denied'.tr(),
-    );
+    AppSnackBar.showSnackBar(context, 'camera_permission_denied'.tr());
     return null; // Cannot proceed without permission
   }
   final ImagePicker picker = ImagePicker();

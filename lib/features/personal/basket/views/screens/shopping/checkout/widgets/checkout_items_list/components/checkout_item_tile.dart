@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../../../../../../core/functions/app_log.dart';
-import '../../../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../../../../data/sources/local/local_cart.dart';
 import '../../../../../../../domain/param/get_postage_detail_params.dart';

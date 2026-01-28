@@ -4,7 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import '../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../core/functions/app_log.dart';
 import '../../../../../core/sources/data_state.dart';
-import '../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../../postage/domain/entities/service_point_entity.dart';
 import '../../../../postage/domain/usecase/add_shipping_usecase.dart';

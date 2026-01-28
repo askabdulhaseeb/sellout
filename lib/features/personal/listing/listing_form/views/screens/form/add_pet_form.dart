@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/editable_availablity_widget.dart';
+import '../../../../../../../core/widgets/utils/editable_availablity_widget.dart';
 import '../../providers/add_listing_form_provider.dart';
 import '../../widgets/core/add_listing_update_button_widget.dart';
 import '../../widgets/pet/add_listing_age_leave_section.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../chat_dashboard/data/models/chat/chat_model.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';

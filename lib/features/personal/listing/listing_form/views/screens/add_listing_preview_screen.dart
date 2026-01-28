@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../core/widgets/attachment_slider.dart';
-import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../core/widgets/media/attachment_slider.dart';
+import '../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
@@ -76,9 +76,7 @@ class _AddListingPreviewScreenState extends State<AddListingPreviewScreen> {
                       });
                     },
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   _previewMode == _PreviewMode.feed
                       ? _FeedPreviewSection(
                           post: previewPost,
@@ -117,22 +115,18 @@ class _FeedPreviewSection extends StatelessWidget {
           picked: pickedAttachments,
         ),
         AbsorbPointer(
-            absorbing: true,
-            child: HomePostIconBottonSection(post: post, isPreview: true)),
+          absorbing: true,
+          child: HomePostIconBottonSection(post: post, isPreview: true),
+        ),
         HomePostTitleSection(post: post),
         AbsorbPointer(
           absorbing: true,
-          child: (post.type == ListingType.pets ||
+          child:
+              (post.type == ListingType.pets ||
                   post.type == ListingType.vehicle ||
                   post.type == ListingType.property)
-              ? ViewingPostButtonTile(
-                  post: post,
-                  detailWidget: false,
-                )
-              : StorePostButtonTile(
-                  post: post,
-                  detailWidget: false,
-                ),
+              ? ViewingPostButtonTile(post: post, detailWidget: false)
+              : StorePostButtonTile(post: post, detailWidget: false),
         ),
         const SizedBox(height: AppSpacing.vMd),
         Container(
@@ -175,17 +169,12 @@ class _DetailPreviewSection extends StatelessWidget {
           PostDetailTitleAmountSection(post: post),
           AbsorbPointer(
             absorbing: true,
-            child: (post.type == ListingType.pets ||
+            child:
+                (post.type == ListingType.pets ||
                     post.type == ListingType.vehicle ||
                     post.type == ListingType.property)
-                ? ViewingPostButtonTile(
-                    post: post,
-                    detailWidget: false,
-                  )
-                : StorePostButtonTile(
-                    post: post,
-                    detailWidget: false,
-                  ),
+                ? ViewingPostButtonTile(post: post, detailWidget: false)
+                : StorePostButtonTile(post: post, detailWidget: false),
           ),
           const SizedBox(height: AppSpacing.vMd),
         ],
@@ -194,16 +183,16 @@ class _DetailPreviewSection extends StatelessWidget {
           child: post.listID == ListingType.items.json
               ? ItemPostDetailSection(post: post)
               : post.listID == ListingType.clothAndFoot.json
-                  ? ClothFootPostDetailSection(post: post)
-                  : post.listID == ListingType.foodAndDrink.json
-                      ? FoodDrinkPostDetailSection(post: post)
-                      : post.listID == ListingType.property.json
-                          ? PropertyPostDetailSection(post: post)
-                          : post.listID == ListingType.pets.json
-                              ? PetsPostDetailSection(post: post)
-                              : post.listID == ListingType.vehicle.json
-                                  ? VehiclePostDetailSection(post: post)
-                                  : const SizedBox.shrink(),
+              ? ClothFootPostDetailSection(post: post)
+              : post.listID == ListingType.foodAndDrink.json
+              ? FoodDrinkPostDetailSection(post: post)
+              : post.listID == ListingType.property.json
+              ? PropertyPostDetailSection(post: post)
+              : post.listID == ListingType.pets.json
+              ? PetsPostDetailSection(post: post)
+              : post.listID == ListingType.vehicle.json
+              ? VehiclePostDetailSection(post: post)
+              : const SizedBox.shrink(),
         ),
       ],
     );

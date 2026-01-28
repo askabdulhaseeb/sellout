@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/extension/datetime_ext.dart';
-import '../../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../chat/views/providers/chat_provider.dart';
 import '../../../../../chat/views/screens/chat_screen.dart';
 import '../../../../data/sources/local/local_unseen_messages.dart';
@@ -15,8 +15,10 @@ class GroupChatDashbordTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        Provider.of<ChatProvider>(context, listen: false)
-            .setChat(context, chat);
+        Provider.of<ChatProvider>(
+          context,
+          listen: false,
+        ).setChat(context, chat);
         await LocalUnreadMessagesService().clearCount(chat.chatId);
         Navigator.of(context).pushNamed(ChatScreen.routeName);
       },

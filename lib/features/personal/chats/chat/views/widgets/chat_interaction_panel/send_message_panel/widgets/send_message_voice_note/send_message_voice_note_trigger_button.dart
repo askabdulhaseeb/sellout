@@ -10,7 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import '../../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../../core/helper_functions/duration_format_helper.dart';
 import '../../../../../../../../../../core/utilities/app_string.dart';
-import '../../../../../../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../../../../../../core/widgets/buttons/custom_icon_button.dart';
 import '../../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../../../../attachment/domain/entities/picked_attachment.dart';
 import '../../../../../providers/send_message_provider.dart';
@@ -57,7 +57,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       final PermissionStatus status = await Permission.microphone.request();
       AppLog.info('microphone permission: $status', name: tag);
       if (!status.isGranted) {
-        AppLog.info('microphone permission not granted; recorder not ready', name: tag);
+        AppLog.info(
+          'microphone permission not granted; recorder not ready',
+          name: tag,
+        );
         return;
       }
       await _recorder.openRecorder();
@@ -122,12 +125,7 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       await _recorder.startRecorder(toFile: _recordPath, codec: Codec.aacADTS);
       AppLog.info('startRecording: recorder started', name: tag);
     } catch (e, st) {
-      AppLog.error(
-        'startRecording ERROR',
-        name: tag,
-        error: e,
-        stackTrace: st,
-      );
+      AppLog.error('startRecording ERROR', name: tag, error: e, stackTrace: st);
       _isActionInFlight = false;
       return;
     }
@@ -177,10 +175,13 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
     try {
       if (_recorder.isRecording) {
         AppLog.info('stopRecording: calling stopRecorder()', name: tag);
-        final String? stoppedPath = await _recorder
-            .stopRecorder()
-            .timeout(const Duration(seconds: 4));
-        AppLog.info('stopRecording: stopRecorder returned=$stoppedPath', name: tag);
+        final String? stoppedPath = await _recorder.stopRecorder().timeout(
+          const Duration(seconds: 4),
+        );
+        AppLog.info(
+          'stopRecording: stopRecorder returned=$stoppedPath',
+          name: tag,
+        );
         if (stoppedPath != null && stoppedPath.isNotEmpty) {
           _recordPath = stoppedPath;
         }
@@ -191,19 +192,12 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       AppLog.info('stopRecording: stopRecorder TIMEOUT: $e', name: tag);
       AppLog.info('stopRecording: stopRecorder TIMEOUT STACK: $st', name: tag);
     } catch (e, st) {
-      AppLog.error(
-        'stopRecording ERROR',
-        name: tag,
-        error: e,
-        stackTrace: st,
-      );
+      AppLog.error('stopRecording ERROR', name: tag, error: e, stackTrace: st);
     }
 
     try {
       AppLog.info('stopRecording: stopping waveform controller', name: tag);
-      await _waveformController
-          .stop()
-          .timeout(const Duration(seconds: 2));
+      await _waveformController.stop().timeout(const Duration(seconds: 2));
       AppLog.info('stopRecording: waveform controller stopped', name: tag);
     } on TimeoutException catch (e, st) {
       AppLog.info('stopRecording: waveform stop TIMEOUT: $e', name: tag);
@@ -234,7 +228,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       final File file = File(_recordPath!);
       try {
         final bool exists = await file.exists();
-        AppLog.info('sendRecording: file exists=$exists path=$_recordPath', name: tag);
+        AppLog.info(
+          'sendRecording: file exists=$exists path=$_recordPath',
+          name: tag,
+        );
         if (exists) {
           final int length = await file.length();
           AppLog.info('sendRecording: file length=$length bytes', name: tag);
@@ -249,7 +246,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
           AppLog.info('sendRecording: provider addVoiceNote called', name: tag);
           unawaited(_playSound(AppStrings.recordingShareSound));
           await _msgPro.sendVoiceNote(context);
-          AppLog.info('sendRecording: provider sendVoiceNote finished', name: tag);
+          AppLog.info(
+            'sendRecording: provider sendVoiceNote finished',
+            name: tag,
+          );
         }
       } catch (e, st) {
         AppLog.error(
@@ -276,7 +276,10 @@ class _VoiceRecordTriggerState extends State<VoiceRecordTrigger> {
       final File file = File(_recordPath!);
       try {
         final bool exists = await file.exists();
-        AppLog.info('deleteRecording: file exists=$exists path=$_recordPath', name: tag);
+        AppLog.info(
+          'deleteRecording: file exists=$exists path=$_recordPath',
+          name: tag,
+        );
         if (exists) {
           // Give the OS a moment to release the handle.
           await Future<void>.delayed(const Duration(milliseconds: 80));

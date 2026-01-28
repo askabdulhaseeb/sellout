@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../../../core/bottom_sheets/address/address_bottom_sheet.dart';
 import '../../../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../../core/functions/app_log.dart';
 import '../../../../../../../../../services/get_it.dart';
 import '../../../../../../../basket/data/models/cart/buynow_add_shipping_response_model.dart';

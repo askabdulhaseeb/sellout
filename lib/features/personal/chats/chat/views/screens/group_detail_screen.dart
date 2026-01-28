@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/chat/chat_participant_role.dart';
-import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../../chat_dashboard/domain/entities/chat/participant/chat_participant_entity.dart';
@@ -48,27 +48,34 @@ class GroupDetailScreen extends StatelessWidget {
                       maxLines: 7,
                       groupInfo.description,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.grey),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                     ),
                   ),
                   const GroupDetailParticipantsWidget(),
                   if (!_isAdmin(pro))
                     ListTile(
-                      leading: Icon(Icons.exit_to_app,
-                          color: Theme.of(context).primaryColor),
-                      title: Text('leave_group'.tr(),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      leading: Icon(
+                        Icons.exit_to_app,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      title: Text(
+                        'leave_group'.tr(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       onTap: () => pro.leaveGroup(context),
                     ),
                   if (_isAdmin(pro))
                     ListTile(
-                      leading: Icon(Icons.group_add,
-                          color: Theme.of(context).primaryColor),
-                      title: Text('invite_to_group'.tr(),
-                          style: Theme.of(context).textTheme.titleMedium),
+                      leading: Icon(
+                        Icons.group_add,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      title: Text(
+                        'invite_to_group'.tr(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       onTap: () => showInviteBottomSheet(context, pro),
                     ),
                   const Divider(),

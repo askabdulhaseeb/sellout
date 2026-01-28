@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../post/domain/entities/offer/offer_detail_entity.dart';
 import '../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../pinned_message/widgets/offer_buttons/offer_message_tile_buttons.dart';
@@ -90,9 +90,9 @@ class OfferMessageTileDetail extends StatelessWidget {
                     horizontal: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: ColorScheme.of(context)
-                        .outlineVariant
-                        .withValues(alpha: 0.4),
+                    color: ColorScheme.of(
+                      context,
+                    ).outlineVariant.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: ColorScheme.of(context).outlineVariant,
@@ -135,9 +135,9 @@ class OfferMessageTileDetail extends StatelessWidget {
                 currency: offerDetail?.currency,
                 offerPrice: offerDetail?.offerPrice,
                 originalPrice: offerDetail?.price,
-                offerStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                offerStyle: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w700),
                 originalStyle: Theme.of(context).textTheme.labelSmall,
               ),
               const SizedBox(height: 4),

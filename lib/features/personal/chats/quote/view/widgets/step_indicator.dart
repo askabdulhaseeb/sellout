@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../core/widgets/custom_toggle_switch.dart';
+import '../../../../../../core/widgets/toggles/custom_toggle_switch.dart';
 import '../enums/request_quote_steps.dart';
 
 class StepIndicator extends StatelessWidget {
@@ -34,7 +34,9 @@ class StepIndicator extends StatelessWidget {
             child: CustomToggleSwitch<RequestQuoteStep>(
               isShaded: false,
               labels: labels,
-              labelStrs: labels.map((RequestQuoteStep e) => e.label.tr()).toList(),
+              labelStrs: labels
+                  .map((RequestQuoteStep e) => e.label.tr())
+                  .toList(),
               labelText: '',
               onToggle: onToggle,
               initialValue: currentStep,
@@ -51,10 +53,9 @@ class StepIndicator extends StatelessWidget {
               child: LinearProgressIndicator(
                 minHeight: 3,
                 value: (currentIndex + 1) / totalSteps,
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .outlineVariant
-                    .withValues(alpha: 0.4),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withValues(alpha: 0.4),
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),

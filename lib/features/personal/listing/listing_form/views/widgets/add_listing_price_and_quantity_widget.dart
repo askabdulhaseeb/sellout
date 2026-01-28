@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/utilities/app_validators.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../providers/add_listing_form_provider.dart';
 
@@ -31,7 +31,8 @@ class AddListingPriceAndQuantityWidget extends StatelessWidget {
                   child: Center(
                     child: Text(
                       CountryHelper.currencySymbolHelper(
-                          LocalAuth.currency.toUpperCase()),
+                        LocalAuth.currency.toUpperCase(),
+                      ),
                     ),
                   ),
                 ),

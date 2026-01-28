@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
 import '../../domain/entites/service_employee_entity.dart';
 import '../enums/request_quote_steps.dart';
@@ -83,17 +83,18 @@ class RequestQuoteBottomBar extends StatelessWidget {
                         RequestQuoteStep.values[currentStep.index + 1],
                       );
                     } else {
-                      context
-                          .read<QuoteProvider>()
-                          .requestQuote(business?.businessID ?? '', context);
+                      context.read<QuoteProvider>().requestQuote(
+                        business?.businessID ?? '',
+                        context,
+                      );
                     }
                   },
                   title: currentStep == RequestQuoteStep.review
                       ? 'submit_request'.tr()
                       : 'next'.tr(),
-                  textStyle: TextTheme.of(context)
-                      .bodyMedium
-                      ?.copyWith(color: ColorScheme.of(context).onPrimary),
+                  textStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                    color: ColorScheme.of(context).onPrimary,
+                  ),
                 ),
               ),
             ],

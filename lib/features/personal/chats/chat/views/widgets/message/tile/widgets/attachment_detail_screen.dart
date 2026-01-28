@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../../../core/widgets/video_widget.dart';
+import '../../../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../../../core/widgets/media/video_widget.dart';
 import '../../../../../../../../attachment/domain/entities/attachment_entity.dart';
 
 class AttachmentDetailScreen extends StatefulWidget {
@@ -39,7 +39,8 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            '${'media'.tr()}: ${_currentIndex + 1}/${widget.attachments.length}'),
+          '${'media'.tr()}: ${_currentIndex + 1}/${widget.attachments.length}',
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -80,9 +81,9 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
                 icon: const Icon(Icons.chevron_left, size: 40),
                 onPressed: _currentIndex > 0
                     ? () => _pageController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        )
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      )
                     : null,
               ),
             ),
@@ -93,9 +94,9 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
                 icon: const Icon(Icons.chevron_right, size: 40),
                 onPressed: _currentIndex < widget.attachments.length - 1
                     ? () => _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        )
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      )
                     : null,
               ),
             ),
@@ -106,13 +107,13 @@ class _AttachmentDetailScreenState extends State<AttachmentDetailScreen> {
 
   Widget _buildMediaContent(AttachmentEntity attachment) {
     if (attachment.type == AttachmentType.image) {
-      return CustomNetworkImage(
-        imageURL: attachment.url,
-        fit: BoxFit.contain,
-      );
+      return CustomNetworkImage(imageURL: attachment.url, fit: BoxFit.contain);
     } else {
       return VideoWidget(
-          videoSource: attachment.url, showTime: true, play: true);
+        videoSource: attachment.url,
+        showTime: true,
+        play: true,
+      );
     }
   }
 }

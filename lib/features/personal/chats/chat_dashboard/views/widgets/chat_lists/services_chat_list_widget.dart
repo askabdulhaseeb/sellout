@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../data/models/chat/chat_model.dart';
@@ -12,8 +12,8 @@ class ServicesChatListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChatDashboardProvider provider =
-        context.watch<ChatDashboardProvider>();
+    final ChatDashboardProvider provider = context
+        .watch<ChatDashboardProvider>();
     final List<ChatEntity> filteredChats = provider.filteredChats;
 
     if (filteredChats.isEmpty) {

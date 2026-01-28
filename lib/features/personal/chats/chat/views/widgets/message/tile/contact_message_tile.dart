@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../../attachment/domain/entities/attachment_entity.dart';
 import '../../../../../../user/profiles/views/user_profile/screens/user_profile_screen.dart';
 
@@ -31,8 +31,9 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
 
   Future<void> _loadVcf() async {
     try {
-      final http.Response response =
-          await http.get(Uri.parse(widget.attachment.url));
+      final http.Response response = await http.get(
+        Uri.parse(widget.attachment.url),
+      );
       if (response.statusCode == 200) {
         final List<String> lines = response.body.split('\n');
         for (String line in lines) {
@@ -86,8 +87,9 @@ class _ContactMessageTileState extends State<ContactMessageTile> {
                     displayName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w500),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],

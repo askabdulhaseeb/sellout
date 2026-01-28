@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../core/enums/core/status_type.dart';
 import '../../../../../../../../core/enums/message/message_type.dart';
-import '../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../core/widgets/loaders/loader_container.dart';
 import '../../../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../../../../business/core/domain/entity/service/service_entity.dart';
@@ -38,8 +38,9 @@ class QuoteMessageTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: pinnedMessage ? 0 : 16),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: <Widget>[
           if (pinnedMessage)
             Divider(height: 1, color: Theme.of(context).dividerColor),
@@ -74,61 +75,63 @@ class _QuoteServicesSection extends StatelessWidget {
     return FutureBuilder<List<ServiceEntity?>>(
       future: Future.wait(
         quoteDetail.serviceEmployee.map(
-          (ServiceEmployeeEntity se) =>
-              LocalService().getService(se.serviceId),
+          (ServiceEmployeeEntity se) => LocalService().getService(se.serviceId),
         ),
       ),
       builder:
           (BuildContext context, AsyncSnapshot<List<ServiceEntity?>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoaderContainer(
-            height: 40,
-            width: double.infinity,
-            borderRadius: 6,
-          );
-        }
-        if (!snapshot.hasData) {
-          return const SizedBox.shrink();
-        }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const LoaderContainer(
+                height: 40,
+                width: double.infinity,
+                borderRadius: 6,
+              );
+            }
+            if (!snapshot.hasData) {
+              return const SizedBox.shrink();
+            }
 
-        final List<ServiceEntity?> services = snapshot.data!;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              message.displayText,
-              style: TextTheme.of(context).titleSmall,
-            ),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: quoteDetail.serviceEmployee.length,
-              itemBuilder: (BuildContext context, int index) {
-                final ServiceEmployeeEntity se =
-                    quoteDetail.serviceEmployee[index];
-                final String serviceName =
-                    services[index]?.name ?? 'na'.tr();
-                return _ServiceRow(
-                  serviceName: serviceName,
-                  serviceEmployee: se,
-                  showQuantity: pinnedMessage,
-                );
-              },
-            ),
-            if (quoteDetail.price != 0)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: CurrencyDisplay(
-                  currency: quoteDetail.currency,
-                  price: quoteDetail.price,
+            final List<ServiceEntity?> services = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  message.displayText,
                   style: TextTheme.of(context).titleSmall,
                 ),
-              ),
-            if (message.type == MessageType.quote)
-              _QuoteActionButtons(message: message, quoteDetail: quoteDetail),
-          ],
-        );
-      },
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: quoteDetail.serviceEmployee.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final ServiceEmployeeEntity se =
+                        quoteDetail.serviceEmployee[index];
+                    final String serviceName =
+                        services[index]?.name ?? 'na'.tr();
+                    return _ServiceRow(
+                      serviceName: serviceName,
+                      serviceEmployee: se,
+                      showQuantity: pinnedMessage,
+                    );
+                  },
+                ),
+                if (quoteDetail.price != 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: CurrencyDisplay(
+                      currency: quoteDetail.currency,
+                      price: quoteDetail.price,
+                      style: TextTheme.of(context).titleSmall,
+                    ),
+                  ),
+                if (message.type == MessageType.quote)
+                  _QuoteActionButtons(
+                    message: message,
+                    quoteDetail: quoteDetail,
+                  ),
+              ],
+            );
+          },
     );
   }
 }
@@ -189,10 +192,7 @@ class _ServiceRow extends StatelessWidget {
           ),
           Text(
             serviceEmployee.bookAt,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
             textAlign: TextAlign.end,
             overflow: TextOverflow.ellipsis,
           ),
@@ -203,10 +203,7 @@ class _ServiceRow extends StatelessWidget {
 }
 
 class _QuoteActionButtons extends StatelessWidget {
-  const _QuoteActionButtons({
-    required this.message,
-    required this.quoteDetail,
-  });
+  const _QuoteActionButtons({required this.message, required this.quoteDetail});
 
   final MessageEntity message;
   final QuoteDetailEntity quoteDetail;
@@ -225,9 +222,9 @@ class _QuoteActionButtons extends StatelessWidget {
               child: CustomElevatedButton(
                 border: Border.all(color: Theme.of(context).primaryColor),
                 bgColor: Colors.transparent,
-                textStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: Theme.of(context).primaryColor),
+                textStyle: TextTheme.of(
+                  context,
+                ).bodyMedium?.copyWith(color: Theme.of(context).primaryColor),
                 padding: const EdgeInsets.all(4),
                 title: 'decline'.tr(),
                 isLoading: false,
@@ -236,9 +233,9 @@ class _QuoteActionButtons extends StatelessWidget {
             ),
             Expanded(
               child: CustomElevatedButton(
-                textStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                textStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 padding: const EdgeInsets.all(4),
                 title: 'pay_now'.tr(),
                 isLoading: false,
@@ -250,9 +247,9 @@ class _QuoteActionButtons extends StatelessWidget {
             Expanded(
               child: CustomElevatedButton(
                 isDisable: true,
-                textStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                textStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 padding: const EdgeInsets.all(4),
                 title: 'paid'.tr(),
                 isLoading: false,
@@ -264,9 +261,9 @@ class _QuoteActionButtons extends StatelessWidget {
               child: CustomElevatedButton(
                 isDisable: true,
                 bgColor: Colors.transparent,
-                textStyle: TextTheme.of(context)
-                    .bodyMedium
-                    ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                textStyle: TextTheme.of(context).bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 padding: const EdgeInsets.all(4),
                 title: 'declined'.tr(),
                 isLoading: false,

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../domain/entities/chat/chat_entity.dart';
 import '../../providers/chat_dashboard_provider.dart';
 import 'tiles/group_chat_dashbord_tile.dart';
@@ -12,8 +12,8 @@ class GroupChatListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChatDashboardProvider provider =
-        context.watch<ChatDashboardProvider>();
+    final ChatDashboardProvider provider = context
+        .watch<ChatDashboardProvider>();
     final List<ChatEntity> chats = provider.filteredChats
         .where((ChatEntity c) => c.type == ChatType.group)
         .toList();

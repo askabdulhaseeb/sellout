@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../core/widgets/text_display/shadow_container.dart';
 
 class CheckoutAddressTile extends StatelessWidget {
   const CheckoutAddressTile({super.key});

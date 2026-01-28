@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/app_snackbar.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_calender.dart';
 import '../../../../../../core/widgets/calender/create_booking_widgets/widgets/create_booking_slots_with_slot_entity.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
+import '../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../../business/core/data/sources/local_business.dart';
 import '../../../../../business/core/data/sources/service/local_service.dart';
 import '../../../../../business/core/domain/entity/business_entity.dart';
@@ -51,22 +51,27 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     try {
       /// For per-service mode
       if (!widget.isGlobalTime && widget.serviceEmployee != null) {
-        serviceEntity =
-            await LocalService().getService(widget.serviceEmployee!.serviceId);
+        serviceEntity = await LocalService().getService(
+          widget.serviceEmployee!.serviceId,
+        );
         if (serviceEntity != null) {
-          business =
-              await LocalBusiness().getBusiness(serviceEntity!.businessID);
+          business = await LocalBusiness().getBusiness(
+            serviceEntity!.businessID,
+          );
         }
       } else {
         /// Global mode – pick first available service from provider
-        final QuoteProvider pro =
-            Provider.of<QuoteProvider>(context, listen: false);
+        final QuoteProvider pro = Provider.of<QuoteProvider>(
+          context,
+          listen: false,
+        );
         if (pro.selectedServices.isNotEmpty) {
           final ServiceEmployeeEntity first = pro.selectedServices.first;
           serviceEntity = await LocalService().getService(first.serviceId);
           if (serviceEntity != null) {
-            business =
-                await LocalBusiness().getBusiness(serviceEntity!.businessID);
+            business = await LocalBusiness().getBusiness(
+              serviceEntity!.businessID,
+            );
           }
         }
       }
@@ -82,13 +87,17 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
     if (business == null || serviceEntity == null) return;
 
     final RoutineEntity? routine = _routineForDate(date);
-    final QuoteProvider slotsProvider =
-        Provider.of<QuoteProvider>(context, listen: false);
+    final QuoteProvider slotsProvider = Provider.of<QuoteProvider>(
+      context,
+      listen: false,
+    );
 
-    final String openingTime =
-        (routine?.isOpen ?? false) ? (routine?.opening ?? '') : '';
-    final String closingTime =
-        (routine?.isOpen ?? false) ? (routine?.closing ?? '') : '';
+    final String openingTime = (routine?.isOpen ?? false)
+        ? (routine?.opening ?? '')
+        : '';
+    final String closingTime = (routine?.isOpen ?? false)
+        ? (routine?.closing ?? '')
+        : '';
 
     if (openingTime.isEmpty || closingTime.isEmpty) {
       slotsProvider.clearSlots();
@@ -118,9 +127,7 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoadingBusiness) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (businessError != null) {
@@ -149,9 +156,7 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
             return Column(
               children: <Widget>[
                 if (!widget.isGlobalTime)
-                  ProductImageWidget(
-                    image: serviceEntity?.thumbnailURL ?? '',
-                  ),
+                  ProductImageWidget(image: serviceEntity?.thumbnailURL ?? ''),
 
                 /// Date picker
                 CreateBookingCalender(
@@ -196,8 +201,10 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                       return;
                     }
 
-                    final DateTime slotDateTime =
-                        _combineDateTime(selectedDate, selectedTime!);
+                    final DateTime slotDateTime = _combineDateTime(
+                      selectedDate,
+                      selectedTime!,
+                    );
                     final String formatted =
                         '${_format12Hour(slotDateTime)} ${slotDateTime.toIso8601String().split('T')[0]}';
 
@@ -206,10 +213,13 @@ class _BookQuoteScreenState extends State<BookQuoteScreen> {
                       Navigator.pop(context, formatted);
                     } else {
                       /// 🔹 For individual service
-                      final ServiceEmployeeEntity updatedService =
-                          widget.serviceEmployee!.copyWith(bookAt: formatted);
-                      Provider.of<QuoteProvider>(context, listen: false)
-                          .updateService(updatedService);
+                      final ServiceEmployeeEntity updatedService = widget
+                          .serviceEmployee!
+                          .copyWith(bookAt: formatted);
+                      Provider.of<QuoteProvider>(
+                        context,
+                        listen: false,
+                      ).updateService(updatedService);
                       Navigator.pop(context, formatted);
                     }
                   },

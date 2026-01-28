@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../../core/enums/cart/cart_item_type.dart';
 import '../../../../../../../core/extension/string_ext.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/custom_switch_list_tile.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../core/widgets/toggles/custom_switch_list_tile.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
@@ -47,12 +47,15 @@ class _CartTileDataCache {
     // Start a new load and memoize the Future to de-duplicate concurrent calls
     final Future<(PostEntity?, UserEntity?)> fut = _load(postId);
     _inFlight[postId] = fut;
-    fut.then(((PostEntity?, UserEntity?) value) {
-      _cache[postId] = value;
-      _inFlight.remove(postId);
-    }, onError: (_) {
-      _inFlight.remove(postId);
-    });
+    fut.then(
+      ((PostEntity?, UserEntity?) value) {
+        _cache[postId] = value;
+        _inFlight.remove(postId);
+      },
+      onError: (_) {
+        _inFlight.remove(postId);
+      },
+    );
     return fut;
   }
 
@@ -73,8 +76,10 @@ class _PersonalCartTileState extends State<PersonalCartTile>
   void initState() {
     super.initState();
     _loadFuture = _loadData();
-    final CartProvider provider =
-        Provider.of<CartProvider>(context, listen: false);
+    final CartProvider provider = Provider.of<CartProvider>(
+      context,
+      listen: false,
+    );
     isActive = provider.fastDeliveryProducts.contains(widget.item.cartItemID);
     if (isActive) {
       _deliveryType = DeliveryType.fastDelivery;
@@ -99,202 +104,223 @@ class _PersonalCartTileState extends State<PersonalCartTile>
     final TextTheme textTheme = Theme.of(context).textTheme;
     return FutureBuilder<(PostEntity?, UserEntity?)>(
       future: _loadFuture,
-      builder: (BuildContext context,
-          AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Lightweight skeleton to reduce layout shift while loading
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.vSm),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.hSm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        height: 14,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        height: 12,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-        final (PostEntity?, UserEntity?)? data = snapshot.data;
-        final PostEntity? post = data?.$1;
-        final UserEntity? seller = data?.$2;
-
-        // Prefer the local, potentially-updated delivery type. Fall back to
-        // the post's delivery type or a safe default.
-        final DeliveryType displayDeliveryType =
-            _deliveryType ?? post?.deliveryType ?? DeliveryType.collection;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ///MARK: Seller info
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
+      builder:
+          (
+            BuildContext context,
+            AsyncSnapshot<(PostEntity?, UserEntity?)> snapshot,
+          ) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Lightweight skeleton to reduce layout shift while loading
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.vSm),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text.rich(
-                      TextSpan(children: <InlineSpan>[
-                        TextSpan(
-                          text: '${'seller'.tr()}: ',
-                          style: textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6)),
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusSm,
                         ),
-                        TextSpan(
-                          text: seller?.displayName ?? '',
-                          style: textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6)),
-                        ),
-                      ]),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.hSm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            height: 14,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: scheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            height: 12,
+                            width: 120,
+                            decoration: BoxDecoration(
+                              color: scheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.vXs),
-                Text(
-                  '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
-                  style: textTheme.labelSmall?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.vSm),
+              );
+            }
+            final (PostEntity?, UserEntity?)? data = snapshot.data;
+            final PostEntity? post = data?.$1;
+            final UserEntity? seller = data?.$2;
 
-            ///MARK: Product row
-            _ProductInfo(
-                widget: widget,
-                post: post,
-                textTheme: textTheme,
-                scheme: scheme),
-            const SizedBox(height: AppSpacing.vSm),
+            // Prefer the local, potentially-updated delivery type. Fall back to
+            // the post's delivery type or a safe default.
+            final DeliveryType displayDeliveryType =
+                _deliveryType ?? post?.deliveryType ?? DeliveryType.collection;
 
-            ///MARK: Delivery Section
-            if (widget.item.status == CartItemStatusType.cart)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xs, vertical: AppSpacing.xs),
-                    decoration: BoxDecoration(
-                      color:
-                          displayDeliveryType.bgColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                      border: Border.all(
-                        color: displayDeliveryType.color.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color:
-                              displayDeliveryType.color.withValues(alpha: 0.08),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ///MARK: Seller info
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
                       children: <Widget>[
-                        Icon(
-                          Icons.circle,
-                          size: 8,
-                          color:
-                              displayDeliveryType.color.withValues(alpha: 0.6),
-                        ),
-                        const SizedBox(width: AppSpacing.hXs),
-                        Text(
-                          displayDeliveryType.code.tr(),
-                          style: textTheme.labelSmall?.copyWith(
-                            color: displayDeliveryType.color,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.3,
+                        Text.rich(
+                          TextSpan(
+                            children: <InlineSpan>[
+                              TextSpan(
+                                text: '${'seller'.tr()}: ',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                ),
+                              ),
+                              TextSpan(
+                                text: seller?.displayName ?? '',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: AppSpacing.vXs),
+                    Text(
+                      '${calculateReviewPercentage(seller?.listOfReviews ?? <double>[])}% ${'positive_feedback'.tr()}',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                ///MARK: Product row
+                _ProductInfo(
+                  widget: widget,
+                  post: post,
+                  textTheme: textTheme,
+                  scheme: scheme,
+                ),
+                const SizedBox(height: AppSpacing.vSm),
+
+                ///MARK: Delivery Section
+                if (widget.item.status == CartItemStatusType.cart)
                   Row(
-                    spacing: AppSpacing.hSm,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        'need_fast_delivery'.tr(),
-                        style: textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w400,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                          vertical: AppSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: displayDeliveryType.bgColor.withValues(
+                            alpha: 0.12,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusSm,
+                          ),
+                          border: Border.all(
+                            color: displayDeliveryType.color.withValues(
+                              alpha: 0.3,
+                            ),
+                            width: 1,
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: displayDeliveryType.color.withValues(
+                                alpha: 0.08,
+                              ),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.circle,
+                              size: 8,
+                              color: displayDeliveryType.color.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.hXs),
+                            Text(
+                              displayDeliveryType.code.tr(),
+                              style: textTheme.labelSmall?.copyWith(
+                                color: displayDeliveryType.color,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      CustomSwitch(
-                        value: isActive,
-                        onChanged: (bool val) {
-                          // Update local UI state and persist change to provider's
-                          // fast-delivery id list.
-                          final CartProvider provider =
-                              Provider.of<CartProvider>(context, listen: false);
-                          setState(() {
-                            debugPrint(
-                                'fast delivery for ${widget.item.cartItemID}');
-                            isActive = val;
-                            _deliveryType = val
-                                ? DeliveryType.fastDelivery
-                                : (post?.deliveryType ??
-                                    DeliveryType.collection);
-                          });
-                          if (val) {
-                            provider
-                                .addFastDeliveryProduct(widget.item.cartItemID);
-                          } else {
-                            provider.removeFastDeliveryProduct(
-                                widget.item.cartItemID);
-                          }
-                          debugPrint('Item switch toggled: $val');
-                        },
+                      Row(
+                        spacing: AppSpacing.hSm,
+                        children: <Widget>[
+                          Text(
+                            'need_fast_delivery'.tr(),
+                            style: textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          CustomSwitch(
+                            value: isActive,
+                            onChanged: (bool val) {
+                              // Update local UI state and persist change to provider's
+                              // fast-delivery id list.
+                              final CartProvider provider =
+                                  Provider.of<CartProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                              setState(() {
+                                debugPrint(
+                                  'fast delivery for ${widget.item.cartItemID}',
+                                );
+                                isActive = val;
+                                _deliveryType = val
+                                    ? DeliveryType.fastDelivery
+                                    : (post?.deliveryType ??
+                                          DeliveryType.collection);
+                              });
+                              if (val) {
+                                provider.addFastDeliveryProduct(
+                                  widget.item.cartItemID,
+                                );
+                              } else {
+                                provider.removeFastDeliveryProduct(
+                                  widget.item.cartItemID,
+                                );
+                              }
+                              debugPrint('Item switch toggled: $val');
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
 
-            ///MARK: Delete/Later/Share
-            SaveLaterWidget(item: widget.item),
-          ],
-        );
-      },
+                ///MARK: Delete/Later/Share
+                SaveLaterWidget(item: widget.item),
+              ],
+            );
+          },
     );
   }
 
@@ -330,10 +356,7 @@ class _ProductInfo extends StatelessWidget {
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-            child: CustomNetworkImage(
-              imageURL: post?.imageURL,
-              size: 60,
-            ),
+            child: CustomNetworkImage(imageURL: post?.imageURL, size: 60),
           ),
         ),
 
@@ -375,8 +398,9 @@ class _ProductInfo extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: scheme.primary.withValues(alpha: 0.08),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusXs),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusXs,
+                            ),
                           ),
                           child: Text(
                             post?.condition.code.tr() ?? '',
@@ -397,18 +421,18 @@ class _ProductInfo extends StatelessWidget {
                     future: post?.getPriceStr(),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Text('...');
-                      }
-                      return Text(
-                        snapshot.data!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      );
-                    },
+                          if (!snapshot.hasData) {
+                            return const Text('...');
+                          }
+                          return Text(
+                            snapshot.data!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        },
                   ),
                 ],
               ),
@@ -467,10 +491,13 @@ class _SaveLaterWidgetState extends State<SaveLaterWidget> {
     });
 
     try {
-      final CartProvider cartProvider =
-          Provider.of<CartProvider>(context, listen: false);
-      final DataState<bool> result =
-          await cartProvider.updateStatus(widget.item);
+      final CartProvider cartProvider = Provider.of<CartProvider>(
+        context,
+        listen: false,
+      );
+      final DataState<bool> result = await cartProvider.updateStatus(
+        widget.item,
+      );
 
       if (mounted) {
         if (result is DataSuccess) {

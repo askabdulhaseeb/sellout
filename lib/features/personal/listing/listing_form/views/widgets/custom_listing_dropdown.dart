@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../core/widgets/custom_dropdown.dart';
+import '../../../../../../core/widgets/inputs/custom_dropdown.dart';
 
 class CustomListingDropDown<T extends ChangeNotifier, O>
     extends StatefulWidget {

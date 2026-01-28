@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/enums/core/attachment_type.dart';
 import '../../../../../../core/sources/data_state.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
-import '../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
+import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
@@ -22,8 +22,9 @@ class CreateGroupBottomSheet extends StatefulWidget {
 }
 
 class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
-  final GetUserByUidUsecase getUserByUidUsecase =
-      GetUserByUidUsecase(locator());
+  final GetUserByUidUsecase getUserByUidUsecase = GetUserByUidUsecase(
+    locator(),
+  );
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int step = 1;
   @override
@@ -47,19 +48,21 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
     );
   }
 
-// Inside _buildChooseMembers
-  Widget _buildChooseMembers(CreateChatGroupProvider provider,
-      List<SupporterDetailEntity> supporters) {
+  // Inside _buildChooseMembers
+  Widget _buildChooseMembers(
+    CreateChatGroupProvider provider,
+    List<SupporterDetailEntity> supporters,
+  ) {
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) => provider.reset(),
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          leading: BackButton(
-            onPressed: () => Navigator.pop(context),
+          leading: BackButton(onPressed: () => Navigator.pop(context)),
+          title: Text(
+            'choose_members'.tr(),
+            style: TextTheme.of(context).titleMedium,
           ),
-          title: Text('choose_members'.tr(),
-              style: TextTheme.of(context).titleMedium),
         ),
         body: Stack(
           children: <Widget>[
@@ -74,102 +77,121 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
 
                   return FutureBuilder<DataState<UserEntity?>>(
                     future: getUserByUidUsecase(userId),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<DataState<UserEntity?>> snapshot) {
-                      // SKELETON LOADING
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  shape: BoxShape.circle,
-                                ),
+                    builder:
+                        (
+                          BuildContext context,
+                          AsyncSnapshot<DataState<UserEntity?>> snapshot,
+                        ) {
+                          // SKELETON LOADING
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      height: 14,
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
                                       color: Colors.grey.shade300,
-                                      margin: const EdgeInsets.only(bottom: 6),
+                                      shape: BoxShape.circle,
                                     ),
-                                    Container(
-                                      height: 12,
-                                      width: 100,
-                                      color: Colors.grey.shade300,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Container(
+                                          height: 14,
+                                          color: Colors.grey.shade300,
+                                          margin: const EdgeInsets.only(
+                                            bottom: 6,
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 12,
+                                          width: 100,
+                                          color: Colors.grey.shade300,
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Container(
-                                width: 35,
-                                height: 35,
-                                color: Colors.grey.shade300,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      // NULL / ERROR CHECKS
-                      if (!snapshot.hasData ||
-                          snapshot.data == null ||
-                          snapshot.data!.entity == null) {
-                        return ListTile(
-                          leading: const Icon(Icons.error_outline),
-                          title: Text('user_not_found'.tr()),
-                        );
-                      }
-
-                      final UserEntity user = snapshot.data!.entity!;
-
-                      return ListTile(
-                        minTileHeight: 70,
-                        leading: ProfilePhoto(
-                          size: 30,
-                          url: user.profilePhotoURL,
-                          placeholder: user.displayName,
-                        ),
-                        title: Text(
-                          user.displayName,
-                          style: TextTheme.of(context).bodyMedium,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Consumer<CreateChatGroupProvider>(
-                          builder: (BuildContext context,
-                              CreateChatGroupProvider p, _) {
-                            final bool isSelected = p.isSelected(user.uid);
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: IconButton(
-                                key: ValueKey<bool>(isSelected),
-                                icon: Icon(
-                                  isSelected
-                                      ? Icons.cancel_outlined
-                                      : Icons.add_circle_outline,
-                                  color: isSelected
-                                      ? Theme.of(context).colorScheme.secondary
-                                      : Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () {
-                                  p.toggleSupporter(user.uid);
-                                },
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    width: 35,
+                                    height: 35,
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ],
                               ),
                             );
-                          },
-                        ),
-                      );
-                    },
+                          }
+
+                          // NULL / ERROR CHECKS
+                          if (!snapshot.hasData ||
+                              snapshot.data == null ||
+                              snapshot.data!.entity == null) {
+                            return ListTile(
+                              leading: const Icon(Icons.error_outline),
+                              title: Text('user_not_found'.tr()),
+                            );
+                          }
+
+                          final UserEntity user = snapshot.data!.entity!;
+
+                          return ListTile(
+                            minTileHeight: 70,
+                            leading: ProfilePhoto(
+                              size: 30,
+                              url: user.profilePhotoURL,
+                              placeholder: user.displayName,
+                            ),
+                            title: Text(
+                              user.displayName,
+                              style: TextTheme.of(context).bodyMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: Consumer<CreateChatGroupProvider>(
+                              builder:
+                                  (
+                                    BuildContext context,
+                                    CreateChatGroupProvider p,
+                                    _,
+                                  ) {
+                                    final bool isSelected = p.isSelected(
+                                      user.uid,
+                                    );
+                                    return AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      child: IconButton(
+                                        key: ValueKey<bool>(isSelected),
+                                        icon: Icon(
+                                          isSelected
+                                              ? Icons.cancel_outlined
+                                              : Icons.add_circle_outline,
+                                          color: isSelected
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.secondary
+                                              : Theme.of(context).primaryColor,
+                                        ),
+                                        onPressed: () {
+                                          p.toggleSupporter(user.uid);
+                                        },
+                                      ),
+                                    );
+                                  },
+                            ),
+                          );
+                        },
                   );
                 },
               ),
@@ -182,15 +204,15 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                 builder:
                     (BuildContext context, CreateChatGroupProvider pro, _) =>
                         Column(
-                  children: <Widget>[
-                    if (pro.selectedUserIds.length >= 2)
-                      CustomElevatedButton(
-                        isLoading: false,
-                        onTap: () => setState(() => step = 2),
-                        title: 'next'.tr(),
-                      ),
-                  ],
-                ),
+                          children: <Widget>[
+                            if (pro.selectedUserIds.length >= 2)
+                              CustomElevatedButton(
+                                isLoading: false,
+                                onTap: () => setState(() => step = 2),
+                                title: 'next'.tr(),
+                              ),
+                          ],
+                        ),
               ),
             ),
           ],
@@ -211,8 +233,10 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
             },
           ),
           centerTitle: true,
-          title: Text('group_details'.tr(),
-              style: TextTheme.of(context).titleMedium),
+          title: Text(
+            'group_details'.tr(),
+            style: TextTheme.of(context).titleMedium,
+          ),
         ),
         body: Stack(
           children: <Widget>[
@@ -226,43 +250,52 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                     children: <Widget>[
                       InkWell(
                         onTap: () {
-                          provider.setImages(context,
-                              type: AttachmentType.image);
+                          provider.setImages(
+                            context,
+                            type: AttachmentType.image,
+                          );
                         },
                         child: IgnorePointer(
                           child: CustomTextFormField(
-                              readOnly: true,
-                              hint: 'group_photo_hint'.tr(),
-                              controller: TextEditingController(),
-                              contentPadding: const EdgeInsets.all(6),
-                              prefixIcon: Consumer<CreateChatGroupProvider>(
-                                builder: (BuildContext context,
-                                        CreateChatGroupProvider pro,
-                                        Widget? child) =>
-                                    Container(
-                                  padding: const EdgeInsets.all(4.0),
-                                  margin: const EdgeInsets.all(4.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant,
+                            readOnly: true,
+                            hint: 'group_photo_hint'.tr(),
+                            controller: TextEditingController(),
+                            contentPadding: const EdgeInsets.all(6),
+                            prefixIcon: Consumer<CreateChatGroupProvider>(
+                              builder:
+                                  (
+                                    BuildContext context,
+                                    CreateChatGroupProvider pro,
+                                    Widget? child,
+                                  ) => Container(
+                                    padding: const EdgeInsets.all(4.0),
+                                    margin: const EdgeInsets.all(4.0),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
+                                      ),
                                     ),
-                                  ),
-                                  child: provider.attachments.isNotEmpty
-                                      ? ClipOval(
-                                          child: Image.file(
-                                            File(pro
-                                                .attachments.first.file.path),
-                                            width: 30,
-                                            height: 30,
-                                            fit: BoxFit.cover,
+                                    child: provider.attachments.isNotEmpty
+                                        ? ClipOval(
+                                            child: Image.file(
+                                              File(
+                                                pro.attachments.first.file.path,
+                                              ),
+                                              width: 30,
+                                              height: 30,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.camera_alt,
+                                            size: 30,
                                           ),
-                                        )
-                                      : const Icon(Icons.camera_alt, size: 30),
-                                ),
-                              )),
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                       CustomTextFormField(
@@ -270,20 +303,18 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                         controller: provider.groupTitle,
                         validator: (String? value) =>
                             (value == null || value.trim().isEmpty)
-                                ? 'group_name_required'.tr()
-                                : null,
+                            ? 'group_name_required'.tr()
+                            : null,
                       ),
                       CustomTextFormField(
                         labelText: 'group_description'.tr(),
                         controller: provider.groupDescription,
                         validator: (String? value) =>
                             (value == null || value.trim().isEmpty)
-                                ? 'group_description_required'.tr()
-                                : null,
+                            ? 'group_description_required'.tr()
+                            : null,
                       ),
-                      const SizedBox(
-                        height: 100,
-                      ),
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),

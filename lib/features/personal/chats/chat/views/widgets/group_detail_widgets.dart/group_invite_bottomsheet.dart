@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
-import '../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../user/profiles/domain/entities/supporter_detail_entity.dart';
@@ -15,13 +15,15 @@ import '../../providers/chat_provider.dart';
 
 void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
   Future<List<UserEntity>> getSupporterUsers(
-      List<SupporterDetailEntity> supporters) async {
+    List<SupporterDetailEntity> supporters,
+  ) async {
     final GetUserByUidUsecase getUser = GetUserByUidUsecase(locator());
     final List<UserEntity> users = <UserEntity>[];
 
     for (final SupporterDetailEntity supporter in supporters) {
-      final DataState<UserEntity?> result =
-          await getUser.call(supporter.userID);
+      final DataState<UserEntity?> result = await getUser.call(
+        supporter.userID,
+      );
       final UserEntity? user = result.entity;
       if (user != null) users.add(user);
     }
@@ -29,7 +31,8 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
   }
 
   final GroupInfoEntity? groupInfo = pro.chat?.groupInfo;
-  final List<String> participantUids = groupInfo?.participants
+  final List<String> participantUids =
+      groupInfo?.participants
           .map((ChatParticipantEntity e) => e.uid)
           .toList() ??
       <String>[];
@@ -59,51 +62,54 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
         future: getSupporterUsers(supporters),
         builder:
             (BuildContext context, AsyncSnapshot<List<UserEntity>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final List<UserEntity> users = snapshot.data ?? <UserEntity>[];
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: users.length,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (BuildContext context, int index) {
-              final UserEntity user = users[index];
-              final List<String> invitedUids = groupInfo?.invitations
-                      .map((InvitationEntity e) => e.uid)
-                      .toList() ??
-                  <String>[];
-              final bool isAlreadyParticipant =
-                  participantUids.contains(user.uid);
-              final bool isAlreadyInvited = invitedUids.contains(user.uid);
-              return ListTile(
-                leading: ProfilePhoto(
-                  url: user.profilePhotoURL,
-                  isCircle: true,
-                  placeholder: user.displayName,
-                  size: 20,
-                ),
-                title: Text(
-                  user.displayName,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                trailing: SizedBox(
-                  width: 100,
-                  child: isAlreadyParticipant
-                      ? CustomElevatedButton(
-                          isLoading: false,
-                          bgColor: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withAlpha(30),
-                          textColor: Theme.of(context).colorScheme.secondary,
-                          textStyle: Theme.of(context).textTheme.bodySmall,
-                          title: 'participant'.tr(),
-                          onTap: () {},
-                        )
-                      : isAlreadyInvited
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final List<UserEntity> users = snapshot.data ?? <UserEntity>[];
+              return ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: users.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (BuildContext context, int index) {
+                  final UserEntity user = users[index];
+                  final List<String> invitedUids =
+                      groupInfo?.invitations
+                          .map((InvitationEntity e) => e.uid)
+                          .toList() ??
+                      <String>[];
+                  final bool isAlreadyParticipant = participantUids.contains(
+                    user.uid,
+                  );
+                  final bool isAlreadyInvited = invitedUids.contains(user.uid);
+                  return ListTile(
+                    leading: ProfilePhoto(
+                      url: user.profilePhotoURL,
+                      isCircle: true,
+                      placeholder: user.displayName,
+                      size: 20,
+                    ),
+                    title: Text(
+                      user.displayName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    trailing: SizedBox(
+                      width: 100,
+                      child: isAlreadyParticipant
+                          ? CustomElevatedButton(
+                              isLoading: false,
+                              bgColor: Theme.of(
+                                context,
+                              ).colorScheme.secondary.withAlpha(30),
+                              textColor: Theme.of(
+                                context,
+                              ).colorScheme.secondary,
+                              textStyle: Theme.of(context).textTheme.bodySmall,
+                              title: 'participant'.tr(),
+                              onTap: () {},
+                            )
+                          : isAlreadyInvited
                           ? CustomElevatedButton(
                               isLoading: false,
                               bgColor: Colors.grey.withAlpha(30),
@@ -114,8 +120,9 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                             )
                           : CustomElevatedButton(
                               isLoading: false,
-                              bgColor:
-                                  Theme.of(context).primaryColor.withAlpha(30),
+                              bgColor: Theme.of(
+                                context,
+                              ).primaryColor.withAlpha(30),
                               textColor: Theme.of(context).primaryColor,
                               textStyle: Theme.of(context).textTheme.bodySmall,
                               title: 'invite'.tr(),
@@ -124,11 +131,11 @@ void showInviteBottomSheet(BuildContext context, ChatProvider pro) {
                                 Navigator.pop(context);
                               },
                             ),
-                ),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
       );
     },
   );

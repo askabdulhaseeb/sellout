@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/profile_photo.dart';
+import '../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../chat_dashboard/domain/entities/chat/group/group_into_entity.dart';
 import '../../providers/chat_provider.dart';
 import '../../screens/group_detail_screen.dart';
@@ -17,10 +17,11 @@ class GroupChatTitleWidget extends StatelessWidget {
         return InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute<GroupDetailScreen>(
-                  builder: (BuildContext context) => const GroupDetailScreen(),
-                ));
+              context,
+              MaterialPageRoute<GroupDetailScreen>(
+                builder: (BuildContext context) => const GroupDetailScreen(),
+              ),
+            );
           },
           child: Row(
             children: <Widget>[
@@ -41,7 +42,9 @@ class GroupChatTitleWidget extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                     Opacity(
                       opacity: 0.5,
@@ -49,10 +52,10 @@ class GroupChatTitleWidget extends StatelessWidget {
                         'tap_here_to_open_profile',
                         style: TextStyle(fontSize: 12),
                       ).tr(),
-                    )
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         );

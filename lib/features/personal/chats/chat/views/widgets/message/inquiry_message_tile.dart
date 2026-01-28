@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
-import '../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
+import '../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
@@ -34,8 +34,9 @@ class InquiryMessageTile extends StatelessWidget {
                   children: <Widget>[
                     if (postEntity != null && postEntity.imageURL.isNotEmpty)
                       ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.radiusSm),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusSm,
+                        ),
                         child: CustomNetworkImage(
                           imageURL: postEntity.imageURL,
                           size: 80,
@@ -52,9 +53,7 @@ class InquiryMessageTile extends StatelessWidget {
                           children: <Widget>[
                             Text(
                               message.text,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -70,9 +69,7 @@ class InquiryMessageTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         post.title ?? '',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
+                        style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -82,18 +79,15 @@ class InquiryMessageTile extends StatelessWidget {
                       currency: post.currency,
                       price: post.price,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ],
               // Action Buttons
               if (postEntity != null && postEntity.createdBy != LocalAuth.uid)
-                PostButtonSection(
-                  post: postEntity,
-                  detailWidget: false,
-                ),
+                PostButtonSection(post: postEntity, detailWidget: false),
             ],
           ),
         );

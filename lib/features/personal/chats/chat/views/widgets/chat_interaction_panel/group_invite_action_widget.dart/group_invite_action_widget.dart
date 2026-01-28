@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../providers/chat_provider.dart';
 
 class GroupInviteActionWidget extends StatelessWidget {
@@ -22,10 +22,7 @@ class GroupInviteActionWidget extends StatelessWidget {
           Text(
             'You_have_been_added_group'.tr(),
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 16),
           Row(
@@ -40,7 +37,9 @@ class GroupInviteActionWidget extends StatelessWidget {
                   onTap: () => pro.acceptGroupInvite(context),
                   bgColor: Theme.of(context).primaryColor,
                   textStyle: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),
@@ -54,10 +53,13 @@ class GroupInviteActionWidget extends StatelessWidget {
                   onTap: () {},
                   bgColor: Colors.transparent,
                   border: Border.all(
-                      color: Theme.of(context).primaryColor, width: 1.5),
+                    color: Theme.of(context).primaryColor,
+                    width: 1.5,
+                  ),
                   textStyle: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold),
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),

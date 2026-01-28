@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/empty_page_widget.dart';
+import '../../../../../../../core/widgets/text_display/empty_page_widget.dart';
 import '../../../../domain/entities/checkout/payment_item_entity.dart';
 import '../../../providers/cart_provider.dart';
 import 'review_widgets/review_item_card.dart';

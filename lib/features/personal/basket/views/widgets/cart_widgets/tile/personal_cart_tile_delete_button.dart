@@ -2,15 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
 import '../../../../data/sources/local/local_cart.dart';
 import '../../../providers/cart_provider.dart';
 
 class PersonalCartTileDeleteButton extends StatefulWidget {
-  const PersonalCartTileDeleteButton({
-    required this.item,
-    super.key,
-  });
+  const PersonalCartTileDeleteButton({required this.item, super.key});
 
   final CartItemEntity item;
 
@@ -27,10 +24,13 @@ class _PersonalCartTileDeleteButtonState
     if (_isLoading) return; // prevent double taps
     setState(() => _isLoading = true);
     try {
-      final CartProvider provider =
-          Provider.of<CartProvider>(context, listen: false);
-      final DataState<bool> result =
-          await provider.removeItem(widget.item.cartItemID);
+      final CartProvider provider = Provider.of<CartProvider>(
+        context,
+        listen: false,
+      );
+      final DataState<bool> result = await provider.removeItem(
+        widget.item.cartItemID,
+      );
 
       if (!mounted) return;
       if (result is DataSuccess<bool>) {

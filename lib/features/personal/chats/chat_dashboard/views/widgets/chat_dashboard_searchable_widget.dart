@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../core/utilities/app_string.dart';
 import '../../../../../../core/widgets/custom_svg_icon.dart';
-import '../../../../../../core/widgets/searchable_textfield.dart';
+import '../../../../../../core/widgets/inputs/searchable_textfield.dart';
 import '../../../create_chat/view/screens/create_group_bottomsheet.dart';
 import '../../../create_chat/view/screens/create_private_chat_bottomsheet.dart';
 import '../providers/chat_dashboard_provider.dart';

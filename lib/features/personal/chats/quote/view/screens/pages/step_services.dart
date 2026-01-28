@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../services/get_it.dart';
 import '../../../../../../business/business_page/views/widgets/section_details/empty_lists/business_page_empty_service_widget.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
@@ -22,8 +22,9 @@ class StepServices extends StatefulWidget {
 }
 
 class _StepServicesState extends State<StepServices> {
-  final GetServicesByQueryUsecase _servicesUsecase =
-      GetServicesByQueryUsecase(locator());
+  final GetServicesByQueryUsecase _servicesUsecase = GetServicesByQueryUsecase(
+    locator(),
+  );
 
   final ScrollController _scrollController = ScrollController();
   final List<ServiceEntity> _services = <ServiceEntity>[];
@@ -48,16 +49,16 @@ class _StepServicesState extends State<StepServices> {
   }
 
   ServiceByFiltersParams get _servicesParam => ServiceByFiltersParams(
-        lastKey: _lastKey,
-        query: '', // you can add a search box later if needed
-        filters: <FilterParam>[
-          FilterParam(
-            attribute: 'business_id',
-            operator: 'eq',
-            value: widget.businessId,
-          ),
-        ],
-      );
+    lastKey: _lastKey,
+    query: '', // you can add a search box later if needed
+    filters: <FilterParam>[
+      FilterParam(
+        attribute: 'business_id',
+        operator: 'eq',
+        value: widget.businessId,
+      ),
+    ],
+  );
 
   Future<void> _fetchServices({bool reset = false}) async {
     if (widget.businessId.isEmpty) return;
@@ -72,8 +73,9 @@ class _StepServicesState extends State<StepServices> {
     setState(() => _isLoading = true);
 
     try {
-      final DataState<List<ServiceEntity>> result =
-          await _servicesUsecase.call(_servicesParam);
+      final DataState<List<ServiceEntity>> result = await _servicesUsecase.call(
+        _servicesParam,
+      );
 
       if (result is DataSuccess) {
         final List<ServiceEntity> fetched = result.entity ?? <ServiceEntity>[];
@@ -166,9 +168,9 @@ class _ServiceStepGridTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 4),
 
@@ -178,17 +180,17 @@ class _ServiceStepGridTile extends StatelessWidget {
               Text(
                 service.priceStr,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: Theme.of(context).colorScheme.outline,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(width: 8),
               Text(
                 '${service.time} ${'min'.tr()}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -197,17 +199,18 @@ class _ServiceStepGridTile extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: CustomElevatedButton(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  bgColor:
-                      Theme.of(context).primaryColor.withValues(alpha: 0.0),
-                  border: Border.all(
-                    color: Theme.of(context).primaryColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 4,
                   ),
+                  bgColor: Theme.of(
+                    context,
+                  ).primaryColor.withValues(alpha: 0.0),
+                  border: Border.all(color: Theme.of(context).primaryColor),
                   textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                   title: 'add'.tr(),
                   isLoading: false,
                   onTap: () => quoteProvider.addService(
@@ -224,23 +227,26 @@ class _ServiceStepGridTile extends StatelessWidget {
                   child: Text(
                     '$qty',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
                 Expanded(
                   child: CustomElevatedButton(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 4,
+                    ),
                     bgColor: Colors.transparent,
                     border: Border.all(
-                        color: Theme.of(context).colorScheme.outline,
-                        width: 1.2),
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1.2,
+                    ),
                     textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: Theme.of(context).colorScheme.outline,
+                      fontWeight: FontWeight.w600,
+                    ),
                     title: 'remove'.tr(),
                     isLoading: false,
                     onTap: () => quoteProvider.removeService(service.serviceID),

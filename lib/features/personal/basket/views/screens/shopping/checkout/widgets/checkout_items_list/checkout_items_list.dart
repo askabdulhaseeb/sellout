@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/constants/app_spacings.dart';
-import '../../../../../../../../../core/widgets/shadow_container.dart';
+import '../../../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../../../../../core/enums/listing/core/postage_type.dart';
 import '../../../../../../domain/entities/cart/cart_item_entity.dart';
 import '../../../../../../domain/param/get_postage_detail_params.dart';

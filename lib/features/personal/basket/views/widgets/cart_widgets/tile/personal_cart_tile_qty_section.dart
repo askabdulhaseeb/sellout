@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../../core/extension/int_ext.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/app_snackbar.dart';
+import '../../../../../../../core/widgets/utils/app_snackbar.dart';
 
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../data/sources/local/local_cart.dart';
@@ -51,9 +51,10 @@ class _PersonalCartTileQtySectionState
     });
 
     try {
-      final DataState<bool> result =
-          await Provider.of<CartProvider>(context, listen: false)
-              .updateQty(widget.item, newQty);
+      final DataState<bool> result = await Provider.of<CartProvider>(
+        context,
+        listen: false,
+      ).updateQty(widget.item, newQty);
 
       if (result is DataFailer && mounted) {
         // Revert quantity on failure
@@ -124,8 +125,8 @@ class _PersonalCartTileQtySectionState
           child: Text(
             qty.putInStart(sign: '0', length: 2),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: _isUpdating ? Theme.of(context).disabledColor : null,
-                ),
+              color: _isUpdating ? Theme.of(context).disabledColor : null,
+            ),
           ),
         ),
         IconButton(
