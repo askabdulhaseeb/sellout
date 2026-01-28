@@ -9,7 +9,7 @@ import '../../../../../../../../domain/entities/size_color/color_entity.dart';
 import '../../../../../../../../domain/entities/size_color/size_color_entity.dart';
 import 'size_chart_button_tile.dart';
 import 'widgets/post_add_to_basket_button.dart';
-import 'widgets/post_buy_now_button.dart';
+import '../post_buy_now_button/post_buy_now_button.dart';
 import 'widgets/post_collection_button.dart';
 import 'widgets/post_make_offer_button.dart';
 

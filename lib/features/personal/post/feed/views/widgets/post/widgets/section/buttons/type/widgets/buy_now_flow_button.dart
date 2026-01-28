@@ -8,7 +8,7 @@ import '../../../../../../../../../../../../core/widgets/custom_elevated_button.
 /// This widget is modular, reusable, and follows clean architecture principles.
 /// All text uses localized keys and project conventions.
 
-import 'post_buy_now_button.dart';
+import '../../post_buy_now_button/post_buy_now_button.dart';
 
 class BuyNowFlowButton extends StatelessWidget {
   const BuyNowFlowButton({

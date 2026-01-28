@@ -5,7 +5,7 @@ import '../../../../../../core/helper_functions/country_helper.dart';
 import '../../../../../../core/widgets/custom_network_image.dart';
 import '../../../../../../core/widgets/shadow_container.dart';
 import '../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../post/feed/views/widgets/post/widgets/section/buttons/type/widgets/post_buy_now_button.dart';
+import '../../../../post/feed/views/widgets/post/widgets/section/buttons/post_buy_now_button/post_buy_now_button.dart';
 import '../../../domain/entities/order_entity.dart';
 
 class BuyerOrderProductDetailWidget extends StatelessWidget {
