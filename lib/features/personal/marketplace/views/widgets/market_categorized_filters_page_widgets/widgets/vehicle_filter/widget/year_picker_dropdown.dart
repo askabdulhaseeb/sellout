@@ -33,7 +33,7 @@ class _CustomYearDropdownState extends State<CustomYearDropdown> {
 
   void _generateYearList() {
     final int currentYear = DateTime.now().year;
-    _yearList = List.generate(
+    _yearList = List<String>.generate(
       currentYear - widget.startYear + 1,
       (int index) => (currentYear - index).toString(), // Descending order
     );

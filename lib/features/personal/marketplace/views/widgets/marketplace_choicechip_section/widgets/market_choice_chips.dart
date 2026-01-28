@@ -40,7 +40,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: jsons.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 4),
+            separatorBuilder: (_, _) => const SizedBox(width: 4),
             itemBuilder: (_, int index) {
               final String? json = jsons[index];
               final bool isSelected = selectedJson == json;
