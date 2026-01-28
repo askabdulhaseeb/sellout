@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/widgets/coming_soon_overlay.dart';
+import '../../../../../core/widgets/text_display/coming_soon_overlay.dart';
 import '../../../../../core/widgets/scaffold/app_bar/app_bar_title_widget.dart';
 import '../../../../../core/widgets/scaffold/personal_scaffold.dart';
 import '../providers/services_page_provider.dart';
@@ -44,24 +44,26 @@ class _ServicesScreenState extends State<ServicesScreen> {
   @override
   Widget build(BuildContext context) {
     return PersonalScaffold(
-        body: Stack(children: <Widget>[
-      SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        controller: _scrollController,
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            AppBarTitle(
-              titleKey: 'services',
+      body: Stack(
+        children: <Widget>[
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            controller: _scrollController,
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                AppBarTitle(titleKey: 'services'),
+                ServicesPageTypeToggleSection(),
+              ],
             ),
-            ServicesPageTypeToggleSection(),
-          ],
-        ),
+          ),
+          ComingSoonOverlay(
+            title: 'coming_soon'.tr(),
+            subtitle: 'services_coming_soon_subtitle'.tr(),
+            icon: CupertinoIcons.hourglass,
+          ),
+        ],
       ),
-      ComingSoonOverlay(
-          title: 'coming_soon'.tr(),
-          subtitle: 'services_coming_soon_subtitle'.tr(),
-          icon: CupertinoIcons.hourglass),
-    ]));
+    );
   }
 }

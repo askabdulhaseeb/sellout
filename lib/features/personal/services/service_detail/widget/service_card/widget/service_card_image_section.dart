@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 
 class ServiceCardImageSection extends StatelessWidget {
-  const ServiceCardImageSection({
-    required this.service,
-    super.key,
-  });
+  const ServiceCardImageSection({required this.service, super.key});
 
   final ServiceEntity service;
 

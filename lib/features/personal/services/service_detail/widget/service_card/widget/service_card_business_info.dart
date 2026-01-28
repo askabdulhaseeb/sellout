@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/profile_photo.dart';
-import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../../core/widgets/media/profile_photo.dart';
+import '../../../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../../../../business/business_page/views/screens/business_profile_screen.dart';
 import '../../../../../../business/business_page/views/screens/user_business_profile_screen.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
@@ -23,10 +23,12 @@ class ServiceCardBusinessInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute<BusinessProfileScreen>(
-              builder: (BuildContext context) => UserBusinessProfileScreen(
-                  businessID: business?.businessID ?? ''))),
+        context,
+        MaterialPageRoute<BusinessProfileScreen>(
+          builder: (BuildContext context) =>
+              UserBusinessProfileScreen(businessID: business?.businessID ?? ''),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -43,8 +45,10 @@ class ServiceCardBusinessInfo extends StatelessWidget {
                 Row(
                   spacing: 4,
                   children: <Widget>[
-                    Text(business?.displayName ?? 'na'.tr(),
-                        style: txt.titleMedium),
+                    Text(
+                      business?.displayName ?? 'na'.tr(),
+                      style: txt.titleMedium,
+                    ),
                     RatingDisplayWidget(
                       size: 12,
                       ratingList: service.listOfReviews,

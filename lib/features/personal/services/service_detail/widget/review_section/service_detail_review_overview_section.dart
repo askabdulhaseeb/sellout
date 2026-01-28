@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../core/sources/data_state.dart';
-import '../../../../../../../core/widgets/linear_rating_widget.dart';
+import '../../../../../../core/widgets/indicators/linear_rating_widget.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../post/post_detail/views/providers/post_detail_provider.dart';
 import '../../../../post/post_detail/views/widgets/reviews/post_detail_review_attachment_list_widget.dart';

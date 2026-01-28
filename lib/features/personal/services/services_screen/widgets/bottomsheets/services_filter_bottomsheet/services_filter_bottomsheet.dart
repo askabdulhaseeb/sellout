@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../providers/services_page_provider.dart';
 import 'widgets/services_filter_sheet_price_range.dart';
 import 'widgets/services_filter_sheet_review_dropdown.dart';
@@ -12,8 +12,10 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ServicesPageProvider pro =
-        Provider.of<ServicesPageProvider>(context, listen: false);
+    final ServicesPageProvider pro = Provider.of<ServicesPageProvider>(
+      context,
+      listen: false,
+    );
     return BottomSheet(
       showDragHandle: false,
       enableDrag: false,
@@ -31,14 +33,16 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  CloseButton(onPressed: () {
-                    Navigator.pop(context);
-                  }),
+                  CloseButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   Text(
                     'filter'.tr(),
-                    style: TextTheme.of(context)
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: TextTheme.of(
+                      context,
+                    ).bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   TextButton(
                     onPressed: () {
@@ -46,9 +50,9 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
                     },
                     child: Text(
                       'reset'.tr(),
-                      style: TextTheme.of(context)
-                          .labelSmall
-                          ?.copyWith(color: Theme.of(context).primaryColor),
+                      style: TextTheme.of(context).labelSmall?.copyWith(
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
                 ],
@@ -78,7 +82,7 @@ class ServicesExploreFilterBottomSheet extends StatelessWidget {
                   title: 'apply'.tr(),
                   isLoading: pro.isLoading,
                 ),
-              )
+              ),
             ],
           ),
         );

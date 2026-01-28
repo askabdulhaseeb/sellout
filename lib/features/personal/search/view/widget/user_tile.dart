@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../user/profiles/data/models/user_model.dart';
 import '../../../user/profiles/views/user_profile/screens/user_profile_screen.dart';
 
@@ -23,10 +23,7 @@ class UserTile extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Theme.of(context).dividerColor,
-            width: 1,
-          ),
+          border: Border.all(color: Theme.of(context).dividerColor, width: 1),
         ),
         child: Row(
           children: <Widget>[
@@ -54,10 +51,10 @@ class UserTile extends StatelessWidget {
                   Text(
                     user.username,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6)),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

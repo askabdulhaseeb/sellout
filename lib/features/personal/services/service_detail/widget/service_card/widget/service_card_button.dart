@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/custom_elevated_button.dart';
+import '../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../routes/app_linking.dart';
 import '../../../../../../business/core/domain/entity/business_entity.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
@@ -29,11 +29,13 @@ class ServiceCardButton extends StatelessWidget {
           isLoading: false,
           onTap: () {
             if (business?.routine != null) {
-              AppNavigator.pushNamed(BookingScreen.routeName,
-                  arguments: <String, dynamic>{
-                    'service': service,
-                    'business': business
-                  });
+              AppNavigator.pushNamed(
+                BookingScreen.routeName,
+                arguments: <String, dynamic>{
+                  'service': service,
+                  'business': business,
+                },
+              );
             }
           },
         ),

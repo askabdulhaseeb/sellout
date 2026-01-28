@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/widgets/custom_network_image.dart';
+import '../../../../../../../../core/widgets/media/custom_network_image.dart';
 import '../../../../../domain/entity/service_category_entity.dart';
 import '../../../../providers/services_page_provider.dart';
 import 'categorized_services_screen.dart';
@@ -34,18 +34,22 @@ class SeviceCategoryTile extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Expanded(
-                child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(8)),
-                    child: CustomNetworkImage(imageURL: category.imgURL))),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8),
+                ),
+                child: CustomNetworkImage(imageURL: category.imgURL),
+              ),
+            ),
             Padding(
-                padding: const EdgeInsets.all(4),
-                child: Text(
-                  category.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                )),
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                category.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
           ],
         ),
       ),

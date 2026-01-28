@@ -1,13 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../../../../../../core/widgets/rating_display_widget.dart';
+import '../../../../../../../core/widgets/indicators/rating_display_widget.dart';
 import '../../../../../../business/core/domain/entity/service/service_entity.dart';
 
 class ServiceDetailReviewHeader extends StatelessWidget {
-  const ServiceDetailReviewHeader({
-    required this.service,
-    super.key,
-  });
+  const ServiceDetailReviewHeader({required this.service, super.key});
 
   final ServiceEntity service;
 
@@ -28,9 +25,7 @@ class ServiceDetailReviewHeader extends StatelessWidget {
               displayPrefix: false,
               displayRating: false,
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             RatingDisplayWidget(
               ratingList: service.listOfReviews,
               displayStars: false,

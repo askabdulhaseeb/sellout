@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../provider/search_provider.dart';
 import '../../widget/user_tile.dart';
 
@@ -39,8 +39,10 @@ class _SearchUsersSectionState extends State<SearchUsersSection> {
           children: <Widget>[
             CustomTextFormField(
               dense: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 6,
+                horizontal: 4,
+              ),
               prefixIcon: const Icon(CupertinoIcons.search, size: 16),
               controller: controller,
               hint: 'search'.tr(),

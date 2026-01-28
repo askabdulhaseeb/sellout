@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../core/widgets/custom_textformfield.dart';
+import '../../../../../../../../core/widgets/inputs/custom_textformfield.dart';
 import '../../../../providers/services_page_provider.dart';
 
 class ServicesExpandablePriceRangeTile extends StatefulWidget {
@@ -18,8 +18,10 @@ class _ServicesExpandablePriceRangeTileState
 
   @override
   Widget build(BuildContext context) {
-    final ServicesPageProvider marketPro =
-        Provider.of<ServicesPageProvider>(context, listen: false);
+    final ServicesPageProvider marketPro = Provider.of<ServicesPageProvider>(
+      context,
+      listen: false,
+    );
     return Column(
       children: <Widget>[
         ListTile(
@@ -34,9 +36,9 @@ class _ServicesExpandablePriceRangeTileState
           ),
           subtitle: Text(
             !_isExpanded ? 'select_price_range'.tr() : '',
-            style: TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(color: ColorScheme.of(context).outline),
+            style: TextTheme.of(
+              context,
+            ).bodyMedium?.copyWith(color: ColorScheme.of(context).outline),
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.end,
