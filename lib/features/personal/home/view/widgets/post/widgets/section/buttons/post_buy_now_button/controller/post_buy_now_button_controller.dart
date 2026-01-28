@@ -1,25 +1,25 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
-import '../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
-import '../../../../../../../../../../core/enums/listing/core/listing_type.dart';
-import '../../../../../../../../../../core/functions/app_log.dart';
-import '../../../../../../../../../../core/sources/api_call.dart';
-import '../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
-import '../../../../../../../../../../services/get_it.dart';
-import '../../../../../../../../../postage/domain/entities/service_point_entity.dart';
-import '../../../../../../../../auth/signin/domain/entities/address_entity.dart';
-import '../../../../../../../../basket/domain/param/get_postage_detail_params.dart';
-import '../../../../../../../../basket/views/providers/cart_provider.dart';
-import '../../../../../../../../basket/views/screens/shopping/checkout/widgets/checkout_items_list/components/service_points_dialog.dart';
-import '../../../../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../../../../../post/domain/entities/size_color/color_entity.dart';
-import '../../../../../../../../post/domain/entities/size_color/size_color_entity.dart';
-import '../../../../../../../../post/domain/params/add_to_cart_param.dart';
-import '../../../../../../../../post/domain/usecase/add_to_cart_usecase.dart';
-import '../type/widgets/address_utils.dart';
-import '../type/widgets/delivery_method_dialog_helper.dart';
+import '../../../../../../../../../../../core/bottom_sheets/postage/postage_bottom_sheet.dart';
+import '../../../../../../../../../../../core/dialogs/post/post_tile_cloth_foot_dialog.dart';
+import '../../../../../../../../../../../core/enums/listing/core/listing_type.dart';
+import '../../../../../../../../../../../core/functions/app_log.dart';
+import '../../../../../../../../../../../core/sources/api_call.dart';
+import '../../../../../../../../../../../core/widgets/utils/app_snackbar.dart';
+import '../../../../../../../../../../../services/get_it.dart';
+import '../../../../../../../../../../postage/domain/entities/service_point_entity.dart';
+import '../../../../../../../../../auth/signin/domain/entities/address_entity.dart';
+import '../../../../../../../../../basket/domain/param/get_postage_detail_params.dart';
+import '../../../../../../../../../basket/views/providers/cart_provider.dart';
+import '../../../../../../../../../basket/views/screens/shopping/checkout/widgets/checkout_items_list/components/service_points_dialog.dart';
+import '../../../../../../../../../post/domain/entities/post/post_entity.dart';
+import '../../../../../../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../../../../../../post/domain/entities/size_color/size_color_entity.dart';
+import '../../../../../../../../../post/domain/params/add_to_cart_param.dart';
+import '../../../../../../../../../post/domain/usecase/add_to_cart_usecase.dart';
+import '../../type/widgets/address_utils.dart';
+import '../widgets/delivery_method/delivery_method_dialog.dart';
 
 /// Controller for PostBuyNowButtonView. Handles business logic and state updates via callbacks.
 class PostBuyNowButtonController {
@@ -53,9 +53,13 @@ class PostBuyNowButtonController {
         );
         return;
       }
-      final bool? isPickup = await DeliveryMethodDialogHelper.show(
-        context,
-        post,
+      final bool? isPickup = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => ChangeNotifierProvider<DeliveryMethodModel>(
+          create: (_) => DeliveryMethodModel(),
+          child: DeliveryMethodDialog(post: post),
+        ),
       );
       if (isPickup == null) return;
       if (isPickup) {

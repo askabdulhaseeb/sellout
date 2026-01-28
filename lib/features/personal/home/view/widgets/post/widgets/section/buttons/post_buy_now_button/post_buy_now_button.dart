@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'controller/post_buy_now_button_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../../post/domain/entities/size_color/color_entity.dart';
+import '../../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../../../post/domain/entities/size_color/size_color_entity.dart';
 
-
-import 'post_buy_now_button_wrapper.dart';
-
-class PostBuyNowButton extends StatelessWidget {
+/// View for the PostBuyNowButton. Handles UI and delegates logic to the controller.
+class PostBuyNowButton extends StatefulWidget {
   const PostBuyNowButton({
     required this.post,
     required this.detailWidget,
@@ -35,19 +36,39 @@ class PostBuyNowButton extends StatelessWidget {
   final VoidCallback? onSuccess;
 
   @override
+  State<PostBuyNowButton> createState() => _PostBuyNowButtonWrapperState();
+}
+
+class _PostBuyNowButtonWrapperState extends State<PostBuyNowButton> {
+  bool _isLoading = false;
+
+  void _setLoading(bool value) {
+    if (mounted) setState(() => _isLoading = value);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return PostBuyNowButtonWrapper(
-      post: post,
-      detailWidget: detailWidget,
-      detailWidgetSize: detailWidgetSize,
-      detailWidgetColor: detailWidgetColor,
-      buyNowText: buyNowText,
-      buyNowTextStyle: buyNowTextStyle,
-      buyNowColor: buyNowColor,
-      border: border,
-      padding: padding,
-      margin: margin,
-      onSuccess: onSuccess,
+    final PostBuyNowButtonController controller = PostBuyNowButtonController(
+      context: context,
+      post: widget.post,
+      detailWidget: widget.detailWidget,
+      detailWidgetColor: widget.detailWidgetColor,
+      detailWidgetSize: widget.detailWidgetSize,
+      onSuccess: widget.onSuccess,
+      setLoading: _setLoading,
+    );
+    return CustomElevatedButton(
+      border: widget.border,
+      onTap: () async {
+        _setLoading(true);
+        await controller.buyNow();
+        _setLoading(false);
+      },
+      title: widget.buyNowText ?? tr('buy_now'),
+      isLoading: _isLoading,
+      textStyle: widget.buyNowTextStyle,
+      padding: widget.padding,
+      margin: widget.margin,
     );
   }
 }
