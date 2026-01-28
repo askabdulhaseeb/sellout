@@ -12,9 +12,9 @@ import '../../../../user/profiles/data/models/user_model.dart';
 import '../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../user/profiles/domain/usecase/get_user_by_uid.dart';
 import '../../../domain/entities/post/post_entity.dart';
-import '../../../feed/views/widgets/post/widgets/section/icon_butoons/post_inquiry_buttons.dart';
-import '../../../feed/views/widgets/post/widgets/section/icon_butoons/save_post_icon_button.dart';
-import '../../../feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
+import '../../../../home/view/widgets/post/widgets/section/icon_butoons/post_inquiry_buttons.dart';
+import '../../../../home/view/widgets/post/widgets/section/icon_butoons/save_post_icon_button.dart';
+import '../../../../home/view/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
 import '../../../../../../../../../core/widgets/media/profile_photo.dart';
 import '../../../../../../../../../services/get_it.dart';
 

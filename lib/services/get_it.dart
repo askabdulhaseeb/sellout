@@ -166,7 +166,7 @@ import '../features/personal/post/domain/usecase/add_buy_now_shipping_usecase.da
 import '../features/personal/promo/domain/usecase/get_promo_of_followers_usecase.dart';
 import '../features/personal/post/domain/usecase/get_specific_post_usecase.dart';
 import '../features/personal/post/domain/usecase/update_offer_usecase.dart';
-import '../features/personal/post/feed/views/providers/feed_provider.dart';
+import '../features/personal/home/view/providers/feed_provider.dart';
 import '../features/personal/promo/data/repo/promo_repo_impl.dart';
 import '../features/personal/promo/data/source/remote/promo_remote_data_source.dart';
 import '../features/personal/promo/domain/repo/promo_repo.dart';
