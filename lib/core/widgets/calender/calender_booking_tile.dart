@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import '../../../features/business/core/data/sources/service/local_service.dart';
 import '../../../features/business/core/domain/entity/service/service_entity.dart';
 import '../../../features/personal/bookings/domain/entity/booking_entity.dart';
@@ -8,7 +7,7 @@ import '../../../features/personal/user/profiles/data/sources/local/local_user.d
 import '../../enums/core/status_type.dart';
 import '../../extension/datetime_ext.dart';
 import '../../theme/app_colors.dart';
-import '../custom_network_image.dart';
+import '../media/custom_network_image.dart';
 
 class CalenderBookingTile extends StatefulWidget {
   const CalenderBookingTile({required this.booking, super.key});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../custom_shimmer_effect.dart';
+import '../indicators/custom_shimmer_effect.dart';
+
 
 class HomePostLoader extends StatelessWidget {
   const HomePostLoader({super.key});

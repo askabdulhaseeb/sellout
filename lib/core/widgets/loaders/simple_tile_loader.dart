@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../custom_shimmer_effect.dart';
+import '../indicators/custom_shimmer_effect.dart';
 
 class SimpleTileLoader extends StatelessWidget {
   const SimpleTileLoader({super.key});
@@ -16,8 +15,9 @@ class SimpleTileLoader extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-                color: Theme.of(context).dividerColor,
-                borderRadius: BorderRadius.circular(4)),
+              color: Theme.of(context).dividerColor,
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
           const SizedBox(width: 8),
 
@@ -27,14 +27,16 @@ class SimpleTileLoader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                    height: 12,
-                    width: double.infinity,
-                    color: Theme.of(context).dividerColor),
+                  height: 12,
+                  width: double.infinity,
+                  color: Theme.of(context).dividerColor,
+                ),
                 const SizedBox(height: 6),
                 Container(
-                    height: 12,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    color: Theme.of(context).dividerColor),
+                  height: 12,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  color: Theme.of(context).dividerColor,
+                ),
               ],
             ),
           ),

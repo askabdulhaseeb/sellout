@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../features/personal/review/domain/entities/review_entity.dart';
+
+import '../../../features/personal/review/domain/entities/review_entity.dart';
 
 class LinearRatingGraphWidget extends StatelessWidget {
   const LinearRatingGraphWidget({
@@ -31,8 +32,8 @@ class LinearRatingGraphWidget extends StatelessWidget {
           percent: reviews.isEmpty
               ? 0
               : reviews.where((ReviewEntity e) => e.rating > 4).length *
-                  100 ~/
-                  reviews.length,
+                    100 ~/
+                    reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(4),
@@ -40,10 +41,12 @@ class LinearRatingGraphWidget extends StatelessWidget {
           percent: reviews.isEmpty
               ? 0
               : reviews
-                      .where((ReviewEntity e) => e.rating > 3 && e.rating <= 4)
-                      .length *
-                  100 ~/
-                  reviews.length,
+                        .where(
+                          (ReviewEntity e) => e.rating > 3 && e.rating <= 4,
+                        )
+                        .length *
+                    100 ~/
+                    reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(3),
@@ -51,10 +54,12 @@ class LinearRatingGraphWidget extends StatelessWidget {
           percent: reviews.isEmpty
               ? 0
               : reviews
-                      .where((ReviewEntity e) => e.rating > 2 && e.rating <= 3)
-                      .length *
-                  100 ~/
-                  reviews.length,
+                        .where(
+                          (ReviewEntity e) => e.rating > 2 && e.rating <= 3,
+                        )
+                        .length *
+                    100 ~/
+                    reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(2),
@@ -62,10 +67,12 @@ class LinearRatingGraphWidget extends StatelessWidget {
           percent: reviews.isEmpty
               ? 0
               : reviews
-                      .where((ReviewEntity e) => e.rating > 1 && e.rating <= 2)
-                      .length *
-                  100 ~/
-                  reviews.length,
+                        .where(
+                          (ReviewEntity e) => e.rating > 1 && e.rating <= 2,
+                        )
+                        .length *
+                    100 ~/
+                    reviews.length,
         ),
         _LinearProgressTile(
           onTap: () => onTap(1),
@@ -73,8 +80,8 @@ class LinearRatingGraphWidget extends StatelessWidget {
           percent: reviews.isEmpty
               ? 0
               : reviews.where((ReviewEntity e) => e.rating <= 1).length *
-                  100 ~/
-                  reviews.length,
+                    100 ~/
+                    reviews.length,
         ),
       ],
     );
@@ -109,7 +116,8 @@ class _LinearProgressTile extends StatelessWidget {
                   minHeight: 24,
                   backgroundColor: Theme.of(context).dividerColor,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor),
+                    Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
             ),

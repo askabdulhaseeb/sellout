@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../custom_shimmer_effect.dart';
+import '../indicators/custom_shimmer_effect.dart';
 
 class PostGridLoader extends StatelessWidget {
   const PostGridLoader({super.key});
