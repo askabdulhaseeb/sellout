@@ -47,7 +47,7 @@ class AppRadioTile<T> extends StatelessWidget {
         padding: padding,
         decoration: BoxDecoration(
           color: isSelected
-              ? colorScheme.primaryContainer.withOpacity(0.18)
+              ? colorScheme.primaryContainer.withValues(alpha: 0.18)
               : colorScheme.surface,
           borderRadius: borderRadius,
           border: Border.all(

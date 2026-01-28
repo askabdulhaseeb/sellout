@@ -20,10 +20,11 @@ class ProfilePhoto extends StatelessWidget {
     final String placeholderText = placeholder.isEmpty
         ? '/'
         : placeholder.length > 1
-            ? placeholder.substring(0, 2)
-            : placeholder;
+        ? placeholder.substring(0, 2)
+        : placeholder;
 
-    final bool isValidUrl = url != null &&
+    final bool isValidUrl =
+        url != null &&
         (url!.startsWith('http://') || url!.startsWith('https://'));
 
     // ✅ Safe fallback: empty or invalid URL
@@ -31,7 +32,9 @@ class ProfilePhoto extends StatelessWidget {
       return isCircle
           ? CircleAvatar(
               radius: size,
-              backgroundColor: Theme.of(context).dividerColor.withOpacity(0.2),
+              backgroundColor: Theme.of(
+                context,
+              ).dividerColor.withValues(alpha: 0.2),
               child: Text(
                 placeholderText.toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.w500),
@@ -49,18 +52,20 @@ class ProfilePhoto extends StatelessWidget {
           height: size * 2,
           width: size * 2,
           placeholder: (_, _) => _staticPlaceholder(context),
-          errorWidget: (_, _, _) =>
-              _textPlaceholder(context, placeholderText),
+          errorWidget: (_, _, _) => _textPlaceholder(context, placeholderText),
           // Added protection for Flutter image decoder crash
           imageBuilder:
               (BuildContext context, ImageProvider<Object> imageProvider) =>
                   Image(
-            image: imageProvider,
-            fit: BoxFit.cover,
-            errorBuilder:
-                (BuildContext context, Object error, StackTrace? stackTrace) =>
-                    _textPlaceholder(context, placeholderText),
-          ),
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (
+                          BuildContext context,
+                          Object error,
+                          StackTrace? stackTrace,
+                        ) => _textPlaceholder(context, placeholderText),
+                  ),
         ),
       );
     }
@@ -78,12 +83,15 @@ class ProfilePhoto extends StatelessWidget {
         imageBuilder:
             (BuildContext context, ImageProvider<Object> imageProvider) =>
                 Image(
-          image: imageProvider,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (BuildContext context, Object error, StackTrace? stackTrace) =>
-                  _textPlaceholder(context, placeholderText),
-        ),
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (
+                        BuildContext context,
+                        Object error,
+                        StackTrace? stackTrace,
+                      ) => _textPlaceholder(context, placeholderText),
+                ),
       ),
     );
   }
@@ -93,7 +101,7 @@ class ProfilePhoto extends StatelessWidget {
       height: size * 2,
       width: size * 2,
       alignment: Alignment.center,
-      color: Theme.of(context).dividerColor.withOpacity(0.2),
+      color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
       child: Text(
         placeholderText.toUpperCase(),
         style: const TextStyle(fontWeight: FontWeight.w500),
@@ -105,7 +113,7 @@ class ProfilePhoto extends StatelessWidget {
     return Container(
       height: size * 2,
       width: size * 2,
-      color: Theme.of(context).dividerColor.withOpacity(0.2),
+      color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
     );
   }
 }

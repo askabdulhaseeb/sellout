@@ -22,12 +22,10 @@ class SubmitButton extends StatelessWidget {
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
           isActive
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
-              : Colors.grey.withOpacity(0.1),
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+              : Colors.grey.withValues(alpha: 0.1),
         ),
-        shape: const WidgetStatePropertyAll(
-          CircleBorder(),
-        ),
+        shape: const WidgetStatePropertyAll(CircleBorder()),
       ),
     );
   }

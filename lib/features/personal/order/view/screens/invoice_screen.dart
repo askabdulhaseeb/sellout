@@ -705,7 +705,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
   Widget _buildActionsRow() {
     final ThemeData theme = Theme.of(context);
-    final Color mutedText = theme.colorScheme.onSurface.withOpacity(0.6);
+    final Color mutedText = theme.colorScheme.onSurface.withValues(alpha: 0.6);
 
     return Row(
       children: <Widget>[

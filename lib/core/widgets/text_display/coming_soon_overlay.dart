@@ -27,7 +27,7 @@ class ComingSoonOverlay extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
               child: Container(
-                color: colorScheme.surface.withOpacity(0.2),
+                color: colorScheme.surface.withValues(alpha: 0.2),
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 40),
               ),
@@ -66,7 +66,7 @@ class ComingSoonOverlay extends StatelessWidget {
                   subtitle,
                   textAlign: TextAlign.center,
                   style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withOpacity(0.8),
+                    color: colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ],

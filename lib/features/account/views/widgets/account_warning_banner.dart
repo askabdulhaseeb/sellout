@@ -15,19 +15,19 @@ class AccountWarningBanner extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFC41C3B), Color(0xFFB01832)],
+          colors: <Color>[Color(0xFFC41C3B), Color(0xFFB01832)],
         ),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Stack(
-        children: [
+        children: <Widget>[
           // Decorative Background Pattern
           Positioned.fill(
             child: ClipRRect(
@@ -38,13 +38,13 @@ class AccountWarningBanner extends StatelessWidget {
           // Content
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               // Icon Section
               SizedBox(
                 width: 40,
                 height: 40,
                 child: Stack(
-                  children: [
+                  children: <Widget>[
                     const Icon(
                       Icons.shield_outlined,
                       size: 32,
@@ -74,7 +74,7 @@ class AccountWarningBanner extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text(
                       'Account Deactivation & Deletion',
                       style: textTheme.titleMedium?.copyWith(
@@ -88,7 +88,7 @@ class AccountWarningBanner extends StatelessWidget {
                     Text(
                       'Need a break or want to leave? You can temporarily deactivate your account or permanently delete it. Choose an option below to proceed.',
                       style: textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.95),
+                        color: Colors.white.withValues(alpha: 0.95),
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         height: 1.5,
@@ -110,12 +110,12 @@ class _DecorationPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint starPaint = Paint()
-      ..color = Colors.white.withOpacity(0.15)
+      ..color = Colors.white.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
     final Paint circlePaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     // Draw decorative stars and circles across the banner
@@ -138,11 +138,11 @@ class _DecorationPatternPainter extends CustomPainter {
   }
 
   void _drawStar(Canvas canvas, Offset center, double size, Paint paint) {
-    final path = Path();
+    final Path path = Path();
     for (int i = 0; i < 5; i++) {
-      final angle = (i * 4 * pi) / 5 - pi / 2;
-      final x = center.dx + size * cos(angle);
-      final y = center.dy + size * sin(angle);
+      final double angle = (i * 4 * pi) / 5 - pi / 2;
+      final double x = center.dx + size * cos(angle);
+      final double y = center.dy + size * sin(angle);
       if (i == 0) {
         path.moveTo(x, y);
       } else {

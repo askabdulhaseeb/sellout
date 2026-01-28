@@ -25,8 +25,10 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
   bool get wantKeepAlive {
     // Keep this tile alive if it's selected
     // This prevents the tile from being disposed when scrolled out of view
-    final PickedMediaProvider provider =
-        Provider.of<PickedMediaProvider>(context, listen: false);
+    final PickedMediaProvider provider = Provider.of<PickedMediaProvider>(
+      context,
+      listen: false,
+    );
     return provider.isSelected(widget.media);
   }
 
@@ -34,8 +36,10 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-    final PickedMediaProvider mediaPro =
-        Provider.of<PickedMediaProvider>(context, listen: false);
+    final PickedMediaProvider mediaPro = Provider.of<PickedMediaProvider>(
+      context,
+      listen: false,
+    );
     const Color overlayColor = Colors.black54;
     const double radius = AppSpacing.radiusXs;
 
@@ -67,28 +71,30 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
               Consumer<PickedMediaProvider>(
                 builder:
                     (BuildContext context, PickedMediaProvider provider, _) {
-                  final int? index = provider.indexOf(widget.media);
-                  if (index == null) return const SizedBox.shrink();
-                  return Positioned(
-                    top: 6,
-                    left: 6,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor.withOpacity(0.9),
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: Text(
-                        '${index + 1}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                      final int? index = provider.indexOf(widget.media);
+                      if (index == null) return const SizedBox.shrink();
+                      return Positioned(
+                        top: 6,
+                        left: 6,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.9),
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: Text(
+                            '${index + 1}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
               ),
               // --- Bottom overlay icons ---
               Positioned(
@@ -100,8 +106,11 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
                     if (widget.media.type == AssetType.video)
                       _buildIcon(overlayColor, Icons.videocam),
                     if (widget.media.isFavorite)
-                      _buildIcon(overlayColor, Icons.favorite,
-                          color: Colors.red),
+                      _buildIcon(
+                        overlayColor,
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
                   ],
                 ),
               ),
@@ -112,7 +121,7 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: <Color>[
-                      Colors.black.withOpacity(0.15),
+                      Colors.black.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -133,7 +142,7 @@ class _PickedMediaDisplayTileState extends State<PickedMediaDisplayTile>
         shape: BoxShape.circle,
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 3,
             offset: const Offset(0, 1),
           ),

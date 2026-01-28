@@ -27,10 +27,7 @@ class PickedMediaDisplayLimitsWidget extends StatelessWidget {
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return ScaleTransition(
                   scale: animation,
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
+                  child: FadeTransition(opacity: animation, child: child),
                 );
               },
               child: Text(
@@ -50,19 +47,28 @@ class PickedMediaDisplayLimitsWidget extends StatelessWidget {
   }
 
   Color _getContainerColor(
-      BuildContext context, int selectedCount, int maxCount) {
+    BuildContext context,
+    int selectedCount,
+    int maxCount,
+  ) {
     if (selectedCount == 0) {
-      return Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3);
+      return Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3);
     } else if (selectedCount < maxCount) {
-      return Theme.of(context).colorScheme.primary.withOpacity(0.15);
+      return Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
     } else {
-      return Theme.of(context).colorScheme.primaryContainer.withOpacity(0.8);
+      return Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.8);
     }
   }
 
   Color _getTextColor(BuildContext context, int selectedCount, int maxCount) {
     if (selectedCount == 0) {
-      return Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.6);
+      return Theme.of(
+        context,
+      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
     } else if (selectedCount < maxCount) {
       return Theme.of(context).colorScheme.primary;
     } else {
@@ -71,12 +77,15 @@ class PickedMediaDisplayLimitsWidget extends StatelessWidget {
   }
 
   List<BoxShadow>? _getBoxShadow(
-      BuildContext context, int selectedCount, int maxCount) {
+    BuildContext context,
+    int selectedCount,
+    int maxCount,
+  ) {
     if (selectedCount == 0) return null;
 
     return <BoxShadow>[
       BoxShadow(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
         blurRadius: selectedCount == maxCount ? 12 : 6,
         offset: const Offset(0, 2),
       ),

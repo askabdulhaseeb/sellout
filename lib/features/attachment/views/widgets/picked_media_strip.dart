@@ -5,10 +5,7 @@ import 'dart:typed_data';
 import '../providers/picked_media_provider.dart';
 
 class PickedMediaStrip extends StatelessWidget {
-  const PickedMediaStrip({
-    required this.onItemTap,
-    super.key,
-  });
+  const PickedMediaStrip({required this.onItemTap, super.key});
   final void Function(int index) onItemTap;
 
   @override
@@ -29,32 +26,28 @@ class PickedMediaStrip extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: <Color>[
-                          Theme.of(context)
-                              .colorScheme
-                              .surface
-                              .withOpacity(0.98),
-                          Theme.of(context)
-                              .colorScheme
-                              .surface
-                              .withOpacity(0.95),
+                          Theme.of(
+                            context,
+                          ).colorScheme.surface.withValues(alpha: 0.98),
+                          Theme.of(
+                            context,
+                          ).colorScheme.surface.withValues(alpha: 0.95),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .outline
-                            .withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: 0.1),
                         width: 1,
                       ),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.12),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.12),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -65,15 +58,18 @@ class PickedMediaStrip extends StatelessWidget {
                         ),
                       ],
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: provider.pickedMedia.length,
                       itemBuilder: (BuildContext context, int index) {
                         final AssetEntity media = provider.pickedMedia[index];
-                        final Uint8List? thumb =
-                            provider.getThumbnail(media.id);
+                        final Uint8List? thumb = provider.getThumbnail(
+                          media.id,
+                        );
                         return _StripItemTile(
                           key: ValueKey<AssetEntity>(media),
                           thumbnail: thumb,
@@ -120,9 +116,10 @@ class _StripItemTileState extends State<_StripItemTile>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.92,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

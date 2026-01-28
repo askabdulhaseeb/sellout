@@ -55,7 +55,7 @@ class AccountActionCard extends StatelessWidget {
           boxShadow: isSelected
               ? <BoxShadow>[
                   BoxShadow(
-                    color: primaryColor.withOpacity(0.15),
+                    color: primaryColor.withValues(alpha: 0.15),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

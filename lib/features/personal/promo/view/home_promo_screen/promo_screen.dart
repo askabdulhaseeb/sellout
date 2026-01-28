@@ -203,7 +203,7 @@ class _PromoProgressBar extends StatelessWidget {
       height: 3,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(2),
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white.withValues(alpha: 0.25),
       ),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -220,11 +220,14 @@ class _PromoProgressBar extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: isVideo
                         ? <Color>[
-                            Colors.white.withOpacity(0.4),
-                            Colors.white.withOpacity(0.6),
-                            Colors.white.withOpacity(0.4),
+                            Colors.white.withValues(alpha: 0.4),
+                            Colors.white.withValues(alpha: 0.6),
+                            Colors.white.withValues(alpha: 0.4),
                           ]
-                        : <Color>[Colors.white.withOpacity(0.9), Colors.white],
+                        : <Color>[
+                            Colors.white.withValues(alpha: 0.9),
+                            Colors.white,
+                          ],
                   ),
                 ),
               ),
@@ -242,9 +245,9 @@ class _PromoProgressBar extends StatelessWidget {
                           borderRadius: BorderRadius.circular(2),
                           gradient: LinearGradient(
                             colors: <Color>[
-                              Colors.white.withOpacity(0),
-                              Colors.white.withOpacity(0.8),
-                              Colors.white.withOpacity(0),
+                              Colors.white.withValues(alpha: 0),
+                              Colors.white.withValues(alpha: 0.8),
+                              Colors.white.withValues(alpha: 0),
                             ],
                           ),
                         ),
@@ -356,7 +359,7 @@ class _PromoStoryHeaderState extends State<PromoStoryHeader> {
                             imageUrl: profileUrl,
                             fit: BoxFit.cover,
                             placeholder: (_, __) => Container(
-                              color: Colors.white.withOpacity(0.12),
+                              color: Colors.white.withValues(alpha: 0.12),
                               alignment: Alignment.center,
                               child: const SizedBox(
                                 width: 14,
@@ -368,7 +371,7 @@ class _PromoStoryHeaderState extends State<PromoStoryHeader> {
                               ),
                             ),
                             errorWidget: (_, __, ___) => Container(
-                              color: Colors.white.withOpacity(0.12),
+                              color: Colors.white.withValues(alpha: 0.12),
                               alignment: Alignment.center,
                               child: const Icon(
                                 Icons.person,
@@ -401,7 +404,7 @@ class _PromoStoryHeaderState extends State<PromoStoryHeader> {
                           Text(
                             timeAgo,
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 11,
                             ),
                           ),
@@ -478,17 +481,17 @@ class _GlassButton extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Material(
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withValues(alpha: 0.15),
           child: InkWell(
             onTap: onTap,
-            splashColor: Colors.white.withOpacity(0.2),
-            highlightColor: Colors.white.withOpacity(0.1),
+            splashColor: Colors.white.withValues(alpha: 0.2),
+            highlightColor: Colors.white.withValues(alpha: 0.1),
             child: Container(
               padding: padding,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
               ),
@@ -788,7 +791,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -801,7 +804,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
             Text(
               'Unable to load video',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
             ),
@@ -821,14 +824,14 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
               height: 48,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               'Loading...',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 13,
               ),
             ),
@@ -868,7 +871,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
             FadeTransition(
               opacity: _controlsOpacity,
               child: Container(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 child: Center(
                   child: _VideoControlButton(
                     icon: _ended
@@ -902,7 +905,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
                         Text(
                           _formatDuration(position),
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -910,7 +913,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
                         Text(
                           _formatDuration(duration),
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                             fontSize: 11,
                           ),
                         ),
@@ -927,7 +930,7 @@ class _PromoVideoMediaState extends State<PromoVideoMedia>
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -970,17 +973,17 @@ class _VideoControlButton extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Material(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           child: InkWell(
             onTap: onTap,
-            splashColor: Colors.white.withOpacity(0.3),
+            splashColor: Colors.white.withValues(alpha: 0.3),
             child: Container(
               width: size,
               height: size,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -1011,15 +1014,15 @@ class PromoFooter extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: Colors.white.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 0.5,
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -1051,7 +1054,7 @@ class PromoFooter extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.2),
+                            color: colorScheme.primary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -1152,7 +1155,7 @@ class _AnimatedOrderButtonState extends State<_AnimatedOrderButton>
                   end: Alignment.bottomRight,
                   colors: <Color>[
                     widget.primaryColor,
-                    widget.primaryColor.withOpacity(0.8),
+                    widget.primaryColor.withValues(alpha: 0.8),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(14),

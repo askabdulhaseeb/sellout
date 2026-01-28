@@ -206,7 +206,7 @@ class _CountryFlag extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(
                 context,
-              ).colorScheme.outlineVariant.withOpacity(0.3),
+              ).colorScheme.outlineVariant.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(4),
             ),
           )

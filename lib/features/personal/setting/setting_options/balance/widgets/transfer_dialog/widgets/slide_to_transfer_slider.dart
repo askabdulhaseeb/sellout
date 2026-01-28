@@ -148,23 +148,23 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider>
 
         if (widget.isError) {
           mainColor = colorScheme.error;
-          backgroundColor = colorScheme.error.withOpacity(0.08);
-          progressColor = colorScheme.error.withOpacity(0.5);
-          borderColor = colorScheme.error.withOpacity(0.3);
+          backgroundColor = colorScheme.error.withValues(alpha: 0.08);
+          progressColor = colorScheme.error.withValues(alpha: 0.5);
+          borderColor = colorScheme.error.withValues(alpha: 0.3);
         } else if (widget.isSuccess) {
           mainColor = Colors.green;
-          backgroundColor = Colors.green.withOpacity(0.08);
-          progressColor = Colors.green.withOpacity(0.5);
-          borderColor = Colors.green.withOpacity(0.3);
+          backgroundColor = Colors.green.withValues(alpha: 0.08);
+          progressColor = Colors.green.withValues(alpha: 0.5);
+          borderColor = Colors.green.withValues(alpha: 0.3);
         } else if (widget.isLoading || widget.canTransfer) {
           mainColor = colorScheme.primary;
-          backgroundColor = colorScheme.primary.withOpacity(0.08);
-          progressColor = colorScheme.primary.withOpacity(0.4);
-          borderColor = colorScheme.primary.withOpacity(0.2);
+          backgroundColor = colorScheme.primary.withValues(alpha: 0.08);
+          progressColor = colorScheme.primary.withValues(alpha: 0.4);
+          borderColor = colorScheme.primary.withValues(alpha: 0.2);
         } else {
           mainColor = colorScheme.outline;
           backgroundColor = colorScheme.surfaceContainerHighest;
-          progressColor = colorScheme.outline.withOpacity(0.3);
+          progressColor = colorScheme.outline.withValues(alpha: 0.3);
           borderColor = Colors.transparent;
         }
 
@@ -223,7 +223,7 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider>
                       gradient: LinearGradient(
                         colors: <Color>[
                           progressColor,
-                          progressColor.withOpacity(0.7),
+                          progressColor.withValues(alpha: 0.7),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(10.0),
@@ -284,7 +284,7 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider>
                         borderRadius: BorderRadius.circular(12.0),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                            color: mainColor.withOpacity(0.3),
+                            color: mainColor.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -320,7 +320,7 @@ class _SlideToTransferSliderState extends State<SlideToTransferSlider>
                           const SizedBox(width: 4),
                           Icon(
                             Icons.arrow_forward_rounded,
-                            color: colorScheme.primary.withOpacity(0.6),
+                            color: colorScheme.primary.withValues(alpha: 0.6),
                             size: 18,
                           ),
                         ],

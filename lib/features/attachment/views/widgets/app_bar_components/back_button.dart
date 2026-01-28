@@ -17,8 +17,9 @@ class AppBarBackButton extends StatelessWidget {
       onPressed: onPressed,
       icon: const Icon(Icons.arrow_back_rounded),
       style: IconButton.styleFrom(
-        backgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        backgroundColor: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
         ),
