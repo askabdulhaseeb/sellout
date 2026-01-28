@@ -22,15 +22,15 @@ enum NotificationType {
   ),
   share(code: 'share', jsonKey: '', cids: <String>['new_chat_message']);
 
-  final String code;
-  final String jsonKey;
-  final List<String> cids;
-
   const NotificationType({
     required this.code,
     required this.jsonKey,
     required this.cids,
   });
+
+  final String code;
+  final String jsonKey;
+  final List<String> cids;
 
   String toJson() => code;
 

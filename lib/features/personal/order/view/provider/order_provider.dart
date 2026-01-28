@@ -26,7 +26,7 @@ class OrderProvider extends ChangeNotifier {
   }
   final UpdateOrderUsecase _updateOrderUsecase;
   OrderEntity? _sellerOrder;
-  StreamSubscription? _orderBoxStream;
+  StreamSubscription<dynamic>? _orderBoxStream;
   String? _currentOrderId;
 
   OrderEntity? get order => _sellerOrder;
@@ -37,7 +37,7 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _onBoxEvent(event) {
+  void _onBoxEvent(dynamic event) {
     if (_currentOrderId != null && event.key == _currentOrderId) {
       // Order changed in box, reload and notify
       final OrderEntity? updated = LocalOrders().get(_currentOrderId!);
@@ -120,7 +120,7 @@ class OrderProvider extends ChangeNotifier {
   Future<bool> buyLabel(String orderId) async {
     _setBuyingLabel(true);
     try {
-      final DataState res = await BuyLabelUsecase(
+      final DataState<> res = await BuyLabelUsecase(
         locator(),
       ).call(BuyLabelParams(orderId: orderId));
       if (res is DataSuccess) {
@@ -228,6 +228,7 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
+  @override
   @override
   void dispose() {
     _orderBoxStream?.cancel();

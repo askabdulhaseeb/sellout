@@ -28,7 +28,7 @@ class NotificationOrderHeader extends StatelessWidget {
         return FutureBuilder<PostEntity?>(
           future: postId != null
               ? LocalPost().getPost(postId)
-              : Future.value(null),
+              : Future<PostEntity?>.value(null),
           builder:
               (BuildContext context, AsyncSnapshot<PostEntity?> postSnapshot) {
                 final PostEntity? post = postSnapshot.data;

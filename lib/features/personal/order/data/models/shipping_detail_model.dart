@@ -21,7 +21,7 @@ class ShippingDetailModel extends ShippingDetailEntity {
     String? labelUrl;
     final List<dynamic>? postageList = json['postage'] as List<dynamic>?;
     if (postageList != null && postageList.isNotEmpty) {
-      final firstPostage = postageList.first;
+      final dynamic firstPostage = postageList.first;
       if (firstPostage is Map<String, dynamic>) {
         labelUrl = firstPostage['url'] as String?;
       }
@@ -30,7 +30,7 @@ class ShippingDetailModel extends ShippingDetailEntity {
 
     return ShippingDetailModel(
       postage:
-          postageList?.map((e) => PostageModel.fromJson(e)).toList() ??
+          postageList?.map((dynamic e) => PostageModel.fromJson(e)).toList() ??
           <PostageModel>[],
       fastDelivery: json['fast_delivery'] != null
           ? FastDeliveryModel.fromJson(json['fast_delivery'])
