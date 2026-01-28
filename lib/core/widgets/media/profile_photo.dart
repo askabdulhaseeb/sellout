@@ -78,8 +78,8 @@ class ProfilePhoto extends StatelessWidget {
         height: size * 2,
         width: size * 2,
         fit: BoxFit.cover,
-        placeholder: (_, __) => _staticPlaceholder(context),
-        errorWidget: (_, __, ___) => _textPlaceholder(context, placeholderText),
+        placeholder: (_, _) => _staticPlaceholder(context),
+        errorWidget: (_, _, _) => _textPlaceholder(context, placeholderText),
         imageBuilder:
             (BuildContext context, ImageProvider<Object> imageProvider) =>
                 Image(

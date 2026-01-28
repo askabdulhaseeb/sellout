@@ -140,7 +140,7 @@ class ListingAttachmentTile extends StatelessWidget {
             bytes,
             fit: BoxFit.cover,
             filterQuality: FilterQuality.high,
-            errorBuilder: (_, __, ___) =>
+            errorBuilder: (_, _, _) =>
                 _errorPlaceholder(context, isVideo: false),
           );
         },

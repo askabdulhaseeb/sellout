@@ -197,7 +197,7 @@ class _StripItemTileState extends State<_StripItemTile>
                             widget.thumbnail!,
                             fit: BoxFit.cover,
                             filterQuality: FilterQuality.high,
-                            errorBuilder: (_, __, ___) =>
+                            errorBuilder: (_, _, _) =>
                                 const ColoredBox(color: Colors.black12),
                           )
                         else

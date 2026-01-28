@@ -151,7 +151,7 @@ class _SubCategorySelectableWidgetState<T extends ChangeNotifier>
 
     if (widget.listenProvider != null) {
       debugPrint('🟢 Listening to provider changes for rebuild');
-      return Consumer<T>(builder: (_, __, ___) => builder(context));
+      return Consumer<T>(builder: (_, _, _) => builder(context));
     } else {
       return builder(context);
     }

@@ -296,8 +296,8 @@ class AddPromoCard extends StatelessWidget {
           fit: BoxFit.cover,
           width: double.infinity,
           height: double.infinity,
-          placeholder: (_, __) => Container(color: theme.primaryColor),
-          errorWidget: (_, __, ___) => Container(color: theme.primaryColor),
+          placeholder: (_, _) => Container(color: theme.primaryColor),
+          errorWidget: (_, _, _) => Container(color: theme.primaryColor),
         );
       } else {
         base = Container(color: theme.primaryColor);

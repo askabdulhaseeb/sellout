@@ -173,15 +173,14 @@ Widget _buildImageFor(_RenderableAttachment item) {
           return Image.file(
             item.file!,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) =>
-                const ColoredBox(color: Colors.black12),
+            errorBuilder: (_, _, _) => const ColoredBox(color: Colors.black12),
           );
         }
         return Image.memory(
           bytes,
           fit: BoxFit.cover,
           filterQuality: FilterQuality.high,
-          errorBuilder: (_, __, ___) => const ColoredBox(color: Colors.black12),
+          errorBuilder: (_, _ ,_) => const ColoredBox(color: Colors.black12),
         );
       },
     );
@@ -192,7 +191,7 @@ Widget _buildImageFor(_RenderableAttachment item) {
     return Image.file(
       item.file!,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => const ColoredBox(color: Colors.black12),
+      errorBuilder: (_, _, _) => const ColoredBox(color: Colors.black12),
     );
   }
 

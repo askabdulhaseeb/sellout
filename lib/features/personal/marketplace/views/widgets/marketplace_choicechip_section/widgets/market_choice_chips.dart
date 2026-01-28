@@ -29,7 +29,7 @@ class _MarketplaceChoiceChipsState extends State<MarketplaceChoiceChips> {
   @override
   Widget build(BuildContext context) {
     return Consumer<MarketPlaceProvider>(
-      builder: (_, __, ___) {
+      builder: (_, _, _) {
         final List<String?> jsons = <String?>[
           null,
           ...ListingType.values.map((ListingType e) => e.json),

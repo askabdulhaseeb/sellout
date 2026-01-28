@@ -358,7 +358,7 @@ class _PromoStoryHeaderState extends State<PromoStoryHeader> {
                           child: CachedNetworkImage(
                             imageUrl: profileUrl,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(
+                            placeholder: (_, _) => Container(
                               color: Colors.white.withValues(alpha: 0.12),
                               alignment: Alignment.center,
                               child: const SizedBox(
@@ -370,7 +370,7 @@ class _PromoStoryHeaderState extends State<PromoStoryHeader> {
                                 ),
                               ),
                             ),
-                            errorWidget: (_, __, ___) => Container(
+                            errorWidget: (_, _, _) => Container(
                               color: Colors.white.withValues(alpha: 0.12),
                               alignment: Alignment.center,
                               child: const Icon(
@@ -631,9 +631,9 @@ class PromoMedia extends StatelessWidget {
         imageUrl: promo.fileUrl,
         width: double.infinity,
         fit: BoxFit.cover,
-        placeholder: (_, __) =>
+        placeholder: (_, _) =>
             const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
-        errorWidget: (_, __, ___) => const Center(
+        errorWidget: (_, _, _) => const Center(
           child: Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
         ),
       );
@@ -1161,8 +1161,8 @@ class _AnimatedOrderButtonState extends State<_AnimatedOrderButton>
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: widget.primaryColor.withOpacity(
-                      _isPressed ? 0.2 : 0.4,
+                    color: widget.primaryColor.withValues(
+                      alpha: _isPressed ? 0.2 : 0.4,
                     ),
                     blurRadius: _isPressed ? 8 : 12,
                     offset: Offset(0, _isPressed ? 2 : 4),
