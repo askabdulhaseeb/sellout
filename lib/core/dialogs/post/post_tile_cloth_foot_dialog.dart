@@ -10,11 +10,11 @@ import '../../../services/get_it.dart';
 import '../../extension/string_ext.dart';
 import '../../functions/app_log.dart';
 import '../../sources/data_state.dart';
-import '../../widgets/app_snackbar.dart';
-import '../../widgets/custom_dropdown.dart';
-import '../../widgets/custom_elevated_button.dart';
+import '../../widgets/buttons/custom_elevated_button.dart';
 import '../../../features/personal/post/domain/usecase/add_to_cart_usecase.dart';
 import '../../../features/personal/post/domain/params/add_to_cart_param.dart';
+import '../../widgets/inputs/custom_dropdown.dart';
+import '../../widgets/utils/app_snackbar.dart';
 
 /// Unified dialog for Add to Cart, Buy Now, and Make Offer
 enum PostTileClothFootType { add, buy, offer }

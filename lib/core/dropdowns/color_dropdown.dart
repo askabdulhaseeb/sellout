@@ -4,7 +4,8 @@ import '../../features/personal/listing/listing_form/data/sources/remote/colors_
 import '../../features/personal/listing/listing_form/domain/entities/color_options_entity.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
-import '../widgets/custom_textformfield.dart';
+import '../widgets/inputs/custom_textformfield.dart';
+
 
 class ColorDropdown extends StatefulWidget {
   const ColorDropdown({

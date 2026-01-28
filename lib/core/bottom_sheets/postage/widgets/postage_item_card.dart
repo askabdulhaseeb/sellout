@@ -7,7 +7,7 @@ import '../../../../features/personal/post/domain/entities/post/post_entity.dart
 import '../../../../features/postage/domain/entities/postage_detail_response_entity.dart';
 import '../../../enums/listing/core/delivery_type.dart';
 import '../../../constants/app_spacings.dart';
-import '../../../widgets/shadow_container.dart';
+import '../../../widgets/text_display/shadow_container.dart';
 import 'shipping_rates_section/shipping_rates_group_widget.dart';
 import 'shipping_rates_section/shipping_state_widgets.dart';
 

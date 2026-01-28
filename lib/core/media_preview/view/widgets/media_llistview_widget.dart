@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../features/attachment/domain/entities/attachment_entity.dart';
 import '../../../../features/attachment/domain/entities/picked_attachment.dart';
-import '../../../widgets/video_widget.dart';
+import '../../../widgets/media/video_widget.dart';
 import '../provider/media_preview_provider.dart';
 
 class MediaListView extends StatelessWidget {

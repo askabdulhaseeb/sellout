@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/data/sources/local/local_auth.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
-import '../../widgets/custom_elevated_button.dart';
-import '../../widgets/in_dev_mode.dart';
+import '../../widgets/buttons/custom_elevated_button.dart';
+import '../../widgets/utils/in_dev_mode.dart';
 import '../widgets/selectable_address_tile.dart';
 
 class AddressBottomSheet extends StatefulWidget {

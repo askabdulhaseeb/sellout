@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../features/personal/address/add_address/views/screens/add_address_screen.dart';
 import '../../../features/personal/auth/signin/domain/entities/address_entity.dart';
-import '../../widgets/custom_elevated_button.dart';
+import '../../widgets/buttons/custom_elevated_button.dart';
 
 class SelectableAddressTile extends StatelessWidget {
   const SelectableAddressTile({

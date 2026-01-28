@@ -52,7 +52,7 @@ class PostEntity {
 **Recommendation:** Break into specialized entities using composition pattern
 
 #### **Code Duplication in UI Components**
-**File:** `lib/core/widgets/expandable_text_widget.dart`  
+**File:** `lib/core/widgets/text_display/expandable_text_widget.dart`  
 **Issue:** Duplicate styling logic repeated across methods (lines 41-43, 73-77, 87-89, 114-118)
 ```dart
 // Repeated pattern in multiple methods
