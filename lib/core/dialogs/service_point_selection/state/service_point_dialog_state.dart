@@ -4,11 +4,11 @@ import '../../../../features/postage/data/models/service_points_response_model.d
 /// State management for service point selection dialog
 class ServicePointDialogState {
   ServicePointDialogState({
-    this.selectedPoint,
     required this.selectedRadius,
     required this.selectedCategory,
     required this.servicePoints,
- });
+    this.selectedPoint,
+  });
 
   final ServicePointModel? selectedPoint;
   final SearchRadius selectedRadius;
