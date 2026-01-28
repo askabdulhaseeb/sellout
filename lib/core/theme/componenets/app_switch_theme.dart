@@ -24,7 +24,7 @@ class AppSwitchTheme {
           return AppColors.lightSurface;
         }),
         // 👇 smaller thumb without icon
-        thumbIcon: const WidgetStatePropertyAll(null),
+        thumbIcon: const WidgetStatePropertyAll<Icon?>(null),
         // 👇 reduce the switch size visually
       );
 
@@ -49,6 +49,6 @@ class AppSwitchTheme {
           }
           return AppColors.darkOutline;
         }),
-        thumbIcon: const WidgetStatePropertyAll(null),
+        thumbIcon: const WidgetStatePropertyAll<Icon?>(null),
       );
 }

@@ -6,7 +6,7 @@ import '../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../payment/domain/entities/exchange_rate_entity.dart';
 import '../../../../payment/domain/params/get_exchange_rate_params.dart';
 import '../../../../payment/domain/usecase/get_exchange_rate_usecase.dart';
-import '../../../feed/views/enums/counter_offer_enum.dart';
+import '../../../../home/view/enums/counter_offer_enum.dart';
 part 'offer_detail_entity.g.dart';
 
 @HiveType(typeId: 19)

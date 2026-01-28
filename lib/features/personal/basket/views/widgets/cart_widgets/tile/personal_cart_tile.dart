@@ -12,7 +12,7 @@ import '../../../../../auth/signin/domain/repositories/signin_repository.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
 import '../../../../../../../core/enums/listing/core/delivery_type.dart';
-import '../../../../../post/feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
+import '../../../../../home/view/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
 import '../../../../../post/post_detail/views/screens/post_detail_screen.dart';
 import '../../../../../user/profiles/data/sources/local/local_user.dart';
 import '../../../../domain/entities/cart/cart_item_entity.dart';

@@ -27,7 +27,7 @@ class CreateBookingSlots extends StatelessWidget {
         height: height,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemCount: 6, // number of skeleton chips
           itemBuilder: (BuildContext context, int index) {
             return Container(
@@ -52,7 +52,7 @@ class CreateBookingSlots extends StatelessWidget {
       height: height,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemCount: slots.length,
         itemBuilder: (BuildContext context, int index) {
           final Map<String, dynamic> slot = slots[index];

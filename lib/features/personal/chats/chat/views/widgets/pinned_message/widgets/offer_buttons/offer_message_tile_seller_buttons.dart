@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../../../../core/widgets/buttons/custom_elevated_button.dart';
-import '../../../../../../../post/feed/views/enums/counter_offer_enum.dart';
-import '../../../../../../../post/feed/views/providers/feed_provider.dart';
+import '../../../../../../../home/view/enums/counter_offer_enum.dart';
+import '../../../../../../../home/view/providers/feed_provider.dart';
 import '../../../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import 'offer_message_tile_counter_offer_button.dart';
 

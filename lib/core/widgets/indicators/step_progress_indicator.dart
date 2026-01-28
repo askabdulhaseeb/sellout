@@ -118,7 +118,7 @@ class StepProgressIndicator<T> extends StatelessWidget {
           ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: List.generate(totalSteps * 2 - 1, (int index) {
+          children: List<Widget>.generate(totalSteps * 2 - 1, (int index) {
             if (index.isEven) {
               // DOT
               final int stepIndex = index ~/ 2;

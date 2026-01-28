@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../indicators/custom_shimmer_effect.dart';
 
 class PostGridLoader extends StatelessWidget {
@@ -18,7 +17,7 @@ class PostGridLoader extends StatelessWidget {
         mainAxisSpacing: 12,
         childAspectRatio: 0.66,
       ),
-      itemBuilder: (_, __) => const LoadingPostTile(),
+      itemBuilder: (_, _) => const LoadingPostTile(),
     );
   }
 }
@@ -55,22 +54,25 @@ class LoadingPostTile extends StatelessWidget {
                   width: 100,
                   height: 15,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).dividerColor,
-                      borderRadius: BorderRadius.circular(2)),
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
                 Container(
                   width: 100,
                   height: 15,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).dividerColor,
-                      borderRadius: BorderRadius.circular(2)),
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
                 Container(
                   width: 40,
                   height: 15,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).dividerColor,
-                      borderRadius: BorderRadius.circular(2)),
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ],
             ),

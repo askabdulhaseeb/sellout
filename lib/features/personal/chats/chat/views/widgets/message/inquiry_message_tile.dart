@@ -5,7 +5,7 @@ import '../../../../../../../core/widgets/text_display/shadow_container.dart';
 import '../../../../../auth/signin/data/sources/local/local_auth.dart';
 import '../../../../../post/data/sources/local/local_post.dart';
 import '../../../../../post/domain/entities/post/post_entity.dart';
-import '../../../../../post/feed/views/widgets/post/widgets/section/buttons/home_post_button_section.dart';
+import '../../../../../home/view/widgets/post/widgets/section/buttons/home_post_button_section.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_entity.dart';
 import '../../../../chat_dashboard/domain/entities/messages/message_post_detail_entity.dart';
 import 'common/currency_display.dart';

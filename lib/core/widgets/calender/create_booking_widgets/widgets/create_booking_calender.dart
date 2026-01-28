@@ -17,12 +17,12 @@ class CreateBookingCalender extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Normalize dates to remove time components for consistent comparison
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
 
     // Calculate safe first and last dates (date-only, no time component)
-    final firstDate = today;
-    final effectiveLastDate = lastDate != null
+    final DateTime firstDate = today;
+    final DateTime effectiveLastDate = lastDate != null
 
         ? DateTime(lastDate!.year, lastDate!.month, lastDate!.day)
         : DateTime(now.year + 5, now.month, now.day);
@@ -34,7 +34,7 @@ class CreateBookingCalender extends StatelessWidget {
         : effectiveLastDate;
 
     // Normalize initial date to remove time component
-    final normalizedInitialDate = DateTime(
+    final DateTime normalizedInitialDate = DateTime(
 
       initialDate.year,
       initialDate.month,
@@ -42,7 +42,7 @@ class CreateBookingCalender extends StatelessWidget {
     );
 
     // Clamp initial date to be within valid range [firstDate, safeLastDate]
-    final safeInitialDate = _clampDate(
+    final DateTime safeInitialDate = _clampDate(
 
       normalizedInitialDate,
       firstDate,

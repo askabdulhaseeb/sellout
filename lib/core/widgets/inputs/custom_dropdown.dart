@@ -282,7 +282,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                     padding: EdgeInsets.zero,
                                     shrinkWrap: true,
                                     itemCount: items.length,
-                                    separatorBuilder: (_, __) => Container(
+                                    separatorBuilder: (_, _) => Container(
                                       margin: const EdgeInsets.symmetric(
                                           horizontal: 4, vertical: 0),
                                       height: 1,

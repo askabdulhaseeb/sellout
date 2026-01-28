@@ -82,11 +82,17 @@ class CountryModel extends CountryEntity {
               if (city.isNotEmpty) cities.add(city);
             }
           }
-          statesList.add(StateEntity(
-              stateName: stateName, stateCode: stateCode, cities: cities));
+          statesList.add(
+            StateEntity(
+              stateName: stateName,
+              stateCode: stateCode,
+              cities: cities,
+            ),
+          );
         } catch (_) {
           statesList.add(
-              StateEntity(stateName: '', stateCode: '', cities: <String>[]));
+            StateEntity(stateName: '', stateCode: '', cities: <String>[]),
+          );
         }
       }
     }
@@ -127,11 +133,13 @@ class CountryModel extends CountryEntity {
         'regex': numberFormat.regex,
       },
       'states': states
-          .map((StateEntity s) => <String, dynamic>{
-                'state_name': s.stateName,
-                'state_code': s.stateCode,
-                'cities': s.cities,
-              })
+          .map(
+            (StateEntity s) => <String, dynamic>{
+              'state_name': s.stateName,
+              'state_code': s.stateCode,
+              'cities': s.cities,
+            },
+          )
           .toList(),
       'currency': currency,
       'is_active': isActive,

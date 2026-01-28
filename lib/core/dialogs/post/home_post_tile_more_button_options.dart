@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../features/personal/post/feed/views/widgets/post/widgets/section/bottomsheets/post_report_bottomsheet.dart';
-import '../../../features/personal/post/feed/views/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
+import '../../../features/personal/home/view/widgets/post/widgets/section/bottomsheets/post_report_bottomsheet.dart';
+import '../../../features/personal/home/view/widgets/post/widgets/section/icon_butoons/share_post_icon_button.dart';
 import '../../utilities/app_string.dart';
 import '../../widgets/custom_svg_icon.dart';
 

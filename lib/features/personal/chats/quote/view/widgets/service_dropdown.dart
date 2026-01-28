@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/sources/api_call.dart';
 import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/media/custom_network_image.dart';
-import '../../../../../../core/widgets//inputs/searchable_textfield.dart';
+import '../../../../../../core/widgets/inputs/searchable_textfield.dart';
 import '../../../../../../services/get_it.dart';
 import '../../../../../business/core/domain/entity/service/service_entity.dart';
 import '../../../../marketplace/domain/params/filter_params.dart';

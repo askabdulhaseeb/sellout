@@ -74,7 +74,7 @@ import '../../../features/personal/post/domain/entities/post/post_vehicle_entity
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import '../../../features/personal/post/domain/entities/visit/visiting_entity.dart';
-import '../../../features/personal/post/feed/views/enums/counter_offer_enum.dart';
+import '../../../features/personal/home/view/enums/counter_offer_enum.dart';
 import '../../../features/personal/promo/data/source/local/local_promo.dart';
 import '../../../features/personal/promo/domain/entities/promo_entity.dart';
 import '../../../features/personal/review/data/sources/local_review.dart';

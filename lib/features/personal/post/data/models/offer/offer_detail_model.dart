@@ -1,6 +1,6 @@
 import '../../../../../../core/enums/core/status_type.dart';
 import '../../../domain/entities/offer/offer_detail_entity.dart';
-import '../../../feed/views/enums/counter_offer_enum.dart';
+import '../../../../home/view/enums/counter_offer_enum.dart';
 
 class OfferDetailModel extends OfferDetailEntity {
   OfferDetailModel({

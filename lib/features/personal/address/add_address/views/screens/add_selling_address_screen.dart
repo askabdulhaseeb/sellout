@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/utilities/app_validators.dart';
 import '../../../../../../core/constants/app_spacings.dart';
 import '../../../../../../core/widgets/inputs/custom_textformfield.dart';
-import '../../../../../../core/widgets//inputs/custom_dropdown.dart';
+import '../../../../../../core/widgets/inputs/custom_dropdown.dart';
 import '../../../../../../core/widgets/buttons/custom_elevated_button.dart';
 import '../../../../../../core/widgets/phone_number/domain/entities/phone_number_entity.dart';
 import '../../../../../../core/widgets/phone_number/views/countries_dropdown.dart';
@@ -87,7 +87,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                   validator: AppValidator.isEmpty,
                 ),
                 Consumer<AddSellingAddressProvider>(
-                  builder: (_, AddSellingAddressProvider pro, __) =>
+                  builder: (_, AddSellingAddressProvider pro, _) =>
                       CountryDropdownField(
                         initialValue: pro.selectedCountryEntity,
                         onChanged: (CountryEntity value) {
@@ -97,7 +97,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                       ),
                 ),
                 Consumer<AddSellingAddressProvider>(
-                  builder: (_, AddSellingAddressProvider pro, __) =>
+                  builder: (_, AddSellingAddressProvider pro, _) =>
                       CustomDropdown<StateEntity>(
                         title: 'state'.tr(),
                         items:
@@ -119,7 +119,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                       ),
                 ),
                 Consumer<AddSellingAddressProvider>(
-                  builder: (_, AddSellingAddressProvider pro, __) =>
+                  builder: (_, AddSellingAddressProvider pro, _) =>
                       CustomDropdown<String>(
                         title: 'city'.tr(),
                         items: (pro.state?.cities ?? <String>[])
@@ -175,7 +175,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
 
                 // 🟢 Consumer for Phone Number
                 Consumer<AddSellingAddressProvider>(
-                  builder: (_, AddSellingAddressProvider pro, __) =>
+                  builder: (_, AddSellingAddressProvider pro, _) =>
                       PhoneNumberInputField(
                         initialCountry: pro.selectedCountryEntity,
                         initialValue: pro.phoneNumber,
@@ -194,7 +194,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Consumer<AddSellingAddressProvider>(
-              builder: (_, AddSellingAddressProvider pro, __) =>
+              builder: (_, AddSellingAddressProvider pro, _) =>
                   CustomElevatedButton(
                     isLoading: pro.isLoading,
                     onTap: () {

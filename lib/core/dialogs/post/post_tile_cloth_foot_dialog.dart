@@ -4,8 +4,8 @@ import '../../../features/personal/basket/views/screens/personal_shopping_basket
 import '../../../features/personal/post/domain/entities/post/post_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/color_entity.dart';
 import '../../../features/personal/post/domain/entities/size_color/size_color_entity.dart';
-import '../../../features/personal/post/feed/views/widgets/post/widgets/section/bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
-import '../../../features/personal/post/feed/views/widgets/post/widgets/section/buttons/type/size_chart_button_tile.dart';
+import '../../../features/personal/home/view/widgets/post/widgets/section/bottomsheets/make_offer_bottomsheet/make_an_offer_bottomsheet.dart';
+import '../../../features/personal/home/view/widgets/post/widgets/section/buttons/type/size_chart_button_tile.dart';
 import '../../../services/get_it.dart';
 import '../../extension/string_ext.dart';
 import '../../functions/app_log.dart';

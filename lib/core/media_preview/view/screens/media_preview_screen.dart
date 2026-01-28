@@ -67,6 +67,7 @@ class _ReviewMediaPreviewContentState extends State<ReviewMediaPreviewContent> {
       },
     );
 
+    if (!mounted) return;
     if (choice != null) {
       await provider.setImages(context, type: choice);
     }
@@ -77,18 +78,22 @@ class _ReviewMediaPreviewContentState extends State<ReviewMediaPreviewContent> {
     return Scaffold(
       appBar: AppBar(title: Text('photo_videos'.tr())),
       body: Consumer<MediaPreviewProvider>(
-        builder: (BuildContext context, MediaPreviewProvider provider,
-            Widget? child) {
-          if (provider.attachments.isEmpty) {
-            return Center(child: Text('no_media_selected'.tr()));
-          }
-          return const Column(
-            children: <Widget>[
-              Expanded(child: MediaPreview()),
-              MediaListView(),
-            ],
-          );
-        },
+        builder:
+            (
+              BuildContext context,
+              MediaPreviewProvider provider,
+              Widget? child,
+            ) {
+              if (provider.attachments.isEmpty) {
+                return Center(child: Text('no_media_selected'.tr()));
+              }
+              return const Column(
+                children: <Widget>[
+                  Expanded(child: MediaPreview()),
+                  MediaListView(),
+                ],
+              );
+            },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,

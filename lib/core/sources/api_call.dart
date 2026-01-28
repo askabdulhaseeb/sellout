@@ -14,7 +14,6 @@ import 'local/local_request_history.dart';
 export 'dart:convert';
 export '../enums/core/api_request_type.dart';
 export 'data_state.dart';
-import 'package:http_parser/http_parser.dart';
 
 class ApiCall<T> {
   /// Validates and sanitizes a JSON body string before sending to API.
@@ -326,7 +325,7 @@ class ApiCall<T> {
           final File file = entry.value.file;
           final String mimeType =
               lookupMimeType(file.path) ?? 'application/octet-stream';
-          final MediaType mediaType = MediaType.parse(mimeType);
+          final http.MediaType mediaType = http.MediaType.parse(mimeType);
           final http.MultipartFile multipartFile = await http
               .MultipartFile.fromPath(key, file.path, contentType: mediaType);
           request.files.add(multipartFile);

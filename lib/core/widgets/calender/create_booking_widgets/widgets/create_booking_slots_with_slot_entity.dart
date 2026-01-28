@@ -36,7 +36,7 @@ class CreateBookingSlotsWithEntity extends StatelessWidget {
       height: height,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemCount: slots.length,
         itemBuilder: (BuildContext context, int index) =>
             _buildSlot(context, slots[index]),
@@ -48,9 +48,9 @@ class CreateBookingSlotsWithEntity extends StatelessWidget {
         height: height,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemCount: 6,
-          itemBuilder: (_, __) => Container(
+          itemBuilder: (_, _) => Container(
             width: 80,
             height: height,
             decoration: BoxDecoration(
