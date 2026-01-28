@@ -45,6 +45,7 @@ import 'package:sellout/features/personal/chats/chat_dashboard/domain/entities/m
 import 'package:sellout/features/personal/chats/chat_dashboard/domain/entities/messages/message_post_detail_entity.dart';
 import 'package:sellout/features/personal/chats/quote/domain/entites/quote_detail_entity.dart';
 import 'package:sellout/features/personal/chats/quote/domain/entites/service_employee_entity.dart';
+import 'package:sellout/features/personal/home/view/enums/counter_offer_enum.dart';
 import 'package:sellout/features/personal/listing/listing_form/domain/entities/category_entites/categories_entity.dart';
 import 'package:sellout/features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_data_entity.dart';
 import 'package:sellout/features/personal/listing/listing_form/domain/entities/category_entites/subentities/dropdown_option_entity.dart';
@@ -80,7 +81,6 @@ import 'package:sellout/features/personal/post/domain/entities/post/post_vehicle
 import 'package:sellout/features/personal/post/domain/entities/size_color/color_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/size_color/size_color_entity.dart';
 import 'package:sellout/features/personal/post/domain/entities/visit/visiting_entity.dart';
-import 'package:sellout/features/personal/post/feed/views/enums/counter_offer_enum.dart';
 import 'package:sellout/features/personal/promo/domain/entities/promo_entity.dart';
 import 'package:sellout/features/personal/review/domain/entities/review_entity.dart';
 import 'package:sellout/features/personal/services/domain/entity/service_category_entity.dart';

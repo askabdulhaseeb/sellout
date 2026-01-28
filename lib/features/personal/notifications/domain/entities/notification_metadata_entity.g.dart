@@ -32,7 +32,6 @@ class NotificationMetadataEntityAdapter
       currency: fields[11] as String?,
       itemTitle: fields[12] as String?,
       event: fields[13] as String?,
-
     );
   }
 
@@ -40,7 +39,7 @@ class NotificationMetadataEntityAdapter
   void write(BinaryWriter writer, NotificationMetadataEntity obj) {
     writer
       ..writeByte(14)
-   ..writeByte(0)
+      ..writeByte(0)
       ..write(obj.postId)
       ..writeByte(1)
       ..write(obj.orderId)
@@ -68,7 +67,7 @@ class NotificationMetadataEntityAdapter
       ..write(obj.itemTitle)
       ..writeByte(13)
       ..write(obj.event);
- }
+  }
 
   @override
   int get hashCode => typeId.hashCode;

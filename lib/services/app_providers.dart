@@ -19,7 +19,7 @@ import '../features/personal/dashboard/views/providers/personal_bottom_nav_provi
 import '../features/personal/visits/view/book_visit/provider/booking_provider.dart';
 import '../features/personal/notifications/view/provider/notification_provider.dart';
 import '../features/personal/order/view/provider/order_provider.dart';
-import '../features/personal/post/feed/views/providers/feed_provider.dart';
+import '../features/personal/home/view/providers/feed_provider.dart';
 import '../features/personal/promo/view/create_promo/provider/promo_provider.dart';
 import '../features/personal/post/post_detail/views/providers/post_detail_provider.dart';
 import '../features/personal/review/views/providers/review_provider.dart';
